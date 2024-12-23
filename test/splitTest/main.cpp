@@ -1,7 +1,7 @@
 #include "../../src/include/splitgui.hpp"
 
 int main() {
-    MyClass obj;
-    obj.greet();
+    Window obj;
+    obj.createWindow();
     return 0;
 }

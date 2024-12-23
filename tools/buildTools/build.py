@@ -1,15 +1,6 @@
 import subprocess
 import os
-import logging
-
-class SingleNewlineHandler(logging.StreamHandler):
-    def emit(self, record):
-        try:
-            msg = self.format(record)
-            self.stream.write(msg + '\n')
-            self.flush()
-        except Exception:
-            self.handleError(record)
+import shutil
 
 def configure():
     subprocess.run(
@@ -32,56 +23,15 @@ def build():
         text=True
     )
     
-def test():
+def structure():
+    if not os.path.isdir('lib'):
+        os.mkdir('lib')
     
-    print('\n---- TESTS ----\n')
+    if not os.path.isdir('lib/bin'):
+        os.mkdir('lib/bin')
     
-    build_dir = 'build/build/'
-    
-    tests = [f for f in os.listdir(build_dir) if f.endswith('.exe')]
-    
-    for test in tests:
-        
-        test_path = os.path.join(build_dir, test)
-        
-        logging.info('')
-        logging.info(f'---- {test_path} ----')
-        logging.info('')
-        
-        try:
-            result = subprocess.run(
-                [
-                    test_path
-                ], 
-                check=True,
-                capture_output=True,
-                text=True
-            )
-            
-            if result.stdout:
-                lines = result.stdout.splitlines()
-                
-                for line in lines:
-                    logging.debug(line)
-                
-            print(f'PASS: {test_path}')
-            
-        except subprocess.CalledProcessError as e:
-            
-            print(f'FAIL: {test_path}')
-            
-            logging.error(f'Error running {test_path}: {str(e)}')
-            if e.stdout:
-                lines = e.stdout.splitlines()
-                
-                for line in lines:
-                    logging.debug(line)
-                    
-            if e.stderr:
-                lines = e.stderr.splitlines()
-                
-                for line in lines:
-                    logging.error(line)
+    shutil.copytree('src/include', 'lib/include')
+    shutil.copy('build/libsplitgui.dll', 'lib/bin/libsplitgui.dll')
     
 # -------------------------------- MAIN --------------------------------
 
@@ -91,21 +41,7 @@ if not os.path.isdir('src'):
     
 if not os.path.isdir('build'):
     os.mkdir('build')
-    
-with open('build/tests.log', 'w'):
-    pass
-    
-logging.basicConfig(
-    filename='build/tests.log',
-    level=logging.DEBUG,
-    format='%(asctime)s\t- %(levelname)s\t- %(message)s'
-)
-    
-logging.info('--- BEGIN LOG ---')
 
 configure()
 build()
-test()
-
-logging.info('')
-logging.info('--- END LOG ---')
+structure()

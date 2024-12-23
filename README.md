@@ -3,9 +3,11 @@
 
 ## How to build 
 
+must have all build dependencies installed to use
+
 `python tools/buildTools/build.py`
 
-must have all build dependencies installed to use
+
 
 ## build dependencies
 

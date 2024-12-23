@@ -1,8 +1,22 @@
 #include "include/splitgui.hpp"
 #include <iostream>
 
-MyClass::MyClass() {}
+namespace SplitGui {
 
-void MyClass::greet() {
-    std::cout << "Hello from the DLL!" << std::endl;
+    Window::Window() {
+
+    }
+
+    void Window::createWindow() {
+
+    }
+
+    void Window::instanceVulkan() {
+
+    }
+
+    Ui Window::parseXml(std::string path) {
+        
+    }
+
 }
