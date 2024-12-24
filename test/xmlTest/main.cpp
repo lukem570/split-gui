@@ -1,7 +1,7 @@
-#include "../../src/include/splitgui.hpp"
+#include <splitgui.hpp>
 
 int main() {
-    Window obj;
-    obj.createWindow();
+    SplitGui::Window obj;
+    
     return 0;
 }

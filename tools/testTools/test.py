@@ -36,7 +36,7 @@ def test():
     
     print('\n---- TESTS ----\n')
     
-    build_dir = 'build/build/'
+    build_dir = 'build/tests/'
     
     tests = [f for f in os.listdir(build_dir) if f.endswith('.exe')]
     

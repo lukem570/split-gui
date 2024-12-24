@@ -13,46 +13,32 @@
 
 namespace SplitGui {
 
-    union propType {
-        std::string string;
-        int integer;
-        float floatingPoint;
-        UiData* reference;
-    };
-
-    struct UiData {
+    struct SPLITGUI_EXPORT Ui {
         std::string name;
-        std::vector<UiData*> children;
-        std::unordered_map<std::string, propType> props;
-    };
-
-    class Ui {
-        public:
-            UiData* getData() {
-                return data;
-            }
-
-            ~Ui() {
-                cleanupUi(data);
-            }
-
-        private:
-            void cleanupUi(UiData* element) {
-                for (int i = 0; i < element->children.size(); i++) {
-                    cleanupUi(element->children[i]);
-                    delete element->children[i];
-                }
-            }
-
-            UiData* data;
+        std::vector<Ui*> children;
+        std::unordered_map<std::string, std::string> props;
     };
 
     class SPLITGUI_EXPORT Window {
         public:
+
             Window();
+
+            ~Window() {
+                if(uiData) {
+                    cleanupUi(uiData);
+                }
+            }
+
             void createWindow();
             void instanceVulkan();
-            Ui parseXml(std::string path);
+            void pushUi(Ui* ui);
+            Ui* parseXml(std::string path);
+
+        private:
+            Ui* uiData = nullptr;
+
+            void cleanupUi(Ui* element);
     };
 }
 #endif

@@ -1,0 +1,10 @@
+<main> 
+    <split direction="vertical" position="20px + 50%"> 
+        <quad>
+            
+        </quad>
+        <quad>
+            
+        </quad>
+    </split>
+</main>

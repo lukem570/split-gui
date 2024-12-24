@@ -34,3 +34,7 @@
 # Build Folders
 build
 lib
+include
+
+# Vscode files
+.vscode

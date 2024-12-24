@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE TESTS test/*/main.cpp)
 
+include_directories(${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/include)
+
 add_library(splitgui SHARED src/splitgui.cpp)
 
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI)
@@ -21,11 +23,11 @@ foreach(main_file ${TESTS})
     target_link_libraries(${main_name} splitgui)
 
     set_target_properties(splitgui PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests
     )
 
     set_target_properties(${main_name} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests
     )
 
     add_custom_command(TARGET ${main_name} POST_BUILD
