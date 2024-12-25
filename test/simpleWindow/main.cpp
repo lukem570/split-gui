@@ -1,4 +1,4 @@
-#include <splitgui.hpp>
+#include <splitgui/window.hpp>
 
 int main() {
     SplitGui::Window obj;

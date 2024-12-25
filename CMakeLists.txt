@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE TESTS test/*/main.cpp)
 
-include_directories(${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library(splitgui SHARED src/splitgui.cpp)
 

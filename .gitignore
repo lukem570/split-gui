@@ -33,8 +33,9 @@
 
 # Build Folders
 build
-lib
-include
+include/glfw
+include/src
+include/vulkan
 
 # Vscode files
 .vscode
