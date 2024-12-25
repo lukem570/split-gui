@@ -22,7 +22,7 @@ namespace SplitGui {
 
             Window();
 
-            void createWindow();
+            void createWindow(const char* title);
             void attachGraphics(Graphics& graphics);
             void attachInterface(Interface& interface);
             void updateInterface();

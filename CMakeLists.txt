@@ -10,6 +10,8 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library(splitgui SHARED src/splitgui.cpp)
 
+target_link_libraries(splitgui glfw3)
+
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI)
 
 foreach(main_file ${TESTS})

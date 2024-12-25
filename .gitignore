@@ -36,6 +36,7 @@ build
 include/glfw
 include/src
 include/vulkan
+include/glfwpp
 
 # Vscode files
 .vscode

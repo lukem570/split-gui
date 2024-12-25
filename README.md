@@ -25,6 +25,7 @@
 ## project dependencies
 
 * GLFW
+* glfwpp
 * vulkan sdk 
 * vulkan headers
 * vulkan hpp

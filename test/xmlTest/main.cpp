@@ -22,7 +22,7 @@ int main() {
 
     interface.parseXml(index);
 
-    SplitGui::Window window;;
+    SplitGui::Window window;
 
     
     return 0;

@@ -2,6 +2,6 @@
 
 int main() {
     SplitGui::Window obj;
-    obj.createWindow();
+    obj.createWindow("simple window");
     return 0;
 }
