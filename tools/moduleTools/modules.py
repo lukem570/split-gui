@@ -47,7 +47,7 @@ def build_glfw():
     )
 
 def structure():
-    shutil.copytree('include/src/glfw/include/GLFW', 'include/glfw')
+    shutil.copytree('include/src/glfw/include/GLFW', 'include/GLFW')
     shutil.copytree('include/src/glfwpp/include/glfwpp', 'include/glfwpp')
     shutil.copytree('include/src/Vulkan-Headers/include/vulkan', 'include/vulkan')
     shutil.copytree('include/src/Vulkan-Hpp/vulkan', 'include/vulkan', dirs_exist_ok=True)

@@ -20,6 +20,7 @@ namespace SplitGui {
         glfw::makeContextCurrent(window);
 
         while (!window.shouldClose()) {
+            glfwSwapBuffers(window);
             glfw::pollEvents();
         }
         

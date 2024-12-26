@@ -17,7 +17,7 @@
 
 ## build dependencies
 
-* python3
+* python
 * ninja
 * cmake
 * git

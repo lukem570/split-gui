@@ -1,13 +1,7 @@
 #ifndef SPLITGUI_WINDOW_HPP
 #define SPLITGUI_WINDOW_HPP
 
-#ifndef SPLITGUI_EXPORT
-#ifdef BUILD_SPLITGUI
-    #define SPLITGUI_EXPORT __declspec(dllexport)
-#else
-    #define SPLITGUI_EXPORT __declspec(dllimport)
-#endif
-#endif
+#include "lib.h"
 
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>

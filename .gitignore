@@ -33,7 +33,7 @@
 
 # Build Folders
 build
-include/glfw
+include/GLFW
 include/src
 include/vulkan
 include/glfwpp

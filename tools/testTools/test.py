@@ -1,6 +1,8 @@
 import subprocess
 import os
+import platform
 import logging
+import sys
 
 class SingleNewlineHandler(logging.StreamHandler):
     def emit(self, record):
@@ -32,17 +34,38 @@ def build():
         text=True
     )
     
+def get_executables_in_directory(directory):
+    executables = []
+    
+    # List of executable extensions for Windows
+    if sys.platform == "win32":
+        exec_extensions = {".exe"}
+    else:
+        exec_extensions = set()
+
+    # Traverse the directory
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            file_path = os.path.join(root, file)
+            
+            if sys.platform == "win32" and any(file.lower().endswith(ext) for ext in exec_extensions):
+                executables.append(file_path)
+            elif sys.platform != "win32" and os.access(file_path, os.X_OK):
+                executables.append(file_path)
+    
+    return executables
+    
 def test():
     
     print('\n---- TESTS ----\n')
     
     build_dir = 'build/tests/'
     
-    tests = [f for f in os.listdir(build_dir) if f.endswith('.exe')]
+    tests = get_executables_in_directory(build_dir)
     
     for test in tests:
         
-        test_path = os.path.join(build_dir, test)
+        test_path = test
         
         logging.info('')
         logging.info(f'---- {test_path} ----')
