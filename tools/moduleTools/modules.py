@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import requests
 import zipfile
+import platform
 
 def fetch_source(repos):
     for repo in repos:
@@ -11,7 +12,6 @@ def fetch_source(repos):
                 'git', 'clone', '--recursive', repo
             ],
             cwd='include/src',
-            check=True,
             text=True
         )
 
@@ -78,7 +78,9 @@ fetch_source(
     ]
 )
 
-fetch_vulkan_sdk('https://sdk.lunarg.com/sdk/download/1.3.296.0/windows/VulkanRT-1.3.296.0-Components.zip')
+# windows
+if platform.system() == 'Windows':
+    fetch_vulkan_sdk('https://sdk.lunarg.com/sdk/download/1.3.296.0/windows/VulkanRT-1.3.296.0-Components.zip')
 
 build_glfw()
 structure()

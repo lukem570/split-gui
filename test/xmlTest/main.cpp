@@ -1,3 +1,5 @@
+#define DEV
+
 #include <splitgui/window.hpp>
 #include <splitgui/interface.hpp>
 #include <fstream>
