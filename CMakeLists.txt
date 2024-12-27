@@ -10,7 +10,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library(splitgui SHARED src/splitgui.cpp)
 
-target_link_libraries(splitgui ${CMAKE_BINARY_DIR}/libglfw3.a)
+target_link_libraries(splitgui ${CMAKE_BINARY_DIR}/libglfw3.a vulkan)
 
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI)
 

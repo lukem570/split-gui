@@ -1,5 +1,5 @@
 #include <splitgui/interface.hpp>
-//#include "xmlParser.cpp"
+#include "xmlParser.cpp"
 
 namespace SplitGui {
 

@@ -1,5 +1,6 @@
 #include <splitgui/graphics.hpp>
 #include <splitgui/window.hpp>
+#include "vulkan/vulkan.cpp"
 
 namespace SplitGui {
 
@@ -8,6 +9,8 @@ namespace SplitGui {
     }
     
     void Graphics::instanceVulkan(Window& window) {
-
+        VulkanInterface interface;
+        interface.instance();
+        interface.submitWindow(window.handle);
     }
 }

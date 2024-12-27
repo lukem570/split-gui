@@ -10,20 +10,26 @@ namespace SplitGui {
 
     }
 
+    Window::~Window() {
+        if (handle) {
+            delete handle;
+        }
+        
+        if (glfw) {
+            delete glfw;
+        }
+    }
+
     void Window::createWindow(const char* title) {
-        glfw::GlfwLibrary GLFW = glfw::init();
+        glfw = new glfw::GlfwLibrary(glfw::init());
 
         glfw::WindowHints hints;
         
-        glfw::Window window(640, 480, title);
+        handle = new glfw::Window(640, 480, title);
 
-        glfw::makeContextCurrent(window);
+        glfw::makeContextCurrent(*handle);
 
-        while (!window.shouldClose()) {
-            glfwSwapBuffers(window);
-            glfw::pollEvents();
-        }
-        
+        handle->swapBuffers();
     }
 
     void Window::attachInterface(Interface& ui) {
@@ -34,6 +40,11 @@ namespace SplitGui {
 
     }
 
-    
+    void Window::__devLoop() {
+        while (!handle->shouldClose()) {
+            handle->swapBuffers();
+            glfw::pollEvents();
+        }
+    }
 
 }

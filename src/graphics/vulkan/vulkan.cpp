@@ -1,4 +1,5 @@
 #include "../interface.hpp"
+#include "../../path.cpp"
 
 #ifdef DEV
 #define VALIDATION true
@@ -15,10 +16,13 @@ class VulkanInterface : GraphicsLibInterface {
             createDevice();
         }
 
-        void submitWindow(glfw::Window& window) override { // need to add physical device surface support
-            pWindow = &window;
-            createSurface(window);
+        void submitWindow(glfw::Window* window) override { // need to add physical device surface support
+            pWindow = window;
+            createSurface(*window);
             createSwapchain();
+            createImageViews();
+            createRenderpass();
+            createPipeline();
         }
 
     protected:
@@ -32,6 +36,7 @@ class VulkanInterface : GraphicsLibInterface {
         vk::SurfaceFormatKHR        vk_surfaceFormat;
         vk::PresentModeKHR          vk_presentMode;
         vk::Extent2D                vk_swapchainExtent;
+        vk::RenderPass              vk_renderpass;
         std::vector<vk::Image>      vk_swapchainImages;
         std::vector<vk::ImageView>  vk_swapchainImageViews;
         unsigned int                graphicsQueueFamilyIndex = -1;
@@ -114,18 +119,18 @@ class VulkanInterface : GraphicsLibInterface {
             vk_device = vk_physicalDevice.createDevice(deviceCreateInfo);
         }
 
-        vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) {
+        inline vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) {
             if (capabilities.currentExtent.width != UINT32_MAX) {
                 return capabilities.currentExtent;
             } else {
-                vk::Extent2D actualExtent = {std::get<0>(pWindow->getSize()), std::get<1>(pWindow->getSize())};
+                vk::Extent2D actualExtent = {(uint32_t)std::get<0>(pWindow->getSize()), (uint32_t)std::get<1>(pWindow->getSize())};
                 actualExtent.width  = (((capabilities.minImageExtent.width) > ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width)))) ? (capabilities.minImageExtent.width) : ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width))));
                 actualExtent.height = (((capabilities.minImageExtent.height) > ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height)))) ? (capabilities.minImageExtent.height) : ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height))));
                 return actualExtent;
             }
         }
 
-        vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) {
+        inline vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) {
             for (const auto& availableFormat : availableFormats) {
                 if (availableFormat.format == vk::Format::eB8G8R8A8Srgb && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
                     return availableFormat;
@@ -135,7 +140,7 @@ class VulkanInterface : GraphicsLibInterface {
             return availableFormats[0];
         }
 
-        vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) {
+        inline vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) {
             for (const auto& availablePresentMode : availablePresentModes) {
                 if (availablePresentMode == vk::PresentModeKHR::eMailbox) {
                     return availablePresentMode;
@@ -198,5 +203,62 @@ class VulkanInterface : GraphicsLibInterface {
 
                 vk_swapchainImageViews[i] = vk_device.createImageView(createInfo);
             }
+        }
+
+        void createRenderpass() {
+            vk::AttachmentDescription colorAttachment;
+            colorAttachment.format              = vk_surfaceFormat.format;
+            colorAttachment.samples             = vk::SampleCountFlagBits::e1;
+            colorAttachment.loadOp              = vk::AttachmentLoadOp::eClear;
+            colorAttachment.storeOp             = vk::AttachmentStoreOp::eStore;
+            colorAttachment.stencilLoadOp       = vk::AttachmentLoadOp::eDontCare;
+            colorAttachment.stencilStoreOp      = vk::AttachmentStoreOp::eDontCare;
+            colorAttachment.initialLayout       = vk::ImageLayout::eUndefined;
+            colorAttachment.finalLayout         = vk::ImageLayout::ePresentSrcKHR;
+
+            vk::AttachmentReference colorAttachmentReference;
+            colorAttachmentReference.attachment = 0;
+            colorAttachmentReference.layout     = vk::ImageLayout::eColorAttachmentOptimal;
+
+            vk::SubpassDescription subpass;
+            subpass.pipelineBindPoint           = vk::PipelineBindPoint::eGraphics;
+            subpass.colorAttachmentCount        = 1;
+            subpass.pColorAttachments           = &colorAttachmentReference;
+
+            vk::SubpassDependency dependency;
+            dependency.srcSubpass               = vk::SubpassExternal;
+            dependency.dstSubpass               = 0;
+            dependency.srcStageMask             = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+            dependency.srcAccessMask            = (vk::AccessFlags) 0;
+            dependency.dstStageMask             = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+            dependency.dstAccessMask           |= vk::AccessFlagBits::eColorAttachmentRead;
+            dependency.dstAccessMask           |= vk::AccessFlagBits::eColorAttachmentWrite;
+
+            vk::RenderPassCreateInfo createInfo;
+            createInfo.attachmentCount          = 1;
+            createInfo.subpassCount             = 1;
+            createInfo.dependencyCount          = 1;
+            createInfo.pAttachments             = &colorAttachment;
+            createInfo.pSubpasses               = &subpass;
+            createInfo.pDependencies            = &dependency;
+
+            vk_renderpass = vk_device.createRenderPass(createInfo);
+        }
+
+        inline vk::ShaderModule createShaderModule(const std::vector<char>& code) {
+            vk::ShaderModuleCreateInfo createInfo;
+            createInfo.codeSize = code.size();
+            createInfo.pCode    = reinterpret_cast<const uint32_t*>(code.data());
+
+            return vk_device.createShaderModule(createInfo);
+        }
+
+        void createPipeline() {
+
+            const std::vector<char> vertexShaderFile   = SplitGui::readFile("shaders/vertex.spv");
+            const std::vector<char> fragmentShaderFile = SplitGui::readFile("shaders/fragment.spv");
+
+            vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile);
+            vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile);
         }
 };
