@@ -24,6 +24,10 @@ namespace SplitGui {
         glfw = new glfw::GlfwLibrary(glfw::init());
 
         glfw::WindowHints hints;
+        hints.clientApi = (glfw::ClientApi) 0L;
+        hints.resizable = false;
+        hints.visible   = true;
+        hints.decorated = true;
         
         handle = new glfw::Window(640, 480, title);
 

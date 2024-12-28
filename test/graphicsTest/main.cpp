@@ -6,8 +6,9 @@ int main() {
     SplitGui::Window window;
     window.createWindow("graphics test");
 
-    //SplitGui::Graphics graphics;
-    //graphics.instanceVulkan(window);
+    SplitGui::Graphics graphics;
+    graphics.instanceVulkan();
+    graphics.submitWindow(window);
 
     window.__devLoop();
 
