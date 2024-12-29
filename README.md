@@ -35,5 +35,6 @@
 ## Todo
 
 * make xml parser
-* open window
-* creatw vulkan surface on window
+* create vulkan surface on window
+* add volk
+* edit cmakelists.txt to build for different window managers

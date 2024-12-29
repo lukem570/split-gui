@@ -9,7 +9,7 @@
 
 std::vector<const char*> instanceExtensions = {
     VK_KHR_SURFACE_EXTENSION_NAME,  
-    vk::KHRXlibSurfaceExtensionName,
+    VK_KHR_WM_SURFACE_EXTENSION_NAME,
 };
 
 namespace SplitGui {

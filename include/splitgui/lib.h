@@ -27,6 +27,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
+#define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_WIN32_SURFACE_EXTENSION_NAME
 
 #elif defined(__linux__)  
 
@@ -37,20 +38,25 @@
     #include <X11/Xlib.h>
     #include <vulkan/vulkan_xlib.h>
     #define __USE_XLIB__
+    #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XLIB_SURFACE_EXTENSION_NAME
 
     #elif defined(__WAYLAND__)
         #define GLFW_EXPOSE_NATIVE_WAYLAND
         #include <vulkan/vulkan_wayland.h>
+        #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
     #elif defined(__USE_XCB__)
         #define GLFW_EXPOSE_NATIVE_X11
         #include <X11/Xlib.h>
         #include <vulkan/vulkan_xcb.h>
+        #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XCB_SURFACE_EXTENSION_NAME
     #elif defined(__USE_XLIB__)
         #define GLFW_EXPOSE_NATIVE_X11
         #include <X11/Xlib.h>
         #include <vulkan/vulkan_xlib.h>
+        #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XLIB_SURFACE_EXTENSION_NAME
     #endif
-
+#else
+#error "Unsupported platform"
 #endif
 
 #include <glfwpp/native.h>
