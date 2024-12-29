@@ -7,25 +7,9 @@
 #define VALIDATION false
 #endif
 
-
-
-
-
 std::vector<const char*> instanceExtensions = {
     VK_KHR_SURFACE_EXTENSION_NAME,  
-#ifdef _WIN32  
-    VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
-#elif defined(__WAYLAND__)
-    VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
-#elif defined(__USE_XCB__)
-    VK_KHR_XCB_SURFACE_EXTENSION_NAME,
-#elif defined(__USE_XLIB__)
-    VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
-#elif defined(__APPLE__)
-    VK_KHR_MACOS_SURFACE_EXTENSION_NAME
-#else
-    #error "Unknown platform, no suitable surface extension defined"
-#endif
+    vk::KHRXlibSurfaceExtensionName,
 };
 
 namespace SplitGui {
@@ -42,10 +26,10 @@ namespace SplitGui {
             void submitWindow(glfw::Window* window) override { // need to add physical device surface support
                 pWindow = window;
                 createSurface(*window);
-                createSwapchain();
-                createImageViews();
-                createRenderpass();
-                createPipeline();
+                //createSwapchain();
+                //createImageViews();
+                //createRenderpass();
+                //createPipeline();
             }
 
         protected:
@@ -177,7 +161,18 @@ namespace SplitGui {
             }
 
             void createSurface(glfw::Window& window) {
-                vk_surface = window.createSurface(vk_instance);
+                VkXlibSurfaceCreateInfoKHR createInfo;
+                createInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+                createInfo.dpy = glfwGetX11Display();
+                createInfo.window = glfwGetX11Window(window);
+                createInfo.pNext = NULL;
+                createInfo.flags = 0;
+                
+                VkSurfaceKHR temp = &*vk_surface;
+
+                vkCreateXlibSurfaceKHR(&*vk_instance, &createInfo, nullptr, &temp);
+
+                //vk_surface = window.createSurface(vk_instance);
             }
 
             void createSwapchain() {
