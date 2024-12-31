@@ -52,6 +52,7 @@ def structure():
     shutil.copytree('include/src/Vulkan-Headers/include/vulkan', 'include/vulkan')
     shutil.copytree('include/src/Vulkan-Headers/include/vk_video', 'include/vulkan/vk_video')
     shutil.copytree('include/src/Vulkan-Hpp/vulkan', 'include/vulkan', dirs_exist_ok=True)
+    shutil.copytree('include/src/Vulkan-Hpp/vulkan', 'include/vulkan', dirs_exist_ok=True)
     
     shutil.copy('include/src/vulkan-sdk/VulkanRT-1.3.296.0-Components/x64/vulkan-1.dll', 'build/vulkan-1.dll')
     shutil.copy('include/src/glfw/build/src/libglfw3.a', 'build/libglfw3.a')
@@ -76,6 +77,7 @@ fetch_source(
         'https://github.com/KhronosGroup/Vulkan-Hpp.git',
         'https://github.com/KhronosGroup/Vulkan-Headers.git', 
         'https://github.com/lukem570/glfwpp.git',
+        'https://github.com/zeux/volk.git',
     ]
 )
 

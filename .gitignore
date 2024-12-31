@@ -37,6 +37,7 @@ include/GLFW
 include/src
 include/vulkan
 include/glfwpp
+include/volk
 
 # Vscode files
 .vscode

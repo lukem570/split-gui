@@ -49,12 +49,71 @@ namespace SplitGui {
             unsigned int                graphicsQueueFamilyIndex = -1;
 
             void instanceVulkan() {
+                VkResult err = volkInitialize();
+                if (err != VK_SUCCESS) {
+                    printf(
+                        "Unable to find the Vulkan runtime on the system.\n\n"
+                        "This likely indicates that no Vulkan capable drivers are installed.",
+                        "Installation Failure\n");
+                    throw;
+                }
+
+                VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+
+                auto instance_extensions_return = vk::enumerateInstanceExtensionProperties();
+                std::vector<const char *> enabled_instance_extensions;
+
+                bool use_debug_messenger = false;
+                bool portabilityEnumerationActive = false;
+                vk::Bool32 surfaceExtFound = 0;
+                vk::Bool32 platformSurfaceExtFound = 0;
+
+                for (const auto &extension : instance_extensions_return.value) {
+                    if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, extension.extensionName)) {
+                        enabled_instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+                    } else if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, extension.extensionName)) {
+                        use_debug_messenger = true;
+                        enabled_instance_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+                    } else if (!strcmp(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, extension.extensionName)) {
+                        // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
+                        // portability enumeration extension.
+                        portabilityEnumerationActive = true;
+                        enabled_instance_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+                    } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+                        surfaceExtFound = 1;
+                        enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+                    } else if (!strcmp(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+                        platformSurfaceExtFound = 1;
+                        enabled_instance_extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+                    }
+                }
+
+                if (!surfaceExtFound) {
+                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_SURFACE_EXTENSION_NAME
+                            " extension.\n\n"
+                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                            "Please look at the Getting Started guide for additional information.\n",
+                            "vkCreateInstance Failure\n");
+                    throw;
+                }
+
+                if (!platformSurfaceExtFound) {
+
+                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
+                            " extension.\n\n"
+                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                            "Please look at the Getting Started guide for additional information.\n",
+                            "vkCreateInstance Failure\n");
+                    throw;
+
+                }
+
                 vk::ApplicationInfo appInfo;
                 appInfo.pApplicationName   = "Split-gui";
                 appInfo.applicationVersion = 0;
                 appInfo.pEngineName        = "Split-gui";
                 appInfo.engineVersion      = 0;
-                appInfo.apiVersion         = vk::ApiVersion12;
+                appInfo.apiVersion         = VK_API_VERSION_1_0;
 
                 vk::InstanceCreateInfo createInfo;
                 createInfo.pApplicationInfo = &appInfo;
@@ -71,17 +130,47 @@ namespace SplitGui {
                 createInfo.setEnabledExtensionCount(static_cast<uint32_t>(instanceExtensions.size()));
                 createInfo.setPpEnabledExtensionNames(instanceExtensions.data());
 
-                vk_instance = vk::createInstance(createInfo);
+                vk::ResultValue<vk::Instance> result = vk::createInstance(createInfo);
+
+                if (result.result == vk::Result::eErrorIncompatibleDriver) {
+                    printf(
+                        "Cannot find a compatible Vulkan installable client driver (ICD).\n\n"
+                        "Please look at the Getting Started guide for additional information.\n",
+                        "vkCreateInstance Failure");
+                    throw;
+                } else if (result.result == vk::Result::eErrorExtensionNotPresent) {
+                    printf(
+                        "Cannot find a specified extension library.\n"
+                        "Make sure your layers path is set appropriately.\n",
+                        "vkCreateInstance Failure");
+                    throw;
+                } else if (result.result != vk::Result::eSuccess) {
+                    printf(
+                        "vkCreateInstance failed.\n\n"
+                        "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                        "Please look at the Getting Started guide for additional information.\n",
+                        "vkCreateInstance Failure");
+                    throw;
+                }
+
+                vk_instance = result.value;
+
+                VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_instance);
             }
 
             // Device selction could be more robust but this will do for now
             void createPhysicalDevice() { 
-                std::vector<vk::PhysicalDevice> physicalDevices = vk_instance.enumeratePhysicalDevices();
+                vk::ResultValue<std::vector<vk::PhysicalDevice>> physicalDevices = vk_instance.enumeratePhysicalDevices();
+
+                if (physicalDevices.result != vk::Result::eSuccess) {
+                    printf("Error enumerating physical devices\n");
+                    throw;
+                }
 
                 int selection = -1;
                 
-                for (int i = 0; i < physicalDevices.size(); i++) {
-                    if (physicalDevices[i].getProperties().apiVersion < vk::ApiVersion12) {
+                for (int i = 0; i < physicalDevices.value.size(); i++) {
+                    if (physicalDevices.value[i].getProperties().apiVersion < vk::ApiVersion12) {
                         continue;
                     }
 
@@ -94,7 +183,7 @@ namespace SplitGui {
                     throw;
                 }
 
-                vk_physicalDevice = physicalDevices[selection];
+                vk_physicalDevice = physicalDevices.value[selection];
 
                 printf("Using %s\n", vk_physicalDevice.getProperties().deviceName.data());
             }
@@ -126,7 +215,16 @@ namespace SplitGui {
                 deviceCreateInfo.pQueueCreateInfos    = &queueCreateInfo;
                 deviceCreateInfo.pEnabledFeatures     = &deviceFeatures;
 
-                vk_device = vk_physicalDevice.createDevice(deviceCreateInfo);
+                vk::ResultValue<vk::Device> result = vk_physicalDevice.createDevice(deviceCreateInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error creating logical device\n");
+                    throw;
+                }
+
+                vk_device = result.value;
+
+                VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_device);
             }
 
             inline vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) {
@@ -161,21 +259,24 @@ namespace SplitGui {
             }
 
             void createSurface(glfw::Window& window) {
-                VkXlibSurfaceCreateInfoKHR createInfo;
-                createInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+                vk::XlibSurfaceCreateInfoKHR createInfo;
                 createInfo.dpy = glfwGetX11Display();
                 createInfo.window = glfwGetX11Window(window);
-                createInfo.pNext = NULL;
-                createInfo.flags = 0;
-                
-                VkSurfaceKHR temp = &*vk_surface;
+                createInfo.pNext = nullptr;
 
-                vkCreateXlibSurfaceKHR(&*vk_instance, &createInfo, nullptr, &temp);
+                vk::ResultValue<vk::SurfaceKHR> result = vk_instance.createXlibSurfaceKHR(createInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error creating surface\n");
+                    throw;
+                }
+
+                vk_surface = result.value;
 
                 //vk_surface = window.createSurface(vk_instance);
             }
 
-            void createSwapchain() {
+            /*void createSwapchain() {
                 vk::SurfaceCapabilitiesKHR capabilities      = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface);
                 std::vector<vk::SurfaceFormatKHR> formats    = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface);
                 std::vector<vk::PresentModeKHR> presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface);
@@ -281,6 +382,6 @@ namespace SplitGui {
 
                 vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile);
                 vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile);
-            }
+            }*/
     };
 }

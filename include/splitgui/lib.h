@@ -14,12 +14,23 @@
 #else
     #error "Unknown platform, please define export/import macros."
 #endif
-#endif
+
+#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
+#define VULKAN_HPP_NO_EXCEPTIONS
+#define VULKAN_HPP_TYPESAFE_CONVERSION 1
 
 #define VK_USE_PLATFORM_XLIB_KHR
 
+#ifdef VULKAN_H_
+#error "vulkan previously defined error"
+#endif
+
+#include <volk/volk.h>
+
+#define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.hpp>
-#include <glfwpp/glfwpp.h>
+
+VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 #ifdef _WIN32
 
@@ -60,3 +71,4 @@
 #endif
 
 #include <glfwpp/native.h>
+#endif

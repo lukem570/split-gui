@@ -38,3 +38,4 @@
 * create vulkan surface on window
 * add volk
 * edit cmakelists.txt to build for different window managers
+* refactor build tools
