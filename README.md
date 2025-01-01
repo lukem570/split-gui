@@ -35,7 +35,6 @@
 ## Todo
 
 * make xml parser
-* create vulkan surface on window
-* add volk
 * edit cmakelists.txt to build for different window managers
 * refactor build tools
+* make window library modular to support other libs besides glfw

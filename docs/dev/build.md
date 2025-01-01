@@ -31,7 +31,7 @@ run the `tools/moduleTools/modules.py` script and install the vulkan sdk from th
 configure
 
 ```
-cmake -B build -G Ninja
+cmake -B build -G "Ninja"
 ```
 
 build

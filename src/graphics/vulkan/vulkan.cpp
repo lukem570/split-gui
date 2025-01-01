@@ -1,6 +1,8 @@
 #include "../interface.hpp"
 #include "../../path.cpp"
 
+#include <thread>
+
 #ifdef DEV
 #define VALIDATION true
 #else
@@ -48,6 +50,23 @@ namespace SplitGui {
             std::vector<vk::ImageView>  vk_swapchainImageViews;
             unsigned int                graphicsQueueFamilyIndex = -1;
 
+            vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
+                for (const auto &name : check_names) {
+                    vk::Bool32 found = VK_FALSE;
+                    for (const auto &layer : layers) {
+                        if (!strcmp(name, layer.layerName)) {
+                            found = VK_TRUE;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        fprintf(stderr, "Cannot find layer: %s\n", name);
+                        return 0;
+                    }
+                }
+                return VK_TRUE;
+            }
+
             void instanceVulkan() {
                 VkResult err = volkInitialize();
                 if (err != VK_SUCCESS) {
@@ -58,54 +77,29 @@ namespace SplitGui {
                     throw;
                 }
 
+                std::vector<const char *> enabled_layers;
+
                 VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 
-                auto instance_extensions_return = vk::enumerateInstanceExtensionProperties();
-                std::vector<const char *> enabled_instance_extensions;
+                std::vector<const char *> instanceLayers = {"VK_LAYER_KHRONOS_validation"};
 
-                bool use_debug_messenger = false;
-                bool portabilityEnumerationActive = false;
-                vk::Bool32 surfaceExtFound = 0;
-                vk::Bool32 platformSurfaceExtFound = 0;
+                vk::Bool32 validation_found = VK_FALSE;
+                if (VALIDATION) {
+                    vk::ResultValue<std::vector<vk::LayerProperties>> layers = vk::enumerateInstanceLayerProperties();
+                    
 
-                for (const auto &extension : instance_extensions_return.value) {
-                    if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, extension.extensionName)) {
-                        enabled_instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-                    } else if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, extension.extensionName)) {
-                        use_debug_messenger = true;
-                        enabled_instance_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-                    } else if (!strcmp(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, extension.extensionName)) {
-                        // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
-                        // portability enumeration extension.
-                        portabilityEnumerationActive = true;
-                        enabled_instance_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-                    } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
-                        surfaceExtFound = 1;
-                        enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-                    } else if (!strcmp(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
-                        platformSurfaceExtFound = 1;
-                        enabled_instance_extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+                    validation_found = check_layers(instanceLayers, layers.value);
+                    if (validation_found) {
+                        enabled_layers.push_back("VK_LAYER_KHRONOS_validation");
                     }
-                }
 
-                if (!surfaceExtFound) {
-                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_SURFACE_EXTENSION_NAME
-                            " extension.\n\n"
-                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                    else {
+                        printf(
+                            "vkEnumerateInstanceLayerProperties failed to find required validation layer.\n\n"
                             "Please look at the Getting Started guide for additional information.\n",
-                            "vkCreateInstance Failure\n");
-                    throw;
-                }
-
-                if (!platformSurfaceExtFound) {
-
-                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
-                            " extension.\n\n"
-                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                            "Please look at the Getting Started guide for additional information.\n",
-                            "vkCreateInstance Failure\n");
-                    throw;
-
+                            "vkCreateInstance Failure");
+                        throw;
+                    }
                 }
 
                 vk::ApplicationInfo appInfo;
@@ -119,12 +113,8 @@ namespace SplitGui {
                 createInfo.pApplicationInfo = &appInfo;
 
                 if (VALIDATION) {
-                    const char* layers[] = {
-                        "VK_LAYER_KHRONOS_validation"
-                    };
-
-                    createInfo.enabledLayerCount   = 1;
-                    createInfo.ppEnabledLayerNames = layers;
+                    createInfo.enabledLayerCount   = instanceLayers.size();
+                    createInfo.ppEnabledLayerNames = instanceLayers.data();
                 }
 
                 createInfo.setEnabledExtensionCount(static_cast<uint32_t>(instanceExtensions.size()));
@@ -210,10 +200,14 @@ namespace SplitGui {
                 vk::PhysicalDeviceFeatures deviceFeatures;
                 deviceFeatures = vk_physicalDevice.getFeatures();
 
+                std::vector<const char*> extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
                 vk::DeviceCreateInfo deviceCreateInfo;
-                deviceCreateInfo.queueCreateInfoCount = 1;
-                deviceCreateInfo.pQueueCreateInfos    = &queueCreateInfo;
-                deviceCreateInfo.pEnabledFeatures     = &deviceFeatures;
+                deviceCreateInfo.queueCreateInfoCount    = 1;
+                deviceCreateInfo.pQueueCreateInfos       = &queueCreateInfo;
+                deviceCreateInfo.pEnabledFeatures        = &deviceFeatures;
+                deviceCreateInfo.enabledExtensionCount   = extensions.size();
+                deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
 
                 vk::ResultValue<vk::Device> result = vk_physicalDevice.createDevice(deviceCreateInfo);
 
@@ -263,7 +257,8 @@ namespace SplitGui {
                 createInfo.dpy = glfwGetX11Display();
                 createInfo.window = glfwGetX11Window(window);
                 createInfo.pNext = nullptr;
-
+                
+                printf("alpha\n");
                 vk::ResultValue<vk::SurfaceKHR> result = vk_instance.createXlibSurfaceKHR(createInfo);
 
                 if (result.result != vk::Result::eSuccess) {
@@ -273,20 +268,35 @@ namespace SplitGui {
 
                 vk_surface = result.value;
 
-                //vk_surface = window.createSurface(vk_instance);
+                vk::ResultValue<uint32_t> isSupported = vk_physicalDevice.getSurfaceSupportKHR(graphicsQueueFamilyIndex, vk_surface);
+                if (isSupported.value == 0) {
+                    printf("Error: The physical device does not support the surface\n");
+                    //throw;
+                }
             }
 
-            /*void createSwapchain() {
-                vk::SurfaceCapabilitiesKHR capabilities      = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface);
-                std::vector<vk::SurfaceFormatKHR> formats    = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface);
-                std::vector<vk::PresentModeKHR> presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface);
+            void createSwapchain() {
+                printf("a\n");
 
-                vk_swapchainExtent = chooseSwapExtent(capabilities);
-                vk_surfaceFormat   = chooseSwapSurfaceFormat(formats);
-                vk_presentMode     = chooseSwapPresentMode(presentModes);
+
+                vk::ResultValue<std::vector<vk::SurfaceFormatKHR>> formats      = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface); printf("b\n");
+                vk::ResultValue<vk::SurfaceCapabilitiesKHR>        capabilities = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface); printf("c\n");
+                vk::ResultValue<std::vector<vk::PresentModeKHR>>   presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface); printf("d\n");
+
+                if (capabilities.result != vk::Result::eSuccess || 
+                    formats.result      != vk::Result::eSuccess ||
+                    presentModes.result != vk::Result::eSuccess) {
+
+                    printf("Error getting physical device props\n");
+                    throw;
+                }
+
+                vk_swapchainExtent = chooseSwapExtent(capabilities.value);
+                vk_surfaceFormat   = chooseSwapSurfaceFormat(formats.value);
+                vk_presentMode     = chooseSwapPresentMode(presentModes.value);
 
                 vk::SwapchainCreateInfoKHR createInfo;
-                createInfo.minImageCount         = capabilities.minImageCount + 1;
+                createInfo.minImageCount         = capabilities.value.minImageCount + 1;
                 createInfo.pQueueFamilyIndices   = &graphicsQueueFamilyIndex;
                 createInfo.surface               = vk_surface;
                 createInfo.imageFormat           = vk_surfaceFormat.format;
@@ -300,8 +310,18 @@ namespace SplitGui {
                 createInfo.clipped               = true;
                 createInfo.oldSwapchain          = nullptr;
 
-                vk_swapchain       = vk_device.createSwapchainKHR(createInfo);
-                vk_swapchainImages = vk_device.getSwapchainImagesKHR(vk_swapchain);
+                vk::ResultValue<vk::SwapchainKHR>       result_swapchain       = vk_device.createSwapchainKHR(createInfo);
+                vk::ResultValue<std::vector<vk::Image>> result_swapchainImages = vk_device.getSwapchainImagesKHR(vk_swapchain);
+
+                if (result_swapchain.result       != vk::Result::eSuccess || 
+                    result_swapchainImages.result != vk::Result::eSuccess) {
+
+                    printf("Error creating swapchain\n");
+                    throw;
+                }
+
+                vk_swapchain       = result_swapchain.value;
+                vk_swapchainImages = result_swapchainImages.value;
             }
 
             void createImageViews() {
@@ -323,7 +343,14 @@ namespace SplitGui {
                     createInfo.subresourceRange.baseArrayLayer  = 0;
                     createInfo.subresourceRange.layerCount      = 1;
 
-                    vk_swapchainImageViews[i] = vk_device.createImageView(createInfo);
+                    vk::ResultValue<vk::ImageView> result = vk_device.createImageView(createInfo);
+
+                    if (result.result != vk::Result::eSuccess) {
+                        printf("Error creating imageview\n");
+                        throw;
+                    }
+
+                    vk_swapchainImageViews[i] = result.value;
                 }
             }
 
@@ -364,7 +391,14 @@ namespace SplitGui {
                 createInfo.pSubpasses               = &subpass;
                 createInfo.pDependencies            = &dependency;
 
-                vk_renderpass = vk_device.createRenderPass(createInfo);
+                vk::ResultValue<vk::RenderPass> result = vk_device.createRenderPass(createInfo);
+                
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error creating renderpass\n");
+                    throw;
+                }
+
+                vk_renderpass = result.value;
             }
 
             inline vk::ShaderModule createShaderModule(const std::vector<char>& code) {
@@ -372,7 +406,14 @@ namespace SplitGui {
                 createInfo.codeSize = code.size();
                 createInfo.pCode    = reinterpret_cast<const uint32_t*>(code.data());
 
-                return vk_device.createShaderModule(createInfo);
+                vk::ResultValue<vk::ShaderModule> result = vk_device.createShaderModule(createInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error creating shader module\n");
+                    throw;
+                }
+
+                return result.value;
             }
 
             void createPipeline() {
@@ -382,6 +423,6 @@ namespace SplitGui {
 
                 vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile);
                 vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile);
-            }*/
+            }
     };
 }
