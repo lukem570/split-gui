@@ -24,6 +24,32 @@ namespace SplitGui {
                 vk_clearColor.color = vk::ClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
             }
 
+            ~VulkanInterface() {
+                //vk_device.freeDescriptorSets(vk_descriptorPool, 1, &vk_descriptorSet);
+                //vk_device.destroyDescriptorPool(vk_descriptorPool);
+
+                cleanupSyncObj();
+
+                
+                vk_device.freeCommandBuffers(vk_commandPool, vk_commandBuffers.size(), vk_commandBuffers.data());
+                vk_device.destroyCommandPool(vk_commandPool);
+                
+                cleanupFrameBuffers();
+
+                vk_device.destroyPipeline(vk_pipeline);
+                vk_device.destroyPipelineLayout(vk_pipelineLayout);
+                //vk_device.destroyDescriptorSetLayout(vk_descriptorSetLayout);
+                vk_device.destroyRenderPass(vk_renderpass);
+                
+                cleanupImageViews();
+
+                vk_device.destroySwapchainKHR(vk_swapchain);
+                vk_device.destroy();
+
+                vk_instance.destroySurfaceKHR(vk_surface);
+                vk_instance.destroy();
+            }
+
             void instance() override {
                 instanceVulkan();
                 createPhysicalDevice();
@@ -63,7 +89,6 @@ namespace SplitGui {
                     throw;
                 }
 
-                printf("frame\n");
                 vk::ResultValue<uint32_t> result = vk_device.acquireNextImageKHR(vk_swapchain, UINT64_MAX, vk_imageAvailableSemaphores[currentFrame], nullptr);
 
                 if (result.result != vk::Result::eSuccess) {
@@ -166,6 +191,7 @@ namespace SplitGui {
             vk::DescriptorPool              vk_descriptorPool;
             vk::DescriptorSet               vk_descriptorSet;
             vk::Rect2D                      vk_scissor;
+            vk::PipelineStageFlags          vk_waitStages;
             std::vector<vk::CommandBuffer>  vk_commandBuffers;
             std::vector<vk::Framebuffer>    vk_swapchainFramebuffers;
             std::vector<vk::Image>          vk_swapchainImages;
@@ -225,54 +251,35 @@ namespace SplitGui {
                     validation_found = check_layers(instanceLayers, layers.value);
                     if (validation_found) {
                         enabled_layers.push_back("VK_LAYER_KHRONOS_validation");
-                    }
-
-                    else {
-                        printf(
-                            "vkEnumerateInstanceLayerProperties failed to find required validation layer.\n\n"
-                            "Please look at the Getting Started guide for additional information.\n",
-                            "vkCreateInstance Failure");
+                    } else {
+                        printf("Error: Could not find validation layers\n");
                         throw;
                     }
                 }
 
                 auto instance_extensions_return = vk::enumerateInstanceExtensionProperties();
 
-                vk::Bool32 surfaceExtFound = VK_FALSE;
-                vk::Bool32 platformSurfaceExtFound = VK_FALSE;
+                bool surfaceExtFound = false;
+                bool platformSurfaceExtFound = false;
                 bool portabilityEnumerationActive = false;
 
                 for (const auto &extension : instance_extensions_return.value) {
-                    if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, extension.extensionName)) {
-                        enabled_instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-                    } else if (!strcmp(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, extension.extensionName)) {
-                        // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
-                        // portability enumeration extension.
-                        portabilityEnumerationActive = true;
-                        enabled_instance_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-                    } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
-                        surfaceExtFound = 1;
+                    if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+                        surfaceExtFound = true;
                         enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
                     } else if (!strcmp(VK_KHR_WM_SURFACE_EXTENSION_NAME, extension.extensionName)) {
-                        platformSurfaceExtFound = 1;
+                        platformSurfaceExtFound = true;
                         enabled_instance_extensions.push_back(VK_KHR_WM_SURFACE_EXTENSION_NAME);
                     }
                 }
 
                 if (!surfaceExtFound) {
-                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_SURFACE_EXTENSION_NAME
-                            " extension.\n\n"
-                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                            "Please look at the Getting Started guide for additional information.\n",
-                            "vkCreateInstance Failure\n");
+                    printf( "Error: failed to find: " VK_KHR_SURFACE_EXTENSION_NAME "\n");
                     throw;
                 }
 
                 if (!platformSurfaceExtFound) {
-                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WM_SURFACE_EXTENSION_NAME
-                            " extension.\n\n"
-                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                            "vkCreateInstance Failure\n");
+                    printf( "Error: failed to find: " VK_KHR_WM_SURFACE_EXTENSION_NAME "\n");
                     throw;
                 }
 
@@ -281,13 +288,10 @@ namespace SplitGui {
                 appInfo.applicationVersion = 0;
                 appInfo.pEngineName        = "Split-gui";
                 appInfo.engineVersion      = 0;
-                appInfo.apiVersion         = VK_API_VERSION_1_0;
+                appInfo.apiVersion         = vk::ApiVersion10;
 
                 vk::InstanceCreateInfo createInfo;
                 createInfo.pApplicationInfo = &appInfo;
-                createInfo.flags = portabilityEnumerationActive ? 
-                                        vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR
-                                      : static_cast<vk::InstanceCreateFlagBits>(0);
 
                 if (vk_validation) {
                     createInfo.enabledLayerCount   = enabled_layers.size();
@@ -300,23 +304,13 @@ namespace SplitGui {
                 vk::ResultValue<vk::Instance> result = vk::createInstance(createInfo);
 
                 if (result.result == vk::Result::eErrorIncompatibleDriver) {
-                    printf(
-                        "Cannot find a compatible Vulkan installable client driver (ICD).\n\n"
-                        "Please look at the Getting Started guide for additional information.\n",
-                        "vkCreateInstance Failure\n");
+                    printf("Error: incompatable driver\n");
                     throw;
                 } else if (result.result == vk::Result::eErrorExtensionNotPresent) {
-                    printf(
-                        "Cannot find a specified extension library.\n"
-                        "Make sure your layers path is set appropriately.\n",
-                        "vkCreateInstance Failure\n");
+                    printf("Error: could not find vulkan extention\n");
                     throw;
                 } else if (result.result != vk::Result::eSuccess) {
-                    printf(
-                        "vkCreateInstance failed.\n\n"
-                        "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                        "Please look at the Getting Started guide for additional information.\n",
-                        "vkCreateInstance Failure\n");
+                    printf("Error: could not instance vulkan\n");
                     throw;
                 }
 
@@ -402,13 +396,13 @@ namespace SplitGui {
                 vk::PhysicalDeviceFeatures deviceFeatures;
                 deviceFeatures = vk_physicalDevice.getFeatures();
 
-                vk::Bool32 swapchainExtFound = VK_FALSE;
+                bool swapchainExtFound = false;
 
                 auto device_extension_return = vk_physicalDevice.enumerateDeviceExtensionProperties();
 
                 for (const auto &extension : device_extension_return.value) {
                     if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, extension.extensionName)) {
-                        swapchainExtFound = 1;
+                        swapchainExtFound = true;
                         enabled_device_extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
                     } else if (!strcmp("VK_KHR_portability_subset", extension.extensionName)) {
                         enabled_device_extensions.push_back("VK_KHR_portability_subset");
@@ -416,11 +410,7 @@ namespace SplitGui {
                 }
 
                 if (!swapchainExtFound) {
-                    printf ("vkEnumerateDeviceExtensionProperties failed to find the " VK_KHR_SWAPCHAIN_EXTENSION_NAME
-                            " extension.\n\n"
-                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                            "Please look at the Getting Started guide for additional information.\n",
-                            "vkCreateInstance Failure\n");
+                    printf("Error: could not find swapchain extension\n");
                     throw;
                 }
 
@@ -917,10 +907,10 @@ namespace SplitGui {
             }
 
             void setupSubmitInfo() {
-                vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
+                vk_waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
 
                 vk_submitInfo.waitSemaphoreCount   = 1;
-                vk_submitInfo.pWaitDstStageMask    = waitStages;
+                vk_submitInfo.pWaitDstStageMask    = &vk_waitStages;
                 vk_submitInfo.commandBufferCount   = 1;
                 vk_submitInfo.signalSemaphoreCount = 1;
             }
@@ -929,6 +919,32 @@ namespace SplitGui {
                 vk_presentInfo.waitSemaphoreCount = 1;
                 vk_presentInfo.swapchainCount     = 1;
                 vk_presentInfo.pSwapchains        = &vk_swapchain;
+            }
+
+            void cleanupFrameBuffers() {
+                for (int i = 0; i < vk_swapchainFramebuffers.size(); i++) {
+                    vk_device.destroyFramebuffer(vk_swapchainFramebuffers[i]);
+                }
+                vk_swapchainFramebuffers.clear();
+            }
+
+            void cleanupSyncObj() {
+                for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+                    vk_device.destroySemaphore(vk_imageAvailableSemaphores[i]);
+                    vk_device.destroySemaphore(vk_renderFinishedSemaphores[i]);
+                    vk_device.destroyFence(vk_inFlightFences[i]);
+                }
+
+                vk_imageAvailableSemaphores.clear();
+                vk_renderFinishedSemaphores.clear();
+                vk_inFlightFences.clear();
+            }
+
+            void cleanupImageViews() {
+                for (int i = 0; i < vk_swapchainImageViews.size(); i++) {
+                    vk_device.destroyImageView(vk_swapchainImageViews[i]);
+                }
+                vk_swapchainImageViews.clear();
             }
 
             void recreateSwapchain() {

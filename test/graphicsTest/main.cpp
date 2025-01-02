@@ -7,7 +7,7 @@ int main() {
 
 
     SplitGui::Graphics graphics;
-    graphics.instanceVulkan(true);
+    graphics.instanceVulkan(false);
     graphics.submitWindow(window);
 
 
