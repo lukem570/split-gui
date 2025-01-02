@@ -3,9 +3,6 @@
 
 #include "lib.h"
 
-#include <vulkan/vulkan.hpp>
-#include <glfwpp/glfwpp.h>
-
 namespace SplitGui {
 
     enum class GraphicsMode {
@@ -18,10 +15,10 @@ namespace SplitGui {
     class SPLITGUI_EXPORT GraphicsLibInterface {
         public:
             virtual void instance() {}
-            virtual void submitWindow(glfw::Window* window) {}
+            virtual void submitWindow(Window& window) {}
 
         protected:
-            glfw::Window* pWindow;
+            SplitGui::Window* pWindow;
     };
 
     class SPLITGUI_EXPORT Graphics {
@@ -30,6 +27,7 @@ namespace SplitGui {
             friend class Window;
 
             Graphics();
+            ~Graphics();
 
             void instanceVulkan();
             void submitWindow(Window& window);

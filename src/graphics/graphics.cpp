@@ -7,20 +7,23 @@ namespace SplitGui {
     Graphics::Graphics() {
         
     }
+
+    Graphics::~Graphics() {
+        if (pInterface) {
+            delete pInterface;
+        }
+    }
     
     void Graphics::instanceVulkan() {
-
         if (!glfw::vulkanSupported()) {
             printf("ERROR: vulkan is not supported on this device\n");
             throw;
         }
-
-        VulkanInterface interface;
-        interface.instance();
-        Graphics::pInterface = (GraphicsLibInterface*) &interface;
+        pInterface = (GraphicsLibInterface*) new VulkanInterface();
+        pInterface->instance();
     }
 
     void Graphics::submitWindow(Window& window) {
-        pInterface->submitWindow(window.handle);
+        pInterface->submitWindow(window);
     }
 }

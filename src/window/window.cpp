@@ -1,8 +1,13 @@
 #include <splitgui/window.hpp>
 #include <splitgui/interface.hpp>
-#include <glfwpp/glfwpp.h>
 #include <cstdio>
 #include <string>
+
+#ifdef SPLIT_GUI_USE_GLFW
+    #include "glfw/glfw.cpp"
+#else
+    #error "windowing lib not implemented"
+#endif
 
 namespace SplitGui {
 
@@ -10,30 +15,32 @@ namespace SplitGui {
 
     }
 
-    Window::~Window() {
-        if (handle) {
-            delete handle;
-        }
+    Window::~Window() {     
+        #ifdef SPLIT_GUI_USE_GLFW
         
-        if (glfw) {
-            delete glfw;
+        if (windowLib) {
+            delete windowLib;
         }
+
+        #else
+            #error "not implemented"
+        #endif
+
+    }
+
+    void Window::instanceGlfw() {
+        #ifdef SPLIT_GUI_USE_GLFW
+
+        windowLib = (WindowLibInterface*) new GlfwInterface();
+
+        #else
+        printf("Missing: \n'#define SPLIT_GUI_USE_GLFW'");
+        throw;
+        #endif
     }
 
     void Window::createWindow(const char* title) {
-        glfw = new glfw::GlfwLibrary(glfw::init());
-
-        glfw::WindowHints hints;
-        hints.clientApi = (glfw::ClientApi) 0L;
-        hints.resizable = false;
-        hints.visible   = true;
-        hints.decorated = true;
-        
-        handle = new glfw::Window(640, 480, title);
-
-        glfw::makeContextCurrent(*handle);
-
-        handle->swapBuffers();
+        windowLib->createWindow(title);
     }
 
     void Window::attachInterface(Interface& ui) {
@@ -44,9 +51,13 @@ namespace SplitGui {
 
     }
 
+    RawWindow* Window::getWindowData() {
+        return windowLib->getWindowData();
+    }
+
     void Window::__devLoop() {
-        while (!handle->shouldClose()) {
-            handle->swapBuffers();
+        while (!windowLib->getWindowData()->handle->shouldClose()) {
+            windowLib->getWindowData()->handle->swapBuffers();
             glfw::pollEvents();
         }
     }

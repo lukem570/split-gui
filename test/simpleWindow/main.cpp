@@ -4,6 +4,7 @@
 
 int main() {
     SplitGui::Window window;
+    window.instanceGlfw();
     window.createWindow("simple window");
 
     window.__devLoop();

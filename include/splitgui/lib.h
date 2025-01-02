@@ -1,4 +1,5 @@
 #ifndef SPLITGUI_EXPORT
+// TODO: THIS FILE IS CURSED NEEDS REFACTOR
 
 #ifdef _WIN32
     #ifdef BUILD_SPLITGUI
@@ -37,9 +38,30 @@
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
+#if !defined(SPLIT_GUI_USE_GLFW)  && \
+    !defined(SPLIT_GUI_USE_XCB)   && \
+    !defined(SPLIT_GUI_USE_XLIB)  && \
+    !defined(SPLIT_GUI_USE_WIN32)
+
+    #include <glfwpp/glfwpp.h>
+
+    #define SPLIT_GUI_USE_GLFW
+#elif defined(SPLIT_GUI_USE_GLFW)
+    #include <glfwpp/glfwpp.h>
+#elif defined(SPLIT_GUI_USE_XCB)
+    #include <X11/Xlib.h>
+#elif defined(SPLIT_GUI_USE_XLIB)
+    #include <X11/Xlib.h>
+#elif defined(SPLIT_GUI_USE_WIN32)
+    #include <windows.h>
+#endif
+
 #ifdef _WIN32
 
-#define GLFW_EXPOSE_NATIVE_WIN32
+#ifdef SPLIT_GUI_USE_GLFW
+    #define GLFW_EXPOSE_NATIVE_WIN32
+#endif
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
@@ -48,26 +70,44 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 #elif defined(__linux__)  
 
     #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        #define GLFW_EXPOSE_NATIVE_WAYLAND
+
+        #ifdef SPLIT_GUI_USE_GLFW
+            #define GLFW_EXPOSE_NATIVE_WAYLAND
+        #endif
+
+        #include <X11/Xlib.h>
         #include <vulkan/vulkan_wayland.h>
         #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
+
     #elif defined(VK_USE_PLATFORM_XCB_KHR)
-        #define GLFW_EXPOSE_NATIVE_X11
+
+        #ifdef SPLIT_GUI_USE_GLFW
+            #define GLFW_EXPOSE_NATIVE_X11
+        #endif
+
         #include <X11/Xlib.h>
         #include <vulkan/vulkan_xcb.h>
         #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XCB_SURFACE_EXTENSION_NAME
+
     #elif defined(VK_USE_PLATFORM_XLIB_KHR)
-        #define GLFW_EXPOSE_NATIVE_X11
+
+        #ifdef SPLIT_GUI_USE_GLFW
+            #define GLFW_EXPOSE_NATIVE_X11
+        #endif
+
         #include <X11/Xlib.h>
         #include <vulkan/vulkan_xlib.h>
         #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XLIB_SURFACE_EXTENSION_NAME
+
     #else
         #error "unknown linux windowing library specified"
     #endif
 #else
-#error "Unsupported platform"
+    #error "Unsupported platform"
 #endif
 
-#include <glfwpp/native.h>
+#ifdef SPLIT_GUI_USE_GLFW
+    #include <glfwpp/native.h>
+#endif
 
 #endif

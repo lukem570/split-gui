@@ -37,4 +37,4 @@
 * make xml parser
 * edit cmakelists.txt to build for different window managers
 * refactor build tools
-* make window library modular to support other libs besides glfw
+* refactor error messages

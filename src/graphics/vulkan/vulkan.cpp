@@ -1,7 +1,10 @@
-#include "../interface.hpp"
+#include <splitgui/lib.h>
+#include <splitgui/graphics.hpp>
+#include <splitgui/window.hpp>
+#include <vector>
+#include <tuple>
+#include <string>
 #include "../../path.cpp"
-
-#include <thread>
 
 #ifdef DEV
 #define VALIDATION true
@@ -25,9 +28,9 @@ namespace SplitGui {
                 createDevice();
             }
 
-            void submitWindow(glfw::Window* window) override { // need to add physical device surface support
-                pWindow = window;
-                createSurface(*window);
+            void submitWindow(SplitGui::Window& window) override { // need to add physical device surface support
+                pWindow = &window;
+                createSurface(window);
                 //createSwapchain();
                 //createImageViews();
                 //createRenderpass();
@@ -35,7 +38,7 @@ namespace SplitGui {
             }
 
         protected:
-            glfw::Window*               pWindow;
+            SplitGui::Window*               pWindow;
         private:
             vk::Instance                vk_instance;
             vk::PhysicalDevice          vk_physicalDevice;
@@ -49,6 +52,9 @@ namespace SplitGui {
             std::vector<vk::Image>      vk_swapchainImages;
             std::vector<vk::ImageView>  vk_swapchainImageViews;
             unsigned int                graphicsQueueFamilyIndex = -1;
+            std::vector<const char *>   enabled_layers;
+            std::vector<const char *>   enabled_instance_extensions;
+            std::vector<const char *>   enabled_device_extensions;
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
                 for (const auto &name : check_names) {
@@ -77,8 +83,6 @@ namespace SplitGui {
                     throw;
                 }
 
-                std::vector<const char *> enabled_layers;
-
                 VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 
                 std::vector<const char *> instanceLayers = {"VK_LAYER_KHRONOS_validation"};
@@ -102,6 +106,46 @@ namespace SplitGui {
                     }
                 }
 
+                auto instance_extensions_return = vk::enumerateInstanceExtensionProperties();
+
+                vk::Bool32 surfaceExtFound = VK_FALSE;
+                vk::Bool32 platformSurfaceExtFound = VK_FALSE;
+                bool portabilityEnumerationActive = false;
+
+                for (const auto &extension : instance_extensions_return.value) {
+                    if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, extension.extensionName)) {
+                        enabled_instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+                    } else if (!strcmp(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, extension.extensionName)) {
+                        // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
+                        // portability enumeration extension.
+                        portabilityEnumerationActive = true;
+                        enabled_instance_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+                    } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+                        surfaceExtFound = 1;
+                        enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+                    } else if (!strcmp(VK_KHR_WM_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+                        platformSurfaceExtFound = 1;
+                        enabled_instance_extensions.push_back(VK_KHR_WM_SURFACE_EXTENSION_NAME);
+                    }
+                }
+
+                if (!surfaceExtFound) {
+                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_SURFACE_EXTENSION_NAME
+                            " extension.\n\n"
+                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                            "Please look at the Getting Started guide for additional information.\n",
+                            "vkCreateInstance Failure\n");
+                    throw;
+                }
+
+                if (!platformSurfaceExtFound) {
+                    printf( "vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WM_SURFACE_EXTENSION_NAME
+                            " extension.\n\n"
+                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                            "vkCreateInstance Failure\n");
+                    throw;
+                }
+
                 vk::ApplicationInfo appInfo;
                 appInfo.pApplicationName   = "Split-gui";
                 appInfo.applicationVersion = 0;
@@ -111,14 +155,17 @@ namespace SplitGui {
 
                 vk::InstanceCreateInfo createInfo;
                 createInfo.pApplicationInfo = &appInfo;
+                createInfo.flags = portabilityEnumerationActive ? 
+                                        vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR
+                                      : static_cast<vk::InstanceCreateFlagBits>(0);
 
                 if (VALIDATION) {
-                    createInfo.enabledLayerCount   = instanceLayers.size();
-                    createInfo.ppEnabledLayerNames = instanceLayers.data();
+                    createInfo.enabledLayerCount   = enabled_layers.size();
+                    createInfo.ppEnabledLayerNames = enabled_layers.data();
                 }
 
-                createInfo.setEnabledExtensionCount(static_cast<uint32_t>(instanceExtensions.size()));
-                createInfo.setPpEnabledExtensionNames(instanceExtensions.data());
+                createInfo.setEnabledExtensionCount  (static_cast<uint32_t>(enabled_instance_extensions.size()));
+                createInfo.setPpEnabledExtensionNames(                      enabled_instance_extensions.data());
 
                 vk::ResultValue<vk::Instance> result = vk::createInstance(createInfo);
 
@@ -126,20 +173,20 @@ namespace SplitGui {
                     printf(
                         "Cannot find a compatible Vulkan installable client driver (ICD).\n\n"
                         "Please look at the Getting Started guide for additional information.\n",
-                        "vkCreateInstance Failure");
+                        "vkCreateInstance Failure\n");
                     throw;
                 } else if (result.result == vk::Result::eErrorExtensionNotPresent) {
                     printf(
                         "Cannot find a specified extension library.\n"
                         "Make sure your layers path is set appropriately.\n",
-                        "vkCreateInstance Failure");
+                        "vkCreateInstance Failure\n");
                     throw;
                 } else if (result.result != vk::Result::eSuccess) {
                     printf(
                         "vkCreateInstance failed.\n\n"
                         "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
                         "Please look at the Getting Started guide for additional information.\n",
-                        "vkCreateInstance Failure");
+                        "vkCreateInstance Failure\n");
                     throw;
                 }
 
@@ -200,14 +247,34 @@ namespace SplitGui {
                 vk::PhysicalDeviceFeatures deviceFeatures;
                 deviceFeatures = vk_physicalDevice.getFeatures();
 
-                std::vector<const char*> extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+                vk::Bool32 swapchainExtFound = VK_FALSE;
+
+                auto device_extension_return = vk_physicalDevice.enumerateDeviceExtensionProperties();
+
+                for (const auto &extension : device_extension_return.value) {
+                    if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, extension.extensionName)) {
+                        swapchainExtFound = 1;
+                        enabled_device_extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+                    } else if (!strcmp("VK_KHR_portability_subset", extension.extensionName)) {
+                        enabled_device_extensions.push_back("VK_KHR_portability_subset");
+                    }
+                }
+
+                if (!swapchainExtFound) {
+                    printf ("vkEnumerateDeviceExtensionProperties failed to find the " VK_KHR_SWAPCHAIN_EXTENSION_NAME
+                            " extension.\n\n"
+                            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                            "Please look at the Getting Started guide for additional information.\n",
+                            "vkCreateInstance Failure");
+                    throw;
+                }
 
                 vk::DeviceCreateInfo deviceCreateInfo;
                 deviceCreateInfo.queueCreateInfoCount    = 1;
                 deviceCreateInfo.pQueueCreateInfos       = &queueCreateInfo;
                 deviceCreateInfo.pEnabledFeatures        = &deviceFeatures;
-                deviceCreateInfo.enabledExtensionCount   = extensions.size();
-                deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
+                deviceCreateInfo.enabledExtensionCount   = enabled_device_extensions.size();
+                deviceCreateInfo.ppEnabledExtensionNames = enabled_device_extensions.data();
 
                 vk::ResultValue<vk::Device> result = vk_physicalDevice.createDevice(deviceCreateInfo);
 
@@ -225,7 +292,7 @@ namespace SplitGui {
                 if (capabilities.currentExtent.width != UINT32_MAX) {
                     return capabilities.currentExtent;
                 } else {
-                    vk::Extent2D actualExtent = {(uint32_t)std::get<0>(pWindow->getSize()), (uint32_t)std::get<1>(pWindow->getSize())};
+                    vk::Extent2D actualExtent = {(uint32_t)std::get<0>(pWindow->getWindowData()->handle->getSize()), (uint32_t)std::get<1>(pWindow->getWindowData()->handle->getSize())};
                     actualExtent.width  = (((capabilities.minImageExtent.width) > ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width)))) ? (capabilities.minImageExtent.width) : ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width))));
                     actualExtent.height = (((capabilities.minImageExtent.height) > ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height)))) ? (capabilities.minImageExtent.height) : ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height))));
                     return actualExtent;
@@ -252,13 +319,18 @@ namespace SplitGui {
                 return vk::PresentModeKHR::eFifo;
             }
 
-            void createSurface(glfw::Window& window) {
+            void createSurface(SplitGui::Window& window) {
+
                 vk::XlibSurfaceCreateInfoKHR createInfo;
-                createInfo.dpy = glfwGetX11Display();
-                createInfo.window = glfwGetX11Window(window);
-                createInfo.pNext = nullptr;
+                createInfo.dpy    = glfwGetX11Display();
+                createInfo.window = glfwGetX11Window(*window.getWindowData()->handle);
+
+                if (createInfo.dpy == None || createInfo.window == None) {
+                    printf("Error getting window handles\n");
+                    throw;
+                }
                 
-                printf("alpha\n");
+                printf("beta\n");
                 vk::ResultValue<vk::SurfaceKHR> result = vk_instance.createXlibSurfaceKHR(createInfo);
 
                 if (result.result != vk::Result::eSuccess) {
