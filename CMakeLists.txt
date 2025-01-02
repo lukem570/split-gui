@@ -8,8 +8,31 @@ file(GLOB_RECURSE TESTS test/*/main.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-if(NOT DEFINED WM_MANUAL)
+set(SHADERS
+    "${CMAKE_SOURCE_DIR}/src/shaders/fragment.frag"
+    "${CMAKE_SOURCE_DIR}/src/shaders/vertex.vert"
+)
 
+foreach(SHADER_SOURCE ${SHADERS})
+    get_filename_component(SHADER_NAME ${SHADER_SOURCE} NAME_WE)
+    set(SHADER_OUTPUT "${CMAKE_BINARY_DIR}/shaders/${SHADER_NAME}.spv")
+
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT}
+        COMMAND glslc ${SHADER_SOURCE} -o ${SHADER_OUTPUT}
+        DEPENDS ${SHADER_SOURCE}
+        COMMENT "Compiling GLSL shader ${SHADER_SOURCE} to SPIR-V"
+    )
+
+    list(APPEND SPIR_V_FILES ${SHADER_OUTPUT})
+endforeach()
+
+add_custom_target(
+    shaders ALL
+    DEPENDS ${SPIR_V_FILES}
+)
+
+if(NOT DEFINED WM_MANUAL)
     if(WIN32)
         set(VK_WINDOW_MANAGER VK_USE_PLATFORM_WIN32_KHR)
     elseif(APPLE)
@@ -30,7 +53,6 @@ if(NOT DEFINED WM_MANUAL)
     else()
         message(FATAL_ERROR "Unsupported platform detected")
     endif()
-
 endif()
 
 if(NOT DEFINED VK_WINDOW_MANAGER)
@@ -39,9 +61,9 @@ endif()
 
 message("-- window manager: ${VK_WINDOW_MANAGER}")
 
-add_library(splitgui SHARED src/splitgui.cpp)
+add_library(splitgui SHARED ${CMAKE_SOURCE_DIR}/src/splitgui.cpp)
 
-target_link_libraries(splitgui PRIVATE ${CMAKE_BINARY_DIR}/libglfw3.a ${CMAKE_CURRENT_LIST_DIR}/include/volk/build/libvolk.a)
+target_link_libraries(splitgui PRIVATE ${CMAKE_BINARY_DIR}/libglfw3.a ${CMAKE_SOURCE_DIR}/include/volk/build/libvolk.a)
 
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${VK_WINDOW_MANAGER})
 

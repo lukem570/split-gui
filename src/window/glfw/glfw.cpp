@@ -5,6 +5,7 @@ namespace SplitGui {
         public:
             GlfwInterface() {
                 glfwInit();
+                window.type = FormatType::eGlfw;
             }
 
             ~GlfwInterface() {

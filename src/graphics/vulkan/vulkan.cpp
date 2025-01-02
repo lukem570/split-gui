@@ -4,6 +4,7 @@
 #include <vector>
 #include <tuple>
 #include <string>
+#include <array>
 #include "../../path.cpp"
 
 #ifdef DEV
@@ -31,10 +32,12 @@ namespace SplitGui {
             void submitWindow(SplitGui::Window& window) override { // need to add physical device surface support
                 pWindow = &window;
                 createSurface(window);
-                //createSwapchain();
-                //createImageViews();
-                //createRenderpass();
-                //createPipeline();
+                createSwapchain();
+                createImageViews();
+                createRenderpass();
+                createDescriptorSet();
+                createPipelineLayout();
+                createPipeline();
             }
 
         protected:
@@ -49,6 +52,9 @@ namespace SplitGui {
             vk::PresentModeKHR          vk_presentMode;
             vk::Extent2D                vk_swapchainExtent;
             vk::RenderPass              vk_renderpass;
+            vk::DescriptorSetLayout     vk_descriptorSetLayout;
+            vk::PipelineLayout          vk_pipelineLayout;
+            vk::Pipeline                vk_pipeline;
             std::vector<vk::Image>      vk_swapchainImages;
             std::vector<vk::ImageView>  vk_swapchainImageViews;
             unsigned int                graphicsQueueFamilyIndex = -1;
@@ -330,7 +336,6 @@ namespace SplitGui {
                     throw;
                 }
                 
-                printf("beta\n");
                 vk::ResultValue<vk::SurfaceKHR> result = vk_instance.createXlibSurfaceKHR(createInfo);
 
                 if (result.result != vk::Result::eSuccess) {
@@ -348,12 +353,9 @@ namespace SplitGui {
             }
 
             void createSwapchain() {
-                printf("a\n");
-
-
-                vk::ResultValue<std::vector<vk::SurfaceFormatKHR>> formats      = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface); printf("b\n");
-                vk::ResultValue<vk::SurfaceCapabilitiesKHR>        capabilities = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface); printf("c\n");
-                vk::ResultValue<std::vector<vk::PresentModeKHR>>   presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface); printf("d\n");
+                vk::ResultValue<std::vector<vk::SurfaceFormatKHR>> formats      = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface);
+                vk::ResultValue<vk::SurfaceCapabilitiesKHR>        capabilities = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface);
+                vk::ResultValue<std::vector<vk::PresentModeKHR>>   presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface);
 
                 if (capabilities.result != vk::Result::eSuccess || 
                     formats.result      != vk::Result::eSuccess ||
@@ -383,7 +385,7 @@ namespace SplitGui {
                 createInfo.oldSwapchain          = nullptr;
 
                 vk::ResultValue<vk::SwapchainKHR>       result_swapchain       = vk_device.createSwapchainKHR(createInfo);
-                vk::ResultValue<std::vector<vk::Image>> result_swapchainImages = vk_device.getSwapchainImagesKHR(vk_swapchain);
+                vk::ResultValue<std::vector<vk::Image>> result_swapchainImages = vk_device.getSwapchainImagesKHR(result_swapchain.value);
 
                 if (result_swapchain.result       != vk::Result::eSuccess || 
                     result_swapchainImages.result != vk::Result::eSuccess) {
@@ -488,13 +490,133 @@ namespace SplitGui {
                 return result.value;
             }
 
+            void createDescriptorSet() {
+                vk::DescriptorSetLayoutBinding uboLayerBinding;
+                uboLayerBinding.binding            = 0;
+                uboLayerBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
+                uboLayerBinding.descriptorCount    = 1;
+                uboLayerBinding.stageFlags         = vk::ShaderStageFlagBits::eVertex;
+                uboLayerBinding.pImmutableSamplers = nullptr;
+
+                vk::DescriptorSetLayoutBinding samplerLayoutBinding;
+                samplerLayoutBinding.binding            = 0;
+                samplerLayoutBinding.descriptorType     = vk::DescriptorType::eCombinedImageSampler;
+                samplerLayoutBinding.descriptorCount    = 1;
+                samplerLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
+                samplerLayoutBinding.pImmutableSamplers = nullptr;
+
+                std::array<vk::DescriptorSetLayoutBinding, 2> bindings = {uboLayerBinding, samplerLayoutBinding};
+
+                vk::DescriptorSetLayoutCreateInfo createInfo;
+                createInfo.bindingCount = bindings.size();
+                createInfo.pBindings    = bindings.data();
+                
+                vk::ResultValue<vk::DescriptorSetLayout> result = vk_device.createDescriptorSetLayout(createInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error: error creating descriptor set layout");
+                    throw;
+                }
+
+                vk_descriptorSetLayout = result.value;
+            }
+
+            void createPipelineLayout() {
+                vk::PipelineLayoutCreateInfo createInfo;
+                createInfo.setLayoutCount = 1;
+                createInfo.pSetLayouts    = &vk_descriptorSetLayout;
+
+                vk::ResultValue<vk::PipelineLayout> result = vk_device.createPipelineLayout(createInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error: error creating pipeline layout");
+                    throw;
+                } 
+
+                vk_pipelineLayout = result.value;
+            }
+
             void createPipeline() {
 
-                const std::vector<char> vertexShaderFile   = readFile("shaders/vertex.spv");
-                const std::vector<char> fragmentShaderFile = readFile("shaders/fragment.spv");
+                const std::vector<char> vertexShaderFile   = readFile("../shaders/vertex.spv");
+                const std::vector<char> fragmentShaderFile = readFile("../shaders/fragment.spv");
 
                 vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile);
                 vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile);
+
+                vk::PipelineShaderStageCreateInfo vertexCreateInfo;
+                vertexCreateInfo.stage  = vk::ShaderStageFlagBits::eVertex;
+                vertexCreateInfo.module = vertexShader;
+                vertexCreateInfo.pName  = "main";
+
+                vk::PipelineShaderStageCreateInfo fragmentCreateInfo;
+                fragmentCreateInfo.stage  = vk::ShaderStageFlagBits::eFragment;
+                fragmentCreateInfo.module = fragmentShader;
+                fragmentCreateInfo.pName  = "main";
+
+                std::array<vk::PipelineShaderStageCreateInfo, 2> shaderStages = {vertexCreateInfo, fragmentCreateInfo};
+
+                vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
+                
+                vk::PipelineInputAssemblyStateCreateInfo inputAssembly;
+                inputAssembly.topology               = vk::PrimitiveTopology::eTriangleList;
+                inputAssembly.primitiveRestartEnable = vk::False;
+
+                vk::PipelineViewportStateCreateInfo viewport;
+                viewport.viewportCount = 1;
+                viewport.scissorCount  = 1;
+
+                vk::PipelineRasterizationStateCreateInfo rasterizer;
+                rasterizer.depthClampEnable        = vk::False;
+                rasterizer.rasterizerDiscardEnable = vk::False;
+                rasterizer.polygonMode             = vk::PolygonMode::eFill;
+                rasterizer.lineWidth               = 1.0f;
+                rasterizer.cullMode                = vk::CullModeFlagBits::eBack;
+                rasterizer.frontFace               = vk::FrontFace::eClockwise;
+
+                vk::PipelineMultisampleStateCreateInfo multisampling;
+                multisampling.sampleShadingEnable  = vk::False;
+                multisampling.rasterizationSamples = vk::SampleCountFlagBits::e1;
+
+                vk::PipelineColorBlendAttachmentState colorBlendAttachment;
+                colorBlendAttachment.blendEnable         = vk::False;
+                colorBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eOne;
+                colorBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eZero;
+                colorBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
+                colorBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+                colorBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eZero;
+                colorBlendAttachment.alphaBlendOp        = vk::BlendOp::eAdd;
+                colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eR;
+                colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eG;
+                colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eB;
+                colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eA;
+
+                vk::PipelineColorBlendStateCreateInfo colorBlending;
+                colorBlending.logicOpEnable   = vk::False;
+                colorBlending.attachmentCount = 1;
+                colorBlending.pAttachments    = &colorBlendAttachment;
+
+                vk::GraphicsPipelineCreateInfo pipelineInfo;
+                pipelineInfo.stageCount          = shaderStages.size();
+                pipelineInfo.pStages             = shaderStages.data();
+                pipelineInfo.pVertexInputState   = &vertexInputInfo;
+                pipelineInfo.pInputAssemblyState = &inputAssembly;
+                pipelineInfo.pVertexInputState   = &vertexInputInfo;
+                pipelineInfo.pRasterizationState = &rasterizer;
+                pipelineInfo.pMultisampleState   = &multisampling;
+                pipelineInfo.pColorBlendState    = &colorBlending;
+                pipelineInfo.layout              = vk_pipelineLayout;
+                pipelineInfo.renderPass          = vk_renderpass;
+                pipelineInfo.subpass             = 0;
+
+                vk::ResultValue<vk::Pipeline> result = vk_device.createGraphicsPipeline(nullptr, pipelineInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error: error creating pipeline");
+                    throw;
+                } 
+
+                vk_pipeline = result.value;
             }
     };
 }

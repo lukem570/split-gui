@@ -56,9 +56,23 @@ namespace SplitGui {
 #error "Unknown platform"
 #endif
 
+    std::string remove_extension(const std::string& filePath) {
+        size_t lastSlashPos = filePath.find_last_of("/\\");
+        
+        std::string parentFolder = filePath.substr(0, lastSlashPos);
+        
+        size_t dotPos = filePath.find_last_of(".");
+        
+        std::string fileWithoutExtension = filePath.substr(lastSlashPos + 1, dotPos - lastSlashPos - 1);
+
+        return parentFolder;
+    }
+
     std::vector<char> readFile(const std::string& filename) {
+        std::string path = remove_extension(getExecutablePath()) + '/' + filename;
+
         std::ifstream file;
-        file.open(getExecutablePath() + '/' + filename, std::ios::ate | std::ios::binary);
+        file.open(path, std::ios::ate | std::ios::binary);
 
         if (!file.is_open()) {
             printf("Failed to open file: %s", filename.c_str());
