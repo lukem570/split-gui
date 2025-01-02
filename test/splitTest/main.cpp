@@ -1,5 +1,3 @@
-#define DEV
-
 #include <splitgui/window.hpp>
 
 int main() {

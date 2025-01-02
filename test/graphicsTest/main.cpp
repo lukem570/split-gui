@@ -1,5 +1,3 @@
-#define DEV
-
 #include <splitgui/window.hpp>
 
 int main() {
@@ -9,10 +7,14 @@ int main() {
 
 
     SplitGui::Graphics graphics;
-    graphics.instanceVulkan();
+    graphics.instanceVulkan(true);
     graphics.submitWindow(window);
 
-    window.__devLoop();
+
+    while (!window.shouldClose()) {
+        graphics.drawFrame();
+        window.update();
+    }
 
     return 0;
 }

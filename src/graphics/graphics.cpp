@@ -14,16 +14,20 @@ namespace SplitGui {
         }
     }
     
-    void Graphics::instanceVulkan() {
+    void Graphics::instanceVulkan(bool validation = false) {
         if (!glfw::vulkanSupported()) {
             printf("ERROR: vulkan is not supported on this device\n");
             throw;
         }
-        pInterface = (GraphicsLibInterface*) new VulkanInterface();
+        pInterface = (GraphicsLibInterface*) new VulkanInterface(validation);
         pInterface->instance();
     }
 
     void Graphics::submitWindow(Window& window) {
         pInterface->submitWindow(window);
+    }
+
+    void Graphics::drawFrame() {
+        pInterface->drawFrame();
     }
 }

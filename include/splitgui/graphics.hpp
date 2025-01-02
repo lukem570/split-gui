@@ -14,8 +14,12 @@ namespace SplitGui {
 
     class SPLITGUI_EXPORT GraphicsLibInterface {
         public:
-            virtual void instance() {}
-            virtual void submitWindow(Window& window) {}
+            GraphicsLibInterface() {}
+            ~GraphicsLibInterface() {}
+
+            virtual void instance() { throw; }
+            virtual void submitWindow(Window& window) { throw; }
+            virtual void drawFrame() { throw; }
 
         protected:
             SplitGui::Window* pWindow;
@@ -29,8 +33,9 @@ namespace SplitGui {
             Graphics();
             ~Graphics();
 
-            void instanceVulkan();
+            void instanceVulkan(bool validation);
             void submitWindow(Window& window);
+            void drawFrame();
 
         private:
             GraphicsMode mode = GraphicsMode::eNull;

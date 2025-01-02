@@ -33,7 +33,7 @@ namespace SplitGui {
             WindowLibInterface() {}
             ~WindowLibInterface() {}
 
-            virtual void       createWindow(const char* title) {}
+            virtual void       createWindow(const char* title) { throw; }
             virtual RawWindow* getWindowData() { throw; return nullptr; }
 
         private:
@@ -55,6 +55,8 @@ namespace SplitGui {
             void       createWindow(const char* title);
             void       attachInterface(Interface& interface);
             void       updateInterface();
+            bool       shouldClose();
+            void       update();
             void       __devLoop();
             RawWindow* getWindowData();
 

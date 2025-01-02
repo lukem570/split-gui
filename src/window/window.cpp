@@ -55,6 +55,15 @@ namespace SplitGui {
         return windowLib->getWindowData();
     }
 
+    bool Window::shouldClose() {
+        return windowLib->getWindowData()->handle->shouldClose();
+    }
+
+    void Window::update() {
+        windowLib->getWindowData()->handle->swapBuffers();
+        glfw::pollEvents();
+    }
+
     void Window::__devLoop() {
         while (!windowLib->getWindowData()->handle->shouldClose()) {
             windowLib->getWindowData()->handle->swapBuffers();
