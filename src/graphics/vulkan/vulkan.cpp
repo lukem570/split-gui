@@ -6,6 +6,7 @@
 #include <tuple>
 #include <string>
 #include <array>
+#include <stack>
 #include "../../path.cpp"
 
 // should prolly make this accessible to the user
@@ -18,12 +19,21 @@ std::vector<const char*> instanceExtensions = {
 
 namespace SplitGui {
 
+    class VulkanInterface;
+
+    typedef void (*Command)(VulkanInterface*);
+
     class VulkanInterface : GraphicsLibInterface {
         public:
+
+#pragma region Constructor
+
             VulkanInterface(bool validation = false) {
                 vk_validation = validation;
                 vk_clearColor.color = vk::ClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
             }
+
+#pragma region Cleanup
 
             ~VulkanInterface() {
                 //vk_device.freeDescriptorSets(vk_descriptorPool, 1, &vk_descriptorSet);
@@ -57,6 +67,8 @@ namespace SplitGui {
                 vk_instance.destroy();
             }
 
+#pragma region Api instance
+
             void instance() override {
                 instanceVulkan();
                 createPhysicalDevice();
@@ -89,6 +101,8 @@ namespace SplitGui {
                 setupSubmitInfo();
                 setupPresentInfo();
             }
+
+#pragma region Draw frame
 
             void drawFrame() override {
                 vk_runtimeResult = vk_device.waitForFences(1, &vk_inFlightFences[currentFrame], vk::True, UINT64_MAX);
@@ -125,6 +139,11 @@ namespace SplitGui {
                 if (vk_runtimeResult != vk::Result::eSuccess) {
                     printf("Error beginning command buffer\n");
                     throw;
+                }
+                
+                while (commands.size() > 0) {
+                    commands.top()(this);
+                    commands.pop();
                 }
 
                 vk_renderpassBeginInfo.framebuffer = vk_swapchainFramebuffers[imageIndex];
@@ -178,10 +197,14 @@ namespace SplitGui {
 
                 currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
             }
+    
+#pragma region Draw quad
 
             void drawQuad(std::array<Vec2, 4> quadVerts, Vec3 color) override {
 
                 throw;
+
+                commands.push(copyStagingBuffer);
 
                 for (int i = 0; i < quadVerts.size(); i++) {
                     Vertex vert;
@@ -191,6 +214,8 @@ namespace SplitGui {
                     //vertices.push_back(vert);
                 }
             }
+
+#pragma region Variables
 
         protected:
             SplitGui::Window*               pWindow;
@@ -243,6 +268,7 @@ namespace SplitGui {
             vk::Result                      vk_runtimeResult;
             unsigned int                    currentFrame = 0;
             uint32_t                        imageIndex = -1;
+            std::stack<Command>             commands;
             const std::vector<Vertex> vertices = {
                 {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
                 {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -252,7 +278,6 @@ namespace SplitGui {
             const std::vector<uint16_t> indices = {
                 0, 1, 2, 2, 3, 0
             };
-            
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
                 for (const auto &name : check_names) {
@@ -270,6 +295,8 @@ namespace SplitGui {
                 }
                 return VK_TRUE;
             }
+
+#pragma region instance
 
             void instanceVulkan() {
                 VkResult err = volkInitialize();
@@ -358,6 +385,8 @@ namespace SplitGui {
                 VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_instance);
             }
 
+#pragma region Physical device
+
             // Device selction could be more robust but this will do for now
             void createPhysicalDevice() { 
                 vk::ResultValue<std::vector<vk::PhysicalDevice>> physicalDevices = vk_instance.enumeratePhysicalDevices();
@@ -387,6 +416,8 @@ namespace SplitGui {
 
                 printf("Using %s\n", vk_physicalDevice.getProperties().deviceName.data());
             }
+
+#pragma region Queue families
 
             void getQueueFamilies() {
                 std::vector<vk::QueueFamilyProperties> queueFamilies = vk_physicalDevice.getQueueFamilyProperties();
@@ -423,6 +454,8 @@ namespace SplitGui {
                     throw;
                 }
             }
+
+#pragma region Device
 
             // or logical device
             void createDevice() {
@@ -472,10 +505,37 @@ namespace SplitGui {
                 VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_device);
             }
 
+#pragma region Queues
+
             void getQueues() {
                 vk_graphicsQueue = vk_device.getQueue(graphicsQueueFamilyIndex, 0);
                 vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
             }
+
+#pragma region Surface
+
+            void createSurface(SplitGui::Window& window) { // TODO: make cross platform
+
+                vk::XlibSurfaceCreateInfoKHR createInfo;
+                createInfo.dpy    = glfwGetX11Display();
+                createInfo.window = glfwGetX11Window(*window.getWindowData()->handle);
+
+                if (createInfo.dpy == None || createInfo.window == None) {
+                    printf("Error getting window handles\n");
+                    throw;
+                }
+                
+                vk::ResultValue<vk::SurfaceKHR> result = vk_instance.createXlibSurfaceKHR(createInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error creating surface\n");
+                    throw;
+                }
+
+                vk_surface = result.value;
+            }
+
+#pragma region Swapchain
 
             inline vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) {
                 if (capabilities.currentExtent.width != UINT32_MAX) {
@@ -506,27 +566,6 @@ namespace SplitGui {
                 }
 
                 return vk::PresentModeKHR::eFifo;
-            }
-
-            void createSurface(SplitGui::Window& window) { // TODO: make cross platform
-
-                vk::XlibSurfaceCreateInfoKHR createInfo;
-                createInfo.dpy    = glfwGetX11Display();
-                createInfo.window = glfwGetX11Window(*window.getWindowData()->handle);
-
-                if (createInfo.dpy == None || createInfo.window == None) {
-                    printf("Error getting window handles\n");
-                    throw;
-                }
-                
-                vk::ResultValue<vk::SurfaceKHR> result = vk_instance.createXlibSurfaceKHR(createInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error creating surface\n");
-                    throw;
-                }
-
-                vk_surface = result.value;
             }
 
             void createSwapchain() {
@@ -575,6 +614,8 @@ namespace SplitGui {
                 vk_swapchainImages = result_swapchainImages.value;
             }
 
+#pragma region Image views
+
             void createImageViews() {
                 vk_swapchainImageViews.resize(vk_swapchainImages.size());
 
@@ -604,6 +645,8 @@ namespace SplitGui {
                     vk_swapchainImageViews[i] = result.value;
                 }
             }
+
+#pragma region Renderpass
 
             void createRenderpass() {
                 vk::AttachmentDescription colorAttachment;
@@ -652,20 +695,7 @@ namespace SplitGui {
                 vk_renderpass = result.value;
             }
 
-            inline vk::ShaderModule createShaderModule(const std::vector<char>& code) {
-                vk::ShaderModuleCreateInfo createInfo;
-                createInfo.codeSize = code.size();
-                createInfo.pCode    = reinterpret_cast<const uint32_t*>(code.data());
-
-                vk::ResultValue<vk::ShaderModule> result = vk_device.createShaderModule(createInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error creating shader module\n");
-                    throw;
-                }
-
-                return result.value;
-            }
+#pragma region Descriptor Layout
 
             void createDescriptorSetLayout() {
 
@@ -692,6 +722,8 @@ namespace SplitGui {
                 vk_descriptorSetLayout = result.value;
             }
 
+#pragma region Pipeline
+
             void createPipelineLayout() { // TODO:
                 vk::PipelineLayoutCreateInfo createInfo;
                 createInfo.setLayoutCount         = 0;
@@ -706,6 +738,21 @@ namespace SplitGui {
                 } 
 
                 vk_pipelineLayout = result.value;
+            }
+
+            inline vk::ShaderModule createShaderModule(const std::vector<char>& code) {
+                vk::ShaderModuleCreateInfo createInfo;
+                createInfo.codeSize = code.size();
+                createInfo.pCode    = reinterpret_cast<const uint32_t*>(code.data());
+
+                vk::ResultValue<vk::ShaderModule> result = vk_device.createShaderModule(createInfo);
+
+                if (result.result != vk::Result::eSuccess) {
+                    printf("Error creating shader module\n");
+                    throw;
+                }
+
+                return result.value;
             }
 
             void createPipeline() {
@@ -817,6 +864,8 @@ namespace SplitGui {
 
                 vk_pipeline = result.value;
             }
+
+#pragma region Buffers
 
             void createFramebuffers() {
                 vk_swapchainFramebuffers.resize(vk_swapchainImageViews.size());
@@ -970,6 +1019,8 @@ namespace SplitGui {
                 vk_device.freeCommandBuffers(vk_commandPool, submitInfo.commandBufferCount, submitInfo.pCommandBuffers);
             }
 
+#pragma region Vertex buffer
+
             void createVertexBuffer() {
 
                 vk::DeviceSize   bufferSize = sizeof(vertices[0]) * vertices.size();
@@ -1009,6 +1060,8 @@ namespace SplitGui {
                 vk_device.freeMemory(vk_stagingBufferMemory);
             }
 
+#pragma region Index buffer
+
             void createIndexBuffer() {
                 vk::DeviceSize   bufferSize = sizeof(indices[0]) * indices.size();
                 vk::Buffer       vk_stagingBuffer;
@@ -1047,6 +1100,8 @@ namespace SplitGui {
                 vk_device.freeMemory(vk_stagingBufferMemory);
             }
 
+#pragma region Command buffer
+
             void createCommandBuffers() {
                 vk::CommandBufferAllocateInfo allocInfo;
                 allocInfo.commandPool        = vk_commandPool;
@@ -1064,6 +1119,8 @@ namespace SplitGui {
 
                 vk_commandBuffers = result.value;
             }
+
+#pragma region Sync objects
 
             void createSyncObj() {
                 vk::SemaphoreCreateInfo semaphoreInfo;
@@ -1093,6 +1150,8 @@ namespace SplitGui {
                     vk_inFlightFences[i]           = result_inFlightFence.value;
                 }
             }
+
+#pragma region Descriptor set
 
             void createDescriptorPool() {
                 vk::DescriptorPoolSize poolSize;
@@ -1129,6 +1188,14 @@ namespace SplitGui {
 
                 vk_descriptorSet = result.value.front();
             }
+
+#pragma region Commands
+
+            static void copyStagingBuffer(VulkanInterface* instance) {
+                
+            }
+
+#pragma region Setup
 
             void setupRenderpassBeginInfo() {
                 vk_renderpassBeginInfo.renderPass          = vk_renderpass;
@@ -1169,6 +1236,8 @@ namespace SplitGui {
                 vk_presentInfo.pSwapchains        = &vk_swapchain;
             }
 
+#pragma region Cleanup functions
+
             void cleanupFrameBuffers() {
                 for (int i = 0; i < vk_swapchainFramebuffers.size(); i++) {
                     vk_device.destroyFramebuffer(vk_swapchainFramebuffers[i]);
@@ -1194,6 +1263,8 @@ namespace SplitGui {
                 }
                 vk_swapchainImageViews.clear();
             }
+
+#pragma region Swapchain recreate
 
             void recreateSwapchain() {
 
