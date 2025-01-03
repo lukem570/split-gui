@@ -35,6 +35,7 @@
 ## Todo
 
 * make xml parser
-* edit cmakelists.txt to build for different window managers
 * refactor build tools
 * refactor error messages
+* make the interface for the interface
+* write documentation
