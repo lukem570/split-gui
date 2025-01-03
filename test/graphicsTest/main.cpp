@@ -1,4 +1,5 @@
 #include <splitgui/window.hpp>
+#include <splitgui/graphics.hpp>
 
 int main() {
     SplitGui::Window window;
@@ -7,7 +8,7 @@ int main() {
 
 
     SplitGui::Graphics graphics;
-    graphics.instanceVulkan(false);
+    graphics.instanceVulkan(true);
     graphics.submitWindow(window);
 
 

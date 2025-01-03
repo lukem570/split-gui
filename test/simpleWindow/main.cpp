@@ -5,6 +5,6 @@ int main() {
     window.instanceGlfw();
     window.createWindow("simple window");
 
-    window.__devLoop();
+    window.update();
     return 0;
 }

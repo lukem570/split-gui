@@ -30,4 +30,8 @@ namespace SplitGui {
     void Graphics::drawFrame() {
         pInterface->drawFrame();
     }
+
+    void Graphics::drawQuad(std::array<Vec2, 4> vertices, Vec3 color) {
+        pInterface->drawQuad(vertices, color);
+    }
 }

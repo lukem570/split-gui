@@ -1,6 +1,7 @@
 #include <splitgui/lib.h>
 #include <splitgui/graphics.hpp>
 #include <splitgui/window.hpp>
+#include <splitgui/structs.hpp>
 #include <vector>
 #include <tuple>
 #include <string>
@@ -29,9 +30,15 @@ namespace SplitGui {
                 //vk_device.destroyDescriptorPool(vk_descriptorPool);
 
                 cleanupSyncObj();
-
                 
                 vk_device.freeCommandBuffers(vk_commandPool, vk_commandBuffers.size(), vk_commandBuffers.data());
+
+                vk_device.freeMemory(vk_vertexBufferMemory);
+                vk_device.destroyBuffer(vk_vertexBuffer);
+
+                vk_device.freeMemory(vk_indexBufferMemory);
+                vk_device.destroyBuffer(vk_indexBuffer);
+
                 vk_device.destroyCommandPool(vk_commandPool);
                 
                 cleanupFrameBuffers();
@@ -69,6 +76,8 @@ namespace SplitGui {
                 createPipeline();
                 createFramebuffers();
                 createCommandPool();
+                createVertexBuffer();
+                createIndexBuffer();
                 createCommandBuffers();
                 createSyncObj();
                 //createDescriptorPool();
@@ -82,9 +91,9 @@ namespace SplitGui {
             }
 
             void drawFrame() override {
-                vk::Result waitResult = vk_device.waitForFences(1, &vk_inFlightFences[currentFrame], vk::True, UINT64_MAX);
+                vk_runtimeResult = vk_device.waitForFences(1, &vk_inFlightFences[currentFrame], vk::True, UINT64_MAX);
 
-                if (waitResult != vk::Result::eSuccess) {
+                if (vk_runtimeResult != vk::Result::eSuccess) {
                     printf("Error Waiting for fences\n");
                     throw;
                 }
@@ -101,9 +110,9 @@ namespace SplitGui {
                     throw;
                 }
 
-                vk::Result resetResult = vk_device.resetFences(1, &vk_inFlightFences[currentFrame]);
+                vk_runtimeResult = vk_device.resetFences(1, &vk_inFlightFences[currentFrame]);
 
-                if (resetResult != vk::Result::eSuccess) {
+                if (vk_runtimeResult != vk::Result::eSuccess) {
                     printf("Error resetting fences\n");
                     throw;
                 }
@@ -111,9 +120,9 @@ namespace SplitGui {
                 imageIndex = result.value;
 
                 vk_commandBuffers[currentFrame].reset();
-                vk::Result beginResult = vk_commandBuffers[currentFrame].begin(vk_beginInfo);
+                vk_runtimeResult = vk_commandBuffers[currentFrame].begin(vk_beginInfo);
 
-                if (beginResult != vk::Result::eSuccess) {
+                if (vk_runtimeResult != vk::Result::eSuccess) {
                     printf("Error beginning command buffer\n");
                     throw;
                 }
@@ -121,19 +130,22 @@ namespace SplitGui {
                 vk_renderpassBeginInfo.framebuffer = vk_swapchainFramebuffers[imageIndex];
                 
                 vk_commandBuffers[currentFrame].beginRenderPass(vk_renderpassBeginInfo, vk::SubpassContents::eInline);
+
                 vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, vk_pipeline);
+                vk_commandBuffers[currentFrame].bindVertexBuffers(0, 1, &vk_vertexBuffer, &vk_vertexBufferOffsets);
+                vk_commandBuffers[currentFrame].bindIndexBuffer(vk_indexBuffer, 0, vk::IndexType::eUint16);
                 //vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, vk_pipelineLayout, 0, 1, &vk_descriptorSet, 0, nullptr);
 
                 vk_commandBuffers[currentFrame].setViewport(0, 1, &vk_viewport);
                 vk_commandBuffers[currentFrame].setScissor(0, 1, &vk_scissor);
 
-                vk_commandBuffers[currentFrame].draw(vertCount, 1, 0, 0);
+                vk_commandBuffers[currentFrame].drawIndexed(indices.size(), 1, 0, 0, 0);
 
                 vk_commandBuffers[currentFrame].endRenderPass();
 
-                vk::Result endResult = vk_commandBuffers[currentFrame].end();
+                vk_runtimeResult = vk_commandBuffers[currentFrame].end();
 
-                if (endResult != vk::Result::eSuccess) {
+                if (vk_runtimeResult != vk::Result::eSuccess) {
                     printf("Error ending command buffer\n");
                     throw;
                 }
@@ -142,9 +154,9 @@ namespace SplitGui {
                 vk_submitInfo.pCommandBuffers   = &vk_commandBuffers[currentFrame];
                 vk_submitInfo.pSignalSemaphores = &vk_renderFinishedSemaphores[currentFrame];
 
-                vk::Result graphicsResult = vk_graphicsQueue.submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
+                vk_runtimeResult = vk_graphicsQueue.submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
 
-                if (graphicsResult != vk::Result::eSuccess) {
+                if (vk_runtimeResult != vk::Result::eSuccess) {
                     printf("Error sending command to gpu\n");
                     throw;
                 }
@@ -152,10 +164,10 @@ namespace SplitGui {
                 vk_presentInfo.pWaitSemaphores = &vk_renderFinishedSemaphores[currentFrame];
                 vk_presentInfo.pImageIndices   = &imageIndex;
 
-                vk::Result presentResult = vk_presentQueue.presentKHR(&vk_presentInfo);
+                vk_runtimeResult = vk_presentQueue.presentKHR(&vk_presentInfo);
 
-                if (presentResult != vk::Result::eSuccess) {
-                    if (presentResult == vk::Result::eErrorOutOfDateKHR || presentResult == vk::Result::eSuboptimalKHR) {
+                if (vk_runtimeResult != vk::Result::eSuccess) {
+                    if (vk_runtimeResult == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
                         recreateSwapchain();
                         return;
                     }
@@ -165,6 +177,19 @@ namespace SplitGui {
                 }
 
                 currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+            }
+
+            void drawQuad(std::array<Vec2, 4> quadVerts, Vec3 color) override {
+
+                throw;
+
+                for (int i = 0; i < quadVerts.size(); i++) {
+                    Vertex vert;
+                    vert.pos = quadVerts[i];
+                    vert.color = color;
+
+                    //vertices.push_back(vert);
+                }
             }
 
         protected:
@@ -192,6 +217,10 @@ namespace SplitGui {
             vk::DescriptorSet               vk_descriptorSet;
             vk::Rect2D                      vk_scissor;
             vk::PipelineStageFlags          vk_waitStages;
+            vk::Buffer                      vk_vertexBuffer;
+            vk::DeviceMemory                vk_vertexBufferMemory;
+            vk::Buffer                      vk_indexBuffer;
+            vk::DeviceMemory                vk_indexBufferMemory;
             std::vector<vk::CommandBuffer>  vk_commandBuffers;
             std::vector<vk::Framebuffer>    vk_swapchainFramebuffers;
             std::vector<vk::Image>          vk_swapchainImages;
@@ -199,20 +228,30 @@ namespace SplitGui {
             std::vector<vk::Semaphore>      vk_imageAvailableSemaphores;
             std::vector<vk::Semaphore>      vk_renderFinishedSemaphores;
             std::vector<vk::Fence>          vk_inFlightFences;
+            bool                            vk_validation;
             unsigned int                    graphicsQueueFamilyIndex = -1;
             unsigned int                    presentQueueFamilyIndex = -1;
             std::vector<const char *>       enabled_layers;
             std::vector<const char *>       enabled_instance_extensions;
             std::vector<const char *>       enabled_device_extensions;
-            bool                            vk_validation;
 
             // runtime variables (here to prevent excess push and pop operations)
             vk::CommandBufferBeginInfo      vk_beginInfo;
             vk::SubmitInfo                  vk_submitInfo;
+            vk::DeviceSize                  vk_vertexBufferOffsets = 0;
             vk::PresentInfoKHR              vk_presentInfo;
+            vk::Result                      vk_runtimeResult;
             unsigned int                    currentFrame = 0;
             uint32_t                        imageIndex = -1;
-            uint32_t                        vertCount = 3;
+            const std::vector<Vertex> vertices = {
+                {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+                {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+                {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+                {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+            };
+            const std::vector<uint16_t> indices = {
+                0, 1, 2, 2, 3, 0
+            };
             
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
@@ -695,9 +734,27 @@ namespace SplitGui {
                 dynamicState.dynamicStateCount = dynamicStates.size();
                 dynamicState.pDynamicStates    = dynamicStates.data();
 
+                vk::VertexInputBindingDescription bindingDescription;
+                bindingDescription.binding   = 0;
+                bindingDescription.stride    = sizeof(Vertex);
+                bindingDescription.inputRate = vk::VertexInputRate::eVertex;
+                
+                std::array<vk::VertexInputAttributeDescription, 2> attributeDescriptions;
+                attributeDescriptions[0].binding  = 0;
+                attributeDescriptions[0].location = 0;
+                attributeDescriptions[0].format   = vk::Format::eR32G32Sfloat;
+                attributeDescriptions[0].offset   = offsetof(Vertex, Vertex::pos);
+
+                attributeDescriptions[1].binding  = 0;
+                attributeDescriptions[1].location = 1;
+                attributeDescriptions[1].format   = vk::Format::eR32G32B32Sfloat;
+                attributeDescriptions[1].offset   = offsetof(Vertex, Vertex::color);
+
                 vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
-                vertexInputInfo.vertexBindingDescriptionCount   = 0;
-                vertexInputInfo.vertexAttributeDescriptionCount = 0;
+                vertexInputInfo.vertexBindingDescriptionCount   = 1;
+                vertexInputInfo.pVertexBindingDescriptions      = &bindingDescription;
+                vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
+                vertexInputInfo.pVertexAttributeDescriptions    = attributeDescriptions.data();
                 
                 vk::PipelineInputAssemblyStateCreateInfo inputAssembly;
                 inputAssembly.topology               = vk::PrimitiveTopology::eTriangleList;
@@ -797,6 +854,197 @@ namespace SplitGui {
                 } 
                 
                 vk_commandPool = result.value;
+            }
+
+            uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
+
+                vk::PhysicalDeviceMemoryProperties memProperties = vk_physicalDevice.getMemoryProperties();
+
+                for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+                    if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+                        return i;
+                    }
+                }
+
+                printf("failed to find suitable memory type");
+                throw;
+            }
+
+            void createBuffer(
+                vk::DeviceSize             size,
+                vk::BufferUsageFlags       usage,
+                vk::MemoryPropertyFlags    properties,
+                vk::Buffer&                out_buffer,
+                vk::DeviceMemory&          out_bufferMemory
+            ) {
+                vk::BufferCreateInfo createInfo;
+                createInfo.size        = size;
+                createInfo.usage       = usage;
+                createInfo.sharingMode = vk::SharingMode::eExclusive;
+
+                vk::ResultValue<vk::Buffer> result_buffer = vk_device.createBuffer(createInfo);
+
+                if (result_buffer.result != vk::Result::eSuccess) {
+                    printf("Error: error creating buffer\n");
+                    throw;
+                } 
+
+                out_buffer = result_buffer.value;
+
+                vk::MemoryRequirements memoryRequirements = vk_device.getBufferMemoryRequirements(out_buffer);
+
+                vk::MemoryAllocateInfo allocInfo;
+                allocInfo.allocationSize  = memoryRequirements.size;
+                allocInfo.memoryTypeIndex = findMemoryType(memoryRequirements.memoryTypeBits, properties);
+
+                vk::ResultValue<vk::DeviceMemory> result_deviceMemory = vk_device.allocateMemory(allocInfo);
+
+                if (result_deviceMemory.result != vk::Result::eSuccess) {
+                    printf("Error: error allocating buffer\n");
+                    throw;
+                }
+
+                out_bufferMemory = result_deviceMemory.value;
+
+                vk::Result result_bind = vk_device.bindBufferMemory(out_buffer, out_bufferMemory, 0);
+
+                if (result_bind != vk::Result::eSuccess) {
+                    printf("Error: error binding buffer\n");
+                    throw;
+                } 
+            }
+
+            void copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size) {
+                vk::CommandBufferAllocateInfo allocInfo;
+                allocInfo.level              = vk::CommandBufferLevel::ePrimary;
+                allocInfo.commandPool        = vk_commandPool;
+                allocInfo.commandBufferCount = 1;
+
+                vk::ResultValue<std::vector<vk::CommandBuffer>> result_commandBuffer = vk_device.allocateCommandBuffers(allocInfo);
+
+                if (result_commandBuffer.result != vk::Result::eSuccess) {
+                    printf("Error: error allocating command buffer\n");
+                    throw;
+                }
+
+                vk::CommandBufferBeginInfo beginInfo;
+                beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+
+                vk::Result result_begin = result_commandBuffer.value.front().begin(beginInfo);
+
+                if (result_begin != vk::Result::eSuccess) {
+                    printf("Error: error allocating command buffer\n");
+                    throw;
+                }
+
+                vk::BufferCopy copyRegion;
+                copyRegion.size = size;
+
+                result_commandBuffer.value.front().copyBuffer(src, dst, 1, &copyRegion);
+
+                vk::Result result_end = result_commandBuffer.value.front().end();
+
+                if (result_end != vk::Result::eSuccess) {
+                    printf("Error: error allocating command buffer\n");
+                    throw;
+                }
+
+                vk::SubmitInfo submitInfo;
+                submitInfo.commandBufferCount = 1;
+                submitInfo.pCommandBuffers    = &result_commandBuffer.value.front();
+
+                vk::Result result_submit = vk_graphicsQueue.submit(1, &submitInfo, nullptr);
+
+                if (result_submit != vk::Result::eSuccess) {
+                    printf("Error: error submitting queue\n");
+                    throw;
+                }
+
+                vk::Result result_waitIdle = vk_graphicsQueue.waitIdle();
+
+                if (result_waitIdle != vk::Result::eSuccess) {
+                    printf("Error: error waiting idle on queue\n");
+                    throw;
+                }
+
+                vk_device.freeCommandBuffers(vk_commandPool, submitInfo.commandBufferCount, submitInfo.pCommandBuffers);
+            }
+
+            void createVertexBuffer() {
+
+                vk::DeviceSize   bufferSize = sizeof(vertices[0]) * vertices.size();
+                vk::Buffer       vk_stagingBuffer;
+                vk::DeviceMemory vk_stagingBufferMemory;
+
+                createBuffer(
+                    bufferSize, 
+                    vk::BufferUsageFlagBits::eTransferSrc, 
+                    vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+                    vk_stagingBuffer,
+                    vk_stagingBufferMemory
+                );
+
+                vk::ResultValue<void*> result_memory = vk_device.mapMemory(vk_stagingBufferMemory, 0, bufferSize);
+
+                if (result_memory.result != vk::Result::eSuccess) {
+                    printf("Error: error mapping vertex buffer\n");
+                    throw;
+                } 
+
+                memcpy(result_memory.value, vertices.data(), bufferSize);
+
+                vk_device.unmapMemory(vk_stagingBufferMemory);
+
+                createBuffer(
+                    bufferSize, 
+                    vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer, 
+                    vk::MemoryPropertyFlagBits::eDeviceLocal,
+                    vk_vertexBuffer,
+                    vk_vertexBufferMemory
+                );
+
+                copyBuffer(vk_stagingBuffer, vk_vertexBuffer, bufferSize);
+
+                vk_device.destroyBuffer(vk_stagingBuffer);
+                vk_device.freeMemory(vk_stagingBufferMemory);
+            }
+
+            void createIndexBuffer() {
+                vk::DeviceSize   bufferSize = sizeof(indices[0]) * indices.size();
+                vk::Buffer       vk_stagingBuffer;
+                vk::DeviceMemory vk_stagingBufferMemory;
+
+                createBuffer(
+                    bufferSize, 
+                    vk::BufferUsageFlagBits::eTransferSrc, 
+                    vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+                    vk_stagingBuffer,
+                    vk_stagingBufferMemory
+                );
+
+                vk::ResultValue<void*> result_memory = vk_device.mapMemory(vk_stagingBufferMemory, 0, bufferSize);
+
+                if (result_memory.result != vk::Result::eSuccess) {
+                    printf("Error: error mapping index buffer\n");
+                    throw;
+                } 
+
+                memcpy(result_memory.value, indices.data(), bufferSize);
+
+                vk_device.unmapMemory(vk_stagingBufferMemory);
+
+                createBuffer(
+                    bufferSize, 
+                    vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, 
+                    vk::MemoryPropertyFlagBits::eDeviceLocal,
+                    vk_indexBuffer,
+                    vk_indexBufferMemory
+                );
+
+                copyBuffer(vk_stagingBuffer, vk_indexBuffer, bufferSize);
+
+                vk_device.destroyBuffer(vk_stagingBuffer);
+                vk_device.freeMemory(vk_stagingBufferMemory);
             }
 
             void createCommandBuffers() {

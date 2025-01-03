@@ -39,3 +39,6 @@
 * refactor error messages
 * make the interface for the interface
 * write documentation
+* compile volk with modules
+* refactor project structure 
+* get draw quad to work
