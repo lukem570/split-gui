@@ -202,9 +202,9 @@ namespace SplitGui {
 
             void drawQuad(std::array<Vec2, 4> quadVerts, Vec3 color) override {
 
-                throw;
+                
 
-                commands.push(copyStagingBuffer);
+                
 
                 for (int i = 0; i < quadVerts.size(); i++) {
                     Vertex vert;
@@ -242,6 +242,8 @@ namespace SplitGui {
             vk::DescriptorSet               vk_descriptorSet;
             vk::Rect2D                      vk_scissor;
             vk::PipelineStageFlags          vk_waitStages;
+            vk::Buffer                      vk_stagingBuffer;
+            vk::DeviceMemory                vk_stagingBufferMemory;
             vk::Buffer                      vk_vertexBuffer;
             vk::DeviceMemory                vk_vertexBufferMemory;
             vk::Buffer                      vk_indexBuffer;
@@ -264,19 +266,21 @@ namespace SplitGui {
             vk::CommandBufferBeginInfo      vk_beginInfo;
             vk::SubmitInfo                  vk_submitInfo;
             vk::DeviceSize                  vk_vertexBufferOffsets = 0;
+            vk::DeviceSize                  vk_stagingBufferRegion;
             vk::PresentInfoKHR              vk_presentInfo;
             vk::Result                      vk_runtimeResult;
             unsigned int                    currentFrame = 0;
             uint32_t                        imageIndex = -1;
             std::stack<Command>             commands;
-            const std::vector<Vertex> vertices = {
+            const std::vector<Vertex>       vertices= {
                 {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-                {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-                {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-                {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+                {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+                {{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
+                {{-0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}},
+                {{ 1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}}
             };
-            const std::vector<uint16_t> indices = {
-                0, 1, 2, 2, 3, 0
+            const std::vector<uint16_t>     indices = {
+                0, 1, 2, 2, 3, 0, 1, 4, 2
             };
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
@@ -1019,32 +1023,43 @@ namespace SplitGui {
                 vk_device.freeCommandBuffers(vk_commandPool, submitInfo.commandBufferCount, submitInfo.pCommandBuffers);
             }
 
-#pragma region Vertex buffer
+#pragma region StagingBuffer
 
-            void createVertexBuffer() {
-
-                vk::DeviceSize   bufferSize = sizeof(vertices[0]) * vertices.size();
-                vk::Buffer       vk_stagingBuffer;
-                vk::DeviceMemory vk_stagingBufferMemory;
+            template <typename T>
+            void InstanceStagingBuffer(
+                std::vector<T>  dataToUpload,
+                vk::DeviceSize& out_size
+            ) {
+                
+                out_size = sizeof(dataToUpload[0]) * dataToUpload.size();
 
                 createBuffer(
-                    bufferSize, 
+                    out_size, 
                     vk::BufferUsageFlagBits::eTransferSrc, 
                     vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
                     vk_stagingBuffer,
                     vk_stagingBufferMemory
                 );
 
-                vk::ResultValue<void*> result_memory = vk_device.mapMemory(vk_stagingBufferMemory, 0, bufferSize);
+                vk::ResultValue<void*> result_memory = vk_device.mapMemory(vk_stagingBufferMemory, 0, out_size);
 
                 if (result_memory.result != vk::Result::eSuccess) {
-                    printf("Error: error mapping vertex buffer\n");
+                    printf("Error: error mapping staging buffer\n");
                     throw;
                 } 
 
-                memcpy(result_memory.value, vertices.data(), bufferSize);
+                memcpy(result_memory.value, dataToUpload.data(), out_size);
 
                 vk_device.unmapMemory(vk_stagingBufferMemory);
+            }
+
+#pragma region Vertex buffer
+
+            void createVertexBuffer() {
+
+                vk::DeviceSize bufferSize;
+
+                InstanceStagingBuffer(vertices, bufferSize);
 
                 createBuffer(
                     bufferSize, 
@@ -1056,35 +1071,16 @@ namespace SplitGui {
 
                 copyBuffer(vk_stagingBuffer, vk_vertexBuffer, bufferSize);
 
-                vk_device.destroyBuffer(vk_stagingBuffer);
-                vk_device.freeMemory(vk_stagingBufferMemory);
+                cleanupStagingBuffer();
             }
 
 #pragma region Index buffer
 
             void createIndexBuffer() {
-                vk::DeviceSize   bufferSize = sizeof(indices[0]) * indices.size();
-                vk::Buffer       vk_stagingBuffer;
-                vk::DeviceMemory vk_stagingBufferMemory;
 
-                createBuffer(
-                    bufferSize, 
-                    vk::BufferUsageFlagBits::eTransferSrc, 
-                    vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-                    vk_stagingBuffer,
-                    vk_stagingBufferMemory
-                );
+                vk::DeviceSize bufferSize;
 
-                vk::ResultValue<void*> result_memory = vk_device.mapMemory(vk_stagingBufferMemory, 0, bufferSize);
-
-                if (result_memory.result != vk::Result::eSuccess) {
-                    printf("Error: error mapping index buffer\n");
-                    throw;
-                } 
-
-                memcpy(result_memory.value, indices.data(), bufferSize);
-
-                vk_device.unmapMemory(vk_stagingBufferMemory);
+                InstanceStagingBuffer(indices, bufferSize);
 
                 createBuffer(
                     bufferSize, 
@@ -1096,8 +1092,7 @@ namespace SplitGui {
 
                 copyBuffer(vk_stagingBuffer, vk_indexBuffer, bufferSize);
 
-                vk_device.destroyBuffer(vk_stagingBuffer);
-                vk_device.freeMemory(vk_stagingBufferMemory);
+                cleanupStagingBuffer();
             }
 
 #pragma region Command buffer
@@ -1191,8 +1186,18 @@ namespace SplitGui {
 
 #pragma region Commands
 
-            static void copyStagingBuffer(VulkanInterface* instance) {
-                
+            static void copyStagingBufferToVertexBuffer(VulkanInterface* instance) {
+                vk::BufferCopy copyRegion;
+                copyRegion.size = instance->vk_stagingBufferRegion;
+
+                instance->vk_commandBuffers[instance->currentFrame].copyBuffer(instance->vk_stagingBuffer, instance->vk_vertexBuffer, 1, &copyRegion);
+            }
+
+            static void copyStagingBufferToIndexBuffer(VulkanInterface* instance) {
+                vk::BufferCopy copyRegion;
+                copyRegion.size = instance->vk_stagingBufferRegion;
+
+                instance->vk_commandBuffers[instance->currentFrame].copyBuffer(instance->vk_stagingBuffer, instance->vk_indexBuffer, 1, &copyRegion);
             }
 
 #pragma region Setup
@@ -1262,6 +1267,11 @@ namespace SplitGui {
                     vk_device.destroyImageView(vk_swapchainImageViews[i]);
                 }
                 vk_swapchainImageViews.clear();
+            }
+
+            void cleanupStagingBuffer() {
+                vk_device.destroyBuffer(vk_stagingBuffer);
+                vk_device.freeMemory(vk_stagingBufferMemory);
             }
 
 #pragma region Swapchain recreate

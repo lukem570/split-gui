@@ -42,3 +42,4 @@
 * compile volk with modules
 * refactor project structure 
 * get draw quad to work
+* draw text
