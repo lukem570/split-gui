@@ -202,31 +202,17 @@ namespace SplitGui {
 
             void drawQuad(std::array<Vec2, 4> quadVerts, Vec3 color) override {
 
-                int indicesOffset = indices.size();
+                
 
-                indices.push_back(indicesOffset + 0); //0, 1, 2, 2, 3, 0
-                indices.push_back(indicesOffset + 1);
-                indices.push_back(indicesOffset + 2);
-                indices.push_back(indicesOffset + 2);
-                indices.push_back(indicesOffset + 3);
-                indices.push_back(indicesOffset + 0);
+                
 
                 for (int i = 0; i < quadVerts.size(); i++) {
                     Vertex vert;
                     vert.pos = quadVerts[i];
                     vert.color = color;
 
-                    vertices.push_back(vert);
+                    //vertices.push_back(vert);
                 }
-
-                vk::DeviceSize verticesSize;
-                vk::DeviceSize indicesSize;
-
-                InstanceStagingBuffer(vertices, verticesSize);
-                InstanceStagingBuffer(indices, indicesSize);
-
-                commands.push(copyStagingBufferToVertexBuffer);
-                commands.push(copyStagingBufferToIndexBuffer);
             }
 
 #pragma region Variables
@@ -256,12 +242,12 @@ namespace SplitGui {
             vk::DescriptorSet               vk_descriptorSet;
             vk::Rect2D                      vk_scissor;
             vk::PipelineStageFlags          vk_waitStages;
+            vk::Buffer                      vk_stagingBuffer;
+            vk::DeviceMemory                vk_stagingBufferMemory;
             vk::Buffer                      vk_vertexBuffer;
             vk::DeviceMemory                vk_vertexBufferMemory;
             vk::Buffer                      vk_indexBuffer;
             vk::DeviceMemory                vk_indexBufferMemory;
-            std::stack<vk::Buffer>          vk_stagingBuffer;
-            std::stack<vk::DeviceMemory>    vk_stagingBufferMemory;
             std::vector<vk::CommandBuffer>  vk_commandBuffers;
             std::vector<vk::Framebuffer>    vk_swapchainFramebuffers;
             std::vector<vk::Image>          vk_swapchainImages;
@@ -286,14 +272,14 @@ namespace SplitGui {
             unsigned int                    currentFrame = 0;
             uint32_t                        imageIndex = -1;
             std::stack<Command>             commands;
-            std::vector<Vertex>       vertices= {
+            const std::vector<Vertex>       vertices= {
                 {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
                 {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
                 {{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
                 {{-0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}},
                 {{ 1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}}
             };
-            std::vector<uint16_t>     indices = {
+            const std::vector<uint16_t>     indices = {
                 0, 1, 2, 2, 3, 0, 1, 4, 2
             };
 
@@ -1047,18 +1033,15 @@ namespace SplitGui {
                 
                 out_size = sizeof(dataToUpload[0]) * dataToUpload.size();
 
-                vk_stagingBuffer.push({});
-                vk_stagingBufferMemory.push({});
-
                 createBuffer(
                     out_size, 
                     vk::BufferUsageFlagBits::eTransferSrc, 
                     vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-                    vk_stagingBuffer.top(),
-                    vk_stagingBufferMemory.top()
+                    vk_stagingBuffer,
+                    vk_stagingBufferMemory
                 );
 
-                vk::ResultValue<void*> result_memory = vk_device.mapMemory(vk_stagingBufferMemory.top(), 0, out_size);
+                vk::ResultValue<void*> result_memory = vk_device.mapMemory(vk_stagingBufferMemory, 0, out_size);
 
                 if (result_memory.result != vk::Result::eSuccess) {
                     printf("Error: error mapping staging buffer\n");
@@ -1067,7 +1050,7 @@ namespace SplitGui {
 
                 memcpy(result_memory.value, dataToUpload.data(), out_size);
 
-                vk_device.unmapMemory(vk_stagingBufferMemory.top());
+                vk_device.unmapMemory(vk_stagingBufferMemory);
             }
 
 #pragma region Vertex buffer
@@ -1086,7 +1069,7 @@ namespace SplitGui {
                     vk_vertexBufferMemory
                 );
 
-                copyBuffer(vk_stagingBuffer.top(), vk_vertexBuffer, bufferSize);
+                copyBuffer(vk_stagingBuffer, vk_vertexBuffer, bufferSize);
 
                 cleanupStagingBuffer();
             }
@@ -1107,7 +1090,7 @@ namespace SplitGui {
                     vk_indexBufferMemory
                 );
 
-                copyBuffer(vk_stagingBuffer.top(), vk_indexBuffer, bufferSize);
+                copyBuffer(vk_stagingBuffer, vk_indexBuffer, bufferSize);
 
                 cleanupStagingBuffer();
             }
@@ -1207,18 +1190,14 @@ namespace SplitGui {
                 vk::BufferCopy copyRegion;
                 copyRegion.size = instance->vk_stagingBufferRegion;
 
-                instance->vk_commandBuffers[instance->currentFrame].copyBuffer(instance->vk_stagingBuffer.top(), instance->vk_vertexBuffer, 1, &copyRegion);
-
-                instance->cleanupStagingBuffer();
+                instance->vk_commandBuffers[instance->currentFrame].copyBuffer(instance->vk_stagingBuffer, instance->vk_vertexBuffer, 1, &copyRegion);
             }
 
             static void copyStagingBufferToIndexBuffer(VulkanInterface* instance) {
                 vk::BufferCopy copyRegion;
                 copyRegion.size = instance->vk_stagingBufferRegion;
 
-                instance->vk_commandBuffers[instance->currentFrame].copyBuffer(instance->vk_stagingBuffer.top(), instance->vk_indexBuffer, 1, &copyRegion);
-
-                instance->cleanupStagingBuffer();
+                instance->vk_commandBuffers[instance->currentFrame].copyBuffer(instance->vk_stagingBuffer, instance->vk_indexBuffer, 1, &copyRegion);
             }
 
 #pragma region Setup
@@ -1291,10 +1270,8 @@ namespace SplitGui {
             }
 
             void cleanupStagingBuffer() {
-                vk_device.destroyBuffer(vk_stagingBuffer.top());
-                vk_device.freeMemory(vk_stagingBufferMemory.top());
-                vk_stagingBuffer.pop();
-                vk_stagingBufferMemory.pop();
+                vk_device.destroyBuffer(vk_stagingBuffer);
+                vk_device.freeMemory(vk_stagingBufferMemory);
             }
 
 #pragma region Swapchain recreate
