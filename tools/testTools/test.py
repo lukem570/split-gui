@@ -83,7 +83,8 @@ def test():
                 lines = result.stdout.splitlines()
                 
                 for line in lines:
-                    logging.debug(line)
+                    if line[0] != '0' and line[1] != ':':
+                        logging.debug(line)
                 
             print(f'PASS: {test_path}')
             
