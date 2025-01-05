@@ -1,4 +1,6 @@
 #include <splitgui/window.hpp>
+#include <splitgui/structs.hpp>
+#include <tuple>
 
 namespace SplitGui {
     class GlfwInterface : WindowLibInterface {
@@ -16,10 +18,10 @@ namespace SplitGui {
                 glfwTerminate();
             }
 
-            virtual void createWindow(const char* title) {
+            void createWindow(const char* title) override {
                 glfw::WindowHints hints;
                 hints.clientApi = (glfw::ClientApi) 0L;
-                hints.resizable = false;
+                hints.resizable = true;
                 hints.visible   = true;
                 hints.decorated = true;
 
@@ -34,8 +36,16 @@ namespace SplitGui {
 
             }
             
-            virtual RawWindow* getWindowData() {
+            RawWindow* getWindowData() override {
                 return &window;
+            }
+
+            IVec2 getSize() {
+                IVec2 size;
+                std::tuple<int, int> sizeTuple = window.handle->getSize();
+                size.x = std::get<0>(sizeTuple);
+                size.y = std::get<1>(sizeTuple);
+                return size;
             }
 
         private:

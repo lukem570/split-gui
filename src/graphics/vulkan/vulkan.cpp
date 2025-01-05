@@ -184,17 +184,17 @@ namespace SplitGui {
                 currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
             }
     
-#pragma region Draw quad
+#pragma region Draw rect
 
-            void drawQuad(std::array<Vec2, 4> quadVerts, Vec3 color) override {
+            void drawRect(std::array<Vec2, 4> quadVerts, Vec3 color) override {
 
                 int verticesOffset = vertices.size();
 
                 indices.push_back(verticesOffset + 0); //0, 1, 2, 2, 3, 0
+                indices.push_back(verticesOffset + 2);
                 indices.push_back(verticesOffset + 1);
-                indices.push_back(verticesOffset + 2);
-                indices.push_back(verticesOffset + 2);
                 indices.push_back(verticesOffset + 3);
+                indices.push_back(verticesOffset + 2);
                 indices.push_back(verticesOffset + 0);
 
                 for (int i = 0; i < quadVerts.size(); i++) {
@@ -600,7 +600,7 @@ namespace SplitGui {
                 if (capabilities.currentExtent.width != UINT32_MAX) {
                     return capabilities.currentExtent;
                 } else {
-                    vk::Extent2D actualExtent = {(uint32_t)std::get<0>(pWindow->getWindowData()->handle->getSize()), (uint32_t)std::get<1>(pWindow->getWindowData()->handle->getSize())};
+                    vk::Extent2D actualExtent = {pWindow->getSize().x, pWindow->getSize().y};
                     actualExtent.width  = (((capabilities.minImageExtent.width) > ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width)))) ? (capabilities.minImageExtent.width) : ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width))));
                     actualExtent.height = (((capabilities.minImageExtent.height) > ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height)))) ? (capabilities.minImageExtent.height) : ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height))));
                     return actualExtent;
@@ -1349,12 +1349,26 @@ namespace SplitGui {
 
             void recreateSwapchain() {
 
-                // TODO:
+                vk::Result result = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), true, UINT64_MAX);
 
+                if (result != vk::Result::eSuccess) {
+                    printf("Error: error waiting for fences\n");
+                    throw;
+                } 
+
+                cleanupImageViews();
+                cleanupFrameBuffers();
+                vk_device.destroySwapchainKHR(vk_swapchain);
+
+                createSwapchain();
+                createImageViews();
+                createFramebuffers();
 
                 setupRenderpassBeginInfo();
                 setupViewport();
                 setupScissor();
+
+                printf("recreated swapchain\n");
             }
     };
 }

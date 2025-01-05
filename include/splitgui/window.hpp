@@ -35,6 +35,7 @@ namespace SplitGui {
 
             virtual void       createWindow(const char* title) { throw; }
             virtual RawWindow* getWindowData() { throw; return nullptr; }
+            IVec2              getSize() { throw; return {}; }
 
         private:
             RawWindow window;
@@ -57,7 +58,7 @@ namespace SplitGui {
             void       updateInterface();
             bool       shouldClose();
             void       update();
-            void       __devLoop();
+            IVec2      getSize();
             RawWindow* getWindowData();
 
         private:

@@ -97,7 +97,8 @@ def test():
                 lines = e.stdout.splitlines()
                 
                 for line in lines:
-                    logging.debug(line)
+                    if line[0] != '0' and line[1] != ':':
+                        logging.debug(line)
                     
             if e.stderr:
                 lines = e.stderr.splitlines()

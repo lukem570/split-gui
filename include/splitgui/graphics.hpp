@@ -23,7 +23,7 @@ namespace SplitGui {
             virtual void instance() { throw; }
             virtual void submitWindow(Window& window) { throw; }
             virtual void drawFrame() { throw; }
-            virtual void drawQuad(std::array<Vec2, 4> vertices, Vec3 color) { throw; }
+            virtual void drawRect(std::array<Vec2, 4> vertices, Vec3 color) { throw; }
 
         protected:
             SplitGui::Window* pWindow;
@@ -40,7 +40,7 @@ namespace SplitGui {
             void instanceVulkan(bool validation);
             void submitWindow(Window& window);
             void drawFrame();
-            void drawQuad(std::array<Vec2, 4> vertices, Vec3 color);
+            void drawRect(std::array<Vec2, 4> vertices, Vec3 color);
 
         private:
             GraphicsMode mode = GraphicsMode::eNull;

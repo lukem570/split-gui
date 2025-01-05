@@ -42,6 +42,13 @@ namespace SplitGui {
         float y;
     };
 
+    struct Rect {
+        int width;
+        int height;
+        int x;
+        int y;
+    };
+
     struct Vertex {
         Vec2 pos;
         Vec3 color;

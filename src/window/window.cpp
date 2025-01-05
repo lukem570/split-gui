@@ -1,5 +1,6 @@
 #include <splitgui/window.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/structs.hpp>
 #include <cstdio>
 #include <string>
 
@@ -64,11 +65,7 @@ namespace SplitGui {
         glfw::pollEvents();
     }
 
-    void Window::__devLoop() {
-        while (!windowLib->getWindowData()->handle->shouldClose()) {
-            windowLib->getWindowData()->handle->swapBuffers();
-            glfw::pollEvents();
-        }
+    IVec2 Window::getSize() {
+        return windowLib->getSize();
     }
-
 }
