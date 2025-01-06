@@ -1,5 +1,6 @@
 #include <splitgui/interface.hpp>
-#include "xmlParser.cpp"
+
+#include "xml/xmlParser.cpp"
 
 namespace SplitGui {
 
@@ -14,9 +15,7 @@ namespace SplitGui {
     }
 
     void Interface::parseXml(std::string& data) {
-        //XmlParser::tokenize(data);
 
-        
     }
 
     InterfaceData* Interface::getInterfaceData() {

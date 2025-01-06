@@ -18,9 +18,9 @@ int main() {
 
     SplitGui::Interface interface;
 
-    std::string index = buffer.str();
+    std::string page = buffer.str();
 
-    interface.parseXml(index);
+    interface.parseXml(page);
 
     SplitGui::Window window;
 
