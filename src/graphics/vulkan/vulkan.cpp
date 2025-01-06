@@ -600,7 +600,7 @@ namespace SplitGui {
                 if (capabilities.currentExtent.width != UINT32_MAX) {
                     return capabilities.currentExtent;
                 } else {
-                    vk::Extent2D actualExtent = {pWindow->getSize().x, pWindow->getSize().y};
+                    vk::Extent2D actualExtent = {(uint32_t)pWindow->getSize().x, (uint32_t)pWindow->getSize().y};
                     actualExtent.width  = (((capabilities.minImageExtent.width) > ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width)))) ? (capabilities.minImageExtent.width) : ((((capabilities.maxImageExtent.width) < (actualExtent.width)) ? (capabilities.maxImageExtent.width) : (actualExtent.width))));
                     actualExtent.height = (((capabilities.minImageExtent.height) > ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height)))) ? (capabilities.minImageExtent.height) : ((((capabilities.maxImageExtent.height) < (actualExtent.height)) ? (capabilities.maxImageExtent.height) : (actualExtent.height))));
                     return actualExtent;
@@ -783,7 +783,7 @@ namespace SplitGui {
 
 #pragma region Graphics pipeline
 
-            void createGraphicsPipelineLayout() { // TODO:
+            void createGraphicsPipelineLayout() {
                 vk::PipelineLayoutCreateInfo createInfo;
                 createInfo.setLayoutCount         = 0;
                 createInfo.pSetLayouts            = nullptr;

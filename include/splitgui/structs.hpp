@@ -38,8 +38,8 @@ namespace SplitGui {
     };
 
     struct IVec2 {
-        float x;
-        float y;
+        int x;
+        int y;
     };
 
     struct Rect {

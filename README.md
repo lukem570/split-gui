@@ -29,6 +29,7 @@
 * vulkan sdk 
 * vulkan headers
 * vulkan hpp
+* volk
 
 ---
 
@@ -41,5 +42,5 @@
 * write documentation
 * compile volk with modules
 * refactor project structure 
-* get draw quad to work
+* fix swapchain recreation
 * draw text

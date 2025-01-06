@@ -5,8 +5,7 @@
 int main() {
     SplitGui::Window window;
     window.instanceGlfw();
-    window.createWindow("graphics test");
-
+    window.createWindow("quad test");
 
     SplitGui::Graphics graphics;
     graphics.instanceVulkan(true);

@@ -1,5 +1,6 @@
 #ifndef SPLITGUI_EXPORT
-// TODO: THIS FILE IS CURSED NEEDS REFACTOR
+
+// linked library defines
 
 #ifdef _WIN32
     #ifdef BUILD_SPLITGUI
@@ -17,97 +18,223 @@
     #error "Unknown platform, please define export/import macros."
 #endif
 
-#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-#define VULKAN_HPP_NO_EXCEPTIONS
-#define VULKAN_HPP_TYPESAFE_CONVERSION 1
+// Graphics library (default Vulkan)
 
-#if !defined(VK_USE_PLATFORM_WAYLAND_KHR) && \
-    !defined(VK_USE_PLATFORM_XCB_KHR) && \
-    !defined(VK_USE_PLATFORM_XLIB_KHR)
-#define VK_USE_PLATFORM_XLIB_KHR
+#if !defined(SPLIT_GUI_USE_VULKAN)
+
+    #define SPLIT_GUI_USE_VULKAN
+
+#elif defined(SPLIT_GUI_USE_VULKAN)
+    
+#else 
+    #error "invalid graphics library"
 #endif
 
-#ifdef VULKAN_H_
-#error "vulkan previously defined"
-#endif
+// Windowing library (default GLFW)
 
-#include <volk/volk.h>
-
-#define VK_NO_PROTOTYPES
-#include <vulkan/vulkan.hpp>
-
-VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
-
-#if !defined(SPLIT_GUI_USE_GLFW)  && \
-    !defined(SPLIT_GUI_USE_XCB)   && \
-    !defined(SPLIT_GUI_USE_XLIB)  && \
+#if !defined(SPLIT_GUI_USE_GLFW)    && \
+    !defined(SPLIT_GUI_USE_XCB)     && \
+    !defined(SPLIT_GUI_USE_XLIB)    && \
+    !defined(SPLIT_GUI_USE_WAYLAND) && \
     !defined(SPLIT_GUI_USE_WIN32)
 
-    #include <glfwpp/glfwpp.h>
-
     #define SPLIT_GUI_USE_GLFW
+
 #elif defined(SPLIT_GUI_USE_GLFW)
-    #include <glfwpp/glfwpp.h>
+    
 #elif defined(SPLIT_GUI_USE_XCB)
-    #include <X11/Xlib.h>
+    
 #elif defined(SPLIT_GUI_USE_XLIB)
-    #include <X11/Xlib.h>
+
+#elif defined(SPLIT_GUI_USE_WAYLAND)
+    
 #elif defined(SPLIT_GUI_USE_WIN32)
-    #include <windows.h>
+    
+#else
+    #error "invalid windowing library"
 #endif
 
-#ifdef _WIN32
 
-#ifdef SPLIT_GUI_USE_GLFW
-    #define GLFW_EXPOSE_NATIVE_WIN32
+// Vulkan library implementation
+
+#ifdef SPLIT_GUI_USE_VULKAN
+
+    // Choose which desktop window manager to use for vulkan surface
+    //
+    // defaults:
+    // - linux   : VK_USE_PLATFORM_XLIB_KHR
+    // - windows : VK_USE_PLATFORM_WIN32_KHR
+
+    #if defined(__linux__) 
+
+        #if !defined(VK_USE_PLATFORM_WAYLAND_KHR) && \
+            !defined(VK_USE_PLATFORM_XCB_KHR) && \
+            !defined(VK_USE_PLATFORM_XLIB_KHR)
+
+            #define VK_USE_PLATFORM_XLIB_KHR
+
+        #endif
+
+    #elif defined(_WIN32)
+
+        #ifndef VK_USE_PLATFORM_WIN32_KHR
+
+            #define VK_USE_PLATFORM_WIN32_KHR
+
+        #endif
+    
+    #endif
+
+    // Vulkan settings 
+
+    #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
+    #define VULKAN_HPP_NO_EXCEPTIONS
+    #define VULKAN_HPP_TYPESAFE_CONVERSION 1
+    #define VK_NO_PROTOTYPES
+
+    // Vulkan already defined check
+
+    #ifdef VULKAN_H_
+        #error "Vulkan previously defined"
+    #endif
+
+    // includes
+
+    #include <volk/volk.h>
+    #include <vulkan/vulkan.hpp>
+
+    // dispatch loader
+
+    VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
+
 #endif
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <vulkan/vulkan_win32.h>
-#define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+// platform specific includes
 
-#elif defined(__linux__)  
+// TODO: use correct platform definitions instead of the vk_use_platform...
+
+#if defined(__linux__)
 
     #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
 
+        // Vulkan specific definition for the surface extention
+
+        #ifdef SPLIT_GUI_USE_VULKAN
+
+            #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
+
+        #endif 
+
+        // GLFW specific expose for "glfwpp/native.h"
+
         #ifdef SPLIT_GUI_USE_GLFW
+
             #define GLFW_EXPOSE_NATIVE_WAYLAND
+
         #endif
 
-        #include <X11/Xlib.h>
+        // wayland includes
+
+        #include <wayland-client.h>
         #include <vulkan/vulkan_wayland.h>
-        #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
 
     #elif defined(VK_USE_PLATFORM_XCB_KHR)
 
+        // Vulkan specific definition for the surface extention
+
+        #ifdef SPLIT_GUI_USE_VULKAN
+
+            #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XCB_SURFACE_EXTENSION_NAME
+
+        #endif 
+
+        // GLFW specific expose for "glfwpp/native.h"
+
         #ifdef SPLIT_GUI_USE_GLFW
+
             #define GLFW_EXPOSE_NATIVE_X11
+
         #endif
 
-        #include <X11/Xlib.h>
+        // xcb includes
+
+        #include <xcb/xcb.h>
         #include <vulkan/vulkan_xcb.h>
-        #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XCB_SURFACE_EXTENSION_NAME
+        
 
     #elif defined(VK_USE_PLATFORM_XLIB_KHR)
 
+        // Vulkan specific definition for the surface extention
+
+        #ifdef SPLIT_GUI_USE_VULKAN
+
+            #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XLIB_SURFACE_EXTENSION_NAME
+
+        #endif 
+
+        // GLFW specific expose for "glfwpp/native.h"
+
         #ifdef SPLIT_GUI_USE_GLFW
+
             #define GLFW_EXPOSE_NATIVE_X11
+
         #endif
+
+        // Xlib includes 
 
         #include <X11/Xlib.h>
         #include <vulkan/vulkan_xlib.h>
-        #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_XLIB_SURFACE_EXTENSION_NAME
 
-    #else
-        #error "unknown linux windowing library specified"
     #endif
-#else
-    #error "Unsupported platform"
+
+#elif defined(_WIN32)
+
+    // Windows settings
+
+    #define WIN32_LEAN_AND_MEAN
+
+    // Vulkan specific definition for the surface extention
+
+    #ifdef SPLIT_GUI_USE_VULKAN
+
+        #define VK_KHR_WM_SURFACE_EXTENSION_NAME VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+
+    #endif
+
+    // GLFW specific expose for "glfwpp/native.h"
+
+    #ifdef SPLIT_GUI_USE_GLFW
+
+        #define GLFW_EXPOSE_NATIVE_WIN32
+
+    #endif
+
+    // Windows includes
+
+    #include <windows.h>
+    #include <vulkan/vulkan_win32.h>
+
 #endif
 
-#ifdef SPLIT_GUI_USE_GLFW
+// windowing library implementation
+
+#if defined(SPLIT_GUI_USE_GLFW)
+
+    #include <glfwpp/glfwpp.h>
     #include <glfwpp/native.h>
+
+#elif defined(SPLIT_GUI_USE_XCB)
+
+    #include <X11/Xlib.h>
+
+#elif defined(SPLIT_GUI_USE_XLIB)
+
+    #include <X11/Xlib.h>
+
+#elif defined(SPLIT_GUI_USE_WIN32)
+
+    #include <windows.h>
 #endif
 
-#endif
+
+#endif // !SPLITGUI_EXPORT

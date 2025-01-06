@@ -5,8 +5,11 @@
 
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
+#include <unordered_map>
 
 namespace SplitGui {
+
+    typedef void (*Callback)(SplitGui::Window* window);
 
     enum class FormatType {
         eGlfw,
@@ -14,6 +17,10 @@ namespace SplitGui {
         eXlib,
         eWayland,
         eWindows,
+    };
+
+    enum class CallbackType {
+        eWindowResize
     };
 
     struct SPLITGUI_EXPORT RawWindow {
@@ -34,8 +41,9 @@ namespace SplitGui {
             ~WindowLibInterface() {}
 
             virtual void       createWindow(const char* title) { throw; }
-            virtual RawWindow* getWindowData() { throw; return nullptr; }
-            IVec2              getSize() { throw; return {}; }
+            virtual RawWindow* getWindowData()                 { throw; }
+            virtual IVec2      getSize()                       { throw; }
+
 
         private:
             RawWindow window;
@@ -55,6 +63,7 @@ namespace SplitGui {
             void       instanceGlfw();
             void       createWindow(const char* title);
             void       attachInterface(Interface& interface);
+            void       setCallback(CallbackType type, Callback callback);
             void       updateInterface();
             bool       shouldClose();
             void       update();
@@ -65,7 +74,7 @@ namespace SplitGui {
             Interface*          interface = nullptr;
             Graphics*           graphics  = nullptr;
             WindowLibInterface* windowLib = nullptr;
-
+            
     };
 }
 #endif
