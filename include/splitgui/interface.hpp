@@ -11,10 +11,33 @@ namespace SplitGui {
 
     class Window;
 
-    struct SPLITGUI_EXPORT InterfaceData {
+    enum class InterfaceElementType {
+
+        // Concepts
+        eSplit,
+        eList,
+        eBox,
+        eOverlay,
+
+        // Modifiers
+        eMask,
+        eTransform,
+
+        // Objects
+        eRect,
+        eScene,
+        eText,
+        eMedia,
+
+        // Misc
+        eBinding,
+        eMeta,
+    };
+
+    struct SPLITGUI_EXPORT InterfaceElement {
+        std::vector<InterfaceElement*> children;
+        InterfaceElementType type;
         std::string name;
-        std::vector<InterfaceData*> children;
-        std::unordered_map<std::string, std::string> props;
     };
 
     class SPLITGUI_EXPORT Interface {
@@ -27,13 +50,13 @@ namespace SplitGui {
 
             void parseXml(std::string& data);
 
-            void setInterfaceData(InterfaceData& data);
-            InterfaceData* getInterfaceData();
+            void setInterfaceElement(InterfaceElement& data);
+            InterfaceElement* getInterfaceElement();
 
         private:
-            InterfaceData* interfaceData = nullptr;
+            InterfaceElement* interfaceElement = nullptr;
 
-            void cleanupInterfaceData(InterfaceData* element);
+            void cleanupInterfaceElement(InterfaceElement* element);
     };
 }
 #endif

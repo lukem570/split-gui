@@ -83,7 +83,10 @@ def test():
                 lines = result.stdout.splitlines()
                 
                 for line in lines:
-                    if line[0] != '0' and line[1] != ':':
+                    if len(line) > 2:
+                        if line[0] != '0' and line[1] != ':':
+                            logging.debug(line)
+                    else:
                         logging.debug(line)
                 
             print(f'PASS: {test_path}')
@@ -97,7 +100,10 @@ def test():
                 lines = e.stdout.splitlines()
                 
                 for line in lines:
-                    if line[0] != '0' and line[1] != ':':
+                    if len(line) > 2:
+                        if line[0] != '0' and line[1] != ':':
+                            logging.debug(line)
+                    else:
                         logging.debug(line)
                     
             if e.stderr:
