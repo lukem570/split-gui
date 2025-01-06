@@ -56,6 +56,8 @@ namespace SplitGui {
         return windowLib->getWindowData();
     }
 
+    // TODO: move to windowlib
+
     bool Window::shouldClose() {
         return windowLib->getWindowData()->handle->shouldClose();
     }
@@ -68,4 +70,12 @@ namespace SplitGui {
     IVec2 Window::getSize() {
         return windowLib->getSize();
     }
+
+#ifdef SPLIT_GUI_USE_VULKAN
+
+    vk::SurfaceKHR Window::createSurface(vk::Instance instance) {
+        return windowLib->createSurface(instance);
+    }
+
+#endif
 }

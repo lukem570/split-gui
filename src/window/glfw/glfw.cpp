@@ -1,5 +1,6 @@
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
+#include <splitgui/lib.h>
 #include <tuple>
 
 namespace SplitGui {
@@ -32,21 +33,103 @@ namespace SplitGui {
                 glfw::makeContextCurrent(*window.handle);
 
                 window.handle->swapBuffers();
-
-
             }
             
             RawWindow* getWindowData() override {
                 return &window;
             }
 
-            IVec2 getSize() {
+            IVec2 getSize() override {
                 IVec2 size;
                 std::tuple<int, int> sizeTuple = window.handle->getSize();
                 size.x = std::get<0>(sizeTuple);
                 size.y = std::get<1>(sizeTuple);
                 return size;
             }
+
+#ifdef SPLIT_GUI_USE_VULKAN
+            
+            vk::SurfaceKHR createSurface(vk::Instance instance) override {
+                #if defined(__linux__) 
+
+                    #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+                        vk::WaylandSurfaceCreateInfoKHR createInfo;
+                        createInfo.display = glfwGetWaylandDisplay();
+                        createInfo.surface = glfwGetWaylandWindow(window);
+
+                        if (createInfo.display == nullptr || createInfo.surface == nullptr) {
+                            printf("Error getting window handles for Wayland\n");
+                            throw;
+                        }
+
+                        vk::ResultValue<vk::SurfaceKHR> result = instance.createWaylandSurfaceKHR(createInfo);
+
+                        if (result.result != vk::Result::eSuccess) {
+                            printf("Error creating wayland surface\n");
+                            throw;
+                        }
+
+                        return result.value;
+                    #elif defined(VK_USE_PLATFORM_XCB_KHR)
+                        vk::XcbSurfaceCreateInfoKHR createInfo;
+                        createInfo.connection = glfwGetX11Display();
+                        createInfo.window     = glfwGetX11Window(window);
+
+                        if (createInfo.connection == nullptr || createInfo.window == 0) {
+                            printf("Error getting window handles for XCB\n");
+                            throw;
+                        }
+
+                        vk::ResultValue<vk::SurfaceKHR> result = instance.createXcbSurfaceKHR(createInfo);
+
+                        if (result.result != vk::Result::eSuccess) {
+                            printf("Error creating xcb surface\n");
+                            throw;
+                        }
+
+                        surface = result.value;
+                    #elif defined(VK_USE_PLATFORM_XLIB_KHR)
+                        vk::XlibSurfaceCreateInfoKHR createInfo;
+                        createInfo.dpy    = glfwGetX11Display();
+                        createInfo.window = glfwGetX11Window(*window.handle);
+
+                        if (createInfo.dpy == None || createInfo.window == None) {
+                            printf("Error getting window handles for\n");
+                            throw;
+                        }
+                        
+                        vk::ResultValue<vk::SurfaceKHR> result = instance.createXlibSurfaceKHR(createInfo);
+
+                        if (result.result != vk::Result::eSuccess) {
+                            printf("Error creating xlib surface\n");
+                            throw;
+                        }
+
+                        return result.value;
+                    #endif
+
+                #elif defined(_WIN32)
+                    vk::Win32SurfaceCreateInfoKHR createInfo;
+                    createInfo.hinstance = GetModuleHandle(nullptr);
+                    createInfo.hwnd      = glfwGetWin32Window(window);
+
+                    if (createInfo.hwnd == nullptr) {
+                        printf("Error getting window handle for win32\n");
+                        throw;
+                    }
+
+                    vk::ResultValue<vk::SurfaceKHR> result = instance.createWin32SurfaceKHR(createInfo);
+
+                    if (result.result != vk::Result::eSuccess) {
+                        printf("Error creating Win32 surface\n");
+                        throw;
+                    }
+
+                    return result.value;       
+                #endif
+            }
+
+#endif 
 
         private:
             RawWindow window;

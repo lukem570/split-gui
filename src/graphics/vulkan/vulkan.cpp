@@ -573,25 +573,8 @@ namespace SplitGui {
 
 #pragma region Surface
 
-            void createSurface(SplitGui::Window& window) { // TODO: make cross platform
-
-                vk::XlibSurfaceCreateInfoKHR createInfo;
-                createInfo.dpy    = glfwGetX11Display();
-                createInfo.window = glfwGetX11Window(*window.getWindowData()->handle);
-
-                if (createInfo.dpy == None || createInfo.window == None) {
-                    printf("Error getting window handles\n");
-                    throw;
-                }
-                
-                vk::ResultValue<vk::SurfaceKHR> result = vk_instance.createXlibSurfaceKHR(createInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error creating surface\n");
-                    throw;
-                }
-
-                vk_surface = result.value;
+            void createSurface(SplitGui::Window& window) {
+                vk_surface = window.createSurface(vk_instance);
             }
 
 #pragma region Swapchain

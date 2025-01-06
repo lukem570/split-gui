@@ -26,13 +26,13 @@ namespace SplitGui {
     struct SPLITGUI_EXPORT RawWindow {
         FormatType type;
 
-        #ifdef SPLIT_GUI_USE_GLFW
+#ifdef SPLIT_GUI_USE_GLFW
         
         glfw::Window* handle = nullptr;
 
-        #else
-            #error "not implemented"
-        #endif
+#else
+    #error "not implemented"
+#endif
     };
 
     class SPLITGUI_EXPORT WindowLibInterface {
@@ -40,11 +40,15 @@ namespace SplitGui {
             WindowLibInterface() {}
             ~WindowLibInterface() {}
 
-            virtual void       createWindow(const char* title) { throw; }
-            virtual RawWindow* getWindowData()                 { throw; }
-            virtual IVec2      getSize()                       { throw; }
+            virtual void           createWindow(const char* title)   { throw; }
+            virtual RawWindow*     getWindowData()                   { throw; }
+            virtual IVec2          getSize()                         { throw; }
 
+#ifdef SPLIT_GUI_USE_VULKAN
+            
+            virtual vk::SurfaceKHR createSurface(vk::Instance instance) { throw; }
 
+#endif 
         private:
             RawWindow window;
 
@@ -69,6 +73,12 @@ namespace SplitGui {
             void       update();
             IVec2      getSize();
             RawWindow* getWindowData();
+
+#ifdef SPLIT_GUI_USE_VULKAN
+            
+            vk::SurfaceKHR createSurface(vk::Instance instance);
+
+#endif 
 
         private:
             Interface*          interface = nullptr;
