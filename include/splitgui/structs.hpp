@@ -52,6 +52,7 @@ namespace SplitGui {
     struct Vertex {
         Vec2 pos;
         Vec3 color;
+        u_int32_t sceneNumber;
     };
 }
 

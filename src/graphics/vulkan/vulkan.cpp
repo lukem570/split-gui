@@ -106,7 +106,7 @@ namespace SplitGui {
                 vk::ResultValue<uint32_t> result = vk_device.acquireNextImageKHR(vk_swapchain, UINT64_MAX, vk_imageAvailableSemaphores[currentFrame], nullptr);
 
                 if (result.result != vk::Result::eSuccess) {
-                    if (result.result == vk::Result::eErrorOutOfDateKHR) {
+                    if (result.result == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
                         recreateSwapchain();
                         return;
                     }
@@ -199,8 +199,9 @@ namespace SplitGui {
 
                 for (int i = 0; i < quadVerts.size(); i++) {
                     Vertex vert;
-                    vert.pos = quadVerts[i];
-                    vert.color = color;
+                    vert.pos         = quadVerts[i];
+                    vert.color       = color;
+                    vert.sceneNumber = 0;
 
                     vertices.push_back(vert);
                 }
@@ -330,9 +331,9 @@ namespace SplitGui {
             unsigned int                    currentFrame = 0;
             uint32_t                        imageIndex = -1;
             std::vector<Vertex>             vertices= {
-                {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-                {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-                {{ 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}},
+                {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0}},
+                {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0}},
+                {{ 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0}},
             };
             std::vector<uint16_t>           indices = {
                 0, 1, 2,
@@ -828,7 +829,7 @@ namespace SplitGui {
                 bindingDescription.stride    = sizeof(Vertex);
                 bindingDescription.inputRate = vk::VertexInputRate::eVertex;
                 
-                std::array<vk::VertexInputAttributeDescription, 2> attributeDescriptions;
+                std::array<vk::VertexInputAttributeDescription, 3> attributeDescriptions;
                 attributeDescriptions[0].binding  = 0;
                 attributeDescriptions[0].location = 0;
                 attributeDescriptions[0].format   = vk::Format::eR32G32Sfloat;
@@ -838,6 +839,11 @@ namespace SplitGui {
                 attributeDescriptions[1].location = 1;
                 attributeDescriptions[1].format   = vk::Format::eR32G32B32Sfloat;
                 attributeDescriptions[1].offset   = offsetof(Vertex, Vertex::color);
+
+                attributeDescriptions[2].binding  = 0;
+                attributeDescriptions[2].location = 2;
+                attributeDescriptions[2].format   = vk::Format::eR32Sint;
+                attributeDescriptions[2].offset   = offsetof(Vertex, Vertex::sceneNumber);
 
                 vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
                 vertexInputInfo.vertexBindingDescriptionCount   = 1;
