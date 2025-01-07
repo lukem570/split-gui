@@ -12,12 +12,11 @@ int main() {
     graphics.submitWindow(window);
 
     graphics.drawRect(
-        {
-            SplitGui::Vec2{-1.0f,  1.0f}, 
-            SplitGui::Vec2{ 1.0f,  1.0f}, 
-            SplitGui::Vec2{ 1.0f, -1.0f}, 
-            SplitGui::Vec2{-1.0f, -1.0f}
-        }, 
+        
+            
+        SplitGui::Vec2{ 1.0f,  1.0f}, 
+        SplitGui::Vec2{-1.0f, -1.0f},
+        
         {0.211764f, 0.270588f, 0.309803f}
     );
 

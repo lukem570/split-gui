@@ -31,7 +31,7 @@ namespace SplitGui {
         pInterface->drawFrame();
     }
 
-    void Graphics::drawRect(std::array<Vec2, 4> vertices, Vec3 color) {
-        pInterface->drawRect(vertices, color);
+    void Graphics::drawRect(Vec2 x1, Vec2 x2, Vec3 color) {
+        pInterface->drawRect(x1, x2, color);
     }
 }

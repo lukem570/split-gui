@@ -186,7 +186,7 @@ namespace SplitGui {
     
 #pragma region Draw rect
 
-            void drawRect(std::array<Vec2, 4> quadVerts, Vec3 color) override {
+            void drawRect(Vec2 x1, Vec2 x2, Vec3 color) override {
 
                 int verticesOffset = vertices.size();
 
@@ -197,14 +197,28 @@ namespace SplitGui {
                 indices.push_back(verticesOffset + 2);
                 indices.push_back(verticesOffset + 0);
 
-                for (int i = 0; i < quadVerts.size(); i++) {
-                    Vertex vert;
-                    vert.pos         = quadVerts[i];
-                    vert.color       = color;
-                    vert.sceneNumber = 0;
+                
+                Vertex vertOne;
+                vertOne.pos   = x1;
+                vertOne.color = color;
 
-                    vertices.push_back(vert);
-                }
+                Vertex vertTwo;
+                vertTwo.pos   = {x1.x, x2.y};
+                vertTwo.color = color;
+
+                Vertex vertThree;
+                vertThree.pos   = {x2.x, x1.y};
+                vertThree.color = color;
+
+                Vertex vertFour;
+                vertFour.pos   = x2;
+                vertFour.color = color;
+
+                vertices.push_back(vertOne);
+                vertices.push_back(vertTwo);
+                vertices.push_back(vertThree);
+                vertices.push_back(vertFour);
+                
 
                 // this could be merged with 'createVertexBuffer' and 'createIndexBuffer' but I am too lazy to care
 
@@ -331,9 +345,9 @@ namespace SplitGui {
             unsigned int                    currentFrame = 0;
             uint32_t                        imageIndex = -1;
             std::vector<Vertex>             vertices= {
-                {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0}},
-                {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0}},
-                {{ 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0}},
+                {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+                {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+                {{ 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}},
             };
             std::vector<uint16_t>           indices = {
                 0, 1, 2,
@@ -829,7 +843,7 @@ namespace SplitGui {
                 bindingDescription.stride    = sizeof(Vertex);
                 bindingDescription.inputRate = vk::VertexInputRate::eVertex;
                 
-                std::array<vk::VertexInputAttributeDescription, 3> attributeDescriptions;
+                std::array<vk::VertexInputAttributeDescription, 2> attributeDescriptions;
                 attributeDescriptions[0].binding  = 0;
                 attributeDescriptions[0].location = 0;
                 attributeDescriptions[0].format   = vk::Format::eR32G32Sfloat;
@@ -839,11 +853,6 @@ namespace SplitGui {
                 attributeDescriptions[1].location = 1;
                 attributeDescriptions[1].format   = vk::Format::eR32G32B32Sfloat;
                 attributeDescriptions[1].offset   = offsetof(Vertex, Vertex::color);
-
-                attributeDescriptions[2].binding  = 0;
-                attributeDescriptions[2].location = 2;
-                attributeDescriptions[2].format   = vk::Format::eR32Sint;
-                attributeDescriptions[2].offset   = offsetof(Vertex, Vertex::sceneNumber);
 
                 vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
                 vertexInputInfo.vertexBindingDescriptionCount   = 1;

@@ -20,10 +20,11 @@ namespace SplitGui {
             GraphicsLibInterface() {}
             ~GraphicsLibInterface() {}
 
-            virtual void instance() { throw; }
-            virtual void submitWindow(Window& window) { throw; }
-            virtual void drawFrame() { throw; }
-            virtual void drawRect(std::array<Vec2, 4> vertices, Vec3 color) { throw; }
+            virtual void instance()                                         { throw; }
+            virtual void submitWindow(Window& window)                       { throw; }
+            virtual void drawFrame()                                        { throw; }
+            virtual void drawRect(Vec2 x1, Vec2 x2, Vec3 color)             { throw; }
+            virtual void submitBuffers()                                    { throw; }
 
         protected:
             SplitGui::Window* pWindow;
@@ -40,7 +41,7 @@ namespace SplitGui {
             void instanceVulkan(bool validation);
             void submitWindow(Window& window);
             void drawFrame();
-            void drawRect(std::array<Vec2, 4> vertices, Vec3 color);
+            void drawRect(Vec2 x1, Vec2 x2, Vec3 color);
 
         private:
             GraphicsMode mode = GraphicsMode::eNull;

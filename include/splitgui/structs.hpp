@@ -4,6 +4,7 @@
 #include "lib.h"
 
 #include <array>
+#include <vector>
 
 namespace SplitGui {
     struct Vec4 {
@@ -49,10 +50,14 @@ namespace SplitGui {
         int y;
     };
 
+    struct Mask { // RGBA mask 
+        IVec2 size;
+        std::vector<std::vector<Vec4>> pixels;
+    };
+
     struct Vertex {
         Vec2 pos;
         Vec3 color;
-        u_int32_t sceneNumber;
     };
 }
 
