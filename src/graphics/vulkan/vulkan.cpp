@@ -815,9 +815,11 @@ namespace SplitGui {
             void createGraphicsPipeline() {
 
                 const std::vector<char> vertexShaderFile   = readFile("../shaders/vertex.spv");
+                const std::vector<char> geometryShaderFile = readFile("../shaders/geometry.spv");
                 const std::vector<char> fragmentShaderFile = readFile("../shaders/fragment.spv");
 
                 vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile);
+                vk::ShaderModule geometryShader = createShaderModule(geometryShaderFile);
                 vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile);
 
                 vk::PipelineShaderStageCreateInfo vertexCreateInfo;
@@ -825,12 +827,17 @@ namespace SplitGui {
                 vertexCreateInfo.module = vertexShader;
                 vertexCreateInfo.pName  = "main";
 
+                vk::PipelineShaderStageCreateInfo geometryCreateInfo;
+                geometryCreateInfo.stage  = vk::ShaderStageFlagBits::eGeometry;
+                geometryCreateInfo.module = geometryShader;
+                geometryCreateInfo.pName  = "main";
+
                 vk::PipelineShaderStageCreateInfo fragmentCreateInfo;
                 fragmentCreateInfo.stage  = vk::ShaderStageFlagBits::eFragment;
                 fragmentCreateInfo.module = fragmentShader;
                 fragmentCreateInfo.pName  = "main";
 
-                std::array<vk::PipelineShaderStageCreateInfo, 2> shaderStages = {vertexCreateInfo, fragmentCreateInfo};
+                std::array<vk::PipelineShaderStageCreateInfo, 3> shaderStages = {vertexCreateInfo, geometryCreateInfo, fragmentCreateInfo};
 
                 std::vector<vk::DynamicState> dynamicStates = {vk::DynamicState::eViewport, vk::DynamicState::eScissor};
 
@@ -917,6 +924,7 @@ namespace SplitGui {
                 } 
 
                 vk_device.destroyShaderModule(fragmentShader);
+                vk_device.destroyShaderModule(geometryShader);
                 vk_device.destroyShaderModule(vertexShader);
 
                 vk_graphicsPipeline = result.value;

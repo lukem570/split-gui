@@ -5,8 +5,35 @@
 
 #include <array>
 #include <vector>
+#include <string>
 
 namespace SplitGui {
+
+    enum class UnitType {
+        ePixels,
+        ePercent,
+    };
+
+    enum class UnitOperationType {
+        eAdd,
+        eSub,
+        eMul,
+        eDiv,
+        eSame,
+    };
+
+    enum class VerticalAnchor {
+        eTop,
+        eCenter,
+        eBottom,
+    };
+
+    enum class HorizontalAnchor {
+        eLeft,
+        eCenter,
+        eRight,
+    };
+
     struct Vec4 {
         float x;
         float y;
@@ -50,14 +77,19 @@ namespace SplitGui {
         int y;
     };
 
-    struct Mask { // RGBA mask 
-        IVec2 size;
-        std::vector<std::vector<Vec4>> pixels;
-    };
-
     struct Vertex {
         Vec2 pos;
         Vec3 color;
+    };
+
+    struct Unit {
+        UnitType type;
+        std::string value;
+    };
+
+    struct UnitOperation {
+        std::array<Unit, 2> operands;
+        UnitOperationType type;
     };
 }
 

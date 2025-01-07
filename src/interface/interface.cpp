@@ -9,9 +9,7 @@ namespace SplitGui {
     };
     
     Interface::~Interface() {
-        if(Interface::interfaceElement) {
-            cleanupInterfaceElement(Interface::interfaceElement);
-        }
+
     }
 
     void Interface::parseXml(std::string& data) {
@@ -32,10 +30,7 @@ namespace SplitGui {
         Interface::interfaceElement = &data;
     }
 
-    void Interface::cleanupInterfaceElement(InterfaceElement* element) {
-        for (int i = 0; i < element->children.size(); i++) {
-            cleanupInterfaceElement(element->children[i]);
-            delete element->children[i];
-        }
+    void InterfaceElement::instance() {
+        
     }
 }
