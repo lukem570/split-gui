@@ -70,11 +70,31 @@ namespace SplitGui {
         int y;
     };
 
-    struct Rect {
-        int width;
-        int height;
-        int x;
-        int y;
+    struct HexColor {
+        HexColor(int hex) {
+            r = (hex >> (UINT8_WIDTH * 3)) & UINT8_MAX;
+            g = (hex >> (UINT8_WIDTH * 2)) & UINT8_MAX;
+            b = (hex >> (UINT8_WIDTH * 1)) & UINT8_MAX;
+        }
+
+        Vec3 normalize() {
+            return {
+                (float) r / UINT8_MAX, 
+                (float) g / UINT8_MAX, 
+                (float) b / UINT8_MAX
+            };
+        }
+
+        uint8_t b;
+        uint8_t g; 
+        uint8_t r;
+    };
+
+    struct RectObj {
+        int width  = 0;
+        int height = 0;
+        int x      = 0;
+        int y      = 0;
     };
 
     struct Vertex {

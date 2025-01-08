@@ -44,14 +44,6 @@ namespace SplitGui {
         windowLib->createWindow(title);
     }
 
-    void Window::attachInterface(Interface& ui) {
-        Window::interface = &ui;
-    }
-
-    void Window::updateInterface() {
-
-    }
-
     RawWindow* Window::getWindowData() {
         return windowLib->getWindowData();
     }

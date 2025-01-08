@@ -66,9 +66,7 @@ namespace SplitGui {
 
             void       instanceGlfw();
             void       createWindow(const char* title);
-            void       attachInterface(Interface& interface);
             void       setCallback(CallbackType type, Callback callback);
-            void       updateInterface();
             bool       shouldClose();
             void       update();
             IVec2      getSize();
@@ -81,7 +79,6 @@ namespace SplitGui {
 #endif 
 
         private:
-            Interface*          interface = nullptr;
             Graphics*           graphics  = nullptr;
             WindowLibInterface* windowLib = nullptr;
             

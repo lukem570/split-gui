@@ -4,6 +4,7 @@
 #include "lib.h"
 
 #include <splitgui/structs.hpp>
+#include <splitgui/graphics.hpp>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -41,54 +42,60 @@ namespace SplitGui {
         public:
             virtual void instance();
 
+            void addChild(InterfaceElement* pChild);
+            void setSize(IVec2 size);
+            void setPosition(IVec2 position);
+            void setExtent(RectObj extent);
+            void setGraphics(Graphics* pgGraphics);
+
         protected:
-            InterfaceElementType           type     = InterfaceElementType::eRoot;
-            std::string                    name     = "root";
+            InterfaceElementType           type        = InterfaceElementType::eRoot;
+            std::string                    name        = "root";
+            const static unsigned int      maxChildren = -1;
             std::vector<InterfaceElement*> children;
-            Vec2                           size;
+            RectObj                        extent;
+
+            Graphics*                      pGraphics   = nullptr;
     };
 
     namespace Default {
 
-        class SPLITGUI_EXPORT Split : InterfaceElement {
+        class SPLITGUI_EXPORT Split : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eSplit;
-                std::string                    name     = "split";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eSplit;
+                std::string                    name        = "split";
+                const static unsigned int      maxChildren = 2;
 
             private: // props
-                UnitOperation position;
-                bool          isVertical;
+                float                          position    = 0.5f; // TODO: get unit operations working
+                bool                           isVertical  = false;
         };
 
-        class SPLITGUI_EXPORT List : InterfaceElement {
+        class SPLITGUI_EXPORT List : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eList;
-                std::string                    name     = "list";
-                std::vector<InterfaceElement*> children;
-                std::array<UnitOperation, 2>   size;
+                InterfaceElementType           type        = InterfaceElementType::eList;
+                std::string                    name        = "list";
+                const static unsigned int      maxChildren = -1;
 
             private: // props
                 UnitOperation itemWidth;
                 bool          isVertical;
         };
 
-        class SPLITGUI_EXPORT Box : InterfaceElement {
+        class SPLITGUI_EXPORT Box : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eBox;
-                std::string                    name     = "box";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eBox;
+                std::string                    name        = "box";
+                const static unsigned int      maxChildren = 1;
 
             private: // props
                 std::array<UnitOperation, 2> sizeOverride;
@@ -96,43 +103,40 @@ namespace SplitGui {
                 HorizontalAnchor             horizontalAnchor;
         };
 
-        class SPLITGUI_EXPORT Overlay : InterfaceElement {
+        class SPLITGUI_EXPORT Overlay : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eOverlay;
-                std::string                    name     = "overlay";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eOverlay;
+                std::string                    name        = "overlay";
+                const static unsigned int      maxChildren = -1;
 
             private: // props
                 std::vector<unsigned int>      order;
         };
 
-        class SPLITGUI_EXPORT Mask : InterfaceElement {
+        class SPLITGUI_EXPORT Mask : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eMask;
-                std::string                    name     = "mask";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eMask;
+                std::string                    name        = "mask";
+                const static unsigned int      maxChildren = 1;
 
             private: // props
                 std::vector<std::vector<Vec4>> pixels;
         };
 
-        class SPLITGUI_EXPORT Transform : InterfaceElement {
+        class SPLITGUI_EXPORT Transform : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eTransform;
-                std::string                    name     = "transform";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eTransform;
+                std::string                    name        = "transform";
+                const static unsigned int      maxChildren = 1;    
 
             private: // props
                 Vec2                           scale;
@@ -140,86 +144,81 @@ namespace SplitGui {
                 Vec2                           rotation;
         };
 
-        class SPLITGUI_EXPORT Rect : InterfaceElement {
+        class SPLITGUI_EXPORT Rect : public InterfaceElement {
             public:
                 void instance() override;
+                void setColor(HexColor color);
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eRect;
-                std::string                    name     = "rect";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eRect;
+                std::string                    name        = "rect";
+                const static unsigned int      maxChildren = 0;
 
             private: // props
-                IVec3                          color; //255rgb
+                HexColor                       color = 0;
         };
 
-        class SPLITGUI_EXPORT Scene : InterfaceElement {
+        class SPLITGUI_EXPORT Scene : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eScene;
-                std::string                    name     = "scene";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eScene;
+                std::string                    name        = "scene";
+                const static unsigned int      maxChildren = 0; // TODO:
 
             private: // props
                 // TODO:
         };
 
-        class SPLITGUI_EXPORT Text : InterfaceElement {
+        class SPLITGUI_EXPORT Text : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eText;
-                std::string                    name     = "text";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eText;
+                std::string                    name        = "text";
+                const static unsigned int      maxChildren = 1;
 
             private: // props
                 unsigned int                   fontSize;
                 std::string                    font;
         };
 
-        class SPLITGUI_EXPORT Media : InterfaceElement {
+        class SPLITGUI_EXPORT Media : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eMedia;
-                std::string                    name     = "media";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eMedia;
+                std::string                    name        = "media";
+                const static unsigned int      maxChildren = 0;
 
             private: // props
                 // TODO:
         };
 
-        class SPLITGUI_EXPORT Binding : InterfaceElement {
+        class SPLITGUI_EXPORT Binding : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eBinding;
-                std::string                    name     = "binding";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eBinding;
+                std::string                    name        = "binding";
+                const static unsigned int      maxChildren = 0;
 
             private: // props
                 // TODO:
         };
 
-        class SPLITGUI_EXPORT Meta : InterfaceElement {
+        class SPLITGUI_EXPORT Meta : public InterfaceElement {
             public:
                 void instance() override;
 
             protected:
-                InterfaceElementType           type     = InterfaceElementType::eMeta;
-                std::string                    name     = "meta";
-                std::vector<InterfaceElement*> children;
-                Vec2                           size;
+                InterfaceElementType           type        = InterfaceElementType::eMeta;
+                std::string                    name        = "meta";
+                const static unsigned int      maxChildren = 0;
 
             private: // props
                 // TODO:
@@ -234,13 +233,13 @@ namespace SplitGui {
             Interface();
             ~Interface();
 
-            void parseXml(std::string& data);
-
-            void setInterfaceElement(InterfaceElement& data);
+            void              parseXml(std::string& data);
+            void              setInterfaceElement(InterfaceElement& data);
             InterfaceElement* getInterfaceElement();
 
         private:
             InterfaceElement* interfaceElement = nullptr;
+            
     };
 }
 #endif

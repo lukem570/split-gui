@@ -24,6 +24,7 @@ namespace SplitGui {
     }
 
     void Graphics::submitWindow(Window& window) {
+        pWindow = &window;
         pInterface->submitWindow(window);
     }
 
@@ -31,8 +32,23 @@ namespace SplitGui {
         pInterface->drawFrame();
     }
 
-    void Graphics::drawRect(Vec2 x1, Vec2 x2, Vec3 color) {
-        pInterface->drawRect(x1, x2, color);
+    void Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color) {
+
+        IVec2 windowSize = pWindow->getSize();
+
+        Vec2 newX1;
+        newX1.x = x1.x / windowSize.x * 2 - 1.0f;
+        newX1.y = x1.y / windowSize.y * 2 - 1.0f;
+
+        Vec2 newX2;
+        newX2.x = x2.x / windowSize.x * 2 - 1.0f;
+        newX2.y = x2.y / windowSize.y * 2 - 1.0f;
+
+        pInterface->drawRect(newX1, newX2, color.normalize());
+    }
+
+    void Graphics::submitBuffers() {
+        pInterface->submitBuffers();
     }
 
     void Graphics::instanceScene(Vec2 x1, Vec2 x2) {

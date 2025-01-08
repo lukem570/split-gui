@@ -4,6 +4,7 @@
 #include <splitgui/structs.hpp>
 #include <vector>
 #include <tuple>
+#include <cmath>
 #include <bits/stdc++.h>
 #include <string>
 #include <array>
@@ -47,7 +48,7 @@ namespace SplitGui {
 
                 vk_device.destroyPipeline(vk_graphicsPipeline);
                 vk_device.destroyPipelineLayout(vk_graphicsPipelineLayout);
-                //vk_device.destroyDescriptorSetLayout(vk_descriptorSetLayout);
+                vk_device.destroyDescriptorSetLayout(vk_descriptorSetLayout);
                 vk_device.destroyRenderPass(vk_renderpass);
                 
                 cleanupImageViews();
@@ -75,13 +76,11 @@ namespace SplitGui {
                 createSwapchain();
                 createImageViews();
                 createRenderpass();
-                //createDescriptorSetLayout();
+                createDescriptorSetLayout();
                 createGraphicsPipelineLayout();
                 createGraphicsPipeline();
                 createFramebuffers();
                 createCommandPool();
-                //createVertexBuffer();
-                //createIndexBuffer();
                 createCommandBuffers();
                 createSyncObj();
                 //createDescriptorPool();
@@ -97,6 +96,11 @@ namespace SplitGui {
 #pragma region Draw frame
 
             void drawFrame() override {
+                
+                if (!vk_vertexBuffer) {
+                    return;
+                }
+
                 vk_runtimeResult = vk_device.waitForFences(1, &vk_inFlightFences[currentFrame], vk::True, UINT64_MAX);
 
                 if (vk_runtimeResult != vk::Result::eSuccess) {
@@ -138,7 +142,7 @@ namespace SplitGui {
                 vk_commandBuffers[currentFrame].beginRenderPass(vk_renderpassBeginInfo, vk::SubpassContents::eInline);
 
                 vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, vk_graphicsPipeline);
-                vk_commandBuffers[currentFrame].bindVertexBuffers(0, vk_vertexBuffer != nullptr ? 1 : 0, &vk_vertexBuffer, &vk_vertexBufferOffsets);
+                vk_commandBuffers[currentFrame].bindVertexBuffers(0, 1, &vk_vertexBuffer, &vk_vertexBufferOffsets);
                 vk_commandBuffers[currentFrame].bindIndexBuffer(vk_indexBuffer, 0, vk::IndexType::eUint16);
                 //vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, vk_graphicsPipelineLayout, 0, 1, &vk_descriptorSet, 0, nullptr);
 
@@ -229,12 +233,22 @@ namespace SplitGui {
 #pragma region Instance Scene
 
             void instanceScene(Vec2 x1, Vec2 x2) { // need to make the scenes have a description for uploading meshes
+                RectObj scene;
+                scene.width  = std::abs(x1.x - x2.x);
+                scene.height = std::abs(x1.y - x2.y);
+                scene.x      = std::min(x1.x,  x2.x);
+                scene.y      = std::min(x1.y,  x2.y);
 
+                scenes.push_back(scene);
             }
 
 #pragma region Submit buffers
 
             void submitBuffers() {
+
+                if (indices.size() == knownIndicesSize) {
+                    return;
+                }
 
                 vk::DeviceSize   indexBufferSize;
                 vk::Buffer       stagingIndexBuffer;
@@ -362,7 +376,7 @@ namespace SplitGui {
             std::vector<Vertex>             vertices;
             std::vector<uint16_t>           indices;
             std::vector<Triangle>           triangles;
-            std::vector<Rect>               scenes;
+            std::vector<RectObj>               scenes;
 
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
@@ -768,14 +782,14 @@ namespace SplitGui {
 
             void createDescriptorSetLayout() {
 
-                vk::DescriptorSetLayoutBinding samplerLayoutBinding;
-                samplerLayoutBinding.binding            = 0;
-                samplerLayoutBinding.descriptorType     = vk::DescriptorType::eCombinedImageSampler;
-                samplerLayoutBinding.descriptorCount    = 1;
-                samplerLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
-                samplerLayoutBinding.pImmutableSamplers = nullptr;
+                vk::DescriptorSetLayoutBinding layoutBinding;
+                layoutBinding.binding            = 0;
+                layoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
+                layoutBinding.descriptorCount    = 1;
+                layoutBinding.stageFlags         = vk::ShaderStageFlagBits::eGeometry;
+                layoutBinding.pImmutableSamplers = nullptr;
 
-                std::array<vk::DescriptorSetLayoutBinding, 1> bindings = { samplerLayoutBinding };
+                std::array<vk::DescriptorSetLayoutBinding, 1> bindings = { layoutBinding };
 
                 vk::DescriptorSetLayoutCreateInfo createInfo;
                 createInfo.bindingCount = bindings.size();

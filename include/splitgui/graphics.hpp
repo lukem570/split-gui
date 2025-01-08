@@ -45,14 +45,15 @@ namespace SplitGui {
             void instanceVulkan(bool validation);
             void submitWindow(Window& window);
             void drawFrame();
-            void drawRect(Vec2 x1, Vec2 x2, Vec3 color);
+            void drawRect(IVec2 x1, IVec2 x2, HexColor color);
             void instanceScene(Vec2 x1, Vec2 x2);
             void drawText(Vec2 x1, Vec2 x2, std::string& text);
             void drawMedia(Vec2 x1, Vec2 x2);
             void submitBuffers();
 
         private:
-            GraphicsMode mode = GraphicsMode::eNull;
+            GraphicsMode          mode       = GraphicsMode::eNull;
+            Window*               pWindow    = nullptr;
             GraphicsLibInterface* pInterface;
     };
 }
