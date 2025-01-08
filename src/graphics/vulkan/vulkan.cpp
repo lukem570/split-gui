@@ -4,6 +4,7 @@
 #include <splitgui/structs.hpp>
 #include <vector>
 #include <tuple>
+#include <bits/stdc++.h>
 #include <string>
 #include <array>
 #include <stack>
@@ -79,8 +80,8 @@ namespace SplitGui {
                 createGraphicsPipeline();
                 createFramebuffers();
                 createCommandPool();
-                createVertexBuffer();
-                createIndexBuffer();
+                //createVertexBuffer();
+                //createIndexBuffer();
                 createCommandBuffers();
                 createSyncObj();
                 //createDescriptorPool();
@@ -137,14 +138,14 @@ namespace SplitGui {
                 vk_commandBuffers[currentFrame].beginRenderPass(vk_renderpassBeginInfo, vk::SubpassContents::eInline);
 
                 vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, vk_graphicsPipeline);
-                vk_commandBuffers[currentFrame].bindVertexBuffers(0, 1, &vk_vertexBuffer, &vk_vertexBufferOffsets);
+                vk_commandBuffers[currentFrame].bindVertexBuffers(0, vk_vertexBuffer != nullptr ? 1 : 0, &vk_vertexBuffer, &vk_vertexBufferOffsets);
                 vk_commandBuffers[currentFrame].bindIndexBuffer(vk_indexBuffer, 0, vk::IndexType::eUint16);
                 //vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, vk_graphicsPipelineLayout, 0, 1, &vk_descriptorSet, 0, nullptr);
 
                 vk_commandBuffers[currentFrame].setViewport(0, 1, &vk_viewport);
                 vk_commandBuffers[currentFrame].setScissor(0, 1, &vk_scissor);
 
-                vk_commandBuffers[currentFrame].drawIndexed(indices.size(), 1, 0, 0, 0);
+                vk_commandBuffers[currentFrame].drawIndexed(knownIndicesSize, 1, 0, 0, 0);
 
                 vk_commandBuffers[currentFrame].endRenderPass();
 
@@ -190,37 +191,50 @@ namespace SplitGui {
 
                 int verticesOffset = vertices.size();
 
-                indices.push_back(verticesOffset + 0); //0, 1, 2, 2, 3, 0
-                indices.push_back(verticesOffset + 2);
-                indices.push_back(verticesOffset + 1);
-                indices.push_back(verticesOffset + 3);
                 indices.push_back(verticesOffset + 2);
                 indices.push_back(verticesOffset + 0);
-
+                indices.push_back(verticesOffset + 3);
+                indices.push_back(verticesOffset + 3);
+                indices.push_back(verticesOffset + 0);
+                indices.push_back(verticesOffset + 1);
                 
-                Vertex vertOne;
-                vertOne.pos   = x1;
-                vertOne.color = color;
+                Vertex bottomLeft;
+                bottomLeft.pos   = {std::min(x1.x, x2.x), std::min(x1.y, x2.y)};
+                bottomLeft.color = color;
 
-                Vertex vertTwo;
-                vertTwo.pos   = {x1.x, x2.y};
-                vertTwo.color = color;
+                Vertex bottomRight;
+                bottomRight.pos   = {std::max(x1.x, x2.x), std::min(x1.y, x2.y)};
+                bottomRight.color = color;
 
-                Vertex vertThree;
-                vertThree.pos   = {x2.x, x1.y};
-                vertThree.color = color;
+                Vertex topLeft;
+                topLeft.pos   = {std::min(x1.x, x2.x), std::max(x1.y, x2.y)};
+                topLeft.color = color;
 
-                Vertex vertFour;
-                vertFour.pos   = x2;
-                vertFour.color = color;
+                Vertex topRight;
+                topRight.pos   = {std::max(x1.x, x2.x), std::max(x1.y, x2.y)};
+                topRight.color = color;
 
-                vertices.push_back(vertOne);
-                vertices.push_back(vertTwo);
-                vertices.push_back(vertThree);
-                vertices.push_back(vertFour);
+                vertices.push_back(bottomLeft);
+                vertices.push_back(bottomRight);
+                vertices.push_back(topLeft);
+                vertices.push_back(topRight);
+
+                Triangle triangleData;
+                triangleData.classNumber = 0;
                 
+                triangles.push_back(triangleData);
+                triangles.push_back(triangleData);
+            }
 
-                // this could be merged with 'createVertexBuffer' and 'createIndexBuffer' but I am too lazy to care
+#pragma region Instance Scene
+
+            void instanceScene(Vec2 x1, Vec2 x2) { // need to make the scenes have a description for uploading meshes
+
+            }
+
+#pragma region Submit buffers
+
+            void submitBuffers() {
 
                 vk::DeviceSize   indexBufferSize;
                 vk::Buffer       stagingIndexBuffer;
@@ -238,8 +252,6 @@ namespace SplitGui {
 
                 vk::Buffer       tempVertexBuffer;
                 vk::DeviceMemory tempVertexBufferMemory;
-
-                printf("new: %d, %d\n", vertexBufferSize / sizeof(SplitGui::Vertex), indexBufferSize / sizeof(u_int16_t));
 
                 createBuffer(
                     indexBufferSize, 
@@ -286,6 +298,8 @@ namespace SplitGui {
 
                 vk_device.destroyBuffer(stagingIndexBuffer);
                 vk_device.freeMemory(stagingIndexBufferMemory);
+                
+                knownIndicesSize = indices.size();
             }
 
 #pragma region Variables
@@ -343,15 +357,13 @@ namespace SplitGui {
             vk::PresentInfoKHR              vk_presentInfo;
             vk::Result                      vk_runtimeResult;
             unsigned int                    currentFrame = 0;
+            unsigned int                    knownIndicesSize = 0;
             uint32_t                        imageIndex = -1;
-            std::vector<Vertex>             vertices= {
-                {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-                {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-                {{ 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}},
-            };
-            std::vector<uint16_t>           indices = {
-                0, 1, 2,
-            };
+            std::vector<Vertex>             vertices;
+            std::vector<uint16_t>           indices;
+            std::vector<Triangle>           triangles;
+            std::vector<Rect>               scenes;
+
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
                 for (const auto &name : check_names) {
@@ -1121,64 +1133,6 @@ namespace SplitGui {
                 memcpy(result_memory.value, dataToUpload.data(), out_size);
 
                 vk_device.unmapMemory(out_memory);
-            }
-
-#pragma region Vertex buffer
-
-            void createVertexBuffer() {
-
-                vk::DeviceSize   bufferSize;
-                vk::Buffer       vk_stagingBuffer;
-                vk::DeviceMemory vk_stagingBufferMemory;
-
-                InstanceStagingBuffer(vertices, vk_stagingBuffer, vk_stagingBufferMemory, bufferSize);
-
-                createBuffer(
-                    bufferSize, 
-                    vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer, 
-                    vk::MemoryPropertyFlagBits::eDeviceLocal,
-                    vk_vertexBuffer,
-                    vk_vertexBufferMemory
-                );
-
-                vk::CommandBuffer commandBuffer = startCopyBuffer();
-                vk::BufferCopy copyRegion;
-
-                copyBuffer(vk_stagingBuffer, vk_vertexBuffer, bufferSize, commandBuffer, copyRegion);
-
-                endCopyBuffer(commandBuffer);
-
-                vk_device.destroyBuffer(vk_stagingBuffer);
-                vk_device.freeMemory(vk_stagingBufferMemory);
-            }
-
-#pragma region Index buffer
-
-            void createIndexBuffer() {
-
-                vk::DeviceSize   bufferSize;
-                vk::Buffer       vk_stagingBuffer;
-                vk::DeviceMemory vk_stagingBufferMemory;
-
-                InstanceStagingBuffer(indices, vk_stagingBuffer, vk_stagingBufferMemory, bufferSize);
-
-                createBuffer(
-                    bufferSize, 
-                    vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, 
-                    vk::MemoryPropertyFlagBits::eDeviceLocal,
-                    vk_indexBuffer,
-                    vk_indexBufferMemory
-                );
-
-                vk::CommandBuffer commandBuffer = startCopyBuffer();
-                vk::BufferCopy copyRegion;
-
-                copyBuffer(vk_stagingBuffer, vk_indexBuffer, bufferSize, commandBuffer, copyRegion);
-
-                endCopyBuffer(commandBuffer);
-
-                vk_device.destroyBuffer(vk_stagingBuffer);
-                vk_device.freeMemory(vk_stagingBufferMemory);
             }
 
 #pragma region Command buffer

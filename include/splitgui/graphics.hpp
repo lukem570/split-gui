@@ -25,9 +25,9 @@ namespace SplitGui {
             virtual void drawFrame()                                   { throw; }
             virtual void submitFont(std::string& path)                 { throw; }
             virtual void drawRect(Vec2 x1, Vec2 x2, Vec3 color)        { throw; }
-            virtual void drawScene(Vec2 x1, Vec2 x2)                   { throw; }
+            virtual void instanceScene(Vec2 x1, Vec2 x2)               { throw; }
             virtual void drawText(Vec2 x1, Vec2 x2, std::string& text) { throw; }
-            virtual void drawMedia(Vec2 x1, Vec2 x2)                   { throw; } // TODO:
+            virtual void drawMedia(Vec2 x1, Vec2 x2)                   { throw; }
             virtual void submitBuffers()                               { throw; }
 
         protected:
@@ -46,6 +46,10 @@ namespace SplitGui {
             void submitWindow(Window& window);
             void drawFrame();
             void drawRect(Vec2 x1, Vec2 x2, Vec3 color);
+            void instanceScene(Vec2 x1, Vec2 x2);
+            void drawText(Vec2 x1, Vec2 x2, std::string& text);
+            void drawMedia(Vec2 x1, Vec2 x2);
+            void submitBuffers();
 
         private:
             GraphicsMode mode = GraphicsMode::eNull;

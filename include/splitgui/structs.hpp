@@ -82,6 +82,10 @@ namespace SplitGui {
         Vec3 color;
     };
 
+    struct Triangle {
+        uint32_t classNumber = 0; // 0 = ui / root; >0 = scene number
+    };
+
     struct Unit {
         UnitType type;
         std::string value;
