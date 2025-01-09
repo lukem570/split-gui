@@ -4,13 +4,15 @@
 namespace SplitGui {
     
     void Default::Split::instance() {
-        if (Default::Split::maxChildren != Default::Split::children.size()) {
-            printf("ERROR: '%s' element doesn't have 2 children", Default::Split::name.c_str());
+        if (maxChildren != children.size()) {
+            printf("ERROR: '%s' element doesn't have 2 children\n", name.c_str());
+            fflush(stdout);
             throw;
         }
 
-        if (Default::Split::position > 0 && 1 > Default::Split::position) {
-            printf("ERROR: position must be between 0 and 1");
+        if (position < 0.0f || position > 1.0f) {
+            printf("ERROR: position must be between 0 and 1 it is: %.4f\n", position);
+            fflush(stdout);
             throw;
         }
 
@@ -19,40 +21,46 @@ namespace SplitGui {
 
         int divide;
 
-        if (Default::Split::isVertical) {
-            divide = Default::Split::extent.height * Default::Split::position;
+        if (isVertical) {
+            divide = extent.height * position;
 
-            childExtentOne.x      = Default::Split::extent.x;
-            childExtentOne.y      = Default::Split::extent.y;
-            childExtentOne.width  = Default::Split::extent.width;
+            childExtentOne.x      = extent.x;
+            childExtentOne.y      = extent.y;
+            childExtentOne.width  = extent.width;
             childExtentOne.height = divide;
 
-            childExtentTwo.x      = Default::Split::extent.x;
-            childExtentTwo.y      = Default::Split::extent.y + divide;
-            childExtentTwo.width  = Default::Split::extent.width;
-            childExtentTwo.height = Default::Split::extent.height - divide;
+            childExtentTwo.x      = extent.x;
+            childExtentTwo.y      = extent.y + divide;
+            childExtentTwo.width  = extent.width;
+            childExtentTwo.height = extent.height - divide;
 
         } else {
-            divide = Default::Split::extent.width * Default::Split::position;
+            divide = extent.width * position;
             
-            childExtentOne.x      = Default::Split::extent.x;
-            childExtentOne.y      = Default::Split::extent.y;
+            childExtentOne.x      = extent.x;
+            childExtentOne.y      = extent.y;
             childExtentOne.width  = divide;
-            childExtentOne.height = Default::Split::extent.height;
+            childExtentOne.height = extent.height;
 
-            childExtentTwo.x      = Default::Split::extent.x + divide;
-            childExtentTwo.y      = Default::Split::extent.y;
-            childExtentTwo.width  = Default::Split::extent.width - divide;
-            childExtentTwo.height = Default::Split::extent.height;
+            childExtentTwo.x      = extent.x + divide;
+            childExtentTwo.y      = extent.y;
+            childExtentTwo.width  = extent.width - divide;
+            childExtentTwo.height = extent.height;
         }
         
-        Default::Split::children[0]->setGraphics(Default::Split::pGraphics);
-        Default::Split::children[0]->setExtent(childExtentOne);
-        Default::Split::children[0]->instance();
+        printf("split\n");
 
-        Default::Split::children[1]->setGraphics(Default::Split::pGraphics);
-        Default::Split::children[1]->setExtent(childExtentTwo);
-        Default::Split::children[1]->instance();
+        children[0]->setGraphics(pGraphics);
+        children[0]->setExtent(childExtentOne);
+        children[0]->instance();
+
+        children[1]->setGraphics(pGraphics);
+        children[1]->setExtent(childExtentTwo);
+        children[1]->instance();
+    }
+
+    void Default::Split::setVertical(bool state) {
+        isVertical = state;
     }
 
     void Default::List::instance() {
@@ -83,24 +91,26 @@ namespace SplitGui {
     }
 
     void Default::Rect::instance() {
-        if (Default::Rect::maxChildren != Default::Rect::children.size()) {
-            printf("ERROR: '%s' element doesn't have 2 children", Default::Rect::name.c_str());
+        if (maxChildren != children.size()) {
+            printf("ERROR: '%s' element doesn't have 2 children", name.c_str());
             throw;
         }
 
         IVec2 x1;
-        x1.x = Default::Rect::extent.x;
-        x1.y = Default::Rect::extent.y;
+        x1.x = extent.x;
+        x1.y = extent.y;
 
         IVec2 x2;
-        x2.x = Default::Rect::extent.x + Default::Rect::extent.width;
-        x2.y = Default::Rect::extent.y + Default::Rect::extent.height;
+        x2.x = extent.x + extent.width;
+        x2.y = extent.y + extent.height;
 
-        Default::Rect::pGraphics->drawRect(x1, x2, Default::Rect::color);
+        printf("rect: (%d, %d), (%d, %d), color: (%d, %d, %d)\n", x1.x, x1.y, x2.x, x2.y, color.r, color.g, color.b);
+
+        pGraphics->drawRect(x1, x2, color);
     }
 
-    void Default::Rect::setColor(HexColor color) {
-        Default::Rect::color = color;
+    void Default::Rect::setColor(HexColor colorIn) {
+        color = colorIn;
     }
     
     void Default::Scene::instance() {

@@ -63,6 +63,7 @@ namespace SplitGui {
         class SPLITGUI_EXPORT Split : public InterfaceElement {
             public:
                 void instance() override;
+                void setVertical(bool);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eSplit;

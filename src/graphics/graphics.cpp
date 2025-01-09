@@ -37,12 +37,14 @@ namespace SplitGui {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
-        newX1.x = x1.x / windowSize.x * 2 - 1.0f;
-        newX1.y = x1.y / windowSize.y * 2 - 1.0f;
+        newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
+        newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
 
         Vec2 newX2;
-        newX2.x = x2.x / windowSize.x * 2 - 1.0f;
-        newX2.y = x2.y / windowSize.y * 2 - 1.0f;
+        newX2.x = (float)x2.x / windowSize.x * 2.0 - 1.0f;
+        newX2.y = (float)x2.y / windowSize.y * 2.0 - 1.0f;
+
+        printf("drawrect: (%.6f, %.6f), (%.6f, %.6f), color: (%.6f, %.6f, %.6f)\n", newX1.x, newX1.y, newX2.x, newX2.y, color.normalize().x, color.normalize().y, color.normalize().z);
 
         pInterface->drawRect(newX1, newX2, color.normalize());
     }

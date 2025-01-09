@@ -72,16 +72,16 @@ namespace SplitGui {
 
     struct HexColor {
         HexColor(int hex) {
-            r = (hex >> (UINT8_WIDTH * 3)) & UINT8_MAX;
-            g = (hex >> (UINT8_WIDTH * 2)) & UINT8_MAX;
-            b = (hex >> (UINT8_WIDTH * 1)) & UINT8_MAX;
+            r = (hex >> (UINT8_WIDTH * 2)) & UINT8_MAX;
+            g = (hex >> (UINT8_WIDTH * 1)) & UINT8_MAX;
+            b = (hex >> (UINT8_WIDTH * 0)) & UINT8_MAX;
         }
 
         Vec3 normalize() {
             return {
-                (float) r / UINT8_MAX, 
-                (float) g / UINT8_MAX, 
-                (float) b / UINT8_MAX
+                (float) r / (float) UINT8_MAX, 
+                (float) g / (float) UINT8_MAX, 
+                (float) b / (float) UINT8_MAX
             };
         }
 
