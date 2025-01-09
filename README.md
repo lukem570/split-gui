@@ -39,13 +39,10 @@
 
 * refactor build tools
     * compile volk with modules
-    * refactor project structure 
     * refactor error messages
-    
-* make the interface for the interface
+
 * write documentation
 * fix swapchain recreation
 
 * draw text
 * create >1 3d scene
-* get at least static ui going 
