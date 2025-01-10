@@ -32,6 +32,9 @@ namespace SplitGui {
 
                 glfw::makeContextCurrent(*window.handle);
 
+                window.handle->framebufferSizeEvent.setCallback(resize_callback);
+                
+
                 window.handle->swapBuffers();
             }
             
@@ -45,6 +48,15 @@ namespace SplitGui {
                 size.x = std::get<0>(sizeTuple);
                 size.y = std::get<1>(sizeTuple);
                 return size;
+            }
+
+            bool shouldClose() override {
+                return window.handle->shouldClose();
+            }
+
+            void update() override {
+                window.handle->swapBuffers();
+                glfw::pollEvents();
             }
 
 #ifdef SPLIT_GUI_USE_VULKAN
@@ -105,6 +117,22 @@ namespace SplitGui {
 
         private:
             RawWindow window;
+
+            void submitGraphics(Graphics* pGraphics) override {
+
+                printf("graphics submitted\n");
+
+                window.pGraphics = pGraphics;
+
+                window.handle->setUserPointer(pGraphics);
+            }
+
+            static void resize_callback(glfw::Window& window, int width, int height) {
+                
+                ((Graphics*)window.getUserPointer())->resizeEvent();
+                
+                printf("Window resized to %d x %d\n", width, height);
+            }
 
     };
 }

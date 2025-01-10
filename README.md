@@ -42,7 +42,6 @@
     * refactor error messages
 
 * write documentation
-* fix swapchain recreation
 
 * draw text
 * create >1 3d scene

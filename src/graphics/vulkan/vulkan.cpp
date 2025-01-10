@@ -14,11 +14,6 @@
 // should prolly make this accessible to the user
 #define MAX_FRAMES_IN_FLIGHT 2
 
-std::vector<const char*> instanceExtensions = {
-    VK_KHR_SURFACE_EXTENSION_NAME,  
-    VK_KHR_WM_SURFACE_EXTENSION_NAME,
-};
-
 namespace SplitGui {
     class VulkanInterface : GraphicsLibInterface {
         public:
@@ -306,6 +301,9 @@ namespace SplitGui {
                 knownIndicesSize = indices.size();
             }
 
+            void resizeEvent() override{
+                recreateSwapchain();
+            }
 #pragma region Variables
 
         protected:

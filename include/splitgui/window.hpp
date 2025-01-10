@@ -25,6 +25,7 @@ namespace SplitGui {
 
     struct SPLITGUI_EXPORT RawWindow {
         FormatType type;
+        Graphics*  pGraphics;
 
 #ifdef SPLIT_GUI_USE_GLFW
         
@@ -37,12 +38,17 @@ namespace SplitGui {
 
     class SPLITGUI_EXPORT WindowLibInterface {
         public:
+
+            friend class Graphics;
+
             WindowLibInterface() {}
             ~WindowLibInterface() {}
 
-            virtual void           createWindow(const char* title)   { throw; }
-            virtual RawWindow*     getWindowData()                   { throw; }
-            virtual IVec2          getSize()                         { throw; }
+            virtual void       createWindow(const char* title)   { throw; }
+            virtual RawWindow* getWindowData()                   { throw; }
+            virtual IVec2      getSize()                         { throw; }
+            virtual void       update()                          { throw; }
+            virtual bool       shouldClose()                     { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
@@ -51,6 +57,8 @@ namespace SplitGui {
 #endif 
         private:
             RawWindow window;
+
+            virtual void submitGraphics(Graphics* pGraphics) { throw; }
 
     };
 
@@ -79,7 +87,7 @@ namespace SplitGui {
 #endif 
 
         private:
-            Graphics*           graphics  = nullptr;
+            Graphics*           pGraphics = nullptr;
             WindowLibInterface* windowLib = nullptr;
             
     };

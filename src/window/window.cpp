@@ -51,12 +51,11 @@ namespace SplitGui {
     // TODO: move to windowlib
 
     bool Window::shouldClose() {
-        return windowLib->getWindowData()->handle->shouldClose();
+        return windowLib->shouldClose();
     }
 
     void Window::update() {
-        windowLib->getWindowData()->handle->swapBuffers();
-        glfw::pollEvents();
+        windowLib->update();
     }
 
     IVec2 Window::getSize() {

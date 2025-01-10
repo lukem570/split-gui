@@ -24,6 +24,9 @@ namespace SplitGui {
     }
 
     void Graphics::submitWindow(Window& window) {
+        window.pGraphics = this;
+        window.windowLib->submitGraphics(this);
+
         pWindow = &window;
         pInterface->submitWindow(window);
     }
@@ -55,5 +58,9 @@ namespace SplitGui {
 
     void Graphics::instanceScene(Vec2 x1, Vec2 x2) {
         pInterface->instanceScene(x1, x2);
+    }
+
+    void Graphics::resizeEvent() {
+        pInterface->resizeEvent();
     }
 }

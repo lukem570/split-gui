@@ -29,6 +29,7 @@ namespace SplitGui {
             virtual void drawText(Vec2 x1, Vec2 x2, std::string& text) { throw; }
             virtual void drawMedia(Vec2 x1, Vec2 x2)                   { throw; }
             virtual void submitBuffers()                               { throw; }
+            virtual void resizeEvent()                                 { throw; }
 
         protected:
             SplitGui::Window* pWindow;
@@ -50,6 +51,8 @@ namespace SplitGui {
             void drawText(Vec2 x1, Vec2 x2, std::string& text);
             void drawMedia(Vec2 x1, Vec2 x2);
             void submitBuffers();
+            void resizeEvent();
+
 
         private:
             GraphicsMode          mode       = GraphicsMode::eNull;
