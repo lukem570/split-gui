@@ -62,14 +62,7 @@ namespace SplitGui {
                             throw;
                         }
 
-                        vk::ResultValue<vk::SurfaceKHR> result = instance.createWaylandSurfaceKHR(createInfo);
-
-                        if (result.result != vk::Result::eSuccess) {
-                            printf("Error creating wayland surface\n");
-                            throw;
-                        }
-
-                        return result.value;
+                        return instance.createWaylandSurfaceKHR(createInfo);
                     #elif defined(VK_USE_PLATFORM_XCB_KHR)
                         vk::XcbSurfaceCreateInfoKHR createInfo;
                         createInfo.connection = glfwGetX11Display();
@@ -80,32 +73,18 @@ namespace SplitGui {
                             throw;
                         }
 
-                        vk::ResultValue<vk::SurfaceKHR> result = instance.createXcbSurfaceKHR(createInfo);
-
-                        if (result.result != vk::Result::eSuccess) {
-                            printf("Error creating xcb surface\n");
-                            throw;
-                        }
-
-                        surface = result.value;
+                        return instance.createXcbSurfaceKHR(createInfo);
                     #elif defined(VK_USE_PLATFORM_XLIB_KHR)
                         vk::XlibSurfaceCreateInfoKHR createInfo;
                         createInfo.dpy    = glfwGetX11Display();
                         createInfo.window = glfwGetX11Window(*window.handle);
 
                         if (createInfo.dpy == None || createInfo.window == None) {
-                            printf("Error getting window handles for\n");
+                            printf("Error getting window handles for xlib\n");
                             throw;
                         }
                         
-                        vk::ResultValue<vk::SurfaceKHR> result = instance.createXlibSurfaceKHR(createInfo);
-
-                        if (result.result != vk::Result::eSuccess) {
-                            printf("Error creating xlib surface\n");
-                            throw;
-                        }
-
-                        return result.value;
+                        return instance.createXlibSurfaceKHR(createInfo);
                     #endif
 
                 #elif defined(_WIN32)
@@ -118,14 +97,7 @@ namespace SplitGui {
                         throw;
                     }
 
-                    vk::ResultValue<vk::SurfaceKHR> result = instance.createWin32SurfaceKHR(createInfo);
-
-                    if (result.result != vk::Result::eSuccess) {
-                        printf("Error creating Win32 surface\n");
-                        throw;
-                    }
-
-                    return result.value;       
+                    return instance.createWin32SurfaceKHR(createInfo);     
                 #endif
             }
 

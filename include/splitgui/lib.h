@@ -88,7 +88,6 @@
     // Vulkan settings 
 
     #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-    #define VULKAN_HPP_NO_EXCEPTIONS
     #define VULKAN_HPP_TYPESAFE_CONVERSION 1
     #define VK_NO_PROTOTYPES
 

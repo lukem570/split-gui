@@ -130,12 +130,7 @@ namespace SplitGui {
                 imageIndex = result.value;
 
                 vk_commandBuffers[currentFrame].reset();
-                vk_runtimeResult = vk_commandBuffers[currentFrame].begin(vk_beginInfo);
-
-                if (vk_runtimeResult != vk::Result::eSuccess) {
-                    printf("Error beginning command buffer\n");
-                    throw;
-                }
+                vk_commandBuffers[currentFrame].begin(vk_beginInfo);
 
                 vk_renderpassBeginInfo.framebuffer = vk_swapchainFramebuffers[imageIndex];
                 
@@ -153,12 +148,7 @@ namespace SplitGui {
 
                 vk_commandBuffers[currentFrame].endRenderPass();
 
-                vk_runtimeResult = vk_commandBuffers[currentFrame].end();
-
-                if (vk_runtimeResult != vk::Result::eSuccess) {
-                    printf("Error ending command buffer\n");
-                    throw;
-                }
+                vk_commandBuffers[currentFrame].end();
 
                 vk_submitInfo.pWaitSemaphores   = &vk_imageAvailableSemaphores[currentFrame];
                 vk_submitInfo.pCommandBuffers   = &vk_commandBuffers[currentFrame];
@@ -411,10 +401,10 @@ namespace SplitGui {
 
                 vk::Bool32 validation_found = VK_FALSE;
                 if (vk_validation) {
-                    vk::ResultValue<std::vector<vk::LayerProperties>> layers = vk::enumerateInstanceLayerProperties();
+                    std::vector<vk::LayerProperties> layers = vk::enumerateInstanceLayerProperties();
                     
 
-                    validation_found = check_layers(instanceLayers, layers.value);
+                    validation_found = check_layers(instanceLayers, layers);
                     if (validation_found) {
                         enabled_layers.push_back("VK_LAYER_KHRONOS_validation");
                     } else {
@@ -429,7 +419,7 @@ namespace SplitGui {
                 bool platformSurfaceExtFound = false;
                 bool portabilityEnumerationActive = false;
 
-                for (const auto &extension : instance_extensions_return.value) {
+                for (const auto &extension : instance_extensions_return) {
                     if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
                         surfaceExtFound = true;
                         enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
@@ -467,20 +457,7 @@ namespace SplitGui {
                 createInfo.setEnabledExtensionCount  (static_cast<uint32_t>(enabled_instance_extensions.size()));
                 createInfo.setPpEnabledExtensionNames(                      enabled_instance_extensions.data());
 
-                vk::ResultValue<vk::Instance> result = vk::createInstance(createInfo);
-
-                if (result.result == vk::Result::eErrorIncompatibleDriver) {
-                    printf("Error: incompatable driver\n");
-                    throw;
-                } else if (result.result == vk::Result::eErrorExtensionNotPresent) {
-                    printf("Error: could not find vulkan extention\n");
-                    throw;
-                } else if (result.result != vk::Result::eSuccess) {
-                    printf("Error: could not instance vulkan\n");
-                    throw;
-                }
-
-                vk_instance = result.value;
+                vk_instance = vk::createInstance(createInfo);
 
                 VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_instance);
             }
@@ -489,17 +466,12 @@ namespace SplitGui {
 
             // Device selction could be more robust but this will do for now
             void createPhysicalDevice() { 
-                vk::ResultValue<std::vector<vk::PhysicalDevice>> physicalDevices = vk_instance.enumeratePhysicalDevices();
-
-                if (physicalDevices.result != vk::Result::eSuccess) {
-                    printf("Error enumerating physical devices\n");
-                    throw;
-                }
+                std::vector<vk::PhysicalDevice> physicalDevices = vk_instance.enumeratePhysicalDevices();
 
                 int selection = -1;
                 
-                for (int i = 0; i < physicalDevices.value.size(); i++) {
-                    if (physicalDevices.value[i].getProperties().apiVersion < vk::ApiVersion12) {
+                for (int i = 0; i < physicalDevices.size(); i++) {
+                    if (physicalDevices[i].getProperties().apiVersion < vk::ApiVersion12) {
                         continue;
                     }
 
@@ -512,7 +484,7 @@ namespace SplitGui {
                     throw;
                 }
 
-                vk_physicalDevice = physicalDevices.value[selection];
+                vk_physicalDevice = physicalDevices[selection];
 
                 printf("Using %s\n", vk_physicalDevice.getProperties().deviceName.data());
             }
@@ -524,18 +496,13 @@ namespace SplitGui {
 
                 for (int i = 0; i < queueFamilies.size(); i++) {
 
-                    vk::ResultValue<vk::Bool32> result = vk_physicalDevice.getSurfaceSupportKHR(i, vk_surface);
-                    
-                    if(result.result != vk::Result::eSuccess) {
-                        printf("ERROR: error getting surface support\n");
-                        throw;
-                    }
+                    vk::Bool32 result = vk_physicalDevice.getSurfaceSupportKHR(i, vk_surface);
 
                     if (queueFamilies[i].queueFlags & vk::QueueFlagBits::eGraphics && graphicsQueueFamilyIndex == -1){
                         graphicsQueueFamilyIndex = i;
                     }
 
-                    if (result.value && presentQueueFamilyIndex == -1) {
+                    if (result && presentQueueFamilyIndex == -1) {
                         presentQueueFamilyIndex = i;
                     }
                     
@@ -570,9 +537,9 @@ namespace SplitGui {
 
                 bool swapchainExtFound = false;
 
-                auto device_extension_return = vk_physicalDevice.enumerateDeviceExtensionProperties();
+                std::vector<vk::ExtensionProperties> device_extension_return = vk_physicalDevice.enumerateDeviceExtensionProperties();
 
-                for (const auto &extension : device_extension_return.value) {
+                for (const auto &extension : device_extension_return) {
                     if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, extension.extensionName)) {
                         swapchainExtFound = true;
                         enabled_device_extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
@@ -593,14 +560,7 @@ namespace SplitGui {
                 deviceCreateInfo.enabledExtensionCount   = enabled_device_extensions.size();
                 deviceCreateInfo.ppEnabledExtensionNames = enabled_device_extensions.data();
 
-                vk::ResultValue<vk::Device> result = vk_physicalDevice.createDevice(deviceCreateInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error creating logical device\n");
-                    throw;
-                }
-
-                vk_device = result.value;
+                vk_device = vk_physicalDevice.createDevice(deviceCreateInfo);
 
                 VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_device);
             }
@@ -652,24 +612,16 @@ namespace SplitGui {
             }
 
             void createSwapchain() {
-                vk::ResultValue<std::vector<vk::SurfaceFormatKHR>> formats      = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface);
-                vk::ResultValue<vk::SurfaceCapabilitiesKHR>        capabilities = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface);
-                vk::ResultValue<std::vector<vk::PresentModeKHR>>   presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface);
+                std::vector<vk::SurfaceFormatKHR> formats      = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface);
+                vk::SurfaceCapabilitiesKHR        capabilities = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface);
+                std::vector<vk::PresentModeKHR>   presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface);
 
-                if (capabilities.result != vk::Result::eSuccess || 
-                    formats.result      != vk::Result::eSuccess ||
-                    presentModes.result != vk::Result::eSuccess) {
-
-                    printf("Error getting physical device props\n");
-                    throw;
-                }
-
-                vk_swapchainExtent = chooseSwapExtent(capabilities.value);
-                vk_surfaceFormat   = chooseSwapSurfaceFormat(formats.value);
-                vk_presentMode     = chooseSwapPresentMode(presentModes.value);
+                vk_swapchainExtent = chooseSwapExtent(capabilities);
+                vk_surfaceFormat   = chooseSwapSurfaceFormat(formats);
+                vk_presentMode     = chooseSwapPresentMode(presentModes);
 
                 vk::SwapchainCreateInfoKHR createInfo;
-                createInfo.minImageCount         = capabilities.value.minImageCount + 1;
+                createInfo.minImageCount         = capabilities.minImageCount + 1;
                 createInfo.pQueueFamilyIndices   = &graphicsQueueFamilyIndex;
                 createInfo.surface               = vk_surface;
                 createInfo.imageFormat           = vk_surfaceFormat.format;
@@ -683,18 +635,9 @@ namespace SplitGui {
                 createInfo.clipped               = true;
                 createInfo.oldSwapchain          = nullptr;
 
-                vk::ResultValue<vk::SwapchainKHR>       result_swapchain       = vk_device.createSwapchainKHR(createInfo);
-                vk::ResultValue<std::vector<vk::Image>> result_swapchainImages = vk_device.getSwapchainImagesKHR(result_swapchain.value);
+                vk_swapchain       = vk_device.createSwapchainKHR(createInfo);
+                vk_swapchainImages = vk_device.getSwapchainImagesKHR(vk_swapchain);
 
-                if (result_swapchain.result       != vk::Result::eSuccess || 
-                    result_swapchainImages.result != vk::Result::eSuccess) {
-
-                    printf("Error creating swapchain\n");
-                    throw;
-                }
-
-                vk_swapchain       = result_swapchain.value;
-                vk_swapchainImages = result_swapchainImages.value;
             }
 
 #pragma region Image views
@@ -718,14 +661,7 @@ namespace SplitGui {
                     createInfo.subresourceRange.baseArrayLayer  = 0;
                     createInfo.subresourceRange.layerCount      = 1;
 
-                    vk::ResultValue<vk::ImageView> result = vk_device.createImageView(createInfo);
-
-                    if (result.result != vk::Result::eSuccess) {
-                        printf("Error creating imageview\n");
-                        throw;
-                    }
-
-                    vk_swapchainImageViews[i] = result.value;
+                    vk_swapchainImageViews[i] = vk_device.createImageView(createInfo);
                 }
             }
 
@@ -768,14 +704,7 @@ namespace SplitGui {
                 createInfo.pSubpasses               = &subpass;
                 createInfo.pDependencies            = &dependency;
 
-                vk::ResultValue<vk::RenderPass> result = vk_device.createRenderPass(createInfo);
-                
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error creating renderpass\n");
-                    throw;
-                }
-
-                vk_renderpass = result.value;
+                vk_renderpass = vk_device.createRenderPass(createInfo);
             }
 
 #pragma region Descriptor Layout
@@ -795,14 +724,7 @@ namespace SplitGui {
                 createInfo.bindingCount = bindings.size();
                 createInfo.pBindings    = bindings.data();
                 
-                vk::ResultValue<vk::DescriptorSetLayout> result = vk_device.createDescriptorSetLayout(createInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error: error creating descriptor set layout\n");
-                    throw;
-                }
-
-                vk_descriptorSetLayout = result.value;
+                vk_descriptorSetLayout = vk_device.createDescriptorSetLayout(createInfo);
             }
 
 #pragma region Graphics pipeline
@@ -813,14 +735,7 @@ namespace SplitGui {
                 createInfo.pSetLayouts            = nullptr;
                 createInfo.pushConstantRangeCount = 0;
 
-                vk::ResultValue<vk::PipelineLayout> result = vk_device.createPipelineLayout(createInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error: error creating graphics pipeline layout\n");
-                    throw;
-                } 
-
-                vk_graphicsPipelineLayout = result.value;
+                vk_graphicsPipelineLayout = vk_device.createPipelineLayout(createInfo);
             }
 
             inline vk::ShaderModule createShaderModule(const std::vector<char>& code) {
@@ -828,14 +743,7 @@ namespace SplitGui {
                 createInfo.codeSize = code.size();
                 createInfo.pCode    = reinterpret_cast<const uint32_t*>(code.data());
 
-                vk::ResultValue<vk::ShaderModule> result = vk_device.createShaderModule(createInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error creating shader module\n");
-                    throw;
-                }
-
-                return result.value;
+                return vk_device.createShaderModule(createInfo);
             }
 
             void createGraphicsPipeline() {
@@ -970,14 +878,7 @@ namespace SplitGui {
                     framebufferInfo.height          = vk_swapchainExtent.height;
                     framebufferInfo.layers          = 1;
 
-                    vk::ResultValue<vk::Framebuffer> result = vk_device.createFramebuffer(framebufferInfo);
-                    
-                    if (result.result != vk::Result::eSuccess) {
-                        printf("Error: error creating frame buffers\n");
-                        throw;
-                    }
-
-                    vk_swapchainFramebuffers[i] = result.value;
+                    vk_swapchainFramebuffers[i] = vk_device.createFramebuffer(framebufferInfo);
                 }
             }
 
@@ -986,14 +887,7 @@ namespace SplitGui {
                 commandPoolInfo.flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer;
                 commandPoolInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
 
-                vk::ResultValue<vk::CommandPool> result = vk_device.createCommandPool(commandPoolInfo);
-                
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error: error creating command pool\n");
-                    throw;
-                } 
-                
-                vk_commandPool = result.value;
+                vk_commandPool = vk_device.createCommandPool(commandPoolInfo);
             }
 
             uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
@@ -1022,14 +916,7 @@ namespace SplitGui {
                 createInfo.usage       = usage;
                 createInfo.sharingMode = vk::SharingMode::eExclusive;
 
-                vk::ResultValue<vk::Buffer> result_buffer = vk_device.createBuffer(createInfo);
-
-                if (result_buffer.result != vk::Result::eSuccess) {
-                    printf("Error: error creating buffer\n");
-                    throw;
-                } 
-
-                out_buffer = result_buffer.value;
+                out_buffer = vk_device.createBuffer(createInfo);
 
                 vk::MemoryRequirements memoryRequirements = vk_device.getBufferMemoryRequirements(out_buffer);
 
@@ -1037,21 +924,9 @@ namespace SplitGui {
                 allocInfo.allocationSize  = memoryRequirements.size;
                 allocInfo.memoryTypeIndex = findMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-                vk::ResultValue<vk::DeviceMemory> result_deviceMemory = vk_device.allocateMemory(allocInfo);
+                out_bufferMemory = vk_device.allocateMemory(allocInfo);
 
-                if (result_deviceMemory.result != vk::Result::eSuccess) {
-                    printf("Error: error allocating buffer\n");
-                    throw;
-                }
-
-                out_bufferMemory = result_deviceMemory.value;
-
-                vk::Result result_bind = vk_device.bindBufferMemory(out_buffer, out_bufferMemory, 0);
-
-                if (result_bind != vk::Result::eSuccess) {
-                    printf("Error: error binding buffer\n");
-                    throw;
-                } 
+                vk_device.bindBufferMemory(out_buffer, out_bufferMemory, 0);
             }
 
             vk::CommandBuffer startCopyBuffer() {
@@ -1060,24 +935,14 @@ namespace SplitGui {
                 allocInfo.commandPool        = vk_commandPool;
                 allocInfo.commandBufferCount = 1;
 
-                vk::ResultValue<std::vector<vk::CommandBuffer>> result_commandBuffer = vk_device.allocateCommandBuffers(allocInfo);
-
-                if (result_commandBuffer.result != vk::Result::eSuccess) {
-                    printf("Error: error allocating command buffer\n");
-                    throw;
-                }
+                std::vector<vk::CommandBuffer> commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
 
                 vk::CommandBufferBeginInfo beginInfo;
                 beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
 
-                vk::Result result_begin = result_commandBuffer.value.front().begin(beginInfo);
+                commandBuffers.front().begin(beginInfo);
 
-                if (result_begin != vk::Result::eSuccess) {
-                    printf("Error: error beginning command buffer\n");
-                    throw;
-                }
-
-                return result_commandBuffer.value.front();
+                return commandBuffers.front();
             }
 
             void copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion) {
@@ -1089,12 +954,7 @@ namespace SplitGui {
             }
 
             void endCopyBuffer(vk::CommandBuffer commandBuffer) {
-                vk::Result result_end = commandBuffer.end();
-
-                if (result_end != vk::Result::eSuccess) {
-                    printf("Error: error allocating command buffer\n");
-                    throw;
-                }
+                commandBuffer.end();
 
                 vk::SubmitInfo submitInfo;
                 submitInfo.commandBufferCount = 1;
@@ -1107,12 +967,7 @@ namespace SplitGui {
                     throw;
                 }
 
-                vk::Result result_waitIdle = vk_graphicsQueue.waitIdle();
-
-                if (result_waitIdle != vk::Result::eSuccess) {
-                    printf("Error: error waiting idle on queue\n");
-                    throw;
-                }
+                vk_graphicsQueue.waitIdle();
 
                 vk_device.freeCommandBuffers(vk_commandPool, 1, &commandBuffer);
             }
@@ -1137,14 +992,9 @@ namespace SplitGui {
                     out_memory
                 );
 
-                vk::ResultValue<void*> result_memory = vk_device.mapMemory(out_memory, 0, out_size);
+                void* memory = vk_device.mapMemory(out_memory, 0, out_size);
 
-                if (result_memory.result != vk::Result::eSuccess) {
-                    printf("Error: error mapping staging buffer\n");
-                    throw;
-                } 
-
-                memcpy(result_memory.value, dataToUpload.data(), out_size);
+                memcpy(memory, dataToUpload.data(), out_size);
 
                 vk_device.unmapMemory(out_memory);
             }
@@ -1159,14 +1009,7 @@ namespace SplitGui {
 
                 vk_commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
                 
-                vk::ResultValue<std::vector<vk::CommandBuffer>> result = vk_device.allocateCommandBuffers(allocInfo);
-                    
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error: error creating command buffers\n");
-                    throw;
-                } 
-
-                vk_commandBuffers = result.value;
+                vk_commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
             }
 
 #pragma region Sync objects
@@ -1182,21 +1025,9 @@ namespace SplitGui {
 
                 for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
                 {
-                    vk::ResultValue<vk::Semaphore> result_imageAvailable = vk_device.createSemaphore(semaphoreInfo);
-                    vk::ResultValue<vk::Semaphore> result_renderFinished = vk_device.createSemaphore(semaphoreInfo);
-                    vk::ResultValue<vk::Fence>     result_inFlightFence  = vk_device.createFence(fenceInfo);
-
-                    if (result_imageAvailable.result != vk::Result::eSuccess ||
-                        result_renderFinished.result != vk::Result::eSuccess ||
-                        result_inFlightFence.result  != vk::Result::eSuccess) {
-
-                        printf("Error: error creating sync objects\n");
-                        throw;
-                    } 
-
-                    vk_imageAvailableSemaphores[i] = result_imageAvailable.value;
-                    vk_renderFinishedSemaphores[i] = result_renderFinished.value;
-                    vk_inFlightFences[i]           = result_inFlightFence.value;
+                    vk_imageAvailableSemaphores[i] = vk_device.createSemaphore(semaphoreInfo);
+                    vk_renderFinishedSemaphores[i] = vk_device.createSemaphore(semaphoreInfo);
+                    vk_inFlightFences[i]           = vk_device.createFence(fenceInfo);
                 }
             }
 
@@ -1212,14 +1043,7 @@ namespace SplitGui {
                 createInfo.pPoolSizes    = &poolSize;
                 createInfo.maxSets       = 1;
                 
-                vk::ResultValue<vk::DescriptorPool> result = vk_device.createDescriptorPool(createInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error: error creating descriptor pool\n");
-                    throw;
-                } 
-
-                vk_descriptorPool = result.value;
+                vk_descriptorPool = vk_device.createDescriptorPool(createInfo);
             }
 
             void createDescriptorSet() {
@@ -1228,14 +1052,7 @@ namespace SplitGui {
                 allocInfo.descriptorSetCount = 1;
                 allocInfo.pSetLayouts        = &vk_descriptorSetLayout;
 
-                vk::ResultValue<std::vector<vk::DescriptorSet>> result = vk_device.allocateDescriptorSets(allocInfo);
-
-                if (result.result != vk::Result::eSuccess) {
-                    printf("Error: error creating descriptor pool\n");
-                    throw;
-                }
-
-                vk_descriptorSet = result.value.front();
+                vk_descriptorSet = vk_device.allocateDescriptorSets(allocInfo).front();
             }
 
 #pragma region Setup

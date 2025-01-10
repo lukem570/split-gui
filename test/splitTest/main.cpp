@@ -12,13 +12,13 @@ int main() {
     graphics.submitWindow(window);
 
     SplitGui::Default::Rect rect1;
-    rect1.setColor(0x444f70);
+    rect1.setColor(0x9aaedb);
 
     SplitGui::Default::Rect rect2;
-    rect2.setColor(0x272d40);
+    rect2.setColor(0x636e87);
 
     SplitGui::Default::Rect rect3;
-    rect3.setColor(0x373d50);
+    rect3.setColor(0x929bb0);
 
     SplitGui::Default::Split split1;
     split1.addChild(&rect2);
