@@ -30,6 +30,8 @@
 * vulkan headers
 * vulkan hpp
 * volk
+* msdfgen
+* freetype
 
 ---
 

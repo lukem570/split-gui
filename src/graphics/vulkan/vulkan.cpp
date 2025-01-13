@@ -9,6 +9,11 @@
 #include <string>
 #include <array>
 #include <stack>
+#include <msdfgen/msdfgen.h>
+#include <ft2build.h>
+
+#include FT_FREETYPE_H
+
 #include "../../path.cpp"
 
 // should prolly make this accessible to the user
@@ -23,6 +28,13 @@ namespace SplitGui {
             VulkanInterface(bool validation = false) {
                 vk_validation = validation;
                 vk_clearColor.color = vk::ClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
+
+                FT_Error error = FT_Init_FreeType(&ft_lib);
+
+                if (error) {
+                    printf("could not init freetype\n");
+                    throw;
+                }
             }
 
 #pragma region Cleanup
@@ -53,6 +65,12 @@ namespace SplitGui {
 
                 vk_instance.destroySurfaceKHR(vk_surface);
                 vk_instance.destroy();
+
+                if (ft_fontInUse) {
+                    FT_Done_Face(ft_face);
+                }
+
+                FT_Done_FreeType(ft_lib);
             }
 
 #pragma region Api instance
@@ -301,6 +319,27 @@ namespace SplitGui {
                 knownIndicesSize = indices.size();
             }
 
+#pragma region Draw text
+
+            void drawText(Vec2 x1, Vec2 x2, std::string& text) override {
+
+            }
+
+#pragma region Load font
+
+            void loadFont(std::string& path) override {
+                if (ft_fontInUse) {
+                    FT_Done_Face(ft_face);
+                }
+
+                FT_Error error = FT_New_Face(ft_lib, path.c_str(), 0, &ft_face);
+                if (error) {
+                    printf("WARN: could not load font: %s\n", path.c_str());
+                    return;
+                }
+                ft_fontInUse = true;
+            }
+
             void resizeEvent() override{
                 recreateSwapchain();
             }
@@ -309,6 +348,8 @@ namespace SplitGui {
         protected:
             SplitGui::Window*               pWindow;
         private:
+            FT_Library                      ft_lib;
+            FT_Face                         ft_face;
             vk::Instance                    vk_instance;
             vk::PhysicalDevice              vk_physicalDevice;
             vk::Device                      vk_device;
@@ -345,6 +386,7 @@ namespace SplitGui {
             std::vector<vk::Semaphore>      vk_renderFinishedSemaphores;
             std::vector<vk::Fence>          vk_inFlightFences;
             bool                            vk_validation;
+            bool                            ft_fontInUse;
             unsigned int                    graphicsQueueFamilyIndex = -1;
             unsigned int                    presentQueueFamilyIndex = -1;
             std::vector<const char *>       enabled_layers;
@@ -364,7 +406,7 @@ namespace SplitGui {
             std::vector<Vertex>             vertices;
             std::vector<uint16_t>           indices;
             std::vector<Triangle>           triangles;
-            std::vector<RectObj>               scenes;
+            std::vector<RectObj>            scenes;
 
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {

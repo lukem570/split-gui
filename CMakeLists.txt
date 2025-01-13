@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(SplitGui)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 file(GLOB_RECURSE TESTS test/*/main.cpp)
 
@@ -64,7 +65,12 @@ message("-- window manager: ${VK_WINDOW_MANAGER}")
 
 add_library(splitgui SHARED ${CMAKE_SOURCE_DIR}/src/splitgui.cpp)
 
-target_link_libraries(splitgui PRIVATE ${CMAKE_BINARY_DIR}/libglfw3.a ${CMAKE_SOURCE_DIR}/include/volk/build/libvolk.a)
+target_link_libraries(splitgui PRIVATE 
+    ${CMAKE_BINARY_DIR}/libglfw3.a 
+    ${CMAKE_SOURCE_DIR}/include/volk/build/libvolk.a 
+    ${CMAKE_SOURCE_DIR}/include/msdfgen/build/libmsdfgen-core.a
+    ${CMAKE_SOURCE_DIR}/include/src/freetype/build/libfreetype.a
+)
 
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${VK_WINDOW_MANAGER})
 

@@ -77,7 +77,9 @@ fetch_source(
         'https://github.com/KhronosGroup/Vulkan-Hpp.git',
         'https://github.com/KhronosGroup/Vulkan-Headers.git', 
         'https://github.com/lukem570/glfwpp.git',
-        'https://github.com/zeux/volk.git',
+        'https://github.com/zeux/volk.git', 
+        'https://github.com/Chlumsky/msdfgen.git', # cmake -G "Ninja" -DMSDFGEN_CORE_ONLY=ON -B build
+        'https://github.com/freetype/freetype.git', # cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -B build 
     ]
 )
 

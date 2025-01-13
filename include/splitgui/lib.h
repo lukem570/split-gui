@@ -235,5 +235,9 @@
     #include <windows.h>
 #endif
 
+// msdfgen 
+
+#define MSDFGEN_PUBLIC
+#include <msdfgen/msdfgen.h>
 
 #endif // !SPLITGUI_EXPORT

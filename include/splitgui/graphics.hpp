@@ -27,6 +27,7 @@ namespace SplitGui {
             virtual void drawRect(Vec2 x1, Vec2 x2, Vec3 color)        { throw; }
             virtual void instanceScene(Vec2 x1, Vec2 x2)               { throw; }
             virtual void drawText(Vec2 x1, Vec2 x2, std::string& text) { throw; }
+            virtual void loadFont(std::string& path)                   { throw; }
             virtual void drawMedia(Vec2 x1, Vec2 x2)                   { throw; }
             virtual void submitBuffers()                               { throw; }
             virtual void resizeEvent()                                 { throw; }
