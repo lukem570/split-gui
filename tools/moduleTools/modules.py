@@ -78,8 +78,8 @@ fetch_source(
         'https://github.com/KhronosGroup/Vulkan-Headers.git', 
         'https://github.com/lukem570/glfwpp.git',
         'https://github.com/zeux/volk.git', 
-        'https://github.com/Chlumsky/msdfgen.git', # cmake -G "Ninja" -DMSDFGEN_CORE_ONLY=ON -B build
-        'https://github.com/freetype/freetype.git', # cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -B build 
+        'https://github.com/Chlumsky/msdfgen.git', # cmake -G "Ninja" -DMSDFGEN_CORE_ONLY=ON -B build -DCMAKE_CXX_FLAGS="-fPIC"
+        'https://github.com/freetype/freetype.git', # cmake -B build -G "Ninja" -DCMAKE_C_FLAGS="-fPIC" -DCMAKE_BUILD_TYPE=Release -DFT_DISABLE_ZLIB=TRUE -DFT_DISABLE_BZIP2=TRUE -DFT_DISABLE_PNG=TRUE -DFT_DISABLE_HARFBUZZ=TRUE -DFT_DISABLE_BROTLI=TRUE
     ]
 )
 

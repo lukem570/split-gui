@@ -44,3 +44,6 @@ include/ft2build.h
 
 # Vscode files
 .vscode
+
+# Fonts
+fonts

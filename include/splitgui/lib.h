@@ -240,4 +240,14 @@
 #define MSDFGEN_PUBLIC
 #include <msdfgen/msdfgen.h>
 
+// freetype
+#include <setjmp.h>
+
+namespace ft {
+    #include <ft2build.h>
+
+    #include FT_FREETYPE_H
+    #include FT_OUTLINE_H
+}
+
 #endif // !SPLITGUI_EXPORT

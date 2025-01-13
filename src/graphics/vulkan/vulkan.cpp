@@ -10,14 +10,110 @@
 #include <array>
 #include <stack>
 #include <msdfgen/msdfgen.h>
-#include <ft2build.h>
+#include <setjmp.h>
 
-#include FT_FREETYPE_H
+namespace ft {
+    #include <ft2build.h>
+
+    #include FT_FREETYPE_H
+    #include FT_OUTLINE_H
+}
 
 #include "../../path.cpp"
 
 // should prolly make this accessible to the user
 #define MAX_FRAMES_IN_FLIGHT 2
+
+// recreation of methods from msdfgen/ext/import-font.cpp/.h
+namespace msdfgen {
+    #define MSDFGEN_LEGACY_FONT_COORDINATE_SCALE (1/64.)
+
+    enum class FontCoordinateScaling {
+        eFontScalingNone,
+        eFontScalingEmNormalized,
+        eFontScalingLegacy,
+    };
+
+    struct FtContext {
+        double scale;
+        Point2 position;
+        Shape *shape;
+        Contour *contour;
+    };
+
+    static Point2 ftPoint2(const ft::FT_Vector &vector, double scale) {
+        return Point2(scale*vector.x, scale*vector.y);
+    }
+
+    static double getFontCoordinateScale(const ft::FT_Face &face, FontCoordinateScaling coordinateScaling) {
+        switch (coordinateScaling) {
+            case FontCoordinateScaling::eFontScalingNone:
+                return 1;
+            case FontCoordinateScaling::eFontScalingEmNormalized:
+                return 1./(face->units_per_EM ? face->units_per_EM : 1);
+            case FontCoordinateScaling::eFontScalingLegacy:
+                return MSDFGEN_LEGACY_FONT_COORDINATE_SCALE;
+        }
+        return 1;
+    }
+
+    static int ftMoveTo(const ft::FT_Vector *to, void *user) {
+        FtContext *context = reinterpret_cast<FtContext *>(user);
+        if (!(context->contour && context->contour->edges.empty()))
+            context->contour = &context->shape->addContour();
+        context->position = ftPoint2(*to, context->scale);
+        return 0;
+    }
+
+    static int ftLineTo(const ft::FT_Vector *to, void *user) {
+        FtContext *context = reinterpret_cast<FtContext *>(user);
+        Point2 endpoint = ftPoint2(*to, context->scale);
+        if (endpoint != context->position) {
+            context->contour->addEdge(EdgeHolder(context->position, endpoint));
+            context->position = endpoint;
+        }
+        return 0;
+    }
+
+    static int ftConicTo(const ft::FT_Vector *control, const ft::FT_Vector *to, void *user) {
+        FtContext *context = reinterpret_cast<FtContext *>(user);
+        Point2 endpoint = ftPoint2(*to, context->scale);
+        if (endpoint != context->position) {
+            context->contour->addEdge(EdgeHolder(context->position, ftPoint2(*control, context->scale), endpoint));
+            context->position = endpoint;
+        }
+        return 0;
+    }
+
+    static int ftCubicTo(const ft::FT_Vector *control1, const ft::FT_Vector *control2, const ft::FT_Vector *to, void *user) {
+        FtContext *context = reinterpret_cast<FtContext *>(user);
+        Point2 endpoint = ftPoint2(*to, context->scale);
+        if (endpoint != context->position || crossProduct(ftPoint2(*control1, context->scale)-endpoint, ftPoint2(*control2, context->scale)-endpoint)) {
+            context->contour->addEdge(EdgeHolder(context->position, ftPoint2(*control1, context->scale), ftPoint2(*control2, context->scale), endpoint));
+            context->position = endpoint;
+        }
+        return 0;
+    }
+
+    ft::FT_Error readFreetypeOutline(Shape &output, ft::FT_Outline *outline, double scale) {
+        output.contours.clear();
+        output.inverseYAxis = false;
+        FtContext context = { };
+        context.scale = scale;
+        context.shape = &output;
+        ft::FT_Outline_Funcs ftFunctions;
+        ftFunctions.move_to = &ftMoveTo;
+        ftFunctions.line_to = &ftLineTo;
+        ftFunctions.conic_to = &ftConicTo;
+        ftFunctions.cubic_to = &ftCubicTo;
+        ftFunctions.shift = 0;
+        ftFunctions.delta = 0;
+        ft::FT_Error error = ft::FT_Outline_Decompose(outline, &ftFunctions, &context);
+        if (!output.contours.empty() && output.contours.back().edges.empty())
+            output.contours.pop_back();
+        return error;
+    }
+}
 
 namespace SplitGui {
     class VulkanInterface : GraphicsLibInterface {
@@ -29,7 +125,7 @@ namespace SplitGui {
                 vk_validation = validation;
                 vk_clearColor.color = vk::ClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
 
-                FT_Error error = FT_Init_FreeType(&ft_lib);
+                ft::FT_Error error = ft::FT_Init_FreeType(&ft_lib);
 
                 if (error) {
                     printf("could not init freetype\n");
@@ -322,19 +418,54 @@ namespace SplitGui {
 #pragma region Draw text
 
             void drawText(Vec2 x1, Vec2 x2, std::string& text) override {
+                if (!ft_fontInUse) {
+                    printf("WARN: no font in use\n");
+                    return;
+                }
 
+                for (int i = 0; i < text.size(); i++) {
+                    msdfgen::Shape shape;
+
+                    // recreation of the 'loadGlyph' function in msdfgen/msdfgen-ext.h to reduce bloat
+
+                    ft::FT_Error loadError = ft::FT_Load_Glyph(ft_face, text[i], (ft::FT_Int32) msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
+
+                    if (loadError) {
+                        printf("WARN: could not load glyph: %c\n", text[i]);
+                        return;
+                    }
+
+                    double scale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
+
+                    ft::FT_Error outlineError = msdfgen::readFreetypeOutline(shape, &ft_face->glyph->outline, scale);
+
+                    if (outlineError) {
+                        printf("WARN: could not load glyph: %c\n", text[i]);
+                        return;
+                    }
+
+                    shape.normalize();
+
+                    msdfgen::edgeColoringSimple(shape, 3.0);
+
+                    msdfgen::Bitmap<float, 3> msdf(32, 32);
+
+                    msdfgen::SDFTransformation t(msdfgen::Projection(32.0, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
+                    msdfgen::generateMSDF(msdf, shape, t);
+                }
+                
             }
 
 #pragma region Load font
 
-            void loadFont(std::string& path) override {
+            void loadFont(const char* path) override {
                 if (ft_fontInUse) {
-                    FT_Done_Face(ft_face);
+                    ft::FT_Done_Face(ft_face);
                 }
 
-                FT_Error error = FT_New_Face(ft_lib, path.c_str(), 0, &ft_face);
+                ft::FT_Error error = ft::FT_New_Face(ft_lib, path, 0, &ft_face);
                 if (error) {
-                    printf("WARN: could not load font: %s\n", path.c_str());
+                    printf("WARN: could not load font: %s\n", path);
                     return;
                 }
                 ft_fontInUse = true;
@@ -348,8 +479,8 @@ namespace SplitGui {
         protected:
             SplitGui::Window*               pWindow;
         private:
-            FT_Library                      ft_lib;
-            FT_Face                         ft_face;
+            ft::FT_Library                  ft_lib;
+            ft::FT_Face                     ft_face;
             vk::Instance                    vk_instance;
             vk::PhysicalDevice              vk_physicalDevice;
             vk::Device                      vk_device;
@@ -385,8 +516,8 @@ namespace SplitGui {
             std::vector<vk::Semaphore>      vk_imageAvailableSemaphores;
             std::vector<vk::Semaphore>      vk_renderFinishedSemaphores;
             std::vector<vk::Fence>          vk_inFlightFences;
-            bool                            vk_validation;
-            bool                            ft_fontInUse;
+            bool                            vk_validation = false;
+            bool                            ft_fontInUse  = false;
             unsigned int                    graphicsQueueFamilyIndex = -1;
             unsigned int                    presentQueueFamilyIndex = -1;
             std::vector<const char *>       enabled_layers;

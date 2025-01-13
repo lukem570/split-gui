@@ -63,4 +63,24 @@ namespace SplitGui {
     void Graphics::resizeEvent() {
         pInterface->resizeEvent();
     }
+
+    void Graphics::drawText(IVec2 x1, IVec2 x2, std::string text) {
+        IVec2 windowSize = pWindow->getSize();
+
+        Vec2 newX1;
+        newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
+        newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
+
+        Vec2 newX2;
+        newX2.x = (float)x2.x / windowSize.x * 2.0 - 1.0f;
+        newX2.y = (float)x2.y / windowSize.y * 2.0 - 1.0f;
+
+        printf("drawtext: (%.6f, %.6f), (%.6f, %.6f), text: %s\n", newX1.x, newX1.y, newX2.x, newX2.y, text.c_str());
+
+        pInterface->drawText(newX1, newX2, text);
+    }
+
+    void Graphics::loadFont(const char* path) {
+        pInterface->loadFont(path);
+    }
 }
