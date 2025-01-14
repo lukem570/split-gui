@@ -131,6 +131,9 @@ namespace SplitGui {
                     printf("could not init freetype\n");
                     throw;
                 }
+
+                vk_msdfExtent.width  = 32;
+                vk_msdfExtent.height = 32;
             }
 
 #pragma region Cleanup
@@ -423,7 +426,15 @@ namespace SplitGui {
                     return;
                 }
 
+                vk::CommandBuffer commandBuffer = startCopyBuffer();
+
                 for (int i = 0; i < text.size(); i++) {
+                    if (charImageMappings.find(text[i]) != charImageMappings.end()) {
+                        continue;
+                    }
+
+                    charImageMappings[text[i]] = {};
+
                     msdfgen::Shape shape;
 
                     // recreation of the 'loadGlyph' function in msdfgen/msdfgen-ext.h to reduce bloat
@@ -448,12 +459,98 @@ namespace SplitGui {
 
                     msdfgen::edgeColoringSimple(shape, 3.0);
 
-                    msdfgen::Bitmap<float, 3> msdf(32, 32);
+                    msdfgen::Bitmap<float, 3> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
 
                     msdfgen::SDFTransformation t(msdfgen::Projection(32.0, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
                     msdfgen::generateMSDF(msdf, shape, t);
+
+                    
+
+                    HexColor pixels[vk_msdfExtent.width * vk_msdfExtent.height];
+
+                    for (int x = 0; x < vk_msdfExtent.width; x++) {
+                        for (int y = 0; y < vk_msdfExtent.height; y++) {
+                            pixels[i].r = msdfgen::pixelFloatToByte(msdf(x,y)[0]);
+                            pixels[i].g = msdfgen::pixelFloatToByte(msdf(x,y)[1]);
+                            pixels[i].b = msdfgen::pixelFloatToByte(msdf(x,y)[2]);
+                        }
+                    }
+
+                    vk::ImageCreateInfo imageInfo;
+                    imageInfo.imageType     = vk::ImageType::e2D;
+                    imageInfo.format        = vk::Format::eR8G8B8Uint;
+                    imageInfo.extent.width  = vk_msdfExtent.width;
+                    imageInfo.extent.height = vk_msdfExtent.height;
+                    imageInfo.extent.depth  = 1;
+                    imageInfo.mipLevels     = 1;
+                    imageInfo.arrayLayers   = 1;
+                    imageInfo.samples       = vk::SampleCountFlagBits::e1;
+                    imageInfo.tiling        = vk::ImageTiling::eOptimal;
+                    imageInfo.usage         = vk::ImageUsageFlagBits::eTransferDst;
+                    imageInfo.usage        |= vk::ImageUsageFlagBits::eSampled;
+                    imageInfo.sharingMode   = vk::SharingMode::eExclusive;
+                    imageInfo.initialLayout = vk::ImageLayout::eUndefined;
+
+                    charImageMappings[text[i]].image = vk_device.createImage(imageInfo);
+
+                    vk::MemoryRequirements memReqs = vk_device.getImageMemoryRequirements(charImageMappings[text[i]].image);
+                    
+                    vk::MemoryAllocateInfo allocInfo;
+                    allocInfo.allocationSize  = memReqs.size;
+                    allocInfo.memoryTypeIndex = findMemoryType(memReqs.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+
+                    charImageMappings[text[i]].imageMemory = vk_device.allocateMemory(allocInfo);
+
+                    vk_device.bindImageMemory(charImageMappings[text[i]].image, charImageMappings[text[i]].imageMemory, 0);
+
+                    vk::ImageViewCreateInfo imageViewInfo;
+                    imageViewInfo.image                           = charImageMappings[text[i]].image;
+                    imageViewInfo.viewType                        = vk::ImageViewType::e2D;
+                    imageViewInfo.format                          = imageInfo.format;
+                    imageViewInfo.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
+                    imageViewInfo.subresourceRange.baseMipLevel   = 0;
+                    imageViewInfo.subresourceRange.levelCount     = 1;
+                    imageViewInfo.subresourceRange.baseArrayLayer = 0;
+                    imageViewInfo.subresourceRange.layerCount     = 1;
+
+                    charImageMappings[text[i]].imageView = vk_device.createImageView(imageViewInfo);
+
+                    vk::DeviceSize   imageSize = vk_msdfExtent.width * vk_msdfExtent.height * sizeof(HexColor);
+                    vk::Buffer       imageStagingBuffer;
+                    vk::DeviceMemory imageStagingBufferMemory;
+                    
+                    // could put this as one big buffer but I am too tired to do so
+                    createBuffer(
+                        imageSize, 
+                        vk::BufferUsageFlagBits::eTransferSrc, 
+                        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+                        imageStagingBuffer,
+                        imageStagingBufferMemory
+                    );
+
+                    void* memory = vk_device.mapMemory(imageStagingBufferMemory, 0, imageSize);
+                    memcpy(memory, pixels, imageSize);
+                    vk_device.unmapMemory(imageStagingBufferMemory);
+
+                    vk::BufferImageCopy region;
+                    region.bufferOffset                    = 0;
+                    region.bufferRowLength                 = 0;
+                    region.bufferImageHeight               = 0;
+                    region.imageSubresource.aspectMask     = vk::ImageAspectFlagBits::eColor;
+                    region.imageSubresource.mipLevel       = 0;
+                    region.imageSubresource.baseArrayLayer = 0;
+                    region.imageSubresource.layerCount     = 1;
+                    region.imageOffset.x                   = 0;
+                    region.imageOffset.y                   = 0;
+                    region.imageOffset.z                   = 0;
+                    region.imageExtent.width               = vk_msdfExtent.width;
+                    region.imageExtent.height              = vk_msdfExtent.height;
+                    region.imageExtent.depth               = 0;
+
+                    commandBuffer.copyBufferToImage(imageStagingBuffer, charImageMappings[text[i]].image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
                 }
-                
+
+                endCopyBuffer(commandBuffer);
             }
 
 #pragma region Load font
@@ -477,67 +574,69 @@ namespace SplitGui {
 #pragma region Variables
 
         protected:
-            SplitGui::Window*               pWindow;
+            SplitGui::Window*                   pWindow;
         private:
-            ft::FT_Library                  ft_lib;
-            ft::FT_Face                     ft_face;
-            vk::Instance                    vk_instance;
-            vk::PhysicalDevice              vk_physicalDevice;
-            vk::Device                      vk_device;
-            vk::Queue                       vk_graphicsQueue;
-            vk::Queue                       vk_presentQueue;
-            vk::SurfaceKHR                  vk_surface;
-            vk::SwapchainKHR                vk_swapchain;
-            vk::SurfaceFormatKHR            vk_surfaceFormat;
-            vk::PresentModeKHR              vk_presentMode;
-            vk::Extent2D                    vk_swapchainExtent;
-            vk::RenderPass                  vk_renderpass;
-            vk::DescriptorSetLayout         vk_descriptorSetLayout;
-            vk::PipelineLayout              vk_graphicsPipelineLayout;
-            vk::Pipeline                    vk_graphicsPipeline;
-            vk::PipelineLayout              vk_computePipelineLayout;
-            vk::Pipeline                    vk_computePipeline;
-            vk::CommandPool                 vk_commandPool;
-            vk::ClearValue                  vk_clearColor;
-            vk::RenderPassBeginInfo         vk_renderpassBeginInfo;
-            vk::Viewport                    vk_viewport;
-            vk::DescriptorPool              vk_descriptorPool;
-            vk::DescriptorSet               vk_descriptorSet;
-            vk::Rect2D                      vk_scissor;
-            vk::PipelineStageFlags          vk_waitStages;
-            vk::Buffer                      vk_vertexBuffer;
-            vk::DeviceMemory                vk_vertexBufferMemory;
-            vk::Buffer                      vk_indexBuffer;
-            vk::DeviceMemory                vk_indexBufferMemory;
-            std::vector<vk::CommandBuffer>  vk_commandBuffers;
-            std::vector<vk::Framebuffer>    vk_swapchainFramebuffers;
-            std::vector<vk::Image>          vk_swapchainImages;
-            std::vector<vk::ImageView>      vk_swapchainImageViews;
-            std::vector<vk::Semaphore>      vk_imageAvailableSemaphores;
-            std::vector<vk::Semaphore>      vk_renderFinishedSemaphores;
-            std::vector<vk::Fence>          vk_inFlightFences;
-            bool                            vk_validation = false;
-            bool                            ft_fontInUse  = false;
-            unsigned int                    graphicsQueueFamilyIndex = -1;
-            unsigned int                    presentQueueFamilyIndex = -1;
-            std::vector<const char *>       enabled_layers;
-            std::vector<const char *>       enabled_instance_extensions;
-            std::vector<const char *>       enabled_device_extensions;
+            ft::FT_Library                      ft_lib;
+            ft::FT_Face                         ft_face;
+            vk::Instance                        vk_instance;
+            vk::PhysicalDevice                  vk_physicalDevice;
+            vk::Device                          vk_device;
+            vk::Queue                           vk_graphicsQueue;
+            vk::Queue                           vk_presentQueue;
+            vk::SurfaceKHR                      vk_surface;
+            vk::SwapchainKHR                    vk_swapchain;
+            vk::SurfaceFormatKHR                vk_surfaceFormat;
+            vk::PresentModeKHR                  vk_presentMode;
+            vk::Extent2D                        vk_swapchainExtent;
+            vk::RenderPass                      vk_renderpass;
+            vk::DescriptorSetLayout             vk_descriptorSetLayout;
+            vk::PipelineLayout                  vk_graphicsPipelineLayout;
+            vk::Pipeline                        vk_graphicsPipeline;
+            vk::PipelineLayout                  vk_computePipelineLayout;
+            vk::Pipeline                        vk_computePipeline;
+            vk::CommandPool                     vk_commandPool;
+            vk::ClearValue                      vk_clearColor;
+            vk::RenderPassBeginInfo             vk_renderpassBeginInfo;
+            vk::Viewport                        vk_viewport;
+            vk::DescriptorPool                  vk_descriptorPool;
+            vk::DescriptorSet                   vk_descriptorSet;
+            vk::Rect2D                          vk_scissor;
+            vk::PipelineStageFlags              vk_waitStages;
+            vk::Buffer                          vk_vertexBuffer;
+            vk::DeviceMemory                    vk_vertexBufferMemory;
+            vk::Buffer                          vk_indexBuffer;
+            vk::DeviceMemory                    vk_indexBufferMemory;
+            vk::Extent2D                        vk_msdfExtent;
+            std::vector<vk::CommandBuffer>      vk_commandBuffers;
+            std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
+            std::vector<vk::Image>              vk_swapchainImages;
+            std::vector<vk::ImageView>          vk_swapchainImageViews;
+            std::vector<vk::Semaphore>          vk_imageAvailableSemaphores;
+            std::vector<vk::Semaphore>          vk_renderFinishedSemaphores;
+            std::vector<vk::Fence>              vk_inFlightFences;
+            bool                                vk_validation = false;
+            bool                                ft_fontInUse  = false;
+            unsigned int                        graphicsQueueFamilyIndex = -1;
+            unsigned int                        presentQueueFamilyIndex = -1;
+            std::vector<const char *>           enabled_layers;
+            std::vector<const char *>           enabled_instance_extensions;
+            std::vector<const char *>           enabled_device_extensions;
 
             // runtime variables (here to prevent excess push and pop operations)
-            vk::CommandBufferBeginInfo      vk_beginInfo;
-            vk::SubmitInfo                  vk_submitInfo;
-            vk::DeviceSize                  vk_vertexBufferOffsets = 0;
-            vk::DeviceSize                  vk_stagingBufferRegion;
-            vk::PresentInfoKHR              vk_presentInfo;
-            vk::Result                      vk_runtimeResult;
-            unsigned int                    currentFrame = 0;
-            unsigned int                    knownIndicesSize = 0;
-            uint32_t                        imageIndex = -1;
-            std::vector<Vertex>             vertices;
-            std::vector<uint16_t>           indices;
-            std::vector<Triangle>           triangles;
-            std::vector<RectObj>            scenes;
+            vk::CommandBufferBeginInfo          vk_beginInfo;
+            vk::SubmitInfo                      vk_submitInfo;
+            vk::DeviceSize                      vk_vertexBufferOffsets = 0;
+            vk::DeviceSize                      vk_stagingBufferRegion;
+            vk::PresentInfoKHR                  vk_presentInfo;
+            vk::Result                          vk_runtimeResult;
+            unsigned int                        currentFrame = 0;
+            unsigned int                        knownIndicesSize = 0;
+            uint32_t                            imageIndex = -1;
+            std::vector<Vertex>                 vertices;
+            std::vector<uint16_t>               indices;
+            std::vector<Triangle>               triangles;
+            std::vector<RectObj>                scenes;
+            std::unordered_map<char, MSDFImage> charImageMappings;
 
 
             vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {

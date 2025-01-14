@@ -71,6 +71,8 @@ namespace SplitGui {
     };
 
     struct HexColor {
+        HexColor() {}
+
         HexColor(int hex) {
             r = (hex >> (UINT8_WIDTH * 2)) & UINT8_MAX;
             g = (hex >> (UINT8_WIDTH * 1)) & UINT8_MAX;
@@ -115,6 +117,17 @@ namespace SplitGui {
         std::array<Unit, 2> operands;
         UnitOperationType type;
     };
+
+#ifdef SPLIT_GUI_USE_VULKAN
+
+    struct MSDFImage {
+        vk::Image image;
+        vk::ImageView imageView;
+        //vk::Sampler sampler;
+        vk::DeviceMemory imageMemory;
+    };
+
+#endif
 }
 
 #endif

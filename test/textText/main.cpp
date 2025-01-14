@@ -15,9 +15,8 @@ int main() {
     graphics.drawText(
         SplitGui::IVec2{0, 0}, 
         window.getSize(),
-        "hello world"
+        "A"
     );
-
 
     //graphics.submitBuffers();
 
