@@ -459,26 +459,16 @@ namespace SplitGui {
 
                     msdfgen::edgeColoringSimple(shape, 3.0);
 
-                    msdfgen::Bitmap<float, 3> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
+                    msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
 
                     msdfgen::SDFTransformation t(msdfgen::Projection(32.0, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
-                    msdfgen::generateMSDF(msdf, shape, t);
+                    msdfgen::generateMTSDF(msdf, shape, t);
 
-                    
-
-                    HexColor pixels[vk_msdfExtent.width * vk_msdfExtent.height];
-
-                    for (int x = 0; x < vk_msdfExtent.width; x++) {
-                        for (int y = 0; y < vk_msdfExtent.height; y++) {
-                            pixels[i].r = msdfgen::pixelFloatToByte(msdf(x,y)[0]);
-                            pixels[i].g = msdfgen::pixelFloatToByte(msdf(x,y)[1]);
-                            pixels[i].b = msdfgen::pixelFloatToByte(msdf(x,y)[2]);
-                        }
-                    }
+                    msdfgen::BitmapConstRef<float, 4> ref = msdf;
 
                     vk::ImageCreateInfo imageInfo;
                     imageInfo.imageType     = vk::ImageType::e2D;
-                    imageInfo.format        = vk::Format::eR8G8B8Uint;
+                    imageInfo.format        = vk::Format::eR8G8B8A8Unorm;
                     imageInfo.extent.width  = vk_msdfExtent.width;
                     imageInfo.extent.height = vk_msdfExtent.height;
                     imageInfo.extent.depth  = 1;
@@ -515,7 +505,7 @@ namespace SplitGui {
 
                     charImageMappings[text[i]].imageView = vk_device.createImageView(imageViewInfo);
 
-                    vk::DeviceSize   imageSize = vk_msdfExtent.width * vk_msdfExtent.height * sizeof(HexColor);
+                    vk::DeviceSize   imageSize = vk_msdfExtent.width * vk_msdfExtent.height * sizeof(float) * 4;
                     vk::Buffer       imageStagingBuffer;
                     vk::DeviceMemory imageStagingBufferMemory;
                     
@@ -529,8 +519,30 @@ namespace SplitGui {
                     );
 
                     void* memory = vk_device.mapMemory(imageStagingBufferMemory, 0, imageSize);
-                    memcpy(memory, pixels, imageSize);
+                    memcpy(memory, ref.pixels, imageSize);
                     vk_device.unmapMemory(imageStagingBufferMemory);
+
+                    vk::ImageMemoryBarrier barrier;
+                    barrier.srcAccessMask                   = {};
+                    barrier.dstAccessMask                   = vk::AccessFlagBits::eTransferWrite;
+                    barrier.oldLayout                       = vk::ImageLayout::eUndefined;
+                    barrier.newLayout                       = vk::ImageLayout::eTransferDstOptimal;
+                    barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
+                    barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
+                    barrier.image                           = charImageMappings[text[i]].image;
+                    barrier.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
+                    barrier.subresourceRange.baseMipLevel   = 0;
+                    barrier.subresourceRange.levelCount     = 1;
+                    barrier.subresourceRange.baseArrayLayer = 0;
+                    barrier.subresourceRange.layerCount     = 1;
+
+                    commandBuffer.pipelineBarrier(
+                        vk::PipelineStageFlagBits::eTopOfPipe,
+                        vk::PipelineStageFlagBits::eTransfer,
+                        {},
+                        nullptr, nullptr,
+                        barrier
+                    );
 
                     vk::BufferImageCopy region;
                     region.bufferOffset                    = 0;
@@ -545,9 +557,47 @@ namespace SplitGui {
                     region.imageOffset.z                   = 0;
                     region.imageExtent.width               = vk_msdfExtent.width;
                     region.imageExtent.height              = vk_msdfExtent.height;
-                    region.imageExtent.depth               = 0;
+                    region.imageExtent.depth               = 1;
 
                     commandBuffer.copyBufferToImage(imageStagingBuffer, charImageMappings[text[i]].image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
+
+                    vk::ImageMemoryBarrier barrier2;
+                    barrier2.srcAccessMask                   = vk::AccessFlagBits::eTransferWrite;
+                    barrier2.dstAccessMask                   = vk::AccessFlagBits::eShaderRead;
+                    barrier2.oldLayout                       = vk::ImageLayout::eTransferDstOptimal;
+                    barrier2.newLayout                       = vk::ImageLayout::eShaderReadOnlyOptimal;
+                    barrier2.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
+                    barrier2.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
+                    barrier2.image                           = charImageMappings[text[i]].image;
+                    barrier2.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
+                    barrier2.subresourceRange.baseMipLevel   = 0;
+                    barrier2.subresourceRange.levelCount     = 1;
+                    barrier2.subresourceRange.baseArrayLayer = 0;
+                    barrier2.subresourceRange.layerCount     = 1;
+
+                    // Insert the barrier to transition the image layout to the final layout for sampling
+                    commandBuffer.pipelineBarrier(
+                        vk::PipelineStageFlagBits::eTransfer,
+                        vk::PipelineStageFlagBits::eFragmentShader,
+                        {},
+                        nullptr, nullptr, // No synchronization needed between stages here
+                        barrier2
+                    );
+
+
+                    vk::SamplerCreateInfo samplerInfo;
+                    samplerInfo.magFilter               = vk::Filter::eLinear;
+                    samplerInfo.minFilter               = vk::Filter::eLinear;;
+                    samplerInfo.addressModeU            = vk::SamplerAddressMode::eRepeat;
+                    samplerInfo.addressModeV            = vk::SamplerAddressMode::eRepeat;
+                    samplerInfo.addressModeW            = vk::SamplerAddressMode::eRepeat;
+                    samplerInfo.borderColor             = vk::BorderColor::eIntTransparentBlack;
+                    samplerInfo.unnormalizedCoordinates = vk::False;
+                    samplerInfo.compareEnable           = vk::False;
+                    samplerInfo.compareOp               = vk::CompareOp::eAlways;
+                    samplerInfo.mipmapMode              = vk::SamplerMipmapMode::eLinear;
+
+                    charImageMappings[text[i]].sampler = vk_device.createSampler(samplerInfo);
                 }
 
                 endCopyBuffer(commandBuffer);
@@ -981,14 +1031,21 @@ namespace SplitGui {
 
             void createDescriptorSetLayout() {
 
-                vk::DescriptorSetLayoutBinding layoutBinding;
-                layoutBinding.binding            = 0;
-                layoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
-                layoutBinding.descriptorCount    = 1;
-                layoutBinding.stageFlags         = vk::ShaderStageFlagBits::eGeometry;
-                layoutBinding.pImmutableSamplers = nullptr;
+                vk::DescriptorSetLayoutBinding sceneLayoutBinding;
+                sceneLayoutBinding.binding            = 0;
+                sceneLayoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
+                sceneLayoutBinding.descriptorCount    = 1;
+                sceneLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eGeometry;
+                sceneLayoutBinding.pImmutableSamplers = nullptr;
 
-                std::array<vk::DescriptorSetLayoutBinding, 1> bindings = { layoutBinding };
+                vk::DescriptorSetLayoutBinding textureLayoutBinding;
+                textureLayoutBinding.binding            = 1;
+                textureLayoutBinding.descriptorType     = vk::DescriptorType::eCombinedImageSampler;
+                textureLayoutBinding.descriptorCount    = 1;
+                textureLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eGeometry;
+                textureLayoutBinding.pImmutableSamplers = nullptr;
+
+                std::array<vk::DescriptorSetLayoutBinding, 2> bindings = { sceneLayoutBinding, textureLayoutBinding };
 
                 vk::DescriptorSetLayoutCreateInfo createInfo;
                 createInfo.bindingCount = bindings.size();
@@ -1304,13 +1361,19 @@ namespace SplitGui {
 #pragma region Descriptor set
 
             void createDescriptorPool() {
-                vk::DescriptorPoolSize poolSize;
-                poolSize.type            = vk::DescriptorType::eUniformBuffer;
-                poolSize.descriptorCount = 1;
+                vk::DescriptorPoolSize scenePoolSize;
+                scenePoolSize.type            = vk::DescriptorType::eUniformBuffer;
+                scenePoolSize.descriptorCount = 1;
+
+                vk::DescriptorPoolSize texturePoolSize;
+                texturePoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
+                texturePoolSize.descriptorCount = 1;
+
+                std::array<vk::DescriptorPoolSize, 2> poolSizes = { scenePoolSize, texturePoolSize };
 
                 vk::DescriptorPoolCreateInfo createInfo;
-                createInfo.poolSizeCount = 1;
-                createInfo.pPoolSizes    = &poolSize;
+                createInfo.poolSizeCount = poolSizes.size();
+                createInfo.pPoolSizes    = poolSizes.data();
                 createInfo.maxSets       = 1;
                 
                 vk_descriptorPool = vk_device.createDescriptorPool(createInfo);
