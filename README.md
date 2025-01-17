@@ -39,9 +39,8 @@
 
 * make xml parser
 
-* refactor build tools
-    * compile volk with modules
-    * refactor error messages
+* refactor error messages
+* refactor include
 
 * write documentation
 

@@ -6,8 +6,123 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 file(GLOB_RECURSE TESTS test/*/main.cpp)
-
 include_directories(${CMAKE_SOURCE_DIR}/include)
+
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
+endif()
+
+# ---- fetch dependencies ----
+
+function(copy_files, src, dst)
+    if(NOT EXISTS ${src})
+        file(MAKE_DIRECTORY ${src})
+    endif()
+
+    file(COPY ${src}/* DESTINATION ${dst} FOLLOW_SYMLINKS)
+endfunction()
+
+set(DEPENDENCIES
+    "https://github.com/freetype/freetype.git"
+    "https://github.com/glfw/glfw.git"
+    "https://github.com/KhronosGroup/Vulkan-Hpp.git"
+    "https://github.com/KhronosGroup/Vulkan-Headers.git"
+    "https://github.com/lukem570/glfwpp.git"
+    "https://github.com/zeux/volk.git"
+    "https://github.com/Chlumsky/msdfgen.git"
+)
+
+set(DEPENDENCIES_DO_BUILD
+    "TRUE"                          # freetype
+    "TRUE"                          # glfw
+    "FALSE"                         # vulkan hpp
+    "FALSE"                         # vulkan headers
+    "FALSE"                         # glfwpp
+    "TRUE"                          # volk
+    "TRUE"                          # msdfgen
+)
+
+set(index 0)
+
+foreach(git_repo_link ${DEPENDENCIES})
+    string(REGEX MATCH "([^/]+)\\.git" repo_name_match ${git_repo_link})
+    string(REGEX REPLACE ".git" "" repo_name ${repo_name_match})
+
+    set(repo_path ${CMAKE_BINARY_DIR}/${repo_name})
+
+    if(EXISTS ${repo_path})
+        math(EXPR index "${index} + 1")
+        continue()
+    endif()
+
+    list(GET DEPENDENCIES_DO_BUILD ${index} DO_BUILD)
+    list(GET DEPENDENCIES_INCLUDE_SRC ${index} SRC)
+    list(GET DEPENDENCIES_INCLUDE_DST ${index} DST)
+
+    file(MAKE_DIRECTORY ${repo_path})
+
+    execute_process(
+        COMMAND git clone ${git_repo_link} ${repo_path}
+        RESULT_VARIABLE CLONE_RESULT
+        ERROR_VARIABLE CLONE_ERROR
+        OUTPUT_QUIET
+    )
+    
+    if(NOT CLONE_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to clone repository: ${repo_name}. Error: ${CLONE_ERROR}")
+    else()
+        message(STATUS "Successfully cloned: ${repo_name}")
+    endif()
+
+    if(${DO_BUILD} STREQUAL "FALSE")
+        math(EXPR index "${index} + 1")
+        continue()
+    endif()
+
+    # I am aware that this is cursed but I can't get it to work any other way
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} -B build 
+        -DCMAKE_CXX_FLAGS=-fPIC 
+        -DCMAKE_C_FLAGS=-fPIC 
+        -DFT_DISABLE_ZLIB=TRUE 
+        -DFT_DISABLE_BZIP2=TRUE 
+        -DFT_DISABLE_PNG=TRUE 
+        -DFT_DISABLE_HARFBUZZ=TRUE 
+        -DFT_DISABLE_BROTLI=TRUE 
+        -DMSDFGEN_CORE_ONLY=ON
+        WORKING_DIRECTORY ${repo_path}
+        RESULT_VARIABLE CONFIGURE_RESULT
+        ERROR_VARIABLE CONFIGURE_ERROR
+        OUTPUT_QUIET
+    )
+
+    if(NOT CONFIGURE_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to configure repository: ${repo_name}. Error: ${CONFIGURE_ERROR}")
+    else()
+        message(STATUS "Successfully configured: ${repo_name}")
+    endif()
+    
+    string(REGEX REPLACE ".*/" "" make_program ${CMAKE_MAKE_PROGRAM})
+
+    execute_process(
+        COMMAND ${make_program}
+        WORKING_DIRECTORY ${repo_path}/build
+        RESULT_VARIABLE BUILD_RESULT
+        ERROR_VARIABLE BUILD_ERROR
+        OUTPUT_QUIET
+    )
+
+    if(NOT BUILD_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to build repository: ${repo_name}. Error: ${BUILD_ERROR}")
+    else()
+        message(STATUS "Successfully built: ${repo_name}")
+    endif()
+
+    math(EXPR index "${index} + 1")
+
+endforeach()
+
+# ---- compile shaders ----
 
 set(SHADERS
     "${CMAKE_SOURCE_DIR}/src/shaders/fragment.frag"
@@ -33,6 +148,8 @@ add_custom_target(
     shaders ALL
     DEPENDS ${SPIR_V_FILES}
 )
+
+# ---- provide window manager to vulkan ----
 
 if(NOT DEFINED WM_MANUAL)
     if(WIN32)
@@ -61,18 +178,22 @@ if(NOT DEFINED VK_WINDOW_MANAGER)
     message(FATAL_ERROR "no window manager defined")
 endif()
 
-message("-- window manager: ${VK_WINDOW_MANAGER}")
+message(STATUS "window manager: ${VK_WINDOW_MANAGER}")
+
+# ---- compile splitgui ----
 
 add_library(splitgui SHARED ${CMAKE_SOURCE_DIR}/src/splitgui.cpp)
 
 target_link_libraries(splitgui PRIVATE 
-    ${CMAKE_BINARY_DIR}/libglfw3.a 
-    ${CMAKE_SOURCE_DIR}/include/volk/build/libvolk.a 
-    ${CMAKE_SOURCE_DIR}/include/msdfgen/build/libmsdfgen-core.a
-    ${CMAKE_SOURCE_DIR}/include/src/freetype/build/libfreetype.a
+    ${CMAKE_BINARY_DIR}/glfw/build/src/libglfw3.a 
+    ${CMAKE_BINARY_DIR}/volk/build/libvolk.a 
+    ${CMAKE_BINARY_DIR}/msdfgen/build/libmsdfgen-core.a
+    ${CMAKE_BINARY_DIR}/freetype/build/libfreetype.a
 )
 
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${VK_WINDOW_MANAGER})
+
+# ---- compile tests ----
 
 foreach(main_file ${TESTS})
 
@@ -100,4 +221,3 @@ foreach(main_file ${TESTS})
     )
 
 endforeach()
-
