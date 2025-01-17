@@ -118,7 +118,20 @@ namespace SplitGui {
         UnitOperationType type;
     };
 
+    struct GeometryUniformBufferObject {
+        uint16_t textureMapping;
+        uint16_t sceneNumber;
+        IVec4 viewport;
+    };
+
 #ifdef SPLIT_GUI_USE_VULKAN
+
+    struct GUBO {
+        GeometryUniformBufferObject data;
+        vk::DeviceMemory            memory;
+        void*                       map;
+    };
+
 
     struct MSDFImage {
         vk::Image image;

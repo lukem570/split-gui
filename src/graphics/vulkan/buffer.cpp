@@ -1,0 +1,113 @@
+#include "vulkan.hpp"
+
+namespace SplitGui {
+    inline void VulkanInterface::createFramebuffers() {
+        vk_swapchainFramebuffers.resize(vk_swapchainImageViews.size());
+
+        for (int i = 0; i < vk_swapchainImageViews.size(); i++) {
+            vk::FramebufferCreateInfo framebufferInfo;
+            framebufferInfo.renderPass      = vk_renderpass;
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments    = &vk_swapchainImageViews[i];
+            framebufferInfo.width           = vk_swapchainExtent.width;
+            framebufferInfo.height          = vk_swapchainExtent.height;
+            framebufferInfo.layers          = 1;
+
+            vk_swapchainFramebuffers[i] = vk_device.createFramebuffer(framebufferInfo);
+        }
+    }
+
+
+    inline void VulkanInterface::createBuffer(
+        vk::DeviceSize             size,
+        vk::BufferUsageFlags       usage,
+        vk::MemoryPropertyFlags    properties,
+        vk::Buffer&                out_buffer,
+        vk::DeviceMemory&          out_bufferMemory
+    ) {
+        vk::BufferCreateInfo createInfo;
+        createInfo.size        = size;
+        createInfo.usage       = usage;
+        createInfo.sharingMode = vk::SharingMode::eExclusive;
+
+        out_buffer = vk_device.createBuffer(createInfo);
+
+        vk::MemoryRequirements memoryRequirements = vk_device.getBufferMemoryRequirements(out_buffer);
+
+        vk::MemoryAllocateInfo allocInfo;
+        allocInfo.allocationSize  = memoryRequirements.size;
+        allocInfo.memoryTypeIndex = findMemoryType(memoryRequirements.memoryTypeBits, properties);
+
+        out_bufferMemory = vk_device.allocateMemory(allocInfo);
+
+        vk_device.bindBufferMemory(out_buffer, out_bufferMemory, 0);
+    }
+
+    inline vk::CommandBuffer VulkanInterface::startCopyBuffer() {
+        vk::CommandBufferAllocateInfo allocInfo;
+        allocInfo.level              = vk::CommandBufferLevel::ePrimary;
+        allocInfo.commandPool        = vk_commandPool;
+        allocInfo.commandBufferCount = 1;
+
+        std::vector<vk::CommandBuffer> commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
+
+        vk::CommandBufferBeginInfo beginInfo;
+        beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+
+        commandBuffers.front().begin(beginInfo);
+
+        return commandBuffers.front();
+    }
+
+    inline void VulkanInterface::copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion) {
+        copyRegion.size = size;
+        copyRegion.srcOffset = 0; 
+        copyRegion.dstOffset = 0; 
+
+        commandBuffer.copyBuffer(src, dst, 1, &copyRegion);
+    }
+
+    inline void VulkanInterface::endCopyBuffer(vk::CommandBuffer commandBuffer) {
+        commandBuffer.end();
+
+        vk::SubmitInfo submitInfo;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers    = &commandBuffer;
+
+        vk::Result result_submit = vk_graphicsQueue.submit(1, &submitInfo, nullptr);
+
+        if (result_submit != vk::Result::eSuccess) {
+            printf("Error: error submitting queue\n");
+            throw;
+        }
+
+        vk_graphicsQueue.waitIdle();
+
+        vk_device.freeCommandBuffers(vk_commandPool, 1, &commandBuffer);
+    }
+
+    template <typename T>
+    inline void VulkanInterface::InstanceStagingBuffer(
+        std::vector<T>    dataToUpload,
+        vk::Buffer&       out_buffer,
+        vk::DeviceMemory& out_memory,
+        vk::DeviceSize&   out_size
+    ) {
+        
+        out_size = sizeof(dataToUpload[0]) * dataToUpload.size();
+
+        createBuffer(
+            out_size, 
+            vk::BufferUsageFlagBits::eTransferSrc, 
+            vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+            out_buffer,
+            out_memory
+        );
+
+        void* memory = vk_device.mapMemory(out_memory, 0, out_size);
+
+        memcpy(memory, dataToUpload.data(), out_size);
+
+        vk_device.unmapMemory(out_memory);
+    }
+}
