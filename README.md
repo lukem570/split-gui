@@ -5,20 +5,29 @@
 
 ## How to build 
 
-#### fetch project dependencies
+#### auto test
 
-`python tools/moduleTools/modules.py`
+```
+python tools/testTools/test.py
+```
 
 #### build
 
-`python tools/buildTools/build.py`
+note: ninja is not required for builds
+
+```
+mkdir build
+cd build
+cmake -G "Ninja" .. 
+ninja
+```
 
 ---
 
 ## build dependencies
 
-* python
-* ninja
+* python (optional)
+* ninja  (optional)
 * cmake
 * git
 
