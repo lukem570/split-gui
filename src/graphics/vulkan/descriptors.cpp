@@ -4,21 +4,21 @@ namespace SplitGui {
     void VulkanInterface::createDescriptorSetLayout() {
 
         vk::DescriptorSetLayoutBinding uniformLayoutBinding;
-        uniformLayoutBinding.binding            = 0;
+        uniformLayoutBinding.binding            = DescriporBindings::eVertexUniform;
         uniformLayoutBinding.descriptorCount    = 1;
         uniformLayoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
         uniformLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eVertex;
         uniformLayoutBinding.pImmutableSamplers = nullptr;
 
         vk::DescriptorSetLayoutBinding sceneLayoutBinding;
-        sceneLayoutBinding.binding            = 1;
+        sceneLayoutBinding.binding            = DescriporBindings::eSceneData;
         sceneLayoutBinding.descriptorCount    = 1;
         sceneLayoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
-        sceneLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eVertex;
+        sceneLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
         sceneLayoutBinding.pImmutableSamplers = nullptr;
 
         vk::DescriptorSetLayoutBinding textureLayoutBinding;
-        textureLayoutBinding.binding            = 2;
+        textureLayoutBinding.binding            = DescriporBindings::eGlyphs;
         textureLayoutBinding.descriptorCount    = 1;
         textureLayoutBinding.descriptorType     = vk::DescriptorType::eCombinedImageSampler;
         textureLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
@@ -36,22 +36,22 @@ namespace SplitGui {
     void VulkanInterface::createDescriptorPool() {
         vk::DescriptorPoolSize uniformPoolSize;
         uniformPoolSize.type            = vk::DescriptorType::eUniformBuffer;
-        uniformPoolSize.descriptorCount = MAX_FRAMES_IN_FLIGHT;
+        uniformPoolSize.descriptorCount = 1;
 
         vk::DescriptorPoolSize scenePoolSize;
         scenePoolSize.type            = vk::DescriptorType::eUniformBuffer;
-        scenePoolSize.descriptorCount = MAX_FRAMES_IN_FLIGHT;
+        scenePoolSize.descriptorCount = 1;
 
         vk::DescriptorPoolSize texturePoolSize;
         texturePoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
-        texturePoolSize.descriptorCount = MAX_FRAMES_IN_FLIGHT;
+        texturePoolSize.descriptorCount = 1;
 
         std::array<vk::DescriptorPoolSize, 3> poolSizes = { uniformPoolSize, scenePoolSize, texturePoolSize };
 
         vk::DescriptorPoolCreateInfo createInfo;
         createInfo.poolSizeCount = poolSizes.size();
         createInfo.pPoolSizes    = poolSizes.data();
-        createInfo.maxSets       = MAX_FRAMES_IN_FLIGHT;
+        createInfo.maxSets       = 1;
         
         vk_descriptorPool = vk_device.createDescriptorPool(createInfo);
     }
@@ -59,9 +59,9 @@ namespace SplitGui {
     void VulkanInterface::createDescriptorSet() {
         vk::DescriptorSetAllocateInfo allocInfo;
         allocInfo.descriptorPool     = vk_descriptorPool;
-        allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
+        allocInfo.descriptorSetCount = 1;
         allocInfo.pSetLayouts        = &vk_descriptorSetLayout;
 
-        vk_descriptorSets = vk_device.allocateDescriptorSets(allocInfo);
+        vk_descriptorSet = vk_device.allocateDescriptorSets(allocInfo).back();
     }
 }

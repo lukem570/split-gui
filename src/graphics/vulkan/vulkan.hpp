@@ -46,17 +46,17 @@ namespace SplitGui {
             VulkanInterface(bool validation);
             ~VulkanInterface();
 
-            void instance() override;
-            void submitWindow(SplitGui::Window& window) override;
+            void instance()                                    override;
+            void submitWindow(SplitGui::Window& window)        override;
 
-            void drawFrame() override;
-            void drawRect(Vec2 x1, Vec2 x2, Vec3 color) override;
-            void instanceScene(Vec2 x1, Vec2 x2) override;
+            void drawFrame()                                   override;
+            void drawRect(Vec2 x1, Vec2 x2, Vec3 color)        override;
+            void instanceScene(Vec2 x1, Vec2 x2)               override;
             void drawText(Vec2 x1, Vec2 x2, std::string& text) override;
-            void loadFont(const char* path) override;
-            void submitBuffers() override;
- 
-            void resizeEvent() override;
+            void loadFont(const char* path)                    override;
+            void submitBuffers()                               override;
+
+            void resizeEvent()                                 override;
 
         protected:
             SplitGui::Window*                   pWindow;
@@ -64,7 +64,7 @@ namespace SplitGui {
             // free type variables
             ft::FT_Library                      ft_lib;
             ft::FT_Face                         ft_face;
-            bool                                ft_fontInUse  = false;
+            bool                                ft_fontInUse = false;
 
             // vulkan variables
             vk::Instance                        vk_instance;
@@ -94,11 +94,12 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_vertexBufferMemory;
             vk::Buffer                          vk_indexBuffer;
             vk::DeviceMemory                    vk_indexBufferMemory;
-            vk::Extent2D                        vk_msdfExtent;
             vk::Buffer                          vk_vertexUniformBuffer;
             vk::DeviceMemory                    vk_vertexUniformBufferMemory;
-            void*                               vk_vertexUniformBufferMap;
-            std::vector<vk::DescriptorSet>      vk_descriptorSets;
+            vk::Buffer                          vk_sceneBuffer;
+            vk::DeviceMemory                    vk_sceneBufferMemory;
+            vk::DescriptorSet                   vk_descriptorSet;
+            vk::Extent2D                        vk_msdfExtent;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;
@@ -108,7 +109,7 @@ namespace SplitGui {
             std::vector<vk::Fence>              vk_inFlightFences;
             bool                                vk_validation = false;
             unsigned int                        graphicsQueueFamilyIndex = -1;
-            unsigned int                        presentQueueFamilyIndex = -1;
+            unsigned int                        presentQueueFamilyIndex  = -1;
             std::vector<const char *>           enabled_layers;
             std::vector<const char *>           enabled_instance_extensions;
             std::vector<const char *>           enabled_device_extensions;
@@ -120,9 +121,9 @@ namespace SplitGui {
             vk::DeviceSize                      vk_stagingBufferRegion;
             vk::PresentInfoKHR                  vk_presentInfo;
             vk::Result                          vk_runtimeResult;
-            unsigned int                        currentFrame     = 0;
-            unsigned int                        knownIndicesSize = 0;
-            unsigned int                        knownScenesSize  = 0;
+            unsigned int                        currentFrame     =  0;
+            unsigned int                        knownIndicesSize =  0;
+            unsigned int                        knownScenesSize  =  0;
             uint32_t                            imageIndex       = -1;
             VertexUniformObject                 vertexUniformObject;
             std::vector<VertexBufferObject>     vertices;

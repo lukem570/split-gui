@@ -38,8 +38,8 @@ namespace SplitGui {
         createCommandBuffers();
         createSyncObj();
         createDescriptorPool();
+        createDescriptorSet();
         createVertexUniforms();
-        //createDescriptorSet();
 
         setupRenderpassBeginInfo();
         setupViewport();

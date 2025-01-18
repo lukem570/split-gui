@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     VulkanInterface::~VulkanInterface() {
+        vk_device.waitIdle();
+
         cleanupSyncObj();
                 
         vk_device.freeCommandBuffers(vk_commandPool, vk_commandBuffers.size(), vk_commandBuffers.data());
@@ -12,11 +14,10 @@ namespace SplitGui {
         
         cleanupFrameBuffers();
 
-        vk_device.unmapMemory(vk_vertexUniformBufferMemory);
         vk_device.freeMemory(vk_vertexUniformBufferMemory);
         vk_device.destroyBuffer(vk_vertexUniformBuffer);
 
-        //vk_device.freeDescriptorSets(vk_descriptorPool, vk_descriptorSets.size(), vk_descriptorSets.data());
+        vk_device.freeDescriptorSets(vk_descriptorPool, 1, &vk_descriptorSet);
         vk_device.destroyDescriptorPool(vk_descriptorPool);
 
         vk_device.destroyPipeline(vk_graphicsPipeline);

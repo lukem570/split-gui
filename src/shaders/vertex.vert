@@ -3,17 +3,23 @@
 layout(location = 0) in vec2 inPosition;
 layout(location = 1) in vec4 inColor;
 
-layout(location = 2) in uvec2 flags_in;
-layout(location = 3) in uvec2 sceneNumber_in;
-layout(location = 4) in uvec2 textureNumber_in;
+layout(location = 2) in uvec2 in_flags;
+layout(location = 3) in uvec2 in_sceneNumber;
+layout(location = 4) in uvec2 in_textureNumber;
 
-uint flags         = uint(flags_in.x);
-uint sceneNumber   = uint(sceneNumber_in.x);
-uint textureNumber = uint(textureNumber_in.x);
+uint flags         = uint(in_flags.x);
+uint sceneNumber   = uint(in_sceneNumber.x);
+uint textureNumber = uint(in_textureNumber.x);
 
 layout(location = 0) out vec3 out_fragColor;
 layout(location = 1) out uint out_flags;
 layout(location = 2) out uint out_textureNumber;
+
+layout(binding = 0) uniform UniformBufferObject {
+    ivec2 screenSize;
+} ubo;
+
+
 
 void main() {
     gl_Position       = vec4(inPosition, 0.0, 1.0);

@@ -108,7 +108,7 @@ namespace SplitGui {
 
     struct Scene {
         RectObj  viewport;
-        uint16_t cameraFieldOfView;
+        float    cameraFieldOfView;
         Vec3     cameraPosition;
         Vec3     cameraRotation;
     };
@@ -126,7 +126,9 @@ namespace SplitGui {
     };
 
     struct VertexUniformObject {
-        IVec2 screenSize;
+        IVec2    screenSize;
+        uint16_t numScenes;
+        uint16_t numTextures;
     };
 
     struct Unit {
@@ -140,6 +142,12 @@ namespace SplitGui {
     };
 
 #ifdef SPLIT_GUI_USE_VULKAN
+
+    enum DescriporBindings {
+        eVertexUniform  = 0,
+        eSceneData      = 1,
+        eGlyphs         = 2,
+    };
 
     struct MSDFImage {
         vk::Image image;
