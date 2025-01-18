@@ -34,6 +34,13 @@ namespace SplitGui {
         eRight,
     };
 
+    enum class VertexFlags {
+        eNone        = 0x00,
+        eUseTexture  = 0x01,
+        eTextureMsdf = 0x02,
+        eTransparent = 0x04,
+    };
+
     struct Vec4 {
         float x;
         float y;
@@ -99,13 +106,27 @@ namespace SplitGui {
         int y      = 0;
     };
 
+    struct Scene {
+        RectObj  viewport;
+        uint16_t cameraFieldOfView;
+        Vec3     cameraPosition;
+        Vec3     cameraRotation;
+    };
+
     struct Vertex {
         Vec2 pos;
         Vec3 color;
     };
 
-    struct Triangle {
-        uint32_t classNumber = 0; // 0 = ui / root; >0 = scene number
+    struct VertexBufferObject {
+        Vertex   vertex;
+        uint16_t flags;
+        uint16_t sceneNumber;
+        uint16_t textureNumber;
+    };
+
+    struct VertexUniformObject {
+        IVec2 screenSize;
     };
 
     struct Unit {
@@ -118,20 +139,7 @@ namespace SplitGui {
         UnitOperationType type;
     };
 
-    struct GeometryUniformBufferObject {
-        uint16_t textureMapping;
-        uint16_t sceneNumber;
-        IVec4 viewport;
-    };
-
 #ifdef SPLIT_GUI_USE_VULKAN
-
-    struct GUBO {
-        GeometryUniformBufferObject data;
-        vk::DeviceMemory            memory;
-        void*                       map;
-    };
-
 
     struct MSDFImage {
         vk::Image image;

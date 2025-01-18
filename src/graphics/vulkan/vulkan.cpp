@@ -18,3 +18,4 @@
 #include "sync.cpp"
 #include "system.cpp"
 #include "text.cpp"
+#include "uniform.cpp"

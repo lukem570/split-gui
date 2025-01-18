@@ -28,15 +28,9 @@ namespace SplitGui {
         topRight.pos   = {std::max(x1.x, x2.x), std::max(x1.y, x2.y)};
         topRight.color = color;
 
-        vertices.push_back(bottomLeft);
-        vertices.push_back(bottomRight);
-        vertices.push_back(topLeft);
-        vertices.push_back(topRight);
-
-        Triangle triangleData;
-        triangleData.classNumber = 0;
-        
-        triangles.push_back(triangleData);
-        triangles.push_back(triangleData);
+        vertices.push_back({bottomLeft,  (uint16_t)VertexFlags::eNone, 0, 0});
+        vertices.push_back({bottomRight, (uint16_t)VertexFlags::eNone, 0, 0});
+        vertices.push_back({topLeft,     (uint16_t)VertexFlags::eNone, 0, 0});
+        vertices.push_back({topRight,    (uint16_t)VertexFlags::eNone, 0, 0});
     }
 }

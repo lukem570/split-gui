@@ -3,10 +3,10 @@
 namespace SplitGui {
     inline void VulkanInterface::createGraphicsPipelineLayout() {
         vk::PipelineLayoutCreateInfo createInfo;
-        //createInfo.setLayoutCount         = 1;
-        //createInfo.pSetLayouts            = &vk_descriptorSetLayout;
-        createInfo.setLayoutCount         = 0;
-        createInfo.pSetLayouts            = nullptr;
+        createInfo.setLayoutCount         = 1;
+        createInfo.pSetLayouts            = &vk_descriptorSetLayout;
+        //createInfo.setLayoutCount         = 0;
+        //createInfo.pSetLayouts            = nullptr;
         createInfo.pushConstantRangeCount = 0;
 
         vk_graphicsPipelineLayout = vk_device.createPipelineLayout(createInfo);
@@ -15,11 +15,9 @@ namespace SplitGui {
     inline void VulkanInterface::createGraphicsPipeline() {
 
         const std::vector<char> vertexShaderFile   = readFile(VERTEX_SHADER_PATH);
-        const std::vector<char> geometryShaderFile = readFile(GEOMETRY_SHADER_PATH);
         const std::vector<char> fragmentShaderFile = readFile(FRAGMENT_SHADER_PATH);
 
         vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile);
-        vk::ShaderModule geometryShader = createShaderModule(geometryShaderFile);
         vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile);
 
         vk::PipelineShaderStageCreateInfo vertexCreateInfo;
@@ -27,17 +25,12 @@ namespace SplitGui {
         vertexCreateInfo.module = vertexShader;
         vertexCreateInfo.pName  = "main";
 
-        vk::PipelineShaderStageCreateInfo geometryCreateInfo;
-        geometryCreateInfo.stage  = vk::ShaderStageFlagBits::eGeometry;
-        geometryCreateInfo.module = geometryShader;
-        geometryCreateInfo.pName  = "main";
-
         vk::PipelineShaderStageCreateInfo fragmentCreateInfo;
         fragmentCreateInfo.stage  = vk::ShaderStageFlagBits::eFragment;
         fragmentCreateInfo.module = fragmentShader;
         fragmentCreateInfo.pName  = "main";
 
-        std::array<vk::PipelineShaderStageCreateInfo, 3> shaderStages = {vertexCreateInfo, geometryCreateInfo, fragmentCreateInfo};
+        std::array<vk::PipelineShaderStageCreateInfo, 2> shaderStages = {vertexCreateInfo, fragmentCreateInfo};
 
         std::vector<vk::DynamicState> dynamicStates = {vk::DynamicState::eViewport, vk::DynamicState::eScissor};
 
@@ -47,19 +40,34 @@ namespace SplitGui {
 
         vk::VertexInputBindingDescription bindingDescription;
         bindingDescription.binding   = 0;
-        bindingDescription.stride    = sizeof(Vertex);
+        bindingDescription.stride    = sizeof(VertexBufferObject);
         bindingDescription.inputRate = vk::VertexInputRate::eVertex;
         
-        std::array<vk::VertexInputAttributeDescription, 2> attributeDescriptions;
+        std::array<vk::VertexInputAttributeDescription, 5> attributeDescriptions;
         attributeDescriptions[0].binding  = 0;
         attributeDescriptions[0].location = 0;
         attributeDescriptions[0].format   = vk::Format::eR32G32Sfloat;
-        attributeDescriptions[0].offset   = offsetof(Vertex, Vertex::pos);
+        attributeDescriptions[0].offset   = offsetof(VertexBufferObject, VertexBufferObject::vertex.pos);
 
         attributeDescriptions[1].binding  = 0;
         attributeDescriptions[1].location = 1;
         attributeDescriptions[1].format   = vk::Format::eR32G32B32Sfloat;
-        attributeDescriptions[1].offset   = offsetof(Vertex, Vertex::color);
+        attributeDescriptions[1].offset   = offsetof(VertexBufferObject, VertexBufferObject::vertex.color);
+
+        attributeDescriptions[2].binding  = 0;
+        attributeDescriptions[2].location = 2;
+        attributeDescriptions[2].format   = vk::Format::eR16Uint;
+        attributeDescriptions[2].offset   = offsetof(VertexBufferObject, VertexBufferObject::flags);
+
+        attributeDescriptions[3].binding  = 0;
+        attributeDescriptions[3].location = 3;
+        attributeDescriptions[3].format   = vk::Format::eR16Uint;
+        attributeDescriptions[3].offset   = offsetof(VertexBufferObject, VertexBufferObject::sceneNumber);
+
+        attributeDescriptions[4].binding  = 0;
+        attributeDescriptions[4].location = 4;
+        attributeDescriptions[4].format   = vk::Format::eR16Uint;
+        attributeDescriptions[4].offset   = offsetof(VertexBufferObject, VertexBufferObject::textureNumber);
 
         vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
         vertexInputInfo.vertexBindingDescriptionCount   = 1;
@@ -124,7 +132,6 @@ namespace SplitGui {
         } 
 
         vk_device.destroyShaderModule(fragmentShader);
-        vk_device.destroyShaderModule(geometryShader);
         vk_device.destroyShaderModule(vertexShader);
 
         vk_graphicsPipeline = result.value;

@@ -17,7 +17,6 @@ namespace SplitGui {
         }
     }
 
-
     inline void VulkanInterface::createBuffer(
         vk::DeviceSize             size,
         vk::BufferUsageFlags       usage,

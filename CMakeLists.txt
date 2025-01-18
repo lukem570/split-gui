@@ -127,7 +127,6 @@ endforeach()
 set(SHADERS
     "${CMAKE_SOURCE_DIR}/src/shaders/fragment.frag"
     "${CMAKE_SOURCE_DIR}/src/shaders/vertex.vert"
-    "${CMAKE_SOURCE_DIR}/src/shaders/geometry.geom"
 )
 
 foreach(SHADER_SOURCE ${SHADERS})

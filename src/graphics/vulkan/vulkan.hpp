@@ -95,6 +95,9 @@ namespace SplitGui {
             vk::Buffer                          vk_indexBuffer;
             vk::DeviceMemory                    vk_indexBufferMemory;
             vk::Extent2D                        vk_msdfExtent;
+            vk::Buffer                          vk_vertexUniformBuffer;
+            vk::DeviceMemory                    vk_vertexUniformBufferMemory;
+            void*                               vk_vertexUniformBufferMap;
             std::vector<vk::DescriptorSet>      vk_descriptorSets;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
@@ -117,15 +120,15 @@ namespace SplitGui {
             vk::DeviceSize                      vk_stagingBufferRegion;
             vk::PresentInfoKHR                  vk_presentInfo;
             vk::Result                          vk_runtimeResult;
-            unsigned int                        currentFrame = 0;
+            unsigned int                        currentFrame     = 0;
             unsigned int                        knownIndicesSize = 0;
-            uint32_t                            imageIndex = -1;
-            std::vector<Vertex>                 vertices;
+            unsigned int                        knownScenesSize  = 0;
+            uint32_t                            imageIndex       = -1;
+            VertexUniformObject                 vertexUniformObject;
+            std::vector<VertexBufferObject>     vertices;
             std::vector<uint16_t>               indices;
-            std::vector<Triangle>               triangles;
-            std::vector<RectObj>                scenes;
+            std::vector<Scene>                  scenes;
             std::unordered_map<char, MSDFImage> charImageMappings;
-            std::vector<GUBO>                   uniformBuffers;
 
 
             inline vk::Bool32           check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
@@ -160,6 +163,8 @@ namespace SplitGui {
             inline void createSyncObj();
             inline void createDescriptorPool();
             inline void createDescriptorSet();
+            inline void createVertexUniforms();
+            inline void createScenesUniforms();
 
             inline void setupRenderpassBeginInfo();
             inline void setupViewport();

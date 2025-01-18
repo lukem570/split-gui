@@ -12,12 +12,16 @@ namespace SplitGui {
         
         cleanupFrameBuffers();
 
+        vk_device.unmapMemory(vk_vertexUniformBufferMemory);
+        vk_device.freeMemory(vk_vertexUniformBufferMemory);
+        vk_device.destroyBuffer(vk_vertexUniformBuffer);
+
         //vk_device.freeDescriptorSets(vk_descriptorPool, vk_descriptorSets.size(), vk_descriptorSets.data());
-        //vk_device.destroyDescriptorPool(vk_descriptorPool);
+        vk_device.destroyDescriptorPool(vk_descriptorPool);
 
         vk_device.destroyPipeline(vk_graphicsPipeline);
         vk_device.destroyPipelineLayout(vk_graphicsPipelineLayout);
-        //vk_device.destroyDescriptorSetLayout(vk_descriptorSetLayout);
+        vk_device.destroyDescriptorSetLayout(vk_descriptorSetLayout);
         vk_device.destroyRenderPass(vk_renderpass);
         
         cleanupImageViews();

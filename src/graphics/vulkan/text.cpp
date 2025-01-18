@@ -14,7 +14,7 @@ namespace SplitGui {
         ft_fontInUse = true;
     }
 
-    void VulkanInterface::drawText(Vec2 x1, Vec2 x2, std::string& text) {
+    void VulkanInterface::drawText(Vec2 x1, Vec2 x2, std::string& text) { // memory leaks!!!!
         if (!ft_fontInUse) {
             printf("WARN: no font in use\n");
             return;

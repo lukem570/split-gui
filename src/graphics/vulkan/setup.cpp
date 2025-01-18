@@ -30,14 +30,15 @@ namespace SplitGui {
         createSwapchain();
         createImageViews();
         createRenderpass();
-        //createDescriptorSetLayout();
+        createDescriptorSetLayout();
         createGraphicsPipelineLayout();
         createGraphicsPipeline();
         createFramebuffers();
         createCommandPool();
         createCommandBuffers();
         createSyncObj();
-        //createDescriptorPool();
+        createDescriptorPool();
+        createVertexUniforms();
         //createDescriptorSet();
 
         setupRenderpassBeginInfo();
