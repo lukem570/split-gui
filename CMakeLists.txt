@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 file(GLOB_RECURSE TESTS test/*/main.cpp)
-include_directories(${CMAKE_SOURCE_DIR}/include)
 
 if(NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
@@ -42,6 +41,18 @@ set(DEPENDENCIES_DO_BUILD
     "TRUE"                          # msdfgen
 )
 
+set(DEPENDENCIES_INCLUDE
+    "include"                          # freetype
+    "include"                          # glfw
+    ""                         # vulkan hpp
+    "include"                         # vulkan headers
+    "include"                         # glfwpp
+    "../"                          # volk
+    "../"                          # msdfgen
+)
+
+set(INCLUDE_PATHS ${CMAKE_SOURCE_DIR}/include)
+
 set(index 0)
 
 foreach(git_repo_link ${DEPENDENCIES})
@@ -50,19 +61,21 @@ foreach(git_repo_link ${DEPENDENCIES})
 
     set(repo_path ${CMAKE_BINARY_DIR}/${repo_name})
 
+    list(GET DEPENDENCIES_DO_BUILD ${index} DO_BUILD)
+    list(GET DEPENDENCIES_INCLUDE ${index} REPO_INCLUDE_PATH)
+
+    set(INCLUDE_PATHS ${INCLUDE_PATHS} ${repo_path}/${REPO_INCLUDE_PATH})
+
     if(EXISTS ${repo_path})
         math(EXPR index "${index} + 1")
         continue()
     endif()
 
-    list(GET DEPENDENCIES_DO_BUILD ${index} DO_BUILD)
-    list(GET DEPENDENCIES_INCLUDE_SRC ${index} SRC)
-    list(GET DEPENDENCIES_INCLUDE_DST ${index} DST)
 
     file(MAKE_DIRECTORY ${repo_path})
 
     execute_process(
-        COMMAND git clone ${git_repo_link} ${repo_path}
+        COMMAND git clone ${git_repo_link} ${repo_path} --recursive
         RESULT_VARIABLE CLONE_RESULT
         ERROR_VARIABLE CLONE_ERROR
         OUTPUT_QUIET
@@ -180,6 +193,8 @@ endif()
 message(STATUS "window manager: ${VK_WINDOW_MANAGER}")
 
 # ---- compile splitgui ----
+
+include_directories(${INCLUDE_PATHS})
 
 add_library(splitgui SHARED ${CMAKE_SOURCE_DIR}/src/splitgui.cpp)
 

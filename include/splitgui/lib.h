@@ -100,6 +100,11 @@
     // includes
 
     #include <volk/volk.h>
+
+    // This is wonderful 
+    #include <vulkan/vulkan_core.h>
+    #undef VK_HEADER_VERSION
+    #define VK_HEADER_VERSION 304
     #include <vulkan/vulkan.hpp>
 
     // dispatch loader
