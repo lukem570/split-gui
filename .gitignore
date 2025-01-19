@@ -33,14 +33,6 @@
 
 # Build Folders
 build
-include/GLFW
-include/src
-include/vulkan
-include/glfwpp
-include/volk
-include/msdfgen
-include/freetype
-include/ft2build.h
 
 # Vscode files
 .vscode
