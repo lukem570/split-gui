@@ -5,6 +5,12 @@ namespace SplitGui {
         vk_device.waitIdle();
 
         cleanupSyncObj();
+
+        vk_device.freeMemory(vk_textGlyphImageMemory);
+        vk_device.destroyImage(vk_textGlyphImages);
+
+        vk_device.freeMemory(vk_sceneBufferMemory);
+        vk_device.destroyBuffer(vk_sceneBuffer);
                 
         vk_device.freeCommandBuffers(vk_commandPool, vk_commandBuffers.size(), vk_commandBuffers.data());
 

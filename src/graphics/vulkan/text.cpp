@@ -14,13 +14,23 @@ namespace SplitGui {
         ft_fontInUse = true;
     }
 
+    template <typename T>
+    inline T clamp(T n) {
+        return n >= T(0) && n <= T(1) ? n : T(n > T(0));
+    }
+
+    inline unsigned char pixelFloatToByte(float x) {
+        return (unsigned char)(~int(255.5f-255.f*clamp(x)));
+    }
+
     void VulkanInterface::drawText(Vec2 x1, Vec2 x2, std::string& text) { // memory leaks!!!!
         if (!ft_fontInUse) {
             printf("WARN: no font in use\n");
             return;
         }
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        // background rect
+        VulkanInterface::drawRect(x1, x2, {1.0, 1.0, 1.0});
 
         for (int i = 0; i < text.size(); i++) {
             if (charImageMappings.find(text[i]) != charImageMappings.end()) {
@@ -60,100 +70,58 @@ namespace SplitGui {
 
             msdfgen::BitmapConstRef<float, 4> ref = msdf;
 
-            vk::ImageCreateInfo imageInfo;
-            imageInfo.imageType     = vk::ImageType::e2D;
-            imageInfo.format        = vk::Format::eR8G8B8A8Unorm;
-            imageInfo.extent.width  = vk_msdfExtent.width;
-            imageInfo.extent.height = vk_msdfExtent.height;
-            imageInfo.extent.depth  = 1;
-            imageInfo.mipLevels     = 1;
-            imageInfo.arrayLayers   = 1;
-            imageInfo.samples       = vk::SampleCountFlagBits::e1;
-            imageInfo.tiling        = vk::ImageTiling::eOptimal;
-            imageInfo.usage         = vk::ImageUsageFlagBits::eTransferDst;
-            imageInfo.usage        |= vk::ImageUsageFlagBits::eSampled;
-            imageInfo.sharingMode   = vk::SharingMode::eExclusive;
-            imageInfo.initialLayout = vk::ImageLayout::eUndefined;
+            // ------ vulkan code ------
 
-            charImageMappings[text[i]].image = vk_device.createImage(imageInfo);
 
-            vk::MemoryRequirements memReqs = vk_device.getImageMemoryRequirements(charImageMappings[text[i]].image);
-            
-            vk::MemoryAllocateInfo allocInfo;
-            allocInfo.allocationSize  = memReqs.size;
-            allocInfo.memoryTypeIndex = findMemoryType(memReqs.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+            vk::DeviceSize   stagingBufferSize = vk_msdfExtent.width * vk_msdfExtent.height * 4 * sizeof(float);
+            vk::Buffer       stagingBuffer;
+            vk::DeviceMemory stagingBufferMemory;
 
-            charImageMappings[text[i]].imageMemory = vk_device.allocateMemory(allocInfo);
-
-            vk_device.bindImageMemory(charImageMappings[text[i]].image, charImageMappings[text[i]].imageMemory, 0);
-
-            vk::ImageViewCreateInfo imageViewInfo;
-            imageViewInfo.image                           = charImageMappings[text[i]].image;
-            imageViewInfo.viewType                        = vk::ImageViewType::e2D;
-            imageViewInfo.format                          = imageInfo.format;
-            imageViewInfo.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
-            imageViewInfo.subresourceRange.baseMipLevel   = 0;
-            imageViewInfo.subresourceRange.levelCount     = 1;
-            imageViewInfo.subresourceRange.baseArrayLayer = 0;
-            imageViewInfo.subresourceRange.layerCount     = 1;
-
-            charImageMappings[text[i]].imageView = vk_device.createImageView(imageViewInfo);
-
-            vk::DeviceSize   imageSize = vk_msdfExtent.width * vk_msdfExtent.height * sizeof(float) * 4;
-            vk::Buffer       imageStagingBuffer;
-            vk::DeviceMemory imageStagingBufferMemory;
-            
-            // could put this as one big buffer but I am too tired to do so
             createBuffer(
-                imageSize, 
+                stagingBufferSize, 
                 vk::BufferUsageFlagBits::eTransferSrc, 
                 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-                imageStagingBuffer,
-                imageStagingBufferMemory
+                stagingBuffer,
+                stagingBufferMemory
             );
 
-            void* memory = vk_device.mapMemory(imageStagingBufferMemory, 0, imageSize);
-            memcpy(memory, ref.pixels, imageSize);
-            vk_device.unmapMemory(imageStagingBufferMemory);
+            void* memory = vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
+            memcpy(memory, ref.pixels, stagingBufferSize);
+            vk_device.unmapMemory(stagingBufferMemory);
 
-            vk::ImageMemoryBarrier barrier;
-            barrier.srcAccessMask                   = {};
-            barrier.dstAccessMask                   = vk::AccessFlagBits::eTransferWrite;
-            barrier.oldLayout                       = vk::ImageLayout::eUndefined;
-            barrier.newLayout                       = vk::ImageLayout::eTransferDstOptimal;
-            barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
-            barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
-            barrier.image                           = charImageMappings[text[i]].image;
-            barrier.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
-            barrier.subresourceRange.baseMipLevel   = 0;
-            barrier.subresourceRange.levelCount     = 1;
-            barrier.subresourceRange.baseArrayLayer = 0;
-            barrier.subresourceRange.layerCount     = 1;
+            vk::CommandBuffer commandBuffer = startCopyBuffer();
 
-            commandBuffer.pipelineBarrier(
-                vk::PipelineStageFlagBits::eTopOfPipe,
-                vk::PipelineStageFlagBits::eTransfer,
-                {},
-                nullptr, nullptr,
-                barrier
-            );
+            vk::ImageMemoryBarrier barrier1;
+            barrier1.srcAccessMask                   = (vk::AccessFlagBits) 0;
+            barrier1.dstAccessMask                   = vk::AccessFlagBits::eTransferWrite;
+            barrier1.oldLayout                       = vk::ImageLayout::eUndefined;
+            barrier1.newLayout                       = vk::ImageLayout::eTransferDstOptimal;
+            barrier1.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
+            barrier1.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
+            barrier1.image                           = vk_textGlyphImages;
+            barrier1.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
+            barrier1.subresourceRange.baseArrayLayer = 0;
+            barrier1.subresourceRange.layerCount     = 255;
+            barrier1.subresourceRange.levelCount     = 1;
 
-            vk::BufferImageCopy region;
-            region.bufferOffset                    = 0;
-            region.bufferRowLength                 = 0;
-            region.bufferImageHeight               = 0;
-            region.imageSubresource.aspectMask     = vk::ImageAspectFlagBits::eColor;
-            region.imageSubresource.mipLevel       = 0;
-            region.imageSubresource.baseArrayLayer = 0;
-            region.imageSubresource.layerCount     = 1;
-            region.imageOffset.x                   = 0;
-            region.imageOffset.y                   = 0;
-            region.imageOffset.z                   = 0;
-            region.imageExtent.width               = vk_msdfExtent.width;
-            region.imageExtent.height              = vk_msdfExtent.height;
-            region.imageExtent.depth               = 1;
+            commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eTransfer, (vk::DependencyFlagBits)0, nullptr, nullptr, barrier1);
 
-            commandBuffer.copyBufferToImage(imageStagingBuffer, charImageMappings[text[i]].image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
+            vk::BufferImageCopy copyRegion = {};
+            copyRegion.bufferOffset                    = 0;
+            copyRegion.bufferRowLength                 = 0;
+            copyRegion.bufferImageHeight               = 0;
+            copyRegion.imageSubresource.aspectMask     = vk::ImageAspectFlagBits::eColor;
+            copyRegion.imageSubresource.mipLevel       = 0;
+            copyRegion.imageSubresource.baseArrayLayer = text[i];  // layer set to char encoding
+            copyRegion.imageSubresource.layerCount     = 1;
+            copyRegion.imageOffset.x                   = 0;
+            copyRegion.imageOffset.y                   = 0;
+            copyRegion.imageOffset.z                   = 0;
+            copyRegion.imageExtent.width               = vk_msdfExtent.width;
+            copyRegion.imageExtent.height              = vk_msdfExtent.height;
+            copyRegion.imageExtent.depth               = 1;
+
+            commandBuffer.copyBufferToImage(stagingBuffer, vk_textGlyphImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
 
             vk::ImageMemoryBarrier barrier2;
             barrier2.srcAccessMask                   = vk::AccessFlagBits::eTransferWrite;
@@ -162,38 +130,21 @@ namespace SplitGui {
             barrier2.newLayout                       = vk::ImageLayout::eShaderReadOnlyOptimal;
             barrier2.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
             barrier2.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
-            barrier2.image                           = charImageMappings[text[i]].image;
+            barrier2.image                           = vk_textGlyphImages;
             barrier2.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
-            barrier2.subresourceRange.baseMipLevel   = 0;
-            barrier2.subresourceRange.levelCount     = 1;
             barrier2.subresourceRange.baseArrayLayer = 0;
-            barrier2.subresourceRange.layerCount     = 1;
+            barrier2.subresourceRange.layerCount     = 255;
+            barrier2.subresourceRange.levelCount     = 1;
 
-            // Insert the barrier to transition the image layout to the final layout for sampling
-            commandBuffer.pipelineBarrier(
-                vk::PipelineStageFlagBits::eTransfer,
-                vk::PipelineStageFlagBits::eFragmentShader,
-                {},
-                nullptr, nullptr, // No synchronization needed between stages here
-                barrier2
-            );
+            commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader, vk::DependencyFlagBits::eByRegion, nullptr, nullptr, barrier2);
 
+            vk_device.waitIdle();
+            endCopyBuffer(commandBuffer);
 
-            vk::SamplerCreateInfo samplerInfo;
-            samplerInfo.magFilter               = vk::Filter::eLinear;
-            samplerInfo.minFilter               = vk::Filter::eLinear;;
-            samplerInfo.addressModeU            = vk::SamplerAddressMode::eRepeat;
-            samplerInfo.addressModeV            = vk::SamplerAddressMode::eRepeat;
-            samplerInfo.addressModeW            = vk::SamplerAddressMode::eRepeat;
-            samplerInfo.borderColor             = vk::BorderColor::eIntTransparentBlack;
-            samplerInfo.unnormalizedCoordinates = vk::False;
-            samplerInfo.compareEnable           = vk::False;
-            samplerInfo.compareOp               = vk::CompareOp::eAlways;
-            samplerInfo.mipmapMode              = vk::SamplerMipmapMode::eLinear;
-
-            charImageMappings[text[i]].sampler = vk_device.createSampler(samplerInfo);
+            vk_device.freeMemory(stagingBufferMemory);
+            vk_device.destroyBuffer(stagingBuffer);
         }
 
-        endCopyBuffer(commandBuffer);
+        
     }
 }

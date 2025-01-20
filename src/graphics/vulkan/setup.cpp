@@ -40,6 +40,7 @@ namespace SplitGui {
         createDescriptorPool();
         createDescriptorSet();
         createVertexUniforms();
+        createTextGlyphImage();
 
         setupRenderpassBeginInfo();
         setupViewport();

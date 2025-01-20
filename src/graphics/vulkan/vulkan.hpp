@@ -100,6 +100,8 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_sceneBufferMemory;
             vk::DescriptorSet                   vk_descriptorSet;
             vk::Extent2D                        vk_msdfExtent;
+            vk::Image                           vk_textGlyphImages;
+            vk::DeviceMemory                    vk_textGlyphImageMemory;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;
@@ -166,6 +168,7 @@ namespace SplitGui {
             inline void createDescriptorSet();
             inline void createVertexUniforms();
             inline void createScenesUniforms();
+            inline void createTextGlyphImage();
 
             inline void setupRenderpassBeginInfo();
             inline void setupViewport();

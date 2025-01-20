@@ -19,8 +19,6 @@ layout(binding = 0) uniform UniformBufferObject {
     ivec2 screenSize;
 } ubo;
 
-
-
 void main() {
     gl_Position       = vec4(inPosition, 0.0, 1.0);
     out_fragColor     = inColor.rgb;

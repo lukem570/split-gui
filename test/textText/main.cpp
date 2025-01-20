@@ -18,7 +18,7 @@ int main() {
         "A"
     );
 
-    //graphics.submitBuffers();
+    graphics.submitBuffers();
 
     while (!window.shouldClose()) {
         graphics.drawFrame();

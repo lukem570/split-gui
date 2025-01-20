@@ -16,6 +16,8 @@ layout(binding = 1) uniform ScenesBuffer {
     Scene scenes[];
 } sb;
 
+layout(binding = 2) uniform sampler2DArray glyphs;
+
 layout(location = 0) out vec4 outColor;
 
 void main() {
