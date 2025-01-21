@@ -6,6 +6,8 @@ namespace SplitGui {
 
         cleanupSyncObj();
 
+        vk_device.destroyImageView(vk_textGlyphImageView);
+        vk_device.destroySampler(vk_textGlyphSampler);
         vk_device.freeMemory(vk_textGlyphImageMemory);
         vk_device.destroyImage(vk_textGlyphImages);
 

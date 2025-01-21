@@ -27,5 +27,55 @@ namespace SplitGui {
 
         vk_textGlyphImageMemory = vk_device.allocateMemory(allocateInfo);
         vk_device.bindImageMemory(vk_textGlyphImages, vk_textGlyphImageMemory, 0);
+
+        vk::SamplerCreateInfo samplerInfo;
+        samplerInfo.magFilter               = vk::Filter::eLinear;
+        samplerInfo.minFilter               = vk::Filter::eLinear;
+        samplerInfo.mipmapMode              = vk::SamplerMipmapMode::eNearest;
+        samplerInfo.addressModeU            = vk::SamplerAddressMode::eRepeat;
+        samplerInfo.addressModeV            = vk::SamplerAddressMode::eRepeat;
+        samplerInfo.addressModeW            = vk::SamplerAddressMode::eRepeat;
+        samplerInfo.mipLodBias              = 0.0f;
+        samplerInfo.anisotropyEnable        = vk::False;
+        samplerInfo.maxAnisotropy           = 1.0f;
+        samplerInfo.compareEnable           = vk::False;
+        samplerInfo.compareOp               = vk::CompareOp::eNever;
+        samplerInfo.borderColor             = vk::BorderColor::eIntOpaqueBlack;
+        samplerInfo.unnormalizedCoordinates = vk::False;
+        samplerInfo.minLod                  = 0.0f;
+        samplerInfo.maxLod                  = 1.0f;
+
+        vk_textGlyphSampler = vk_device.createSampler(samplerInfo);
+
+        vk::ImageViewCreateInfo imageViewInfo;
+        imageViewInfo.image                           = vk_textGlyphImages;
+        imageViewInfo.viewType                        = vk::ImageViewType::e2DArray;
+        imageViewInfo.format                          = imageInfo.format;
+        imageViewInfo.components.r                    = vk::ComponentSwizzle::eIdentity;
+        imageViewInfo.components.g                    = vk::ComponentSwizzle::eIdentity;
+        imageViewInfo.components.b                    = vk::ComponentSwizzle::eIdentity;
+        imageViewInfo.components.a                    = vk::ComponentSwizzle::eIdentity;
+        imageViewInfo.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
+        imageViewInfo.subresourceRange.baseMipLevel   = 0;
+        imageViewInfo.subresourceRange.levelCount     = 1;
+        imageViewInfo.subresourceRange.baseArrayLayer = 0;
+        imageViewInfo.subresourceRange.layerCount     = imageInfo.arrayLayers;
+
+        vk_textGlyphImageView = vk_device.createImageView(imageViewInfo);
+
+        vk::DescriptorImageInfo descriptorImageInfo;
+        descriptorImageInfo.sampler     = vk_textGlyphSampler;
+        descriptorImageInfo.imageView   = vk_textGlyphImageView;
+        descriptorImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+
+        vk::WriteDescriptorSet writeDescriptor;
+        writeDescriptor.dstSet          = vk_descriptorSet;
+        writeDescriptor.dstBinding      = DescriporBindings::eGlyphs;
+        writeDescriptor.dstArrayElement = 0;
+        writeDescriptor.descriptorType  = vk::DescriptorType::eCombinedImageSampler;
+        writeDescriptor.descriptorCount = 1;
+        writeDescriptor.pImageInfo      = &descriptorImageInfo;
+
+        vk_device.updateDescriptorSets(1, &writeDescriptor, 0, nullptr);
     }
 }

@@ -102,6 +102,8 @@ namespace SplitGui {
             vk::Extent2D                        vk_msdfExtent;
             vk::Image                           vk_textGlyphImages;
             vk::DeviceMemory                    vk_textGlyphImageMemory;
+            vk::ImageView                       vk_textGlyphImageView;
+            vk::Sampler                         vk_textGlyphSampler;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;
