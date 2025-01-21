@@ -29,8 +29,8 @@ namespace SplitGui {
             return;
         }
 
-        // background rect
-        VulkanInterface::drawRect(x1, x2, {1.0, 1.0, 1.0});
+        // texture rect
+        VulkanInterface::drawRect(x1, x2, {1.0, 1.0, 1.0}, VertexFlagsBits::eTextureMsdf);
 
         for (int i = 0; i < text.size(); i++) {
             if (charImageMappings.find(text[i]) != charImageMappings.end()) {

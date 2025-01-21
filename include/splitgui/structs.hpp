@@ -9,6 +9,8 @@
 
 namespace SplitGui {
 
+    typedef uint16_t VertexFlags;
+
     enum class UnitType {
         ePixels,
         ePercent,
@@ -34,7 +36,7 @@ namespace SplitGui {
         eRight,
     };
 
-    enum class VertexFlags {
+    enum VertexFlagsBits {
         eNone        = 0x00,
         eUseTexture  = 0x01,
         eTextureMsdf = 0x02,
@@ -115,7 +117,8 @@ namespace SplitGui {
 
     struct Vertex {
         Vec2 pos;
-        Vec3 color;
+        Vec3 color; // could be union
+        Vec2 textureCord;
     };
 
     struct VertexBufferObject {
@@ -147,6 +150,15 @@ namespace SplitGui {
         eVertexUniform  = 0,
         eSceneData      = 1,
         eGlyphs         = 2,
+    };
+
+    enum VertexLayout {
+        eVertexPos = 0,
+        eVertexColor = 1,
+        eVertexTextureCord = 2,
+        eFlags = 3,
+        eSceneNumber = 4,
+        eTextureNumber = 5,
     };
 
     struct MSDFImage {
