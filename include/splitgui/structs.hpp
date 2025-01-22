@@ -44,10 +44,10 @@ namespace SplitGui {
     };
 
     struct Vec4 {
-        float x;
-        float y;
-        float z;
-        float w;
+        union {float x; float r;};
+        union {float y; float g;};
+        union {float z; float b;};
+        union {float w; float a;};
     };
 
     struct IVec4 {

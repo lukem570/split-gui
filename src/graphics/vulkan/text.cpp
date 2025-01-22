@@ -30,7 +30,7 @@ namespace SplitGui {
         }
 
         // texture rect
-        VulkanInterface::drawRect(x1, x2, {1.0, 1.0, 1.0}, VertexFlagsBits::eTextureMsdf);
+        VulkanInterface::drawRect(x1, x2, {1.0, 1.0, 1.0}, VertexFlagsBits::eTextureMsdf, 'A');
 
         for (int i = 0; i < text.size(); i++) {
             if (charImageMappings.find(text[i]) != charImageMappings.end()) {
@@ -63,17 +63,17 @@ namespace SplitGui {
 
             msdfgen::edgeColoringSimple(shape, 3.0);
 
-            msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
+            msdfgen::Bitmap<float, 3> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
 
             msdfgen::SDFTransformation t(msdfgen::Projection(32.0, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
-            msdfgen::generateMTSDF(msdf, shape, t);
+            msdfgen::generateMSDF(msdf, shape, t);
 
-            msdfgen::BitmapConstRef<float, 4> ref = msdf;
+            msdfgen::BitmapConstRef<float, 3> ref = msdf;
 
             // ------ vulkan code ------
 
 
-            vk::DeviceSize   stagingBufferSize = vk_msdfExtent.width * vk_msdfExtent.height * 4 * sizeof(float);
+            vk::DeviceSize   stagingBufferSize = vk_msdfExtent.width * vk_msdfExtent.height * sizeof(Vec3);
             vk::Buffer       stagingBuffer;
             vk::DeviceMemory stagingBufferMemory;
 

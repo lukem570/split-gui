@@ -33,7 +33,7 @@ namespace SplitGui {
     inline void VulkanInterface::createTextGlyphImage() {
         vk::ImageCreateInfo imageInfo;
         imageInfo.imageType     = vk::ImageType::e2D;
-        imageInfo.format        = vk::Format::eR8G8B8A8Unorm;
+        imageInfo.format        = vk::Format::eR32G32B32Sfloat;
         imageInfo.extent.width  = vk_msdfExtent.width;
         imageInfo.extent.height = vk_msdfExtent.height;
         imageInfo.extent.depth  = 1;
