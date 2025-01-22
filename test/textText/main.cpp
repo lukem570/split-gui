@@ -10,7 +10,7 @@ int main() {
     SplitGui::Graphics graphics;
     graphics.instanceVulkan(true);
     graphics.submitWindow(window);
-    graphics.loadFont("fonts/roboto/Roboto-Regular.ttf");
+    graphics.loadFont("fonts/Lato/Lato-Bold.ttf");
 
     graphics.drawText(
         SplitGui::IVec2{0, 0}, 

@@ -12,8 +12,8 @@ namespace SplitGui {
             throw;
         }
 
-        vk_msdfExtent.width  = 32;
-        vk_msdfExtent.height = 32;
+        vk_msdfExtent.width  = 64;
+        vk_msdfExtent.height = 64;
     }
 
     void VulkanInterface::instance() {

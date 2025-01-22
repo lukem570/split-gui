@@ -43,7 +43,9 @@ namespace SplitGui {
 
             // recreation of the 'loadGlyph' function in msdfgen/msdfgen-ext.h to reduce bloat
 
-            ft::FT_Error loadError = ft::FT_Load_Glyph(ft_face, text[i], (ft::FT_Int32) msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
+            int glyphId = ft::FT_Get_Char_Index(ft_face, text[i]);
+
+            ft::FT_Error loadError = ft::FT_Load_Glyph(ft_face, glyphId, (ft::FT_Int32) msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
             if (loadError) {
                 printf("WARN: could not load glyph: %c\n", text[i]);
@@ -61,19 +63,20 @@ namespace SplitGui {
 
             shape.normalize();
 
-            msdfgen::edgeColoringSimple(shape, 3.0);
+            msdfgen::edgeColoringSimple(shape, 6.0);
 
-            msdfgen::Bitmap<float, 3> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
+            msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
 
-            msdfgen::SDFTransformation t(msdfgen::Projection(32.0, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
-            msdfgen::generateMSDF(msdf, shape, t);
+            msdfgen::SDFTransformation t(msdfgen::Projection(64.0, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
+            msdfgen::generateMTSDF(msdf, shape, t);
 
-            msdfgen::BitmapConstRef<float, 3> ref = msdf;
+            msdfgen::BitmapConstRef<float, 4> ref = msdf;
+
+            int subPixels = 4 * vk_msdfExtent.width * vk_msdfExtent.height;
 
             // ------ vulkan code ------
 
-
-            vk::DeviceSize   stagingBufferSize = vk_msdfExtent.width * vk_msdfExtent.height * sizeof(Vec3);
+            vk::DeviceSize   stagingBufferSize = subPixels * sizeof(unsigned char);
             vk::Buffer       stagingBuffer;
             vk::DeviceMemory stagingBufferMemory;
 
@@ -85,8 +88,14 @@ namespace SplitGui {
                 stagingBufferMemory
             );
 
-            void* memory = vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
-            memcpy(memory, ref.pixels, stagingBufferSize);
+            unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
+
+            int index = 0;
+            for (int i = subPixels - 1; i >= 0; i--) {
+                memory[index] = pixelFloatToByte(ref.pixels[i]);
+                index++;
+            }
+            
             vk_device.unmapMemory(stagingBufferMemory);
 
             vk::CommandBuffer commandBuffer = startCopyBuffer();
@@ -101,7 +110,7 @@ namespace SplitGui {
             barrier1.image                           = vk_textGlyphImages;
             barrier1.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
             barrier1.subresourceRange.baseArrayLayer = 0;
-            barrier1.subresourceRange.layerCount     = 255;
+            barrier1.subresourceRange.layerCount     = 256;
             barrier1.subresourceRange.levelCount     = 1;
 
             commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eTransfer, (vk::DependencyFlagBits)0, nullptr, nullptr, barrier1);
@@ -133,7 +142,7 @@ namespace SplitGui {
             barrier2.image                           = vk_textGlyphImages;
             barrier2.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
             barrier2.subresourceRange.baseArrayLayer = 0;
-            barrier2.subresourceRange.layerCount     = 255;
+            barrier2.subresourceRange.layerCount     = 256;
             barrier2.subresourceRange.levelCount     = 1;
 
             commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader, vk::DependencyFlagBits::eByRegion, nullptr, nullptr, barrier2);
