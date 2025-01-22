@@ -1,5 +1,8 @@
 #version 450
 
+#define USE_TEXTURE_BIT 0x01
+#define USE_MSDF_BIT 0x02
+
 struct Scene {
     ivec2 size;
     ivec2 position;
@@ -23,9 +26,12 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
 
-    
-    outColor = vec4(in_textureCord, 0.0, 1.0);
-    
+    bool useTexture = in_flags == USE_MSDF_BIT;
 
+    if (useTexture) {
+        outColor = texture(glyphs, vec3(in_textureCord, in_textureNumber));
+    } else {
+        outColor = vec4(in_fragColor, 1.0);
+    }
     
 }

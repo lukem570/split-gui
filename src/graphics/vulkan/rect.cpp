@@ -1,7 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    void VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags) {
+    void VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags, uint16_t textureIndex) {
 
         int verticesOffset = vertices.size();
 
@@ -32,9 +32,9 @@ namespace SplitGui {
         topRight.color       = color;
         topRight.textureCord = {1.0f, 1.0f};
 
-        vertices.push_back({bottomLeft,  flags, 0, 0});
-        vertices.push_back({bottomRight, flags, 0, 0});
-        vertices.push_back({topLeft,     flags, 0, 0});
-        vertices.push_back({topRight,    flags, 0, 0});
+        vertices.push_back({bottomLeft,  flags, 0, textureIndex});
+        vertices.push_back({bottomRight, flags, 0, textureIndex});
+        vertices.push_back({topLeft,     flags, 0, textureIndex});
+        vertices.push_back({topRight,    flags, 0, textureIndex});
     }
 }

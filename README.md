@@ -1,17 +1,24 @@
-# split gui
- A windowing library made in C++ with Vulkan and GLFW
+# Split gui
 
----
+Split gui is a GUI library that is entirely gpu focused therefore it has no dependencies 
+on specific systems making it highly portable. Split gui is built on Vulkan and Glfw but is designed
+to be expanded to other librarries and systems not implementing Vulkan or Glfw.
 
-## How to build 
+## Builds 
 
-#### auto test
+| Operating system |                            Build Status                            |      Notes      |
+|------------------|--------------------------------------------------------------------|-----------------|
+| Linux            | ![Passing](https://img.shields.io/badge/build-passing-brightgreen) |                 |
+| Windows          | ![Unknown](https://img.shields.io/badge/build-unknown-yellow)      | not tested      |
+| IOS              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
+| Mac              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
+| Android          | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
 
-```
-python tools/testTools/test.py
-```
+## Documentation
 
-#### build
+All documentation is located in the [Docs](docs) folder and is seperated into user and developer documentation.
+
+## Build
 
 note: ninja is not required for builds
 
@@ -22,16 +29,12 @@ cmake -G "Ninja" ..
 ninja
 ```
 
----
+## Build dependencies
 
-## build dependencies
-
-* python (optional)
-* ninja  (optional)
 * cmake
 * git
 
-## project dependencies
+## Project dependencies
 
 * GLFW
 * glfwpp
@@ -42,15 +45,10 @@ ninja
 * msdfgen
 * freetype
 
----
-
 ## Todo
 
 * make xml parser
-
 * refactor error messages
-
 * write documentation
-
 * draw text
 * create >1 3d scene

@@ -1,6 +1,35 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
+    inline void transitionImageLayout(vk::CommandBuffer commandBuffer, vk::Image image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout, int layerCount) {
+        vk::ImageMemoryBarrier barrier;
+        barrier.oldLayout                       = oldLayout;
+        barrier.newLayout                       = newLayout;
+        barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
+        barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
+        barrier.image                           = image;
+        barrier.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
+        barrier.subresourceRange.baseMipLevel   = 0;
+        barrier.subresourceRange.levelCount     = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount     = layerCount;
+
+        vk::PipelineStageFlags sourceStage;
+        vk::PipelineStageFlags destinationStage;
+
+        if (oldLayout == vk::ImageLayout::eUndefined && newLayout == vk::ImageLayout::eShaderReadOnlyOptimal) {
+            barrier.srcAccessMask = vk::AccessFlagBits(0);
+            barrier.dstAccessMask = vk::AccessFlagBits::eShaderRead;
+
+            sourceStage      = vk::PipelineStageFlagBits::eTopOfPipe;
+            destinationStage = vk::PipelineStageFlagBits::eFragmentShader;
+        } else {
+            throw std::invalid_argument("unsupported layout transition!");
+        }
+
+        commandBuffer.pipelineBarrier(sourceStage, destinationStage, vk::DependencyFlagBits(0), 0, nullptr, 0, nullptr, 1, &barrier);
+    }
+
     inline void VulkanInterface::createTextGlyphImage() {
         vk::ImageCreateInfo imageInfo;
         imageInfo.imageType     = vk::ImageType::e2D;
@@ -63,19 +92,10 @@ namespace SplitGui {
 
         vk_textGlyphImageView = vk_device.createImageView(imageViewInfo);
 
-        vk::DescriptorImageInfo descriptorImageInfo;
-        descriptorImageInfo.sampler     = vk_textGlyphSampler;
-        descriptorImageInfo.imageView   = vk_textGlyphImageView;
-        descriptorImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
 
-        vk::WriteDescriptorSet writeDescriptor;
-        writeDescriptor.dstSet          = vk_descriptorSet;
-        writeDescriptor.dstBinding      = DescriporBindings::eGlyphs;
-        writeDescriptor.dstArrayElement = 0;
-        writeDescriptor.descriptorType  = vk::DescriptorType::eCombinedImageSampler;
-        writeDescriptor.descriptorCount = 1;
-        writeDescriptor.pImageInfo      = &descriptorImageInfo;
+        transitionImageLayout(commandBuffer, vk_textGlyphImages, vk::ImageLayout::eUndefined, vk::ImageLayout::eShaderReadOnlyOptimal, imageInfo.arrayLayers);
 
-        vk_device.updateDescriptorSets(1, &writeDescriptor, 0, nullptr);
+        endCopyBuffer(commandBuffer);
     }
 }

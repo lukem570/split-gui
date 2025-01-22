@@ -64,4 +64,34 @@ namespace SplitGui {
 
         vk_descriptorSet = vk_device.allocateDescriptorSets(allocInfo).back();
     }
+
+    inline void VulkanInterface::updateDescriptorSets() {
+        vk::DescriptorImageInfo descriptorImageInfo;
+        descriptorImageInfo.sampler     = vk_textGlyphSampler;
+        descriptorImageInfo.imageView   = vk_textGlyphImageView;
+        descriptorImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+
+        vk::DescriptorBufferInfo bufferInfo;
+        bufferInfo.buffer = vk_vertexUniformBuffer;
+        bufferInfo.offset = 0;
+        bufferInfo.range  = sizeof(VertexUniformObject);
+
+        std::array<vk::WriteDescriptorSet, 2> descriptorWrites;
+
+        descriptorWrites[0].dstSet          = vk_descriptorSet;
+        descriptorWrites[0].dstBinding      = DescriporBindings::eGlyphs;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType  = vk::DescriptorType::eCombinedImageSampler;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pImageInfo      = &descriptorImageInfo;
+
+        descriptorWrites[1].dstSet           = vk_descriptorSet;
+        descriptorWrites[1].dstBinding       = DescriporBindings::eVertexUniform;
+        descriptorWrites[1].dstArrayElement  = 0;
+        descriptorWrites[1].descriptorType   = vk::DescriptorType::eUniformBuffer;
+        descriptorWrites[1].descriptorCount  = 1;
+        descriptorWrites[1].pBufferInfo      = &bufferInfo;
+
+        vk_device.updateDescriptorSets(descriptorWrites, nullptr);
+    }
 }

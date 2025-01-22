@@ -46,17 +46,17 @@ namespace SplitGui {
             VulkanInterface(bool validation);
             ~VulkanInterface();
 
-            void instance()                                                    override;
-            void submitWindow(SplitGui::Window& window)                        override;
+            void instance()                                                                               override;
+            void submitWindow(SplitGui::Window& window)                                                   override;
 
-            void drawFrame()                                                   override;
-            void drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0) override;
-            void instanceScene(Vec2 x1, Vec2 x2)                               override;
-            void drawText(Vec2 x1, Vec2 x2, std::string& text)                 override;
-            void loadFont(const char* path)                                    override;
-            void submitBuffers()                                               override;
+            void drawFrame()                                                                              override;
+            void drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0) override;
+            void instanceScene(Vec2 x1, Vec2 x2)                                                          override;
+            void drawText(Vec2 x1, Vec2 x2, std::string& text)                                            override;
+            void loadFont(const char* path)                                                               override;
+            void submitBuffers()                                                                          override;
 
-            void resizeEvent()                                                 override;
+            void resizeEvent()                                                                            override;
 
         protected:
             SplitGui::Window*                   pWindow;
@@ -171,6 +171,7 @@ namespace SplitGui {
             inline void createVertexUniforms();
             inline void createScenesUniforms();
             inline void createTextGlyphImage();
+            inline void updateDescriptorSets();
 
             inline void setupRenderpassBeginInfo();
             inline void setupViewport();

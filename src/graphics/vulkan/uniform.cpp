@@ -18,23 +18,6 @@ namespace SplitGui {
         memcpy(vk_vertexUniformBufferMap, &vertexUniformObject.screenSize, sizeof(IVec2));
 
         vk_device.unmapMemory(vk_vertexUniformBufferMemory);
-
-        vk::DescriptorBufferInfo bufferInfo;
-        bufferInfo.buffer = vk_vertexUniformBuffer;
-        bufferInfo.offset = 0;
-        bufferInfo.range  = sizeof(VertexUniformObject);
-
-        vk::WriteDescriptorSet descriptorWrite;
-        descriptorWrite.dstSet           = vk_descriptorSet;
-        descriptorWrite.dstBinding       = DescriporBindings::eVertexUniform;
-        descriptorWrite.dstArrayElement  = 0;
-        descriptorWrite.descriptorType   = vk::DescriptorType::eUniformBuffer;
-        descriptorWrite.descriptorCount  = 1;
-        descriptorWrite.pBufferInfo      = &bufferInfo;
-        descriptorWrite.pImageInfo       = nullptr;
-        descriptorWrite.pTexelBufferView = nullptr;
-
-        vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
     }
 
     inline void VulkanInterface::createScenesUniforms() { // memory leaks!!!!
