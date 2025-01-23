@@ -52,7 +52,7 @@ namespace SplitGui {
             void drawFrame()                                                                              override;
             void drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0) override;
             void instanceScene(Vec2 x1, Vec2 x2)                                                          override;
-            void drawText(Vec2 x1, Vec2 x2, std::string& text)                                            override;
+            void drawText(Vec2 x1, std::string& text)                                            override;
             void loadFont(const char* path)                                                               override;
             void submitBuffers()                                                                          override;
 
@@ -98,8 +98,6 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_vertexUniformBufferMemory;
             vk::Buffer                          vk_sceneBuffer;
             vk::DeviceMemory                    vk_sceneBufferMemory;
-            vk::Buffer                          vk_stringBuffer;
-            vk::DeviceMemory                    vk_stringBufferMemory;
             vk::DescriptorSet                   vk_descriptorSet;
             vk::Extent2D                        vk_msdfExtent;
             vk::Image                           vk_textGlyphImages;
@@ -173,7 +171,6 @@ namespace SplitGui {
             inline void createVertexUniforms();
             inline void createScenesUniforms();
             inline void createTextGlyphImage();
-            inline void createStringUniform();
             inline void updateDescriptorSets();
 
             inline void setupRenderpassBeginInfo();

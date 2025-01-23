@@ -25,7 +25,7 @@ namespace SplitGui {
             virtual void drawFrame()                                                                              { throw; }
             virtual void drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0) { throw; }
             virtual void instanceScene(Vec2 x1, Vec2 x2)                                                          { throw; }
-            virtual void drawText(Vec2 x1, Vec2 x2, std::string& text)                                            { throw; }
+            virtual void drawText(Vec2 x1, std::string& text)                                                     { throw; }
             virtual void loadFont(const char* path)                                                               { throw; }
             virtual void drawMedia(Vec2 x1, Vec2 x2)                                                              { throw; }
             virtual void submitBuffers()                                                                          { throw; }
@@ -48,7 +48,7 @@ namespace SplitGui {
             void drawFrame();
             void drawRect(IVec2 x1, IVec2 x2, HexColor color);
             void instanceScene(Vec2 x1, Vec2 x2);
-            void drawText(IVec2 x1, IVec2 x2, std::string text);
+            void drawText(IVec2 x1, std::string text);
             void loadFont(const char* path);
             void drawMedia(Vec2 x1, Vec2 x2);
             void submitBuffers();

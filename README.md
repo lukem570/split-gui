@@ -54,3 +54,9 @@ ninja
 * create >1 3d scene
 * interface updating
 * constant sizes
+
+## Updating buffers in the background idea
+
+like an array list the buffer should double if required and the submit buffers function should track 
+current buffer sizes and if it is almost full it sends a request to create a new buffer that is twice
+as big or smaller maybe give creating a new buffer to another thread depending on the required size

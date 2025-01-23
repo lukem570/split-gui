@@ -23,14 +23,13 @@ namespace SplitGui {
         return (unsigned char)(~int(255.5f-255.f*clamp(x)));
     }
 
-    void VulkanInterface::drawText(Vec2 x1, Vec2 x2, std::string& text) { // memory leaks!!!!
+    void VulkanInterface::drawText(Vec2 x1, std::string& text) {
         if (!ft_fontInUse) {
             printf("WARN: no font in use\n");
             return;
         }
 
-        // texture rect
-        VulkanInterface::drawRect(x1, x2, {1.0, 1.0, 1.0}, VertexFlagsBits::eTextureMsdf, 'A');
+        int pos = 0;
 
         for (int i = 0; i < text.size(); i++) {
             if (charImageMappings.find(text[i]) != charImageMappings.end()) {
@@ -91,9 +90,13 @@ namespace SplitGui {
             unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
 
             int index = 0;
-            for (int i = subPixels - 1; i >= 0; i--) {
-                memory[index] = pixelFloatToByte(ref.pixels[i]);
-                index++;
+            for (int x = vk_msdfExtent.width - 1; x >= 0; x--) {
+                for (int y = 0; y < vk_msdfExtent.height; y++) {
+                    for (int j = 0; j < 4; j++) {
+                        memory[index] = pixelFloatToByte(msdf(y,x)[j]);
+                        index++;
+                    }
+                }
             }
             
             vk_device.unmapMemory(stagingBufferMemory);
@@ -154,6 +157,27 @@ namespace SplitGui {
             vk_device.destroyBuffer(stagingBuffer);
         }
 
-        
+        ft::FT_Set_Pixel_Sizes(ft_face, 0, 100);
+
+        for (int i = 0; i < text.size(); i++) {
+
+            ft::FT_Error loadCharError = ft::FT_Load_Char(ft_face, text[i], 0);
+
+            if (loadCharError) {
+                printf("WARN: could not load char: %c\n", text[i]);
+                return;
+            }
+
+            IVec2 windowSize = pWindow->getSize();
+
+            VulkanInterface::drawRect(
+                x1 + Vec2{(float)pos / (float)windowSize.x, 0}, 
+                x1 + Vec2{(float)(ft_face->glyph->bitmap.width + pos) / (float)windowSize.x, (float)ft_face->glyph->bitmap.rows / (float)windowSize.y}, 
+                {0.0, 1.0, 0.0}, 
+                VertexFlagsBits::eTextureMsdf, 
+                text[i]);
+
+            pos += ft_face->glyph->advance.x / 64;
+        }
     }
 }

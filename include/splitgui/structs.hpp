@@ -7,8 +7,6 @@
 #include <vector>
 #include <string>
 
-#define MAX_STRING_SIZE 64
-
 namespace SplitGui {
 
     typedef uint16_t VertexFlags;
@@ -74,6 +72,10 @@ namespace SplitGui {
     struct Vec2 {
         union {float x; float r;};
         union {float y; float g;};
+
+        Vec2 operator+(const Vec2& operand) const {
+            return {operand.x + x, operand.y + y};
+        }
     };
 
     struct IVec2 {
@@ -137,13 +139,13 @@ namespace SplitGui {
     };
 
     struct Unit {
-        UnitType type;
+        UnitType   type;
         std::string value;
     };
 
     struct UnitOperation {
         std::array<Unit, 2> operands;
-        UnitOperationType type;
+        UnitOperationType   type;
     };
 
 #ifdef SPLIT_GUI_USE_VULKAN

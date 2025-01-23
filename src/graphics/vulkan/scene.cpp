@@ -12,5 +12,7 @@ namespace SplitGui {
         scene.cameraRotation    = {0, 0, 0};
 
         scenes.push_back(scene);
+
+        createScenesUniforms(); // TODO: fix speed
     }
 }

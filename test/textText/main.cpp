@@ -12,10 +12,15 @@ int main() {
     graphics.submitWindow(window);
     graphics.loadFont("fonts/Lato/Lato-Regular.ttf");
 
-    graphics.drawText(
+    graphics.drawRect(
         SplitGui::IVec2{0, 0}, 
         window.getSize(),
-        "A"
+        0xFFFFFF
+    );
+
+    graphics.drawText(
+        SplitGui::IVec2{0, 0},
+        "Hello world"
     );
 
     graphics.submitBuffers();
