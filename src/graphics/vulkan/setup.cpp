@@ -39,8 +39,10 @@ namespace SplitGui {
         createSyncObj();
         createDescriptorPool();
         createDescriptorSet();
-        createTextGlyphImage();
         createVertexUniforms();
+        //createScenesUniforms();
+        createTextGlyphImage();
+        //createStringUniform();
         updateDescriptorSets();
 
         setupRenderpassBeginInfo();

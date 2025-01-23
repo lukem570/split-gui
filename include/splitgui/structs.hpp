@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#define MAX_STRING_SIZE 64
+
 namespace SplitGui {
 
     typedef uint16_t VertexFlags;
@@ -51,32 +53,32 @@ namespace SplitGui {
     };
 
     struct IVec4 {
-        int x;
-        int y;
-        int z;
-        int w;
+        union {int x; int r;};
+        union {int y; int g;};
+        union {int z; int b;};
+        union {int w; int a;};
     };
 
     struct Vec3 {
-        float x;
-        float y;
-        float z;
+        union {float x; float r;};
+        union {float y; float g;};
+        union {float z; float b;};
     };
 
     struct IVec3 {
-        int x;
-        int y;
-        int z;
+        union {int x; int r;};
+        union {int y; int g;};
+        union {int z; int b;};
     };
 
     struct Vec2 {
-        float x;
-        float y;
+        union {float x; float r;};
+        union {float y; float g;};
     };
 
     struct IVec2 {
-        int x;
-        int y;
+        union {int x; int r;};
+        union {int y; int g;};
     };
 
     struct HexColor {

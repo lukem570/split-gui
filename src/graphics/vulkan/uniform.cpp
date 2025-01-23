@@ -20,7 +20,7 @@ namespace SplitGui {
         vk_device.unmapMemory(vk_vertexUniformBufferMemory);
     }
 
-    inline void VulkanInterface::createScenesUniforms() { // memory leaks!!!!
+    inline void VulkanInterface::createScenesUniforms() {
         
         vk::DeviceSize scenesSize = scenes.size() * sizeof(Scene);
 
@@ -54,5 +54,17 @@ namespace SplitGui {
         descriptorWrite.pTexelBufferView = nullptr;
 
         vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+    }
+
+    inline void VulkanInterface::createStringUniform() {
+        vk::DeviceSize stringSize = scenes.size() * sizeof(Scene);
+
+        createBuffer(
+            stringSize, 
+            vk::BufferUsageFlagBits::eUniformBuffer, 
+            vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, 
+            vk_stringBuffer, 
+            vk_stringBufferMemory
+        );
     }
 }

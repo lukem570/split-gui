@@ -63,11 +63,11 @@ namespace SplitGui {
 
             shape.normalize();
 
-            msdfgen::edgeColoringSimple(shape, 6.0);
+            msdfgen::edgeColoringSimple(shape, 3.0);
 
             msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
 
-            msdfgen::SDFTransformation t(msdfgen::Projection(64.0, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
+            msdfgen::SDFTransformation t(msdfgen::Projection(vk_msdfExtent.width, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
             msdfgen::generateMTSDF(msdf, shape, t);
 
             msdfgen::BitmapConstRef<float, 4> ref = msdf;
