@@ -50,6 +50,7 @@ namespace SplitGui {
         eUseTexture  = 0x01,
         eTextureMsdf = 0x02,
         eTransparent = 0x04,
+        eScene       = 0x08,
     };
 
     struct Vec4 {
@@ -90,6 +91,17 @@ namespace SplitGui {
     struct IVec2 {
         union {int x; int r;};
         union {int y; int g;};
+
+        IVec2 operator+(IVec2 operand) { return { x + operand.x, y + operand.y }; }
+        IVec2 operator-(IVec2 operand) { return { x - operand.x, y - operand.y }; }
+        IVec2 operator*(IVec2 operand) { return { x * operand.x, y * operand.y }; }
+        IVec2 operator/(IVec2 operand) { return { x / operand.x, y / operand.y }; }
+
+        Vec2 operator+(Vec2 operand) { return { (float)x + operand.x, (float)y + operand.y }; }
+        Vec2 operator-(Vec2 operand) { return { (float)x - operand.x, (float)y - operand.y }; }
+        Vec2 operator*(Vec2 operand) { return { (float)x * operand.x, (float)y * operand.y }; }
+        Vec2 operator/(Vec2 operand) { return { (float)x / operand.x, (float)y / operand.y }; }
+        
     };
 
     struct HexColor {
@@ -147,7 +159,7 @@ namespace SplitGui {
         
     };
 
-    struct Scene {
+    struct SceneObj {
         RectObj  viewport;
         float    cameraFieldOfView;
         Vec3     cameraPosition;

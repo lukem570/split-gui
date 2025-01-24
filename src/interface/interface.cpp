@@ -12,6 +12,7 @@ namespace SplitGui {
     Interface::~Interface() {
         if (interfaceElement) {
             interfaceElement->cleanup();
+            delete interfaceElement;
         }
     }
 
@@ -53,7 +54,6 @@ namespace SplitGui {
     void InterfaceElement::instance() {
         if (maxChildren < children.size()) {
             printf("ERROR: '%s' element has too many children", name.c_str());
-            fflush(stdout);
             throw;
         }
 
@@ -96,7 +96,7 @@ namespace SplitGui {
     void InterfaceElement::cleanup() {
         for (int i = 0; i < children.size(); i++) {
             children[i]->cleanup();
-            delete this;
+            delete children[i];
         }
     }
 }

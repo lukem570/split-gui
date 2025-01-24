@@ -167,6 +167,7 @@ namespace SplitGui {
         class SPLITGUI_EXPORT Scene : public InterfaceElement {
             public:
                 void instance() override;
+                void setSceneNumber(unsigned int sceneNumber);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eScene;
@@ -174,6 +175,7 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 0; // TODO:
 
             private: // props
+                unsigned int                   number = 0;
                 // TODO:
         };
 

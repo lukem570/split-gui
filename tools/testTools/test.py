@@ -48,7 +48,7 @@ def get_executables_in_directory(directory):
             
             if platform.system() == "Windows" and any(file.lower().endswith(ext) for ext in exec_extensions):
                 executables.append(file_path)
-            elif sys.platform != "win32" and os.access(file_path, os.X_OK):
+            elif platform.system() != "Windows" and os.access(file_path, os.X_OK) and not file_path.lower().endswith(".so"):
                 executables.append(file_path)
     
     return executables

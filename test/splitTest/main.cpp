@@ -35,11 +35,7 @@ int main() {
     root.setSize(window.getSize());
     root.setPosition({0, 0});
 
-    //SplitGui::Interface interface;
-    //interface.setInterfaceElement(root);
-
     root.instance();
-
 
     graphics.submitBuffers();
 

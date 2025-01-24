@@ -25,8 +25,17 @@ namespace SplitGui {
 
                 if (token.value == "direction") { // isVertical
                     nextToken();
-                    nextToken();
-                    // TODO:
+                    token = nextToken();
+                    
+                    if (token.value == "vertical") {
+                        split->setVertical(true);
+                    } else if (token.value == "horizontal") {
+                        split->setVertical(false);
+                    } else {
+                        printf("ERROR: invalid direction %s\n", token.value.c_str());
+                        throw;
+                    }
+
                     return;
                 }
 
@@ -40,7 +49,7 @@ namespace SplitGui {
                     token = nextToken();
 
                     printf("color  str: %s\n", token.value.c_str());
-                    
+
                     IVec3 vec3;
 
                     std::string numbersPart = token.value.substr(6, token.value.size() - 7);
@@ -72,6 +81,20 @@ namespace SplitGui {
                 throw;
             }
 
+            void handleSceneParameters(Default::Scene* scene, XmlToken& token) {
+
+                if (token.value == "number") {
+                    nextToken();
+                    token = nextToken();
+                    
+                    
+
+                    return;
+                }
+
+                throw;
+            }
+
             InterfaceElement* parse(int depth = 0) {
 
                 XmlToken token = nextToken();
@@ -86,20 +109,16 @@ namespace SplitGui {
 
                     token = nextToken();
 
-                    printf("val: %s\n", token.value.c_str());
-
                     if (token.value == "split") {
                         
                         Default::Split* newSplit = new Default::Split();
 
                         token = nextToken();
 
-                        printf("val4: %s\n", token.value.c_str());
                         while(token.type == XmlTokenType::eText) {
                             handleSplitParameters(newSplit, token);
                             token = nextToken();
                         }
-                        printf("val0: %s\n", token.value.c_str());
 
                         if (token.type == XmlTokenType::eTagClose) {
                             printf("ERROR: split cannot be closed prematurely it must have 2 children\n");
@@ -107,11 +126,12 @@ namespace SplitGui {
                             throw;
                         }
 
-                        printf("val1: %s\n", token.value.c_str());
                         newSplit->addChild(parse(depth + 1));
-                        printf("val2: %s\n", token.value.c_str());
                         newSplit->addChild(parse(depth + 1));
-                        printf("val3: %s\n", token.value.c_str());
+
+                        nextToken();
+                        nextToken();
+                        nextToken();
 
                         return newSplit;
                     }
@@ -153,12 +173,25 @@ namespace SplitGui {
                         }
 
                         return newRect;
-
-                        break;
                     }
 
                     if (token.value == "scene") {
 
+                        Default::Scene* newScene = new Default::Scene();
+
+                        token = nextToken();
+
+                        while(token.type == XmlTokenType::eText) {
+                            handleSceneParameters(newScene, token);
+                            token = nextToken();
+                        }
+
+                        if (token.type != XmlTokenType::eTagClose) {
+                            printf("ERROR: scene must be closed prematurely\n");
+                            throw;
+                        }
+
+                        return newScene;
                     }
 
                     if (token.value == "text") {
@@ -192,7 +225,6 @@ namespace SplitGui {
                         token = nextToken();
 
                         goto Begin;
-                        break;
                     }
 
                     if (token.value == "root") {

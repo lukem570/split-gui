@@ -2,7 +2,7 @@
 
 namespace SplitGui {
     void VulkanInterface::instanceScene(Vec2 x1, Vec2 x2) { // need to make the scenes have a description for uploading meshes
-        Scene scene;
+        SceneObj scene;
         scene.viewport.width    = std::abs(x1.x - x2.x);
         scene.viewport.height   = std::abs(x1.y - x2.y);
         scene.viewport.x        = std::min(x1.x,  x2.x);
@@ -12,7 +12,5 @@ namespace SplitGui {
         scene.cameraRotation    = {0, 0, 0};
 
         scenes.push_back(scene);
-
-        createScenesUniforms(); // TODO: fix speed
     }
 }

@@ -132,7 +132,7 @@ namespace SplitGui {
             VertexUniformObject                 vertexUniformObject;
             std::vector<VertexBufferObject>     vertices;
             std::vector<uint16_t>               indices;
-            std::vector<Scene>                  scenes;
+            std::vector<SceneObj>               scenes;
             std::unordered_map<char, MSDFImage> charImageMappings;
 
 
@@ -146,6 +146,8 @@ namespace SplitGui {
             inline vk::CommandBuffer    startCopyBuffer();
             inline void                 copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion);
             inline void                 endCopyBuffer(vk::CommandBuffer commandBuffer);
+            inline void                 vertexBufferSubmit();
+            inline void                 scenesSubmit();
 
             template <typename T>
             inline void InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);
@@ -169,7 +171,6 @@ namespace SplitGui {
             inline void createDescriptorPool();
             inline void createDescriptorSet();
             inline void createVertexUniforms();
-            inline void createScenesUniforms();
             inline void createTextGlyphImage();
             inline void updateDescriptorSets();
 
@@ -183,6 +184,7 @@ namespace SplitGui {
             inline void cleanupSyncObj();
             inline void cleanupImageViews();
             inline void cleanupVertexAndIndexBuffers();
+            inline void cleanupSceneBuffer();
 
             void recreateSwapchain();
     };

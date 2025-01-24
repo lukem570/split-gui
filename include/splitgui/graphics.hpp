@@ -47,7 +47,7 @@ namespace SplitGui {
             void submitWindow(Window& window);
             void drawFrame();
             void drawRect(IVec2 x1, IVec2 x2, HexColor color);
-            void instanceScene(Vec2 x1, Vec2 x2);
+            void instanceScene(IVec2 x1, IVec2 x2);
             int  drawText(IVec2 x1, std::string text); // Returns the width in pixels of the text
             void loadFont(const char* path);
             void drawMedia(Vec2 x1, Vec2 x2);

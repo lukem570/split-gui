@@ -114,7 +114,11 @@ namespace SplitGui {
     }
     
     void Default::Scene::instance() {
-        
+        pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
+    }
+
+    void Default::Scene::setSceneNumber(unsigned int sceneNumber) {
+        number = sceneNumber;
     }
 
     void Default::Text::instance() {

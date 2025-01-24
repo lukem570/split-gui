@@ -1,11 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    void VulkanInterface::submitBuffers() {
-
-        if (indices.size() == knownIndicesSize) {
-            return;
-        }
+    inline void VulkanInterface::vertexBufferSubmit() {
 
         vk::DeviceSize   indexBufferSize;
         vk::Buffer       stagingIndexBuffer;
@@ -71,5 +67,78 @@ namespace SplitGui {
         vk_device.freeMemory(stagingIndexBufferMemory);
         
         knownIndicesSize = indices.size();
+    }
+
+    inline void VulkanInterface::scenesSubmit() {
+        
+        vk::DeviceSize   sceneBufferSize;
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, sceneBufferSize);
+
+        vk::Buffer       tempBuffer;
+        vk::DeviceMemory tempBufferMemory;
+
+        createBuffer(
+            sceneBufferSize, 
+            vk::BufferUsageFlagBits::eUniformBuffer | vk::BufferUsageFlagBits::eTransferDst, 
+            vk::MemoryPropertyFlagBits::eDeviceLocal, 
+            tempBuffer, 
+            tempBufferMemory
+        );
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+
+        copyBuffer(stagingBuffer,  tempBuffer, sceneBufferSize,  commandBuffer, copyRegion);
+
+        endCopyBuffer(commandBuffer);
+
+        vk_runtimeResult = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), true, UINT64_MAX);
+
+        if (vk_runtimeResult != vk::Result::eSuccess) {
+            printf("Error Waiting for fences\n");
+            throw;
+        }
+
+        cleanupSceneBuffer();
+
+        vk_sceneBuffer       = tempBuffer;
+        vk_sceneBufferMemory = tempBufferMemory;
+
+        vk_device.destroyBuffer(stagingBuffer);
+        vk_device.freeMemory(stagingBufferMemory);
+
+        vk::DescriptorBufferInfo bufferInfo;
+        bufferInfo.buffer = vk_sceneBuffer;
+        bufferInfo.offset = 0;
+        bufferInfo.range  = sizeof(SceneObj);
+
+        vk::WriteDescriptorSet descriptorWrite;
+        descriptorWrite.dstSet           = vk_descriptorSet;
+        descriptorWrite.dstBinding       = DescriporBindings::eSceneData;
+        descriptorWrite.dstArrayElement  = 0;
+        descriptorWrite.descriptorType   = vk::DescriptorType::eUniformBuffer;
+        descriptorWrite.descriptorCount  = 1;
+        descriptorWrite.pBufferInfo      = &bufferInfo;
+        descriptorWrite.pImageInfo       = nullptr;
+        descriptorWrite.pTexelBufferView = nullptr;
+
+        vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+
+        knownScenesSize = scenes.size();
+    }
+
+    void VulkanInterface::submitBuffers() {
+
+        if (indices.size() != knownIndicesSize) {
+            vertexBufferSubmit();
+        }
+        
+        if (scenes.size() != knownScenesSize) {
+            scenesSubmit();
+        }
     }
 }
