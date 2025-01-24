@@ -1,12 +1,20 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
 <meta version="0.1.0"/>
 
-<main> 
-    <split direction="vertical" position="20px + 50%"> 
-        <rect color="{255, 100, 100}">
-            
-        </rect>
-        <rect color="{100, 255, 100}">
-            
-        </rect>
-    </split>
-</main>
+
+<split direction="vertical" position="20px + 50%"> 
+    <rect color="ivec3(255, 100, 100)"/>
+    <rect color="ivec3(100, 255, 100)"/>
+</split>

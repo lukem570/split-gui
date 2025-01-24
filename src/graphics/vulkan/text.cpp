@@ -23,10 +23,10 @@ namespace SplitGui {
         return (unsigned char)(~int(255.5f-255.f*clamp(x)));
     }
 
-    void VulkanInterface::drawText(Vec2 x1, std::string& text) {
+    float VulkanInterface::drawText(Vec2 x1, std::string& text) {
         if (!ft_fontInUse) {
             printf("WARN: no font in use\n");
-            return;
+            return -1.0;
         }
 
         IVec2 windowSize = pWindow->getSize();
@@ -53,7 +53,7 @@ namespace SplitGui {
 
             if (loadError) {
                 printf("WARN: could not load glyph: %c\n", text[i]);
-                return;
+                return -1.0;
             }
 
             double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
@@ -62,14 +62,14 @@ namespace SplitGui {
 
             if (outlineError) {
                 printf("WARN: could not load glyph: %c\n", text[i]);
-                return;
+                return -1.0;
             }
 
             ft::FT_Error loadCharError = ft::FT_Load_Char(ft_face, text[i], 0);
 
             if (loadCharError) {
                 printf("WARN: could not load glyph: %c\n", text[i]);
-                return;
+                return -1.0;
             }
 
             double origin = shape.getBounds().l - shape.getBounds().r;
@@ -84,8 +84,6 @@ namespace SplitGui {
             msdfgen::Range pxRange = msdfgen::Range(0.1);
 
             msdfgen::Shape::Bounds bounds = shape.getBounds();
-            windowSize;
-            vk_msdfExtent;
 
             msdfgen::Vector2 dim(std::abs(bounds.l - bounds.r), std::abs(bounds.t - bounds.b));
 
@@ -209,7 +207,7 @@ namespace SplitGui {
 
             if (loadCharError) {
                 printf("WARN: could not load char: %c\n", text[i]);
-                return;
+                return -1.0;
             }
 
             ft::FT_GlyphSlot slot = ft_face->glyph;
@@ -239,7 +237,9 @@ namespace SplitGui {
             //    text[i]
             //);
 
-            pos += width + ((float)5 / (float)windowSize.x);
+            pos += width + ((float)7 / (float)windowSize.x);
         }
+
+        return pos;
     }
 }

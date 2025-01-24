@@ -15,15 +15,33 @@ int main() {
 
     std::stringstream buffer;
     buffer << indexFile.rdbuf();
-
-    SplitGui::Interface interface;
-
     std::string page = buffer.str();
 
-    interface.parseXml(page);
-
     SplitGui::Window window;
+    window.instanceGlfw();
+    window.createWindow("xml test");
 
+    SplitGui::Graphics graphics;
+    graphics.instanceVulkan(true);
+    graphics.submitWindow(window);
+
+    SplitGui::RectObj viewport;
+    viewport.size = window.getSize();
+    viewport.x    = 0;
+    viewport.y    = 0;
+    
+    SplitGui::Interface interface;
+    interface.parseXml(page);
+    interface.submitGraphics(graphics);
+    interface.setViewport(viewport);
+
+    interface.update();
+    graphics.submitBuffers();
+
+    while (!window.shouldClose()) {
+        graphics.drawFrame();
+        window.update();
+    }
     
     return 0;
 }

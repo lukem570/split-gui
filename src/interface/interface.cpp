@@ -10,25 +10,44 @@ namespace SplitGui {
     };
     
     Interface::~Interface() {
-
+        if (interfaceElement) {
+            interfaceElement->cleanup();
+        }
     }
 
     void Interface::parseXml(std::string& data) {
         XMLParser parser(data);
-        parser.tokenize();
-        
+        setInterfaceElement(parser.parse());
+    }
+
+    void Interface::submitGraphics(Graphics& graphics) {
+        pGraphics = &graphics;
+    }
+
+    void Interface::update() {
+        if (!pGraphics) {
+            printf("WARN: interface requires graphics to call 'update'\n");
+            return;
+        }
+
+        interfaceElement->setGraphics(pGraphics);
+        interfaceElement->instance();
+    }
+
+    void Interface::setViewport(RectObj viewport) {
+        interfaceElement->extent = viewport;
     }
 
     InterfaceElement* Interface::getInterfaceElement() {
         return Interface::interfaceElement;
     }
 
-    void Interface::setInterfaceElement(InterfaceElement& data) {
-        if (Interface::interfaceElement) {
+    void Interface::setInterfaceElement(InterfaceElement* data) {
+        if (interfaceElement) {
             printf("WARN: interface data is being overwritten this can cause memory leaks if unhandled!\n");
         }
 
-        Interface::interfaceElement = &data;
+        interfaceElement = data;
     }
 
     void InterfaceElement::instance() {
@@ -72,5 +91,12 @@ namespace SplitGui {
 
     void InterfaceElement::setGraphics(Graphics* pGraphicsIn) {
         pGraphics = pGraphicsIn;
+    }
+
+    void InterfaceElement::cleanup() {
+        for (int i = 0; i < children.size(); i++) {
+            children[i]->cleanup();
+            delete this;
+        }
     }
 }

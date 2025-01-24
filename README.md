@@ -4,6 +4,71 @@ Split gui is a GUI library that is entirely gpu focused therefore it has no depe
 for specific systems making it highly portable. Split gui is built on Vulkan and Glfw but is designed
 to be expanded to other libraries and systems not implementing Vulkan or Glfw.
 
+## How to use
+
+#### Basic xml handler
+
+main.cpp
+``` c++
+#include <splitgui/window.hpp>
+#include <splitgui/interface.hpp>
+#include <fstream>
+#include <sstream>
+#include <string>
+
+int main() {
+
+    std::ifstream indexFile("index.xml");
+
+    if (!indexFile.is_open()) {
+        return -1;
+    }
+
+    std::stringstream buffer;
+    buffer << indexFile.rdbuf();
+    std::string page = buffer.str();
+
+    SplitGui::Window window;
+    window.instanceGlfw();
+    window.createWindow("xml test");
+
+    SplitGui::Graphics graphics;
+    graphics.instanceVulkan(true);
+    graphics.submitWindow(window);
+
+    SplitGui::RectObj viewport;
+    viewport.size = window.getSize();
+    viewport.x    = 0;
+    viewport.y    = 0;
+    
+    SplitGui::Interface interface;
+    interface.parseXml(page);
+    interface.submitGraphics(graphics);
+    interface.setViewport(viewport);
+
+    interface.update();
+    graphics.submitBuffers();
+
+    while (!window.shouldClose()) {
+        graphics.drawFrame();
+        window.update();
+    }
+    
+    return 0;
+}
+```
+index.xml
+``` xml
+<meta version="0.1.0"/>
+
+
+<split direction="vertical" position="20px + 50%"> 
+    <rect color="ivec3(255, 100, 100)"/>
+    <rect color="ivec3(100, 255, 100)"/>
+</split>
+```
+
+
 ## Builds 
 
 | Operating system |                            Build Status                            |      Notes      |
@@ -22,7 +87,7 @@ All documentation is located in the [Docs](docs) folder and is seperated into us
 
 note: ninja is not required for builds
 
-```
+``` bash
 mkdir build
 cd build
 cmake -G "Ninja" .. 
@@ -47,12 +112,13 @@ ninja
 
 ## Todo
 
-* make xml parser
 * refactor error messages
-* write documentation
+    * use result values
 * create >1 3d scene
-* interface updating
-* constant sizes
+* interface updating / constant sizes
+* write documentation
+* refactor xml parser
+* fix seg fault from xml parsing
 
 ## Updating buffers in the background idea
 

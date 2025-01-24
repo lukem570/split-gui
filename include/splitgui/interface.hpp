@@ -12,6 +12,7 @@
 namespace SplitGui {
 
     class Window;
+    class Interface;
 
     enum class InterfaceElementType {
 
@@ -40,6 +41,9 @@ namespace SplitGui {
 
     class SPLITGUI_EXPORT InterfaceElement {
         public:
+
+            friend class Interface;
+
             virtual void instance();
 
             void addChild(InterfaceElement* pChild);
@@ -47,6 +51,7 @@ namespace SplitGui {
             void setPosition(IVec2 position);
             void setExtent(RectObj extent);
             void setGraphics(Graphics* pgGraphics);
+            void cleanup();
 
         protected:
             InterfaceElementType           type        = InterfaceElementType::eRoot;
@@ -235,12 +240,15 @@ namespace SplitGui {
             ~Interface();
 
             void              parseXml(std::string& data);
-            void              setInterfaceElement(InterfaceElement& data);
+            void              setInterfaceElement(InterfaceElement* data);
             InterfaceElement* getInterfaceElement();
+            void              submitGraphics(Graphics& graphics);
+            void              update();
+            void              setViewport(RectObj viewport);
 
         private:
             InterfaceElement* interfaceElement = nullptr;
-            
+            Graphics*         pGraphics        = nullptr;
     };
 }
 #endif

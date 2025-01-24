@@ -36,6 +36,15 @@ namespace SplitGui {
         eRight,
     };
 
+    enum class XmlTokenType {
+        eTagOpen,
+        eTagClose,
+        eText,
+        eAttribute,
+        eEndOfFile,
+        eError
+    };
+
     enum VertexFlagsBits {
         eNone        = 0x00,
         eUseTexture  = 0x01,
@@ -92,6 +101,12 @@ namespace SplitGui {
             b = (hex >> (UINT8_WIDTH * 0)) & UINT8_MAX;
         }
 
+        HexColor(IVec3 hex) {
+            r = hex.r;
+            g = hex.g;
+            b = hex.b;
+        }
+
         Vec3 normalize() {
             return {
                 (float) r / (float) UINT8_MAX, 
@@ -106,10 +121,30 @@ namespace SplitGui {
     };
 
     struct RectObj {
-        int width  = 0;
-        int height = 0;
-        int x      = 0;
-        int y      = 0;
+
+        RectObj() {
+            width = 0;
+            height = 0;
+            x = 0;
+            y = 0;
+        }
+
+        union {
+            IVec2 size;
+            struct {
+                int width;
+                int height;
+            };
+        };
+
+        union {
+            IVec2 pos;
+            struct {
+                int x;
+                int y;
+            };
+        };
+        
     };
 
     struct Scene {
@@ -148,6 +183,11 @@ namespace SplitGui {
         UnitOperationType   type;
     };
 
+    struct XmlToken {
+        XmlTokenType type;
+        std::string value;
+    };
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     enum DescriporBindings {
@@ -166,7 +206,7 @@ namespace SplitGui {
     };
 
     struct MSDFImage {
-        
+
     };
 
 #endif
