@@ -29,10 +29,15 @@ namespace SplitGui {
             return;
         }
 
-        int pos = 0;
+        IVec2 windowSize = pWindow->getSize();
+
+        int fontSize = 20;
+
+        float pos = 0;
+        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, windowSize.x, windowSize.y);
 
         for (int i = 0; i < text.size(); i++) {
-            if (charImageMappings.find(text[i]) != charImageMappings.end()) {
+            if (charImageMappings.find(text[i]) != charImageMappings.end() || std::isspace(text[i])) {
                 continue;
             }
 
@@ -51,23 +56,58 @@ namespace SplitGui {
                 return;
             }
 
-            double scale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
+            double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
-            ft::FT_Error outlineError = msdfgen::readFreetypeOutline(shape, &ft_face->glyph->outline, scale);
+            ft::FT_Error outlineError = msdfgen::readFreetypeOutline(shape, &ft_face->glyph->outline, fontScale);
 
             if (outlineError) {
                 printf("WARN: could not load glyph: %c\n", text[i]);
                 return;
             }
 
+            ft::FT_Error loadCharError = ft::FT_Load_Char(ft_face, text[i], 0);
+
+            if (loadCharError) {
+                printf("WARN: could not load glyph: %c\n", text[i]);
+                return;
+            }
+
+            double origin = shape.getBounds().l - shape.getBounds().r;
+
             shape.normalize();
+
+            double normalScaleFactor = origin / (shape.getBounds().l - shape.getBounds().r);
 
             msdfgen::edgeColoringSimple(shape, 3.0);
 
-            msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
+            msdfgen::Vector2 scale;
+            msdfgen::Range pxRange = msdfgen::Range(0.1);
 
-            msdfgen::SDFTransformation t(msdfgen::Projection(vk_msdfExtent.width, msdfgen::Vector2(0.125, 0.125)), msdfgen::Range(0.125));
-            msdfgen::generateMTSDF(msdf, shape, t);
+            msdfgen::Shape::Bounds bounds = shape.getBounds();
+            windowSize;
+            vk_msdfExtent;
+
+            msdfgen::Vector2 dim(std::abs(bounds.l - bounds.r), std::abs(bounds.t - bounds.b));
+
+            double offsetX = -((double)ft_face->glyph->metrics.horiBearingX / (double)std::pow(2, 16)) / normalScaleFactor * 5;
+
+            printf("dim(%c): (%.6f, %.6f)\n", text[i], dim.x, dim.y);
+            printf("off(%c): (%.6f)\n", text[i], offsetX);
+
+            dim.normalize();
+
+            scale.set(vk_msdfExtent.width / std::abs(bounds.l - bounds.r), vk_msdfExtent.height);
+
+            msdfgen::SDFTransformation transformation(
+                msdfgen::Projection(
+                    scale,
+                    msdfgen::Vector2(offsetX, 0.2)
+                ), 
+                pxRange
+            );
+
+            msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
+            msdfgen::generateMTSDF(msdf, shape, transformation);
 
             msdfgen::BitmapConstRef<float, 4> ref = msdf;
 
@@ -157,27 +197,49 @@ namespace SplitGui {
             vk_device.destroyBuffer(stagingBuffer);
         }
 
-        ft::FT_Set_Pixel_Sizes(ft_face, 0, 100);
-
         for (int i = 0; i < text.size(); i++) {
+            if (std::isspace(text[i])) {
+                pos += (float)fontSize / (float)windowSize.x;
+                continue;
+            }
 
-            ft::FT_Error loadCharError = ft::FT_Load_Char(ft_face, text[i], 0);
+            int glyphId = ft::FT_Get_Char_Index(ft_face, text[i]);
+
+            ft::FT_Error loadCharError = ft::FT_Load_Glyph(ft_face, glyphId, 0);
 
             if (loadCharError) {
                 printf("WARN: could not load char: %c\n", text[i]);
                 return;
             }
 
-            IVec2 windowSize = pWindow->getSize();
+            ft::FT_GlyphSlot slot = ft_face->glyph;
+            ft::FT_Fixed heightInFUnits = ft_face->size->metrics.height;
+            ft::FT_Fixed widthInFUnits = slot->metrics.width;
+            ft::FT_F26Dot6 heightInPixels = (heightInFUnits * 16) / ft_face->units_per_EM;
+            ft::FT_F26Dot6 widthInPixels = (widthInFUnits * 16) / ft_face->units_per_EM;
+
+            float height = (float)heightInPixels / (float)windowSize.y;
+            float width  = (float)widthInPixels  / (float)windowSize.x;
+
+            printf("wid(%c): (%.6f)\n", text[i], width);
 
             VulkanInterface::drawRect(
-                x1 + Vec2{(float)pos / (float)windowSize.x, 0}, 
-                x1 + Vec2{(float)(ft_face->glyph->bitmap.width + pos) / (float)windowSize.x, (float)ft_face->glyph->bitmap.rows / (float)windowSize.y}, 
-                {0.0, 1.0, 0.0}, 
+                x1 + Vec2{pos , 0}, 
+                x1 + Vec2{pos + width, height}, 
+                {0.0, 0.0, 0.0}, 
                 VertexFlagsBits::eTextureMsdf, 
-                text[i]);
+                text[i]
+            );
 
-            pos += ft_face->glyph->advance.x / 64;
+            //VulkanInterface::drawRect(
+            //    {-1.0, -1.0}, 
+            //    {1.0, 1.0}, 
+            //    {0.0, 0.0, 0.0}, 
+            //    VertexFlagsBits::eTextureMsdf, 
+            //    text[i]
+            //);
+
+            pos += width + ((float)5 / (float)windowSize.x);
         }
     }
 }

@@ -166,10 +166,7 @@ namespace SplitGui {
     };
 
     struct MSDFImage {
-        vk::Image image;
-        vk::ImageView imageView;
-        vk::Sampler sampler;
-        vk::DeviceMemory imageMemory;
+        
     };
 
 #endif

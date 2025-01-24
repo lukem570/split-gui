@@ -50,7 +50,6 @@ ninja
 * make xml parser
 * refactor error messages
 * write documentation
-* draw text
 * create >1 3d scene
 * interface updating
 * constant sizes

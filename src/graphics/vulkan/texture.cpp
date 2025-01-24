@@ -61,9 +61,9 @@ namespace SplitGui {
         samplerInfo.magFilter               = vk::Filter::eLinear;
         samplerInfo.minFilter               = vk::Filter::eLinear;
         samplerInfo.mipmapMode              = vk::SamplerMipmapMode::eNearest;
-        samplerInfo.addressModeU            = vk::SamplerAddressMode::eRepeat;
-        samplerInfo.addressModeV            = vk::SamplerAddressMode::eRepeat;
-        samplerInfo.addressModeW            = vk::SamplerAddressMode::eRepeat;
+        samplerInfo.addressModeU            = vk::SamplerAddressMode::eClampToBorder;
+        samplerInfo.addressModeV            = vk::SamplerAddressMode::eClampToBorder;
+        samplerInfo.addressModeW            = vk::SamplerAddressMode::eClampToBorder;
         samplerInfo.mipLodBias              = 0.0f;
         samplerInfo.anisotropyEnable        = vk::False;
         samplerInfo.maxAnisotropy           = 1.0f;
