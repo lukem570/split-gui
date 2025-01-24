@@ -4,6 +4,47 @@ Split gui is a GUI library that is entirely gpu focused therefore it has no depe
 for specific systems making it highly portable. Split gui is built on Vulkan and Glfw but is designed
 to be expanded to other libraries and systems not implementing Vulkan or Glfw.
 
+## Builds 
+
+| Operating system |                            Build Status                            |      Notes      |
+|------------------|--------------------------------------------------------------------|-----------------|
+| Linux            | ![Passing](https://img.shields.io/badge/build-passing-brightgreen) |                 |
+| Windows          | ![Unknown](https://img.shields.io/badge/build-unknown-yellow)      | not tested      |
+| IOS              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
+| Mac              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
+| Android          | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
+
+## Documentation
+
+All documentation is located in the [Docs](docs) folder and is seperated into user and developer documentation.
+
+## Build
+
+note: ninja is not required for builds
+
+``` bash
+mkdir build
+cd build
+cmake -G "Ninja" .. 
+ninja
+```
+
+## Build dependencies
+
+* cmake
+* git
+
+## Project dependencies
+
+* GLFW
+* glfwpp
+* vulkan sdk 
+* vulkan headers
+* vulkan hpp
+* volk
+* msdfgen
+* freetype
+
 ## How to use
 
 #### Basic xml handler
@@ -12,6 +53,9 @@ main.cpp
 ``` c++
 #include <splitgui/window.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/graphics.hpp>
+#include <splitgui/structs.hpp>
+
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -67,48 +111,6 @@ index.xml
     <rect color="ivec3(100, 255, 100)"/>
 </split>
 ```
-
-
-## Builds 
-
-| Operating system |                            Build Status                            |      Notes      |
-|------------------|--------------------------------------------------------------------|-----------------|
-| Linux            | ![Passing](https://img.shields.io/badge/build-passing-brightgreen) |                 |
-| Windows          | ![Unknown](https://img.shields.io/badge/build-unknown-yellow)      | not tested      |
-| IOS              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
-| Mac              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
-| Android          | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
-
-## Documentation
-
-All documentation is located in the [Docs](docs) folder and is seperated into user and developer documentation.
-
-## Build
-
-note: ninja is not required for builds
-
-``` bash
-mkdir build
-cd build
-cmake -G "Ninja" .. 
-ninja
-```
-
-## Build dependencies
-
-* cmake
-* git
-
-## Project dependencies
-
-* GLFW
-* glfwpp
-* vulkan sdk 
-* vulkan headers
-* vulkan hpp
-* volk
-* msdfgen
-* freetype
 
 ## Todo
 

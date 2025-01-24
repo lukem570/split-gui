@@ -1,5 +1,8 @@
 #include <splitgui/window.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/graphics.hpp>
+#include <splitgui/structs.hpp>
+
 #include <fstream>
 #include <sstream>
 #include <string>
