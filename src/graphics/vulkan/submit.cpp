@@ -114,7 +114,7 @@ namespace SplitGui {
         vk::DescriptorBufferInfo bufferInfo;
         bufferInfo.buffer = vk_sceneBuffer;
         bufferInfo.offset = 0;
-        bufferInfo.range  = sizeof(SceneObj);
+        bufferInfo.range  = sceneBufferSize;
 
         vk::WriteDescriptorSet descriptorWrite;
         descriptorWrite.dstSet           = vk_descriptorSet;
@@ -127,6 +127,8 @@ namespace SplitGui {
         descriptorWrite.pTexelBufferView = nullptr;
 
         vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+
+        //updateDescriptorSets();
 
         knownScenesSize = scenes.size();
     }

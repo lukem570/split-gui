@@ -57,20 +57,7 @@ namespace SplitGui {
     }
 
     void Graphics::instanceScene(IVec2 x1, IVec2 x2) {
-
-        IVec2 windowSize = pWindow->getSize();
-
-        Vec2 newX1;
-        newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
-        newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
-
-        Vec2 newX2;
-        newX2.x = (float)x2.x / windowSize.x * 2.0 - 1.0f;
-        newX2.y = (float)x2.y / windowSize.y * 2.0 - 1.0f;
-
-        printf("instscene: (%.6f, %.6f), (%.6f, %.6f)\n", newX1.x, newX1.y, newX2.x, newX2.y);
-
-        pInterface->instanceScene(newX1, newX2);
+        pInterface->instanceScene(x1, x2);
     }
 
     void Graphics::resizeEvent() {
@@ -91,5 +78,9 @@ namespace SplitGui {
 
     void Graphics::loadFont(const char* path) {
         pInterface->loadFont(path);
+    }
+
+    void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) {
+        pInterface->submitTriangleData(sceneNumber, vertices, indices);
     }
 }

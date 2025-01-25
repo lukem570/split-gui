@@ -29,14 +29,32 @@ int main() {
     graphics.submitWindow(window);
 
     SplitGui::RectObj viewport;
-    viewport.size = window.getSize();
-    viewport.x    = 0;
-    viewport.y    = 0;
+    viewport.size   = window.getSize();
+    viewport.width /= 2;
+    viewport.x      = 0;
+    viewport.y      = 0;
     
     SplitGui::Interface interface;
     interface.parseXml(page);
     interface.submitGraphics(graphics);
     interface.setViewport(viewport);
+
+    SplitGui::Vertex vert1;
+    vert1.color = SplitGui::HexColor(0xFF0000).normalize();
+    vert1.pos = {0.0, -0.5};
+
+    SplitGui::Vertex vert2;
+    vert2.color = SplitGui::HexColor(0x00FF00).normalize();
+    vert2.pos = {0.5, 0.5};
+
+    SplitGui::Vertex vert3;
+    vert3.color = SplitGui::HexColor(0x0000FF).normalize();
+    vert3.pos = {-0.5, 0.5};
+
+    std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
+    std::vector<uint16_t> indices          = {0, 1, 2};
+
+    graphics.submitTriangleData(0, vertices, indices);
 
     interface.update();
     graphics.submitBuffers();

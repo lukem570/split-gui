@@ -120,7 +120,6 @@ index.xml
 * interface updating / constant sizes
 * write documentation
 * refactor xml parser
-* fix seg fault from xml parsing
 
 ## Updating buffers in the background idea
 

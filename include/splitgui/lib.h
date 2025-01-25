@@ -104,7 +104,7 @@
     // This is wonderful 
     #include <vulkan/vulkan_core.h>
     #undef VK_HEADER_VERSION
-    #define VK_HEADER_VERSION 304
+    #define VK_HEADER_VERSION 305
     #include <vulkan/vulkan.hpp>
 
     // dispatch loader

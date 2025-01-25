@@ -16,6 +16,7 @@ layout(location = 0) out vec3 out_fragColor;
 layout(location = 1) out uint out_flags;
 layout(location = 2) out uint out_textureNumber;
 layout(location = 3) out vec2 out_textureCord;
+layout(location = 4) out uint out_sceneNumber;
 
 layout(binding = 0) uniform UniformBufferObject {
     ivec2 screenSize;
@@ -27,6 +28,7 @@ void main() {
     out_flags         = flags;
     out_textureNumber = textureNumber;
     out_textureCord   = in_textureCord;
+    out_sceneNumber   = sceneNumber;
 
     // need to apply rotation matrices depending on the scene
 

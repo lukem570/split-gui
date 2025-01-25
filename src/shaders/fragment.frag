@@ -20,8 +20,7 @@ layout(location = 0)      in vec3 in_fragColor;
 layout(location = 1) flat in uint in_flags;
 layout(location = 2) flat in uint in_textureNumber;
 layout(location = 3)      in vec2 in_textureCord;
-
-uint in_sceneNumber = 0;
+layout(location = 4) flat in uint in_sceneNumber;
 
 layout(binding = 1) uniform ScenesBuffer {
     Scene scenes[MAX_SCENES];
@@ -61,11 +60,11 @@ void main() {
 
         Scene scene = sb.scenes[in_sceneNumber];
 
-        bool leftBound = scene.position.x >= gl_FragCoord.x;
-        bool topBound  = scene.position.y >= gl_FragCoord.y;
+        bool leftBound = scene.position.x <= gl_FragCoord.x;
+        bool topBound  = scene.position.y <= gl_FragCoord.y;
 
-        bool rightBound  = scene.position.x + scene.size.x <= gl_FragCoord.x;
-        bool bottomBound = scene.position.y + scene.size.y <= gl_FragCoord.y;
+        bool rightBound  = scene.position.x + scene.size.x >= gl_FragCoord.x;
+        bool bottomBound = scene.position.y + scene.size.y >= gl_FragCoord.y;
 
         if (leftBound && topBound && rightBound && bottomBound) {
             outColor = vec4(in_fragColor, 1.0);
