@@ -1,7 +1,7 @@
 #ifndef SPLITGUI_INTERFACE_HPP
 #define SPLITGUI_INTERFACE_HPP
 
-#include "lib.h"
+#include "lib.hpp"
 
 #include <splitgui/structs.hpp>
 #include <splitgui/graphics.hpp>

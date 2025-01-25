@@ -3,7 +3,6 @@
 
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
-#include <splitgui/lib.h>
 #include <tuple>
 
 /*

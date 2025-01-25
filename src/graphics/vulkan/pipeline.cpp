@@ -46,7 +46,7 @@ namespace SplitGui {
         std::array<vk::VertexInputAttributeDescription, 6> attributeDescriptions;
         attributeDescriptions[VertexLayout::eVertexPos].binding          = 0;
         attributeDescriptions[VertexLayout::eVertexPos].location         = VertexLayout::eVertexPos;
-        attributeDescriptions[VertexLayout::eVertexPos].format           = vk::Format::eR32G32Sfloat;
+        attributeDescriptions[VertexLayout::eVertexPos].format           = vk::Format::eR32G32B32Sfloat;
         attributeDescriptions[VertexLayout::eVertexPos].offset           = offsetof(VertexBufferObject, VertexBufferObject::vertex.pos);
 
         attributeDescriptions[VertexLayout::eVertexColor].binding        = 0;

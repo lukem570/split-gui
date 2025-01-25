@@ -1,7 +1,7 @@
 #ifndef SPLITGUI_STRUCTS_HPP
 #define SPLITGUI_STRUCTS_HPP
 
-#include "lib.h"
+#include "lib.hpp"
 
 #include <array>
 #include <vector>
@@ -159,6 +159,12 @@ namespace SplitGui {
         
     };
 
+    struct Transform {
+        Vec3 position;
+        Vec3 rotation;
+        Vec3 scale;
+    };
+
     struct SceneObj {
         RectObj  viewport;
         float    cameraFieldOfView;
@@ -167,7 +173,7 @@ namespace SplitGui {
     };
 
     struct Vertex {
-        Vec2 pos;
+        Vec3 pos;
         Vec3 color; // could be union
         Vec2 textureCord;
     };
@@ -203,9 +209,8 @@ namespace SplitGui {
 #ifdef SPLIT_GUI_USE_VULKAN
 
     enum DescriporBindings {
-        eVertexUniform  = 0,
-        eSceneData      = 1,
-        eGlyphs         = 2,
+        eSceneData      = 0,
+        eGlyphs         = 1,
     };
 
     enum VertexLayout {

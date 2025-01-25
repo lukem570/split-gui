@@ -1,7 +1,6 @@
 #ifndef SPLITGUI_VULKAN_HPP
 #define SPLITGUI_VULKAN_HPP
 
-#include <splitgui/lib.h>
 #include <splitgui/graphics.hpp>
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
@@ -171,7 +170,6 @@ namespace SplitGui {
             inline void createSyncObj();
             inline void createDescriptorPool();
             inline void createDescriptorSet();
-            inline void createVertexUniforms();
             inline void createTextGlyphImage();
             inline void updateDescriptorSets();
 

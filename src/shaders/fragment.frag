@@ -22,11 +22,11 @@ layout(location = 2) flat in uint in_textureNumber;
 layout(location = 3)      in vec2 in_textureCord;
 layout(location = 4) flat in uint in_sceneNumber;
 
-layout(binding = 1) uniform ScenesBuffer {
+layout(binding = 0) uniform ScenesBuffer {
     Scene scenes[MAX_SCENES];
 } sb;
 
-layout(binding = 2) uniform sampler2DArray glyphs;
+layout(binding = 1) uniform sampler2DArray glyphs;
 
 layout(location = 0) out vec4 outColor;
 

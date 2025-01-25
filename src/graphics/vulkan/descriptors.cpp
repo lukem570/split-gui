@@ -3,18 +3,11 @@
 namespace SplitGui {
     void VulkanInterface::createDescriptorSetLayout() {
 
-        vk::DescriptorSetLayoutBinding uniformLayoutBinding;
-        uniformLayoutBinding.binding            = DescriporBindings::eVertexUniform;
-        uniformLayoutBinding.descriptorCount    = 1;
-        uniformLayoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
-        uniformLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eVertex;
-        uniformLayoutBinding.pImmutableSamplers = nullptr;
-
         vk::DescriptorSetLayoutBinding sceneLayoutBinding;
         sceneLayoutBinding.binding            = DescriporBindings::eSceneData;
         sceneLayoutBinding.descriptorCount    = 1;
         sceneLayoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
-        sceneLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
+        sceneLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment | vk::ShaderStageFlagBits::eVertex;
         sceneLayoutBinding.pImmutableSamplers = nullptr;
 
         vk::DescriptorSetLayoutBinding textureLayoutBinding;
@@ -24,7 +17,7 @@ namespace SplitGui {
         textureLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
         textureLayoutBinding.pImmutableSamplers = nullptr;
 
-        std::array<vk::DescriptorSetLayoutBinding, 3> bindings = { uniformLayoutBinding, sceneLayoutBinding, textureLayoutBinding };
+        std::array<vk::DescriptorSetLayoutBinding, 2> bindings = { sceneLayoutBinding, textureLayoutBinding };
 
         vk::DescriptorSetLayoutCreateInfo createInfo;
         createInfo.bindingCount = bindings.size();
@@ -34,10 +27,6 @@ namespace SplitGui {
     }
 
     void VulkanInterface::createDescriptorPool() {
-        vk::DescriptorPoolSize uniformPoolSize;
-        uniformPoolSize.type            = vk::DescriptorType::eUniformBuffer;
-        uniformPoolSize.descriptorCount = 1;
-
         vk::DescriptorPoolSize scenePoolSize;
         scenePoolSize.type            = vk::DescriptorType::eUniformBuffer;
         scenePoolSize.descriptorCount = 1;
@@ -46,7 +35,7 @@ namespace SplitGui {
         texturePoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
         texturePoolSize.descriptorCount = 1;
 
-        std::array<vk::DescriptorPoolSize, 3> poolSizes = { uniformPoolSize, scenePoolSize, texturePoolSize };
+        std::array<vk::DescriptorPoolSize, 2> poolSizes = { scenePoolSize, texturePoolSize };
 
         vk::DescriptorPoolCreateInfo createInfo;
         createInfo.poolSizeCount = poolSizes.size();
@@ -71,12 +60,7 @@ namespace SplitGui {
         descriptorImageInfo.imageView   = vk_textGlyphImageView;
         descriptorImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
 
-        vk::DescriptorBufferInfo bufferInfo;
-        bufferInfo.buffer = vk_vertexUniformBuffer;
-        bufferInfo.offset = 0;
-        bufferInfo.range  = sizeof(VertexUniformObject);
-
-        std::array<vk::WriteDescriptorSet, 2> descriptorWrites;
+        std::array<vk::WriteDescriptorSet, 1> descriptorWrites;
 
         descriptorWrites[0].dstSet          = vk_descriptorSet;
         descriptorWrites[0].dstBinding      = DescriporBindings::eGlyphs;
@@ -84,13 +68,6 @@ namespace SplitGui {
         descriptorWrites[0].descriptorType  = vk::DescriptorType::eCombinedImageSampler;
         descriptorWrites[0].descriptorCount = 1;
         descriptorWrites[0].pImageInfo      = &descriptorImageInfo;
-
-        descriptorWrites[1].dstSet           = vk_descriptorSet;
-        descriptorWrites[1].dstBinding       = DescriporBindings::eVertexUniform;
-        descriptorWrites[1].dstArrayElement  = 0;
-        descriptorWrites[1].descriptorType   = vk::DescriptorType::eUniformBuffer;
-        descriptorWrites[1].descriptorCount  = 1;
-        descriptorWrites[1].pBufferInfo      = &bufferInfo;
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
     }
