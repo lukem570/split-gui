@@ -81,7 +81,7 @@ namespace SplitGui {
                 throw;
             }
 
-            void handleSceneParameters(Default::Scene* scene, XmlToken& token) {
+            void handleSceneParameters(Default::SceneElement* scene, XmlToken& token) {
 
                 if (token.value == "number") {
                     nextToken();
@@ -177,7 +177,7 @@ namespace SplitGui {
 
                     if (token.value == "scene") {
 
-                        Default::Scene* newScene = new Default::Scene();
+                        Default::SceneElement* newScene = new Default::SceneElement();
 
                         token = nextToken();
 

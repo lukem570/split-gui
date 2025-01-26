@@ -44,8 +44,11 @@ namespace SplitGui {
 
     };
 
-    class SceneTree {
+    class Scene {
+        public:
 
+        private:
+            Node* sceneTree;
     };
 
 }

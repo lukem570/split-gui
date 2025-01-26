@@ -30,7 +30,6 @@ namespace SplitGui {
 
         bool surfaceExtFound = false;
         bool platformSurfaceExtFound = false;
-        bool portabilityEnumerationActive = false;
 
         for (const auto &extension : instance_extensions_return) {
             if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {

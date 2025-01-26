@@ -6,6 +6,11 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cmath>
+
+constexpr double degToRad(double degrees) {
+    return degrees * (M_PI / 180.0);
+}
 
 int main() {
 
@@ -30,7 +35,7 @@ int main() {
 
     SplitGui::RectObj viewport;
     viewport.size   = window.getSize();
-    viewport.width /= 2;
+    //viewport.width /= 2;
     viewport.x      = 0;
     viewport.y      = 0;
     
@@ -59,7 +64,14 @@ int main() {
     interface.update();
     graphics.submitBuffers();
 
+    SplitGui::Vec3 rotation = {0, 0, 0};
+
     while (!window.shouldClose()) {
+
+        
+        rotation.z += degToRad(5);
+        graphics.updateSceneCameraRotation(0, rotation);
+
         graphics.drawFrame();
         window.update();
     }

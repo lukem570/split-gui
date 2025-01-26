@@ -83,4 +83,12 @@ namespace SplitGui {
     void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) {
         pInterface->submitTriangleData(sceneNumber, vertices, indices);
     }
+
+    void Graphics::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {
+        pInterface->updateSceneCameraRotation(sceneNumber, rotation);
+    }
+
+    void Graphics::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
+        pInterface->updateSceneCameraPosition(sceneNumber, position);
+    }
 }

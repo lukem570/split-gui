@@ -28,7 +28,6 @@ layout(location = 4) out uint out_sceneNumber;
 struct Scene {
     ivec2 size;
     ivec2 position;
-    float cameraFieldOfView;
     vec3  cameraPosition;
     vec3  cameraRotation;
 };
@@ -72,15 +71,17 @@ void main() {
 
     bool useScene = (flags & SCENE_BIT) != 0;
 
-    if (useScene) {
-        mat3 rotationX = rotateX(sb.scenes[sceneNumber].cameraRotation.x);
-        mat3 rotationY = rotateY(sb.scenes[sceneNumber].cameraRotation.y);
-        mat3 rotationZ = rotateZ(sb.scenes[sceneNumber].cameraRotation.z); 
+    vec3 pos = in_inPosition;
 
-        gl_Position = vec4(in_inPosition * rotationX * rotationY * rotationZ, 1.0);
-    } else {
-        gl_Position = vec4(in_inPosition, 1.0);
+    if (useScene) {
+        Scene scene = sb.scenes[sceneNumber];
+
+        mat3 rotationX = rotateY(scene.cameraRotation.x);
+        mat3 rotationY = rotateZ(scene.cameraRotation.y);
+        mat3 rotationZ = rotateX(scene.cameraRotation.z); 
+
+        pos *= rotationX * rotationY * rotationZ;
     }
 
-    
+    gl_Position = vec4(pos.xy, 0.0, 1.0);
 }

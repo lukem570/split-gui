@@ -167,7 +167,6 @@ namespace SplitGui {
 
     struct SceneObj {
         RectObj  viewport;
-        float    cameraFieldOfView;
         Vec3     cameraPosition;
         Vec3     cameraRotation;
     };

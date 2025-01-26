@@ -9,9 +9,8 @@ namespace SplitGui {
         scene.viewport.y        = std::min(x1.y,  x2.y);
         scene.cameraPosition    = {0, 0, 0};
         scene.cameraRotation    = {0, 0, 0};
-        scene.cameraFieldOfView = 90;
 
-        printf("scene: (%d, %d, %d, %d) (%d, %d) (%d, %d)", scene.viewport.x, scene.viewport.y, scene.viewport.width, scene.viewport.height, x1.x, x1.y, x2.x, x2.y);
+        printf("scene: (%d, %d, %d, %d) (%d, %d) (%d, %d)\n", scene.viewport.x, scene.viewport.y, scene.viewport.width, scene.viewport.height, x1.x, x1.y, x2.x, x2.y);
 
         scenes.push_back(scene);
     }
@@ -38,5 +37,53 @@ namespace SplitGui {
         }
 
         printf("submitted triangles\n");
+    }
+
+    void VulkanInterface::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {
+
+        scenes[sceneNumber].cameraRotation = rotation;
+
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize);
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+
+        copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
+
+        endCopyBuffer(commandBuffer);
+        vk_graphicsQueue.waitIdle();
+
+        vk_device.destroyBuffer(stagingBuffer);
+        vk_device.freeMemory(stagingBufferMemory);
+
+        updateScenes();
+    }
+
+    void VulkanInterface::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
+
+        scenes[sceneNumber].cameraPosition = position;
+
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize);
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+
+        copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
+
+        endCopyBuffer(commandBuffer);
+        vk_graphicsQueue.waitIdle();
+
+        vk_device.destroyBuffer(stagingBuffer);
+        vk_device.freeMemory(stagingBufferMemory);
+
+        updateScenes();
     }
 }

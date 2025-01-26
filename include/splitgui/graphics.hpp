@@ -26,6 +26,8 @@ namespace SplitGui {
             virtual void  drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    { throw; }
             virtual void  instanceScene(IVec2 x1, IVec2 x2)                                                                           { throw; }
             virtual void  submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) { throw; }
+            virtual void  updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         { throw; }
+            virtual void  updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         { throw; }
             virtual float drawText(Vec2 x1, std::string& text)                                                                        { throw; }
             virtual void  loadFont(const char* path)                                                                                  { throw; }
             virtual void  drawMedia(Vec2 x1, Vec2 x2)                                                                                 { throw; }
@@ -50,6 +52,8 @@ namespace SplitGui {
             void drawRect(IVec2 x1, IVec2 x2, HexColor color);
             void instanceScene(IVec2 x1, IVec2 x2);
             void submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices);
+            void updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation);
+            void updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position);
             int  drawText(IVec2 x1, std::string text); // Returns the width in pixels of the text
             void loadFont(const char* path);
             void drawMedia(Vec2 x1, Vec2 x2);

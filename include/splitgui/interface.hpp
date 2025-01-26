@@ -164,7 +164,7 @@ namespace SplitGui {
                 HexColor                       color = 0;
         };
 
-        class SPLITGUI_EXPORT Scene : public InterfaceElement {
+        class SPLITGUI_EXPORT SceneElement : public InterfaceElement {
             public:
                 void instance() override;
                 void setSceneNumber(unsigned int sceneNumber);

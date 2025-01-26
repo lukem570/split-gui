@@ -52,6 +52,8 @@ namespace SplitGui {
             void  drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    override;
             void  instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
             void  submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) override;
+            void  updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         override;
+            void  updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         override;
             float drawText(Vec2 x1, std::string& text)                                                                        override;
             void  loadFont(const char* path)                                                                                  override;
             void  submitBuffers()                                                                                             override;
@@ -94,8 +96,7 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_vertexBufferMemory;
             vk::Buffer                          vk_indexBuffer;
             vk::DeviceMemory                    vk_indexBufferMemory;
-            vk::Buffer                          vk_vertexUniformBuffer;
-            vk::DeviceMemory                    vk_vertexUniformBufferMemory;
+            vk::DeviceSize                      vk_sceneBufferSize;
             vk::Buffer                          vk_sceneBuffer;
             vk::DeviceMemory                    vk_sceneBufferMemory;
             vk::DescriptorSet                   vk_descriptorSet;
@@ -111,7 +112,6 @@ namespace SplitGui {
             std::vector<vk::Semaphore>          vk_imageAvailableSemaphores;
             std::vector<vk::Semaphore>          vk_renderFinishedSemaphores;
             std::vector<vk::Fence>              vk_inFlightFences;
-            bool                                vk_validation = false;
             unsigned int                        graphicsQueueFamilyIndex = -1;
             unsigned int                        presentQueueFamilyIndex  = -1;
             std::vector<const char *>           enabled_layers;
@@ -135,6 +135,9 @@ namespace SplitGui {
             std::vector<SceneObj>               scenes;
             std::unordered_map<char, MSDFImage> charImageMappings;
 
+            // debug
+            bool                                vk_validation = false;
+
 
             inline vk::Bool32           check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
             inline vk::Extent2D         chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
@@ -148,6 +151,7 @@ namespace SplitGui {
             inline void                 endCopyBuffer(vk::CommandBuffer commandBuffer);
             inline void                 vertexBufferSubmit();
             inline void                 scenesSubmit();
+            inline void                 updateScenes();
 
             template <typename T>
             inline void InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);

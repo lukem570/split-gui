@@ -69,19 +69,37 @@ namespace SplitGui {
         knownIndicesSize = indices.size();
     }
 
+    inline void VulkanInterface::updateScenes() {
+        vk::DescriptorBufferInfo bufferInfo;
+        bufferInfo.buffer = vk_sceneBuffer;
+        bufferInfo.offset = 0;
+        bufferInfo.range  = vk_sceneBufferSize;
+
+        vk::WriteDescriptorSet descriptorWrite;
+        descriptorWrite.dstSet           = vk_descriptorSet;
+        descriptorWrite.dstBinding       = DescriporBindings::eSceneData;
+        descriptorWrite.dstArrayElement  = 0;
+        descriptorWrite.descriptorType   = vk::DescriptorType::eUniformBuffer;
+        descriptorWrite.descriptorCount  = 1;
+        descriptorWrite.pBufferInfo      = &bufferInfo;
+        descriptorWrite.pImageInfo       = nullptr;
+        descriptorWrite.pTexelBufferView = nullptr;
+
+        vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+    }
+
     inline void VulkanInterface::scenesSubmit() {
-        
-        vk::DeviceSize   sceneBufferSize;
+    
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, sceneBufferSize);
+        InstanceStagingBuffer<SceneObj>(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize);
 
         vk::Buffer       tempBuffer;
         vk::DeviceMemory tempBufferMemory;
 
         createBuffer(
-            sceneBufferSize, 
+            vk_sceneBufferSize, 
             vk::BufferUsageFlagBits::eUniformBuffer | vk::BufferUsageFlagBits::eTransferDst, 
             vk::MemoryPropertyFlagBits::eDeviceLocal, 
             tempBuffer, 
@@ -92,7 +110,7 @@ namespace SplitGui {
 
         vk::BufferCopy copyRegion;
 
-        copyBuffer(stagingBuffer,  tempBuffer, sceneBufferSize,  commandBuffer, copyRegion);
+        copyBuffer(stagingBuffer,  tempBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
         endCopyBuffer(commandBuffer);
 
@@ -111,24 +129,7 @@ namespace SplitGui {
         vk_device.destroyBuffer(stagingBuffer);
         vk_device.freeMemory(stagingBufferMemory);
 
-        vk::DescriptorBufferInfo bufferInfo;
-        bufferInfo.buffer = vk_sceneBuffer;
-        bufferInfo.offset = 0;
-        bufferInfo.range  = sceneBufferSize;
-
-        vk::WriteDescriptorSet descriptorWrite;
-        descriptorWrite.dstSet           = vk_descriptorSet;
-        descriptorWrite.dstBinding       = DescriporBindings::eSceneData;
-        descriptorWrite.dstArrayElement  = 0;
-        descriptorWrite.descriptorType   = vk::DescriptorType::eUniformBuffer;
-        descriptorWrite.descriptorCount  = 1;
-        descriptorWrite.pBufferInfo      = &bufferInfo;
-        descriptorWrite.pImageInfo       = nullptr;
-        descriptorWrite.pTexelBufferView = nullptr;
-
-        vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
-
-        //updateDescriptorSets();
+        updateScenes();
 
         knownScenesSize = scenes.size();
     }

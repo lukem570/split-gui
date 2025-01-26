@@ -60,7 +60,7 @@ main.cpp
 #include <sstream>
 #include <string>
 
-int main() {
+int main(void) {
 
     std::ifstream indexFile("index.xml");
 
@@ -120,6 +120,18 @@ index.xml
 * interface updating / constant sizes
 * write documentation
 * refactor xml parser
+* add scene tree to xml
+* convension check
+
+## Bugs
+
+* resizing
+* scene warping
+* rot x not working in scenes  
+* text texture warping
+* slowness
+* scenes not centering on viewport
+* scenes buffers recreating on updateposition and updaterotation
 
 ## Updating buffers in the background idea
 

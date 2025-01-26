@@ -113,11 +113,11 @@ namespace SplitGui {
         color = colorIn;
     }
     
-    void Default::Scene::instance() {
+    void Default::SceneElement::instance() {
         pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
     }
 
-    void Default::Scene::setSceneNumber(unsigned int sceneNumber) {
+    void Default::SceneElement::setSceneNumber(unsigned int sceneNumber) {
         number = sceneNumber;
     }
 
