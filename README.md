@@ -122,16 +122,24 @@ index.xml
 * refactor xml parser
 * add scene tree to xml
 * convension check
+* events
+* pass in matrix to vertex shader for scenes
 
 ## Bugs
 
 * resizing
+    * in interfaces have a resize event and when called do a recalculation of bounds
 * scene warping
+    * add a uniform containing screen size to size correctly
 * rot x not working in scenes  
+    * check memory allignment and buffer creation
 * text texture warping
 * slowness
+    * performance testing and checking for bottlenecks
 * scenes not centering on viewport
+    * store screensize in uniform and use to transform the scene contents to the viewport
 * scenes buffers recreating on updateposition and updaterotation
+    * use a custom copy region for specific indices
 
 ## Updating buffers in the background idea
 
