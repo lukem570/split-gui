@@ -9,7 +9,7 @@
 namespace SplitGui {
 
     class EventHandler;
-
+    
     typedef void (*VariaticFunctionPointer)(...);
 
     enum class FunctionReturnType {
@@ -41,27 +41,12 @@ namespace SplitGui {
         }
     }
 
-    template<typename ReturnType, typename... Args>
-    constexpr FunctionReturnType getReturnTypeOfFunctionPointer(ReturnType(*func)(Args...)) {
-        return enumerateReturnType<ReturnType>();
-    }
-
-    template <typename Func>
-    struct FunctionTraits;
-
-    template <typename ReturnType, typename... Args>
-    struct FunctionTraits<ReturnType(*)(Args...)> {
-        static constexpr size_t argCount = sizeof...(Args);
-    };
-    
-    template<typename R, typename... ARGS>
-    static R return_type(R (*)(ARGS...));
-
-    template<auto FUNCTION_POINTER>
-    using ReturnType = decltype(return_type(FUNCTION_POINTER));
-
+    template <typename T>
     struct Callback {
-        VariaticFunctionPointer function;
+        T (*function)(...);
+    };
+
+    struct CallbackData {
         unsigned int            paramCount;
         FunctionReturnType      returnType;
     };
@@ -70,30 +55,55 @@ namespace SplitGui {
         public:
             friend class EventHandler;
 
+            ~Event() {
+                if (callback) {
+                    free(callback);
+                }
+            }
+
+            template <typename Return = void, typename... Args>
+            Return call(Args... args) {
+                if(enumerateReturnType<Return>() != callbackData.returnType) {
+                    printf("WARN: return type provided doesn't match callback return type\n");
+                    return Return();
+                }
+                
+                if(sizeof...(args) != callbackData.paramCount) {
+                    printf("WARN: invalid number of parameters in call\n");
+                    return Return();
+                }
+
+                return ((Callback<Return>*)callback)->function(args...);
+            }
+
         private:
-            Callback callback;
+            void* callback = nullptr;
+            CallbackData callbackData;
     };
 
     class EventHandler {
         public:
 
-            template <typename T>
-            void bindFunction(T function, std::string alias) {
+            template<typename ReturnType, typename... Args>
+            void bindFunction(ReturnType(*function)(Args...), std::string alias) {
                 if (alias.size() <= 0) {
                     printf("WARN: Alias is invalid");
                     return;
                 }
 
-                Callback callback;
-                callback.paramCount =        FunctionTraits<decltype(function)>::argCount;
-                callback.returnType = getReturnTypeOfFunctionPointer(function);
-                callback.function   =       (VariaticFunctionPointer)function;
+                CallbackData callbackData;
+                callbackData.returnType = enumerateReturnType<ReturnType>();
+                callbackData.paramCount = sizeof...(Args);
 
-                events[alias].callback = callback;
+                Callback<ReturnType>* callback = (Callback<ReturnType>*)malloc(sizeof(Callback<ReturnType>));
+                callback->function   = (ReturnType (*)(...))function;
+
+                events[alias].callback     = callback;
+                events[alias].callbackData = callbackData;
             }
 
             Event* fetchEvent(std::string alias) {
-
+                return &events[alias];
             }
         
         private:

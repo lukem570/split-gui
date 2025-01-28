@@ -62,6 +62,10 @@ def test():
     tests = get_executables_in_directory(build_dir)
     
     for test in tests:
+
+        if len(sys.argv) > 1:
+            if not test in sys.argv:
+                continue
         
         test_path = test
         

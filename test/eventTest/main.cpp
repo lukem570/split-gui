@@ -3,16 +3,19 @@
 
 #include <vector>
 
-void event(int a, int b) {
+int event(int a, int b) {
     printf("event: %d, %d\n", a, b);
+    return a + b;
 }
 
 int main() {
     SplitGui::EventHandler handler;
-
     handler.bindFunction(event, "event");
-    std::vector<int> params = {10, 20};
 
+    SplitGui::Event* event = handler.fetchEvent("event");
+    int ret = event->call<int>(10, 20);
+
+    printf("return: %d\n", ret);
 
     return 0;
 }
