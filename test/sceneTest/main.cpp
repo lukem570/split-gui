@@ -2,6 +2,7 @@
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/structs.hpp>
+#include <splitgui/scene.hpp>
 
 #include <fstream>
 #include <sstream>
