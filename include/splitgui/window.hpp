@@ -3,13 +3,12 @@
 
 #include "lib.hpp"
 
+#include <splitgui/events.hpp>
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
 #include <unordered_map>
 
 namespace SplitGui {
-
-    typedef void (*Callback)(SplitGui::Window* window);
 
     enum class FormatType {
         eGlfw,
@@ -17,10 +16,6 @@ namespace SplitGui {
         eXlib,
         eWayland,
         eWindows,
-    };
-
-    enum class CallbackType {
-        eWindowResize
     };
 
     struct SPLITGUI_EXPORT RawWindow {
@@ -74,12 +69,12 @@ namespace SplitGui {
 
             void       instanceGlfw();
             void       createWindow(const char* title);
-            void       setCallback(CallbackType type, Callback callback);
             bool       shouldClose();
             void       update();
             IVec2      getSize();
             RawWindow* getWindowData();
             void       submitInterface(Interface& interface);
+            void       attachEventHandler(EventHandler& handler);
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
@@ -88,9 +83,10 @@ namespace SplitGui {
 #endif 
 
         private:
-            Graphics*           pGraphics  = nullptr;
-            WindowLibInterface* windowLib  = nullptr;
-            Interface*          pInterface = nullptr;
+            Graphics*           pGraphics     = nullptr;
+            WindowLibInterface* windowLib     = nullptr;
+            Interface*          pInterface    = nullptr;
+            EventHandler*       pEventHandler = nullptr;
             
     };
 }

@@ -36,6 +36,10 @@ layout(binding = 0) uniform ScenesBuffer {
     Scene scenes[MAX_SCENES];
 } sb;
 
+layout(binding = 2) uniform VertexUniform {
+    ivec2 screenSize;
+} vub;
+
 mat3 rotateX(float angle) {
     float c = cos(angle);
     float s = sin(angle);
@@ -81,6 +85,15 @@ void main() {
         mat3 rotationZ = rotateX(scene.cameraRotation.z); 
 
         pos *= rotationX * rotationY * rotationZ;
+
+        if (scene.size.x > scene.size.y) {
+            pos.x *= float(scene.size.y) / float(scene.size.x);
+        } else {
+            pos.y *= float(scene.size.x) / float(scene.size.y);
+        }
+
+        pos.x += float(scene.position.x) / float(vub.screenSize.x);
+        pos.y += float(scene.position.y) / float(vub.screenSize.y);
     }
 
     gl_Position = vec4(pos.xy, 0.0, 1.0);

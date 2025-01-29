@@ -16,6 +16,9 @@ namespace SplitGui {
         vk_device.freeMemory(vk_sceneBufferMemory);
         vk_device.destroyBuffer(vk_sceneBuffer);
 
+        vk_device.freeMemory(vk_vertexUniformBufferMemory);
+        vk_device.destroyBuffer(vk_vertexUniformBuffer);
+
         cleanupVertexAndIndexBuffers();
         cleanupSceneBuffer();
 

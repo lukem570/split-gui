@@ -22,6 +22,71 @@ namespace SplitGui {
         eChar,
     };
 
+    class EventAttachment {
+        public:
+            enum class Category{
+                eNone,
+                eWindow,
+                eGraphics,
+                eInterface,
+                eScene,
+            };
+
+            enum class WindowType {
+                eResize,
+            };
+
+            enum class GraphicsType {
+
+            };
+
+            enum class InterfaceType {
+                eBinding
+            };
+
+            enum class SceneType {
+
+            };
+
+            union {
+                WindowType    window;
+                GraphicsType  graphics;
+                InterfaceType interface;
+                SceneType     scene;
+                int raw;
+            };
+            Category category;
+
+            EventAttachment() : category(Category::eNone) {}
+            EventAttachment(Category category, WindowType window)       : category(category), window(window) {}
+            EventAttachment(Category category, GraphicsType graphics)   : category(category), graphics(graphics) {}
+            EventAttachment(Category category, InterfaceType interface) : category(category), interface(interface) {}
+            EventAttachment(Category category, SceneType scene)         : category(category), scene(scene) {}
+
+            bool operator==(const EventAttachment& operand) const {
+                switch (operand.category) {
+                    case Category::eWindow: return operand.window == window; break;
+                    case Category::eGraphics: return operand.graphics == graphics; break;
+                    case Category::eInterface: return operand.interface == interface; break;
+                    case Category::eScene: return operand.scene == scene; break;
+                    default: return false; break;
+                }
+            }
+    };
+}
+
+// hash implementation for attachments
+namespace std {
+    template <>
+    struct hash<SplitGui::EventAttachment> {
+        size_t operator()(const SplitGui::EventAttachment& e) const {
+            return std::hash<int>{}((int)e.category * 20 + e.raw);
+        }
+    };
+}
+
+namespace SplitGui {
+
     template<typename T>
     constexpr FunctionReturnType enumerateReturnType() {
         if constexpr (std::is_same<T,int>::value) {
@@ -77,15 +142,16 @@ namespace SplitGui {
             }
 
         private:
-            void* callback = nullptr;
-            CallbackData callbackData;
+            void*           callback = nullptr;
+            CallbackData    callbackData;
+            EventAttachment attachment;
     };
 
     class EventHandler {
         public:
 
             template<typename ReturnType, typename... Args>
-            void bindFunction(ReturnType(*function)(Args...), std::string alias) {
+            void bindFunction(ReturnType(*function)(Args...), std::string alias, EventAttachment attachment = EventAttachment()) {
                 if (alias.size() <= 0) {
                     printf("WARN: Alias is invalid");
                     return;
@@ -98,16 +164,28 @@ namespace SplitGui {
                 Callback<ReturnType>* callback = (Callback<ReturnType>*)malloc(sizeof(Callback<ReturnType>));
                 callback->function   = (ReturnType (*)(...))function;
 
-                events[alias].callback     = callback;
-                events[alias].callbackData = callbackData;
+                events.push_back({});
+
+                events.back().callback     = callback;
+                events.back().callbackData = callbackData;
+                events.back().attachment   = attachment;
+
+                stringMappings[alias] = &events.back();
+                attachmentMappings[attachment] = &events.back();
             }
 
             Event* fetchEvent(std::string alias) {
-                return &events[alias];
+                return stringMappings[alias];
+            }
+
+            Event* fetchEvent(EventAttachment attachment) {
+                return attachmentMappings[attachment];
             }
         
         private:
-            std::unordered_map<std::string, Event> events;
+            std::vector<Event> events;
+            std::unordered_map<std::string, Event*> stringMappings;
+            std::unordered_map<EventAttachment, Event*> attachmentMappings;
     };
 }
 

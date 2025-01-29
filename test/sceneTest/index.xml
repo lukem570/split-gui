@@ -2,8 +2,8 @@
 
 <split direction="horizontal" position="50%"> 
     <split direction="vertical" position="20px + 50%"> 
-        <scene number="0"/>
         <rect color="ivec3(100, 100, 255)"/>
+        <rect color="ivec3(100, 255, 100)"/>
     </split>
-    <rect color="ivec3(100, 255, 100)"/>
+    <scene number="0"/>
 </split>

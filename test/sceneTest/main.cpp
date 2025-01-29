@@ -70,7 +70,7 @@ int main() {
     while (!window.shouldClose()) {
 
         
-        rotation.z += degToRad(5);
+        rotation.z += degToRad(2);
         graphics.updateSceneCameraRotation(0, rotation);
 
         graphics.drawFrame();

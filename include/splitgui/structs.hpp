@@ -185,9 +185,7 @@ namespace SplitGui {
     };
 
     struct VertexUniformObject {
-        IVec2    screenSize;
-        uint16_t numScenes;
-        uint16_t numTextures;
+        IVec2 screenSize;
     };
 
     struct Unit {
@@ -208,8 +206,9 @@ namespace SplitGui {
 #ifdef SPLIT_GUI_USE_VULKAN
 
     enum DescriporBindings {
-        eSceneData      = 0,
-        eGlyphs         = 1,
+        eSceneData     = 0,
+        eGlyphs        = 1,
+        eVertexUniform = 2,
     };
 
     enum VertexLayout {
