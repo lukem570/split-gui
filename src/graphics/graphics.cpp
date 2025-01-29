@@ -24,9 +24,6 @@ namespace SplitGui {
     }
 
     void Graphics::submitWindow(Window& window) {
-        window.pGraphics = this;
-        window.windowLib->submitGraphics(this);
-
         pWindow = &window;
         pInterface->submitWindow(window);
     }
@@ -35,7 +32,7 @@ namespace SplitGui {
         pInterface->drawFrame();
     }
 
-    void Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color) {
+    RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color) {
 
         IVec2 windowSize = pWindow->getSize();
 
@@ -49,15 +46,29 @@ namespace SplitGui {
 
         printf("drawrect: (%.6f, %.6f), (%.6f, %.6f), color: (%.6f, %.6f, %.6f)\n", newX1.x, newX1.y, newX2.x, newX2.y, color.normalize().x, color.normalize().y, color.normalize().z);
 
-        pInterface->drawRect(newX1, newX2, color.normalize());
+        return pInterface->drawRect(newX1, newX2, color.normalize());
+    }
+
+    void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2) {
+        IVec2 windowSize = pWindow->getSize();
+
+        Vec2 newX1;
+        newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
+        newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
+
+        Vec2 newX2;
+        newX2.x = (float)x2.x / windowSize.x * 2.0 - 1.0f;
+        newX2.y = (float)x2.y / windowSize.y * 2.0 - 1.0f;
+
+        pInterface->updateRect(ref, newX1, newX2);
     }
 
     void Graphics::submitBuffers() {
         pInterface->submitBuffers();
     }
 
-    void Graphics::instanceScene(IVec2 x1, IVec2 x2) {
-        pInterface->instanceScene(x1, x2);
+    SceneObj* Graphics::instanceScene(IVec2 x1, IVec2 x2) {
+        return pInterface->instanceScene(x1, x2);
     }
 
     void Graphics::resizeEvent() {
@@ -90,5 +101,10 @@ namespace SplitGui {
 
     void Graphics::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
         pInterface->updateSceneCameraPosition(sceneNumber, position);
+    }
+
+    void Graphics::attachEventHandler(EventHandler& handler) {
+        handler.attachGraphics(this);
+        pEventHandler = &handler;
     }
 }

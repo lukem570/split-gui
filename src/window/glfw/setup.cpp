@@ -24,12 +24,7 @@ namespace SplitGui {
         window.handle->swapBuffers();
     }
 
-    void GlfwInterface::submitGraphics(Graphics* pGraphics) {
-
-        printf("graphics submitted\n");
-
-        window.pGraphics = pGraphics;
-
-        window.handle->setUserPointer(pGraphics);
+    void GlfwInterface::submitEventHandler(EventHandler* pEventHandler) {
+        window.handle->setUserPointer(pEventHandler);
     }
 }

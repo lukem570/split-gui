@@ -3,19 +3,7 @@
 
 namespace SplitGui {
     
-    void Default::Split::instance() {
-        if (maxChildren != children.size()) {
-            printf("ERROR: '%s' element doesn't have 2 children\n", name.c_str());
-            fflush(stdout);
-            throw;
-        }
-
-        if (position < 0.0f || position > 1.0f) {
-            printf("ERROR: position must be between 0 and 1 it is: %.4f\n", position);
-            fflush(stdout);
-            throw;
-        }
-
+    void Default::Split::update() {
         RectObj childExtentOne;
         RectObj childExtentTwo;
 
@@ -59,11 +47,35 @@ namespace SplitGui {
         children[1]->instance();
     }
 
+    void Default::Split::instance() {
+        if (maxChildren != children.size()) {
+            printf("ERROR: '%s' element doesn't have 2 children\n", name.c_str());
+            fflush(stdout);
+            throw;
+        }
+
+        if (position < 0.0f || position > 1.0f) {
+            printf("ERROR: position must be between 0 and 1 it is: %.4f\n", position);
+            fflush(stdout);
+            throw;
+        }
+
+        update();
+    }
+
     void Default::Split::setVertical(bool state) {
         isVertical = state;
     }
 
+    void Default::List::update() {
+        
+    }
+
     void Default::List::instance() {
+        
+    }
+
+    void Default::Box::update() {
         
     }
 
@@ -78,7 +90,15 @@ namespace SplitGui {
         Default::Box::children[0]->instance();
     }
 
+    void Default::Overlay::update() {
+        
+    }
+
     void Default::Overlay::instance() {
+        
+    }
+
+    void Default::Mask::update() {
         
     }
 
@@ -86,8 +106,24 @@ namespace SplitGui {
         
     }
 
+    void Default::Transform::update() {
+        
+    }
+
     void Default::Transform::instance() {
         
+    }
+
+    void Default::Rect::update() {
+        IVec2 x1;
+        x1.x = extent.x;
+        x1.y = extent.y;
+
+        IVec2 x2;
+        x2.x = extent.x + extent.width;
+        x2.y = extent.y + extent.height;
+
+        pGraphics->updateRect(graphicsRectRef, x1, x2);
     }
 
     void Default::Rect::instance() {
@@ -106,11 +142,15 @@ namespace SplitGui {
 
         printf("rect: (%d, %d), (%d, %d), color: (%d, %d, %d)\n", x1.x, x1.y, x2.x, x2.y, color.r, color.g, color.b);
 
-        pGraphics->drawRect(x1, x2, color);
+        graphicsRectRef = pGraphics->drawRect(x1, x2, color);
     }
 
     void Default::Rect::setColor(HexColor colorIn) {
         color = colorIn;
+    }
+
+    void Default::SceneElement::update() {
+        
     }
     
     void Default::SceneElement::instance() {
@@ -121,7 +161,15 @@ namespace SplitGui {
         number = sceneNumber;
     }
 
+    void Default::Text::update() {
+        
+    }
+
     void Default::Text::instance() {
+        
+    }
+
+    void Default::Media::update() {
         
     }
 
@@ -129,7 +177,15 @@ namespace SplitGui {
         
     }
 
+    void Default::Binding::update() {
+        
+    }
+
     void Default::Binding::instance() {
+        
+    }
+
+    void Default::Meta::update() {
         
     }
 

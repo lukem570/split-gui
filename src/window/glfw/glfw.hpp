@@ -3,6 +3,7 @@
 
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
+#include <splitgui/events.hpp>
 #include <tuple>
 
 /*
@@ -25,6 +26,7 @@ namespace SplitGui {
             IVec2      getSize() override;
             bool       shouldClose() override;
             void       update() override;
+            void       submitEventHandler(EventHandler* pEventHandler) override;
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
@@ -34,7 +36,6 @@ namespace SplitGui {
         private:
             RawWindow window;
 
-            void submitGraphics(Graphics* pGraphics) override;
 
             static void resize_callback(glfw::Window& window, int width, int height);
 

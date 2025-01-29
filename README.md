@@ -72,13 +72,17 @@ int main(void) {
     buffer << indexFile.rdbuf();
     std::string page = buffer.str();
 
+    SplitGui::EventHandler eventHandler;
+
     SplitGui::Window window;
     window.instanceGlfw();
     window.createWindow("xml test");
+    window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
     graphics.instanceVulkan(true);
     graphics.submitWindow(window);
+    graphics.attachEventHandler(eventHandler);
 
     SplitGui::RectObj viewport;
     viewport.size = window.getSize();
@@ -89,6 +93,7 @@ int main(void) {
     interface.parseXml(page);
     interface.submitGraphics(graphics);
     interface.setViewport(viewport);
+    interface.attachEventHandler(eventHandler);
 
     interface.update();
     graphics.submitBuffers();
@@ -114,18 +119,31 @@ index.xml
 
 ## Todo
 
+### Features
+
+* create >1 3d scene
+* interface updating
+* unit sizing
+* write documentation
+* add scene tree to xml
+* implement builtin events
+
+### Optimizations
+
+* pass in matrix to vertex shader for scenes
+* staging buffer caching
+* make staging buffer allocate extra space for update events
+* multithreading?
+
+### Refactoring
+
 * refactor error messages
     * use result values
-* create >1 3d scene
-* interface updating / constant sizes
-* write documentation
 * refactor xml parser
-* add scene tree to xml
 * convension check
-* implement builtin events
-* pass in matrix to vertex shader for scenes
+* general refactor
 
-## Bugs
+### Bugs
 
 * resizing
     * in interfaces have a resize event and when called do a recalculation of bounds
@@ -134,13 +152,5 @@ index.xml
 * text texture warping
 * slowness
     * performance testing and checking for bottlenecks
-* scenes size is not conforming to view port
-    * calculate in vertex shader
 * scenes buffers recreating on updateposition and updaterotation
     * use a custom copy region for specific indices
-
-## Updating buffers in the background idea
-
-like an array list the buffer should double if required and the submit buffers function should track 
-current buffer sizes and if it is almost full it sends a request to create a new buffer that is twice
-as big or smaller maybe give creating a new buffer to another thread depending on the required size

@@ -45,20 +45,21 @@ namespace SplitGui {
             VulkanInterface(bool validation);
             ~VulkanInterface();
 
-            void  instance()                                                                                                  override;
-            void  submitWindow(SplitGui::Window& window)                                                                      override;
+            void      instance()                                                                                                  override;
+            void      submitWindow(SplitGui::Window& window)                                                                      override;
 
-            void  drawFrame()                                                                                                 override;
-            void  drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    override;
-            void  instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
-            void  submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) override;
-            void  updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         override;
-            void  updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         override;
-            float drawText(Vec2 x1, std::string& text)                                                                        override;
-            void  loadFont(const char* path)                                                                                  override;
-            void  submitBuffers()                                                                                             override;
+            void      drawFrame()                                                                                                 override;
+            RectRef   drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    override;
+            void      updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                  override;
+            SceneObj* instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
+            void      submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) override;
+            void      updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         override;
+            void      updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         override;
+            float     drawText(Vec2 x1, std::string& text)                                                                        override;
+            void      loadFont(const char* path)                                                                                  override;
+            void      submitBuffers()                                                                                             override;
 
-            void  resizeEvent()                                                                                               override;
+            void      resizeEvent()                                                                                               override;
 
         protected:
             SplitGui::Window*                   pWindow;
@@ -136,6 +137,7 @@ namespace SplitGui {
             std::vector<uint16_t>               indices;
             std::vector<SceneObj>               scenes;
             std::unordered_map<char, MSDFImage> charImageMappings;
+            bool                                markVerticesForUpdate = false;
 
             // debug
             bool                                vk_validation = false;

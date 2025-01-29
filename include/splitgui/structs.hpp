@@ -104,6 +104,7 @@ namespace SplitGui {
         
     };
 
+
     struct HexColor {
         HexColor() {}
 
@@ -182,6 +183,13 @@ namespace SplitGui {
         uint16_t flags;
         uint16_t sceneNumber;
         uint16_t textureNumber;
+    };
+
+    struct RectRef {
+        VertexBufferObject* bottomLeft;
+        VertexBufferObject* bottomRight;
+        VertexBufferObject* topLeft;
+        VertexBufferObject* topRight;
     };
 
     struct VertexUniformObject {

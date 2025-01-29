@@ -1,7 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    void VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags, uint16_t textureIndex) {
+    RectRef VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags, uint16_t textureIndex) {
 
         int verticesOffset = vertices.size();
 
@@ -32,9 +32,31 @@ namespace SplitGui {
         topRight.color       = color;
         topRight.textureCord = {1.0f, 1.0f};
 
-        vertices.push_back({bottomLeft,  flags, 0, textureIndex});
-        vertices.push_back({bottomRight, flags, 0, textureIndex});
-        vertices.push_back({topLeft,     flags, 0, textureIndex});
-        vertices.push_back({topRight,    flags, 0, textureIndex});
+        int oldSize = vertices.size();
+
+        vertices.resize(oldSize + 4);
+
+        vertices[oldSize + 0] = {bottomLeft,  flags, 0, textureIndex};
+        vertices[oldSize + 1] = {bottomRight, flags, 0, textureIndex};
+        vertices[oldSize + 2] = {topLeft,     flags, 0, textureIndex};
+        vertices[oldSize + 3] = {topRight,    flags, 0, textureIndex};
+
+        RectRef refRet;
+        refRet.bottomLeft  = &vertices[oldSize + 0];
+        refRet.bottomRight = &vertices[oldSize + 1];
+        refRet.topLeft     = &vertices[oldSize + 2];
+        refRet.topRight    = &vertices[oldSize + 3];
+
+        return refRet;
+    }
+
+    void VulkanInterface::updateRect(RectRef& ref, Vec2 x1, Vec2 x2) {
+
+        ref.bottomLeft->vertex.pos  = {std::min(x1.x, x2.x), std::min(x1.y, x2.y), 0};
+        ref.bottomRight->vertex.pos = {std::max(x1.x, x2.x), std::min(x1.y, x2.y), 0};
+        ref.topLeft->vertex.pos     = {std::min(x1.x, x2.x), std::max(x1.y, x2.y), 0};
+        ref.topRight->vertex.pos    = {std::max(x1.x, x2.x), std::max(x1.y, x2.y), 0};
+
+        markVerticesForUpdate = true;
     }
 }

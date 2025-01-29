@@ -62,6 +62,12 @@ namespace SplitGui {
         return windowLib->getSize();
     }
 
+    void Window::attachEventHandler(EventHandler& handler) {
+        handler.attachWindow(this);
+        pEventHandler = &handler;
+        windowLib->submitEventHandler(pEventHandler);
+    }
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     vk::SurfaceKHR Window::createSurface(vk::Instance instance) {

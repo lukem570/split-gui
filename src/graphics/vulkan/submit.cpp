@@ -136,7 +136,8 @@ namespace SplitGui {
 
     void VulkanInterface::submitBuffers() {
 
-        if (indices.size() != knownIndicesSize) {
+        if (indices.size() != knownIndicesSize && !markVerticesForUpdate) {
+            markVerticesForUpdate = false;
             vertexBufferSubmit();
         }
         

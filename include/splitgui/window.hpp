@@ -6,6 +6,7 @@
 #include <splitgui/events.hpp>
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
+#include <splitgui/events.hpp>
 #include <unordered_map>
 
 namespace SplitGui {
@@ -34,16 +35,15 @@ namespace SplitGui {
     class SPLITGUI_EXPORT WindowLibInterface {
         public:
 
-            friend class Graphics;
-
             WindowLibInterface() {}
             ~WindowLibInterface() {}
 
-            virtual void       createWindow(const char* title)   { throw; }
-            virtual RawWindow* getWindowData()                   { throw; }
-            virtual IVec2      getSize()                         { throw; }
-            virtual void       update()                          { throw; }
-            virtual bool       shouldClose()                     { throw; }
+            virtual void       createWindow(const char* title)                 { throw; }
+            virtual RawWindow* getWindowData()                                 { throw; }
+            virtual IVec2      getSize()                                       { throw; }
+            virtual void       update()                                        { throw; }
+            virtual bool       shouldClose()                                   { throw; }
+            virtual void       submitEventHandler(EventHandler* pEventHandler) { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
@@ -53,7 +53,6 @@ namespace SplitGui {
         private:
             RawWindow window;
 
-            virtual void submitGraphics(Graphics* pGraphics) { throw; }
 
     };
 

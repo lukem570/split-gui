@@ -9,6 +9,11 @@
 namespace SplitGui {
 
     class EventHandler;
+
+    class Window;
+    class Graphics;
+    class Interface;
+    class Scene;
     
     typedef void (*VariaticFunctionPointer)(...);
 
@@ -116,6 +121,13 @@ namespace SplitGui {
         FunctionReturnType      returnType;
     };
 
+    struct Context {
+        Window*    pWindow;
+        Graphics*  pGraphics;
+        Interface* pInterface;
+        Scene*     pScene;
+    };
+
     class Event {
         public:
             friend class EventHandler;
@@ -149,6 +161,7 @@ namespace SplitGui {
 
     class EventHandler {
         public:
+            EventHandler();
 
             template<typename ReturnType, typename... Args>
             void bindFunction(ReturnType(*function)(Args...), std::string alias, EventAttachment attachment = EventAttachment()) {
@@ -175,17 +188,43 @@ namespace SplitGui {
             }
 
             Event* fetchEvent(std::string alias) {
+                if (stringMappings.find(alias) == stringMappings.end()) {
+                    return nullptr;
+                }
+
                 return stringMappings[alias];
             }
 
             Event* fetchEvent(EventAttachment attachment) {
                 return attachmentMappings[attachment];
             }
+
+            void attachWindow(Window* pWindow) {
+                eventContext.pWindow = pWindow;
+            }
+
+            void attachGraphics(Graphics* pGraphics) {
+                eventContext.pGraphics = pGraphics;
+            }
+
+            void attachInterface(Interface* pInterface) {
+                eventContext.pInterface = pInterface;
+            }
+
+            void attachScene(Scene* pScene) {
+                eventContext.pScene = pScene;
+            }
+
+            Context getContext() {
+                return eventContext;
+            }
         
         private:
-            std::vector<Event> events;
-            std::unordered_map<std::string, Event*> stringMappings;
+            std::vector<Event>                          events;
+            std::unordered_map<std::string, Event*>     stringMappings;
             std::unordered_map<EventAttachment, Event*> attachmentMappings;
+
+            Context                                     eventContext;
     };
 }
 

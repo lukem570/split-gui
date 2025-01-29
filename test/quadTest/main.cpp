@@ -3,13 +3,18 @@
 #include <splitgui/structs.hpp>
 
 int main() {
+
+    SplitGui::EventHandler eventHandler;
+
     SplitGui::Window window;
     window.instanceGlfw();
     window.createWindow("quad test");
+    window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
     graphics.instanceVulkan(true);
     graphics.submitWindow(window);
+    graphics.attachEventHandler(eventHandler);
 
     graphics.drawRect(
         SplitGui::IVec2{0, 0}, 

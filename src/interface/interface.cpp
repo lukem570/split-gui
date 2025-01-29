@@ -51,6 +51,11 @@ namespace SplitGui {
         interfaceElement = data;
     }
 
+    void Interface::attachEventHandler(EventHandler& handler) {
+        handler.attachInterface(this);
+        pEventHandler = &handler;
+    }
+
     void InterfaceElement::instance() {
         if (maxChildren < children.size()) {
             printf("ERROR: '%s' element has too many children", name.c_str());
@@ -67,6 +72,20 @@ namespace SplitGui {
             children[i]->setGraphics(pGraphics);
             children[i]->setExtent(extent);
             children[i]->instance();
+            break;
+        }
+    }
+
+    void InterfaceElement::update() {
+        for (int i = 0; i < children.size(); i++) {
+            if (children[i]->type == InterfaceElementType::eMeta    ||
+                children[i]->type == InterfaceElementType::eBinding) {
+
+                continue;
+            }
+
+            children[i]->setExtent(extent);
+            children[i]->update();
             break;
         }
     }

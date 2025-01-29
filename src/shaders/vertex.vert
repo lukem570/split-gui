@@ -84,14 +84,21 @@ void main() {
         mat3 rotationY = rotateZ(scene.cameraRotation.y);
         mat3 rotationZ = rotateX(scene.cameraRotation.z); 
 
+        // rotate points
         pos *= rotationX * rotationY * rotationZ;
 
+        // conform points to viewport
+        pos.x *= float(scene.size.x) / float(vub.screenSize.x);
+        pos.y *= float(scene.size.y) / float(vub.screenSize.y);
+
+        // adjust points for aspect ratio
         if (scene.size.x > scene.size.y) {
             pos.x *= float(scene.size.y) / float(scene.size.x);
         } else {
             pos.y *= float(scene.size.x) / float(scene.size.y);
         }
 
+        // move points to viewport
         pos.x += float(scene.position.x) / float(vub.screenSize.x);
         pos.y += float(scene.position.y) / float(vub.screenSize.y);
     }

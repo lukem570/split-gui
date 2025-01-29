@@ -20,13 +20,17 @@ int main() {
     buffer << indexFile.rdbuf();
     std::string page = buffer.str();
 
+    SplitGui::EventHandler eventHandler;
+
     SplitGui::Window window;
     window.instanceGlfw();
     window.createWindow("xml test");
+    window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
     graphics.instanceVulkan(true);
     graphics.submitWindow(window);
+    graphics.attachEventHandler(eventHandler);
 
     SplitGui::RectObj viewport;
     viewport.size = window.getSize();
@@ -37,6 +41,7 @@ int main() {
     interface.parseXml(page);
     interface.submitGraphics(graphics);
     interface.setViewport(viewport);
+    interface.attachEventHandler(eventHandler);
 
     interface.update();
     graphics.submitBuffers();
