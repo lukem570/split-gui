@@ -40,7 +40,6 @@ int main() {
 
     SplitGui::RectObj viewport;
     viewport.size   = window.getSize();
-    //viewport.width /= 2;
     viewport.x      = 0;
     viewport.y      = 0;
     
@@ -67,7 +66,8 @@ int main() {
 
     graphics.submitTriangleData(0, vertices, indices);
 
-    interface.update();
+    eventHandler.instanceBuiltinEvents();
+    interface.instance();
     graphics.submitBuffers();
 
     SplitGui::Vec3 rotation = {0, 0, 0};

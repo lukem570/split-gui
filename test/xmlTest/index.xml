@@ -1,7 +1,7 @@
 <meta version="0.1.0"/>
 
 <split direction="horizontal" position="50%"> 
-    <split direction="vertical" position="20px + 50%"> 
+    <split direction="vertical" position="100px"> 
         <rect color="ivec3(255, 100, 100)"/>
         <rect color="ivec3(100, 100, 255)"/>
     </split>

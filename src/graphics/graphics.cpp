@@ -107,4 +107,8 @@ namespace SplitGui {
         handler.attachGraphics(this);
         pEventHandler = &handler;
     }
+
+    void Graphics::updateScene(SceneObj* ref, IVec2 x1, IVec2 x2) {
+        pInterface->updateScene(ref, x1, x2);
+    }
 }

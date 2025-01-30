@@ -141,7 +141,8 @@ namespace SplitGui {
             vertexBufferSubmit();
         }
         
-        if (scenes.size() != knownScenesSize) {
+        if (scenes.size() != knownScenesSize && !markScenesForUpdate) {
+            markScenesForUpdate = false;
             scenesSubmit();
         }
     }

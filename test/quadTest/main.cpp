@@ -22,6 +22,7 @@ int main() {
         0x222938
     );
 
+    eventHandler.instanceBuiltinEvents();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {

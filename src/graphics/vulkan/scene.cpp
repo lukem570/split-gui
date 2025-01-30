@@ -41,6 +41,15 @@ namespace SplitGui {
         printf("submitted triangles\n");
     }
 
+    void VulkanInterface::updateScene(SceneObj* ref, IVec2 x1, IVec2 x2) {
+        ref->viewport.width    = std::abs(x1.x - x2.x);
+        ref->viewport.height   = std::abs(x1.y - x2.y);
+        ref->viewport.x        = std::min(x1.x,  x2.x);
+        ref->viewport.y        = std::min(x1.y,  x2.y);
+
+        markScenesForUpdate = true;
+    }
+
     void VulkanInterface::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {
 
         scenes[sceneNumber].cameraRotation = rotation;

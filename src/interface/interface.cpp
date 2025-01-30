@@ -2,6 +2,7 @@
 
 #include "xml/xmlParser.cpp"
 #include "default/default.cpp"
+#include "unitExpression.cpp"
 
 namespace SplitGui {
 
@@ -26,6 +27,10 @@ namespace SplitGui {
     }
 
     void Interface::update() {
+        interfaceElement->update();
+    }
+
+    void Interface::instance() {
         if (!pGraphics) {
             printf("WARN: interface requires graphics to call 'update'\n");
             return;

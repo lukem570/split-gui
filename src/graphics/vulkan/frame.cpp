@@ -18,7 +18,6 @@ namespace SplitGui {
 
         if (result.result != vk::Result::eSuccess) {
             if (result.result == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
-                recreateSwapchain();
                 return;
             }
         
@@ -74,7 +73,6 @@ namespace SplitGui {
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
             if (vk_runtimeResult == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
-                recreateSwapchain();
                 return;
             }
         

@@ -122,10 +122,10 @@ namespace SplitGui {
     };
 
     struct Context {
-        Window*    pWindow;
-        Graphics*  pGraphics;
-        Interface* pInterface;
-        Scene*     pScene;
+        Window*    pWindow    = nullptr;
+        Graphics*  pGraphics  = nullptr;
+        Interface* pInterface = nullptr;
+        Scene*     pScene     = nullptr;
     };
 
     class Event {
@@ -135,6 +135,7 @@ namespace SplitGui {
             ~Event() {
                 if (callback) {
                     free(callback);
+                    callback = nullptr;
                 }
             }
 
@@ -161,7 +162,7 @@ namespace SplitGui {
 
     class EventHandler {
         public:
-            EventHandler();
+            void instanceBuiltinEvents();
 
             template<typename ReturnType, typename... Args>
             void bindFunction(ReturnType(*function)(Args...), std::string alias, EventAttachment attachment = EventAttachment()) {
@@ -175,7 +176,7 @@ namespace SplitGui {
                 callbackData.paramCount = sizeof...(Args);
 
                 Callback<ReturnType>* callback = (Callback<ReturnType>*)malloc(sizeof(Callback<ReturnType>));
-                callback->function   = (ReturnType (*)(...))function;
+                callback->function             = (ReturnType (*)(...))function;
 
                 events.push_back({});
 

@@ -9,6 +9,8 @@ int main() {
     window.createWindow("simple window");
     window.attachEventHandler(eventHandler);
 
+    eventHandler.instanceBuiltinEvents();
+
     window.update();
     return 0;
 }

@@ -15,6 +15,7 @@ int main() {
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 
+    eventHandler.instanceBuiltinEvents();
 
     while (!window.shouldClose()) {
         graphics.drawFrame();

@@ -3,6 +3,7 @@
 
 #include "lib.hpp"
 
+#include <cinttypes>
 #include <array>
 #include <vector>
 #include <string>
@@ -196,14 +197,74 @@ namespace SplitGui {
         IVec2 screenSize;
     };
 
-    struct Unit {
-        UnitType   type;
+    enum class UnitExpressionTokenType {
+        eEndOfFile,
+        eLiteral,
+        eBeginBracket,
+        eEndBracket,
+        eUnit,
+        eVector,
+        eBinaryOp,
+        eCall,
+    };
+
+    struct UnitExpressionToken {
+        UnitExpressionTokenType type;
         std::string value;
     };
 
-    struct UnitOperation {
-        std::array<Unit, 2> operands;
-        UnitOperationType   type;
+    struct UnitExpression {
+        
+        enum class Type {
+            eLiteral,
+            eVector,
+            eCall,
+            eBinaryOp,
+        };
+
+        enum class UnitType {
+            ePercent,
+            ePixel,
+        };
+
+        enum class BinaryOpType {
+            eAdd,
+            eSubtract,
+            eMultiply,
+            eDivide,
+        };
+
+        struct Literal {
+            UnitType type;
+            double value;
+        };
+
+        struct Vector {
+            bool isIVec;
+            std::vector<UnitExpression*> values;
+        };
+
+        struct Call {
+            std::string alias;
+            std::vector<UnitExpression*> params;
+        };
+
+        struct BinaryOp {
+            UnitExpression* left;
+            BinaryOpType    oper;
+            UnitExpression* right;
+        };
+
+        union {
+            Literal  literal;
+            Vector   vector;
+            Call     call;
+            BinaryOp binary;
+        };
+        Type type;
+
+        UnitExpression() {}
+        ~UnitExpression() {}
     };
 
     struct XmlToken {

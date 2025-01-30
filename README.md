@@ -95,7 +95,8 @@ int main(void) {
     interface.setViewport(viewport);
     interface.attachEventHandler(eventHandler);
 
-    interface.update();
+    eventHandler.instanceBuiltinEvents();
+    interface.instance();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {
@@ -122,11 +123,11 @@ index.xml
 ### Features
 
 * create >1 3d scene
-* interface updating
-* unit sizing
 * write documentation
 * add scene tree to xml
 * implement builtin events
+* finish xml parser 
+* finish unit expression parser
 
 ### Optimizations
 
@@ -142,6 +143,8 @@ index.xml
 * refactor xml parser
 * convension check
 * general refactor
+* refactor text code
+* refactor unit expression parser
 
 ### Bugs
 
@@ -149,8 +152,11 @@ index.xml
     * in interfaces have a resize event and when called do a recalculation of bounds
 * rot x not working in scenes  
     * check memory allignment and buffer creation
-* text texture warping
 * slowness
     * performance testing and checking for bottlenecks
 * scenes buffers recreating on updateposition and updaterotation
     * use a custom copy region for specific indices
+* scene + rects causing crash when resizing
+* scenes warping 
+    * check algorithm for errors
+* constant sizes not being constant

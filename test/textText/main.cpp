@@ -28,6 +28,7 @@ int main() {
         "abcdefghijklmnopqrstuvwxyz"
     );
 
+    eventHandler.instanceBuiltinEvents();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {

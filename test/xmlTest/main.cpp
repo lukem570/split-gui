@@ -43,7 +43,8 @@ int main() {
     interface.setViewport(viewport);
     interface.attachEventHandler(eventHandler);
 
-    interface.update();
+    eventHandler.instanceBuiltinEvents();
+    interface.instance();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {

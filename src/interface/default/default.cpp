@@ -10,7 +10,7 @@ namespace SplitGui {
         int divide;
 
         if (isVertical) {
-            divide = extent.height * position;
+            divide = evaluateUnitExpression(position, extent.height);
 
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
@@ -23,7 +23,56 @@ namespace SplitGui {
             childExtentTwo.height = extent.height - divide;
 
         } else {
-            divide = extent.width * position;
+            divide = evaluateUnitExpression(position, extent.width);
+            
+            childExtentOne.x      = extent.x;
+            childExtentOne.y      = extent.y;
+            childExtentOne.width  = divide;
+            childExtentOne.height = extent.height;
+
+            childExtentTwo.x      = extent.x + divide;
+            childExtentTwo.y      = extent.y;
+            childExtentTwo.width  = extent.width - divide;
+            childExtentTwo.height = extent.height;
+        }
+        
+        printf("split update: e.w:%d e.h:%d v?:%d, d:%d\n", extent.width, extent.height, isVertical, divide);
+
+        children[0]->setExtent(childExtentOne);
+        children[0]->update();
+
+        children[1]->setExtent(childExtentTwo);
+        children[1]->update();
+    }
+
+    void Default::Split::instance() {
+        if (maxChildren != children.size()) {
+            printf("ERROR: '%s' element doesn't have 2 children\n", name.c_str());
+            fflush(stdout);
+            throw;
+        }
+
+
+        RectObj childExtentOne;
+        RectObj childExtentTwo;
+
+        int divide;
+
+        if (isVertical) {
+            divide = evaluateUnitExpression(position, extent.height);
+
+            childExtentOne.x      = extent.x;
+            childExtentOne.y      = extent.y;
+            childExtentOne.width  = extent.width;
+            childExtentOne.height = divide;
+
+            childExtentTwo.x      = extent.x;
+            childExtentTwo.y      = extent.y + divide;
+            childExtentTwo.width  = extent.width;
+            childExtentTwo.height = extent.height - divide;
+
+        } else {
+            divide = evaluateUnitExpression(position, extent.width);
             
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
@@ -47,24 +96,12 @@ namespace SplitGui {
         children[1]->instance();
     }
 
-    void Default::Split::instance() {
-        if (maxChildren != children.size()) {
-            printf("ERROR: '%s' element doesn't have 2 children\n", name.c_str());
-            fflush(stdout);
-            throw;
-        }
-
-        if (position < 0.0f || position > 1.0f) {
-            printf("ERROR: position must be between 0 and 1 it is: %.4f\n", position);
-            fflush(stdout);
-            throw;
-        }
-
-        update();
-    }
-
     void Default::Split::setVertical(bool state) {
         isVertical = state;
+    }
+
+    void Default::Split::setPosition(std::string pos) {
+        position = pos;
     }
 
     void Default::List::update() {
@@ -123,6 +160,8 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
+        printf("rect update: (%d, %d), (%d, %d)\n", x1.x, x1.y, x2.x, x2.y);
+
         pGraphics->updateRect(graphicsRectRef, x1, x2);
     }
 
@@ -150,11 +189,11 @@ namespace SplitGui {
     }
 
     void Default::SceneElement::update() {
-        
+        pGraphics->updateScene(graphicsSceneRef, extent.pos, extent.pos + extent.size);
     }
     
     void Default::SceneElement::instance() {
-        pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
+        graphicsSceneRef = pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
     }
 
     void Default::SceneElement::setSceneNumber(unsigned int sceneNumber) {

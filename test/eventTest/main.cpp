@@ -1,5 +1,7 @@
 
 #include <splitgui/events.hpp>
+#include <splitgui/window.hpp>
+#include <splitgui/graphics.hpp>
 
 #include <vector>
 

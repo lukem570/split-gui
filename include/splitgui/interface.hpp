@@ -40,6 +40,8 @@ namespace SplitGui {
         eCustom = 0xFF,
     };
 
+    int evaluateUnitExpression(std::string expression, int maxSize);
+
     class SPLITGUI_EXPORT InterfaceElement {
         public:
 
@@ -73,6 +75,7 @@ namespace SplitGui {
                 void update()   override;
 
                 void setVertical(bool);
+                void setPosition(std::string);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eSplit;
@@ -80,7 +83,7 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 2;
 
             private: // props
-                float                          position    = 0.5f; // TODO: get unit operations working
+                std::string                    position    = "50%";
                 bool                           isVertical  = false;
         };
 
@@ -95,8 +98,8 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = -1;
 
             private: // props
-                UnitOperation itemWidth;
-                bool          isVertical;
+                UnitExpression itemWidth;
+                bool           isVertical;
         };
 
         class SPLITGUI_EXPORT Box : public InterfaceElement {
@@ -110,9 +113,7 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 1;
 
             private: // props
-                std::array<UnitOperation, 2> sizeOverride;
-                VerticalAnchor               verticalAnchor;
-                HorizontalAnchor             horizontalAnchor;
+                // TODO:
         };
 
         class SPLITGUI_EXPORT Overlay : public InterfaceElement {
@@ -269,6 +270,7 @@ namespace SplitGui {
             InterfaceElement* getInterfaceElement();
             void              submitGraphics(Graphics& graphics);
             void              update();
+            void              instance();
             void              setViewport(RectObj viewport);
             void              attachEventHandler(EventHandler& handler);
 

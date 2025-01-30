@@ -9,7 +9,7 @@ namespace SplitGui {
 
         vk::WaylandSurfaceCreateInfoKHR createInfo;
         createInfo.display = glfwGetWaylandDisplay();
-        createInfo.surface = glfwGetWaylandWindow(window);
+        createInfo.surface = glfwGetWaylandWindow(*window.handle);
 
         if (createInfo.display == nullptr || createInfo.surface == nullptr) {
             printf("Error getting window handles for Wayland\n");
@@ -22,7 +22,7 @@ namespace SplitGui {
 
         vk::XcbSurfaceCreateInfoKHR createInfo;
         createInfo.connection = glfwGetX11Display();
-        createInfo.window     = glfwGetX11Window(window);
+        createInfo.window     = glfwGetX11Window(*window.handle);
 
         if (createInfo.connection == nullptr || createInfo.window == 0) {
             printf("Error getting window handles for XCB\n");
@@ -49,7 +49,7 @@ namespace SplitGui {
 
         vk::Win32SurfaceCreateInfoKHR createInfo;
         createInfo.hinstance = GetModuleHandle(nullptr);
-        createInfo.hwnd      = glfwGetWin32Window(window);
+        createInfo.hwnd      = glfwGetWin32Window(*window.handle);
 
         if (createInfo.hwnd == nullptr) {
             printf("Error getting window handle for win32\n");

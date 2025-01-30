@@ -18,8 +18,12 @@ namespace SplitGui {
 
                 if (token.value == "position") {
                     nextToken();
-                    nextToken();
-                    // TODO:
+                    token = nextToken();
+
+                    printf("position: %s\n", token.value.c_str());
+
+                    split->setPosition(token.value);
+                    
                     return;
                 }
 

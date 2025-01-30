@@ -1,9 +1,3 @@
 <meta version="0.1.0"/>
 
-<split direction="horizontal" position="50%"> 
-    <split direction="vertical" position="20px + 50%"> 
-        <rect color="ivec3(100, 100, 255)"/>
-        <rect color="ivec3(100, 255, 100)"/>
-    </split>
-    <scene number="0"/>
-</split>
+<scene number="0"/>

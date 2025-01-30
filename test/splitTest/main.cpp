@@ -40,8 +40,8 @@ int main() {
     root.setSize(window.getSize());
     root.setPosition({0, 0});
 
+    eventHandler.instanceBuiltinEvents();
     root.instance();
-
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {
