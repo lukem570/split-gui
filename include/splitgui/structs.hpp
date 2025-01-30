@@ -187,10 +187,10 @@ namespace SplitGui {
     };
 
     struct RectRef {
-        VertexBufferObject* bottomLeft;
-        VertexBufferObject* bottomRight;
-        VertexBufferObject* topLeft;
-        VertexBufferObject* topRight;
+        int bottomLeft;
+        int bottomRight;
+        int topLeft;
+        int topRight;
     };
 
     struct VertexUniformObject {

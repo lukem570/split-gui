@@ -160,7 +160,7 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
-        printf("rect update: (%d, %d), (%d, %d)\n", x1.x, x1.y, x2.x, x2.y);
+        printf("rect update: (%d, %d), (%d, %d), p:%u\n", x1.x, x1.y, x2.x, x2.y, graphicsRectRef.bottomLeft);
 
         pGraphics->updateRect(graphicsRectRef, x1, x2);
     }

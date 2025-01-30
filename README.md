@@ -159,4 +159,3 @@ index.xml
 * scene + rects causing crash when resizing
 * scenes warping 
     * check algorithm for errors
-* constant sizes not being constant

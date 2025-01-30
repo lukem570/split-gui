@@ -42,20 +42,20 @@ namespace SplitGui {
         vertices[oldSize + 3] = {topRight,    flags, 0, textureIndex};
 
         RectRef refRet;
-        refRet.bottomLeft  = &vertices[oldSize + 0];
-        refRet.bottomRight = &vertices[oldSize + 1];
-        refRet.topLeft     = &vertices[oldSize + 2];
-        refRet.topRight    = &vertices[oldSize + 3];
+        refRet.bottomLeft  = oldSize + 0;
+        refRet.bottomRight = oldSize + 1;
+        refRet.topLeft     = oldSize + 2;
+        refRet.topRight    = oldSize + 3;
 
         return refRet;
     }
 
     void VulkanInterface::updateRect(RectRef& ref, Vec2 x1, Vec2 x2) {
 
-        ref.bottomLeft->vertex.pos  = {std::min(x1.x, x2.x), std::min(x1.y, x2.y), 0};
-        ref.bottomRight->vertex.pos = {std::max(x1.x, x2.x), std::min(x1.y, x2.y), 0};
-        ref.topLeft->vertex.pos     = {std::min(x1.x, x2.x), std::max(x1.y, x2.y), 0};
-        ref.topRight->vertex.pos    = {std::max(x1.x, x2.x), std::max(x1.y, x2.y), 0};
+        vertices[ref.bottomLeft].vertex.pos  = {std::min(x1.x, x2.x), std::min(x1.y, x2.y), 0};
+        vertices[ref.bottomRight].vertex.pos = {std::max(x1.x, x2.x), std::min(x1.y, x2.y), 0};
+        vertices[ref.topLeft].vertex.pos     = {std::min(x1.x, x2.x), std::max(x1.y, x2.y), 0};
+        vertices[ref.topRight].vertex.pos    = {std::max(x1.x, x2.x), std::max(x1.y, x2.y), 0};
 
         markVerticesForUpdate = true;
     }

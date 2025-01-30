@@ -45,12 +45,7 @@ namespace SplitGui {
 
         endCopyBuffer(commandBuffer);
 
-        vk_runtimeResult = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), true, UINT64_MAX);
-
-        if (vk_runtimeResult != vk::Result::eSuccess) {
-            printf("Error Waiting for fences\n");
-            throw;
-        }
+        vk_device.waitIdle();
         
         cleanupVertexAndIndexBuffers();
 
@@ -136,12 +131,12 @@ namespace SplitGui {
 
     void VulkanInterface::submitBuffers() {
 
-        if (indices.size() != knownIndicesSize && !markVerticesForUpdate) {
+        if (indices.size() != knownIndicesSize || markVerticesForUpdate) {
             markVerticesForUpdate = false;
             vertexBufferSubmit();
         }
         
-        if (scenes.size() != knownScenesSize && !markScenesForUpdate) {
+        if (scenes.size() != knownScenesSize || markScenesForUpdate) {
             markScenesForUpdate = false;
             scenesSubmit();
         }
