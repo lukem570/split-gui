@@ -1,9 +1,11 @@
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
 
+#include <cctype>
+
 namespace SplitGui {
 
-    UnitExpressionToken getNextUnitExpressionToken(int& index, std::string& expression) {
+    UnitExpressionToken UnitExpressionEvaluator::nextToken(std::string& expression) {
         while (std::isspace(expression[index])) {
             if (expression.size() == ++index) {
                 UnitExpressionToken token;
@@ -105,23 +107,13 @@ namespace SplitGui {
         throw; // invalid char
     }
 
-    UnitExpression::BinaryOpType enumerateOperator(char oper) {
-        switch (oper) {
-            case '+': return UnitExpression::BinaryOpType::eAdd;      break;
-            case '-': return UnitExpression::BinaryOpType::eSubtract; break;
-            case '*': return UnitExpression::BinaryOpType::eMultiply; break;
-            case '/': return UnitExpression::BinaryOpType::eDivide;   break;
-            default: throw;
-        }
-    }
-
-    UnitExpression* parseUnitExpression(std::string& expression, int index = 0) {
+    UnitExpression* UnitExpressionEvaluator::parse(std::string expression) {
 
         UnitExpressionToken token;
 
         UnitExpression* result = nullptr;
 
-        while ((token = getNextUnitExpressionToken(index, expression)).type != UnitExpressionTokenType::eEndOfFile) {
+        while ((token = nextToken(expression)).type != UnitExpressionTokenType::eEndOfFile) {
             switch (token.type) {
                 case UnitExpressionTokenType::eLiteral: {
                     
@@ -130,7 +122,7 @@ namespace SplitGui {
                     newExpression->type          = UnitExpression::Type::eLiteral;
                     newExpression->literal.value = std::atof(token.value.c_str());
 
-                    token = getNextUnitExpressionToken(index, expression);
+                    token = nextToken(expression);
 
                     if (token.type != UnitExpressionTokenType::eUnit) {
                         throw;
@@ -149,31 +141,32 @@ namespace SplitGui {
                     newExpression->type         = UnitExpression::Type::eBinaryOp;
                     newExpression->binary.left  = result;
                     newExpression->binary.oper  = enumerateOperator(token.value[0]);
-                    newExpression->binary.right = parseUnitExpression(expression, index);
+                    newExpression->binary.right = parse(expression);
 
                     result = newExpression;
 
-                    goto ReturnUnitParse;
                     
                     break;
                 }
                 default: throw; // invalid type
             }
         }
-        ReturnUnitParse:
+
+        expressionTree = result;
 
         return result;
     }
 
-    int generateValue(UnitExpression* expression, int maxSize) {
+    int UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {
+
         switch (expression->type) {
             case UnitExpression::Type::eBinaryOp: {
-                
+
                 switch (expression->binary.oper) {
-                    case UnitExpression::BinaryOpType::eAdd:      return generateValue(expression->binary.left, maxSize) + generateValue(expression->binary.right, maxSize); break;
-                    case UnitExpression::BinaryOpType::eSubtract: return generateValue(expression->binary.left, maxSize) - generateValue(expression->binary.right, maxSize); break;
-                    case UnitExpression::BinaryOpType::eMultiply: return generateValue(expression->binary.left, maxSize) * generateValue(expression->binary.right, maxSize); break;
-                    case UnitExpression::BinaryOpType::eDivide:   return generateValue(expression->binary.left, maxSize) / generateValue(expression->binary.right, maxSize); break;
+                    case UnitExpression::BinaryOpType::eAdd:      return evaluateExpr(maxSize, expression->binary.left) + evaluateExpr(maxSize, expression->binary.right); break;
+                    case UnitExpression::BinaryOpType::eSubtract: return evaluateExpr(maxSize, expression->binary.left) - evaluateExpr(maxSize, expression->binary.right); break;
+                    case UnitExpression::BinaryOpType::eMultiply: return evaluateExpr(maxSize, expression->binary.left) * evaluateExpr(maxSize, expression->binary.right); break;
+                    case UnitExpression::BinaryOpType::eDivide:   return evaluateExpr(maxSize, expression->binary.left) / evaluateExpr(maxSize, expression->binary.right); break;
                 }
 
                 break;
@@ -193,40 +186,38 @@ namespace SplitGui {
         return 0;
     }
 
-    void cleanupUnitExpression(UnitExpression* expression) {
+    int UnitExpressionEvaluator::evaluate(int maxSize) {
+        return evaluateExpr(maxSize, expressionTree);
+    }
+
+    UnitExpressionEvaluator::~UnitExpressionEvaluator() {
+        cleanup(expressionTree);
+    }
+
+    void UnitExpressionEvaluator::cleanup(UnitExpression* expression) {
         switch (expression->type) {
             case UnitExpression::Type::eVector:
 
                 for (int i = 0; i < expression->vector.values.size(); i++) {
-                    cleanupUnitExpression(expression->vector.values[i]);
+                    cleanup(expression->vector.values[i]);
                 }
                 
                 break;
             case UnitExpression::Type::eCall:
 
                 for (int i = 0; i < expression->call.params.size(); i++) {
-                    cleanupUnitExpression(expression->call.params[i]);
+                    cleanup(expression->call.params[i]);
                 }
 
                 break;
             case UnitExpression::Type::eBinaryOp:
 
-                cleanupUnitExpression(expression->binary.left);
-                cleanupUnitExpression(expression->binary.right);
+                cleanup(expression->binary.left);
+                cleanup(expression->binary.right);
 
                 break;
         }
 
         delete expression;
-    }
-
-    int evaluateUnitExpression(std::string expression, int maxSize) {
-        UnitExpression* expressionTree = parseUnitExpression(expression);
-        int value = generateValue(expressionTree, maxSize);
-        cleanupUnitExpression(expressionTree);
-
-        printf("evaluated to: %d\n", value);
-
-        return value;
     }
 }

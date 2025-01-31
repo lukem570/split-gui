@@ -29,10 +29,12 @@ int main() {
     split1.addChild(&rect2);
     split1.addChild(&rect3);
     split1.setVertical(true);
+    split1.setPosition("50%");
 
     SplitGui::Default::Split split2;
     split2.addChild(&split1);
     split2.addChild(&rect1);
+    split2.setPosition("50%");
 
     SplitGui::InterfaceElement root;
     root.addChild(&split2);

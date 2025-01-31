@@ -40,7 +40,31 @@ namespace SplitGui {
         eCustom = 0xFF,
     };
 
-    int evaluateUnitExpression(std::string expression, int maxSize);
+    UnitExpression::BinaryOpType enumerateOperator(char oper) {
+        switch (oper) {
+            case '+': return UnitExpression::BinaryOpType::eAdd;      break;
+            case '-': return UnitExpression::BinaryOpType::eSubtract; break;
+            case '*': return UnitExpression::BinaryOpType::eMultiply; break;
+            case '/': return UnitExpression::BinaryOpType::eDivide;   break;
+            default: throw;
+        }
+    }
+
+    class UnitExpressionEvaluator {
+        public: 
+            ~UnitExpressionEvaluator();
+
+            int             evaluate(int maxSize);
+            int             evaluateExpr(int maxSize, UnitExpression* expression);
+            UnitExpression* parse(std::string expression);
+
+        private:
+            UnitExpression* expressionTree;
+            int             index = 0;
+
+            UnitExpressionToken nextToken(std::string& expression);
+            void                cleanup(UnitExpression* expression);
+    };
 
     class SPLITGUI_EXPORT InterfaceElement {
         public:
@@ -83,7 +107,7 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 2;
 
             private: // props
-                std::string                    position    = "50%";
+                UnitExpressionEvaluator        position;
                 bool                           isVertical  = false;
         };
 

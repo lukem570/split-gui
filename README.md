@@ -125,7 +125,6 @@ index.xml
 * create >1 3d scene
 * write documentation
 * add scene tree to xml
-* implement builtin events
 * finish xml parser 
 * finish unit expression parser
 
@@ -144,12 +143,9 @@ index.xml
 * convension check
 * general refactor
 * refactor text code
-* refactor unit expression parser
 
 ### Bugs
 
-* resizing
-    * in interfaces have a resize event and when called do a recalculation of bounds
 * rot x not working in scenes  
     * check memory allignment and buffer creation
 * slowness

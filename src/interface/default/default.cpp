@@ -10,7 +10,7 @@ namespace SplitGui {
         int divide;
 
         if (isVertical) {
-            divide = evaluateUnitExpression(position, extent.height);
+            divide = position.evaluate(extent.height);
 
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
@@ -23,7 +23,7 @@ namespace SplitGui {
             childExtentTwo.height = extent.height - divide;
 
         } else {
-            divide = evaluateUnitExpression(position, extent.width);
+            divide = position.evaluate(extent.width);
             
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
@@ -59,7 +59,7 @@ namespace SplitGui {
         int divide;
 
         if (isVertical) {
-            divide = evaluateUnitExpression(position, extent.height);
+            divide = position.evaluate(extent.height);
 
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
@@ -72,7 +72,7 @@ namespace SplitGui {
             childExtentTwo.height = extent.height - divide;
 
         } else {
-            divide = evaluateUnitExpression(position, extent.width);
+            divide = position.evaluate(extent.width);
             
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
@@ -101,7 +101,7 @@ namespace SplitGui {
     }
 
     void Default::Split::setPosition(std::string pos) {
-        position = pos;
+        position.parse(pos);
     }
 
     void Default::List::update() {
