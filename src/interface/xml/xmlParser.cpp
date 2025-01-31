@@ -10,11 +10,9 @@ namespace SplitGui {
 
     class XMLParser {
         public:
-            XMLParser(const std::string& xmlInput) : input(xmlInput), pos(0) {
-                // create root node
-            }
+            XMLParser(const std::string& xmlInput) : input(xmlInput), pos(0) {}
 
-            void handleSplitParameters(Default::Split* split, XmlToken& token) {
+            Result handleSplitParameters(Default::Split* split, XmlToken& token) {
 
                 if (token.value == "position") {
                     nextToken();
@@ -22,9 +20,9 @@ namespace SplitGui {
 
                     printf("position: %s\n", token.value.c_str());
 
-                    split->setPosition(token.value);
+                    TRYR(split->setPosition(token.value));
                     
-                    return;
+                    return Result::eSuccess;
                 }
 
                 if (token.value == "direction") { // isVertical
@@ -36,17 +34,16 @@ namespace SplitGui {
                     } else if (token.value == "horizontal") {
                         split->setVertical(false);
                     } else {
-                        printf("ERROR: invalid direction %s\n", token.value.c_str());
-                        throw;
+                        return Result::eInvalidDirection;
                     }
 
-                    return;
+                    return Result::eSuccess;
                 }
 
-                throw;
+                return Result::eInvalidSetting;
             }
 
-            void handleRectParameters(Default::Rect* rect, XmlToken& token) {
+            Result handleRectParameters(Default::Rect* rect, XmlToken& token) {
 
                 if (token.value == "color") {
                     nextToken();
@@ -67,25 +64,25 @@ namespace SplitGui {
                     
                     rect->setColor(vec3);
 
-                    return;
+                    return Result::eSuccess;
                 }
 
-                throw;
+                return Result::eInvalidSetting;
             }
 
-            void handleMetaParameters(Default::Meta* split, XmlToken& token) {
+            Result handleMetaParameters(Default::Meta* split, XmlToken& token) {
 
                 if (token.value == "version") {
                     nextToken();
                     nextToken();
                     // TODO:
-                    return;
+                    return Result::eSuccess;
                 }
 
-                throw;
+                return Result::eInvalidSetting;
             }
 
-            void handleSceneParameters(Default::SceneElement* scene, XmlToken& token) {
+            Result handleSceneParameters(Default::SceneElement* scene, XmlToken& token) {
 
                 if (token.value == "number") {
                     nextToken();
@@ -93,13 +90,13 @@ namespace SplitGui {
                     
                     
 
-                    return;
+                    return Result::eSuccess;
                 }
 
-                throw;
+                return Result::eInvalidSetting;
             }
 
-            InterfaceElement* parse(int depth = 0) {
+            ResultValue<InterfaceElement*> parse(int depth = 0) {
 
                 XmlToken token = nextToken();
 
@@ -107,8 +104,7 @@ namespace SplitGui {
                     Begin:
 
                     if (token.value != "<") {
-                        printf("ERROR: invalid tag %s\n", token.value.c_str());
-                        throw;
+                        return Result::eInvalidToken;
                     }
 
                     token = nextToken();
@@ -120,18 +116,21 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            handleSplitParameters(newSplit, token);
+                            TRYR(handleSplitParameters(newSplit, token));
                             token = nextToken();
                         }
 
                         if (token.type == XmlTokenType::eTagClose) {
-                            printf("ERROR: split cannot be closed prematurely it must have 2 children\n");
-                            fflush(stdout);
-                            throw;
+                            return Result::eInvalidPrematureClosure;
                         }
 
-                        newSplit->addChild(parse(depth + 1));
-                        newSplit->addChild(parse(depth + 1));
+                        ResultValue<InterfaceElement*> parseRet1 = parse(depth + 1);
+                        TRY(parseRet1);
+                        newSplit->addChild(parseRet1.value);
+
+                        ResultValue<InterfaceElement*> parseRet2 = parse(depth + 1);
+                        TRY(parseRet2);
+                        newSplit->addChild(parseRet2.value);
 
                         nextToken();
                         nextToken();
@@ -167,13 +166,12 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            handleRectParameters(newRect, token);
+                            TRYR(handleRectParameters(newRect, token));
                             token = nextToken();
                         }
 
                         if (token.type != XmlTokenType::eTagClose) {
-                            printf("ERROR: rect must be closed prematurely\n");
-                            throw;
+                            return Result::eInvalidPrematureClosure;
                         }
 
                         return newRect;
@@ -186,13 +184,12 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            handleSceneParameters(newScene, token);
+                            TRYR(handleSceneParameters(newScene, token));
                             token = nextToken();
                         }
 
                         if (token.type != XmlTokenType::eTagClose) {
-                            printf("ERROR: scene must be closed prematurely\n");
-                            throw;
+                            return Result::eInvalidPrematureClosure;
                         }
 
                         return newScene;
@@ -217,13 +214,12 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            handleMetaParameters(newMeta, token);
+                            TRYR(handleMetaParameters(newMeta, token));
                             token = nextToken();
                         }
 
                         if (token.type != XmlTokenType::eTagClose) {
-                            printf("ERROR: meta must be closed prematurely\n");
-                            throw;
+                            return Result::eInvalidPrematureClosure;
                         }
 
                         token = nextToken();
@@ -235,14 +231,11 @@ namespace SplitGui {
 
                     }
 
-                    throw;
+                    return Result::eInvalidTag;
 
                 } while (token.type != XmlTokenType::eEndOfFile && depth != 0);
 
-                printf("Error: Invalid xml\n");
-
-                throw;
-                return nullptr;
+                return Result::eInvalidXml;
             }
 
         private:

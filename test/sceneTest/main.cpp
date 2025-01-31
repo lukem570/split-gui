@@ -34,7 +34,7 @@ int main() {
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
-    graphics.instanceVulkan(true);
+    TRYRC(graphics.instanceVulkan(true));
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 
@@ -44,7 +44,7 @@ int main() {
     viewport.y      = 0;
     
     SplitGui::Interface interface;
-    interface.parseXml(page);
+    TRYRC(interface.parseXml(page));
     interface.submitGraphics(graphics);
     interface.setViewport(viewport);
     interface.attachEventHandler(eventHandler);

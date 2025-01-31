@@ -17,7 +17,7 @@ namespace SplitGui {
         }
     }
 
-    inline void VulkanInterface::createBuffer(
+    inline Result VulkanInterface::createBuffer(
         vk::DeviceSize             size,
         vk::BufferUsageFlags       usage,
         vk::MemoryPropertyFlags    properties,
@@ -33,13 +33,19 @@ namespace SplitGui {
 
         vk::MemoryRequirements memoryRequirements = vk_device.getBufferMemoryRequirements(out_buffer);
 
+        ResultValue<uint32_t> memType = findMemoryType(memoryRequirements.memoryTypeBits, properties);
+
+        TRY(memType);
+
         vk::MemoryAllocateInfo allocInfo;
         allocInfo.allocationSize  = memoryRequirements.size;
-        allocInfo.memoryTypeIndex = findMemoryType(memoryRequirements.memoryTypeBits, properties);
+        allocInfo.memoryTypeIndex = memType.value;
 
         out_bufferMemory = vk_device.allocateMemory(allocInfo);
 
         vk_device.bindBufferMemory(out_buffer, out_bufferMemory, 0);
+
+        return Result::eSuccess;
     }
 
     inline vk::CommandBuffer VulkanInterface::startCopyBuffer() {
@@ -66,7 +72,7 @@ namespace SplitGui {
         commandBuffer.copyBuffer(src, dst, 1, &copyRegion);
     }
 
-    inline void VulkanInterface::endCopyBuffer(vk::CommandBuffer commandBuffer) {
+    inline Result VulkanInterface::endSingleTimeCommands(vk::CommandBuffer commandBuffer) {
         commandBuffer.end();
 
         vk::SubmitInfo submitInfo;
@@ -76,17 +82,18 @@ namespace SplitGui {
         vk::Result result_submit = vk_graphicsQueue.submit(1, &submitInfo, nullptr);
 
         if (result_submit != vk::Result::eSuccess) {
-            printf("Error: error submitting queue\n");
-            throw;
+            return Result::eFailedToSubmitQueue;
         }
 
         vk_graphicsQueue.waitIdle();
 
         vk_device.freeCommandBuffers(vk_commandPool, 1, &commandBuffer);
+
+        return Result::eSuccess;
     }
 
     template <typename T>
-    inline void VulkanInterface::InstanceStagingBuffer(
+    inline Result VulkanInterface::InstanceStagingBuffer(
         std::vector<T>    dataToUpload,
         vk::Buffer&       out_buffer,
         vk::DeviceMemory& out_memory,
@@ -95,18 +102,20 @@ namespace SplitGui {
         
         out_size = sizeof(dataToUpload[0]) * dataToUpload.size();
 
-        createBuffer(
+        TRYR(createBuffer(
             out_size, 
             vk::BufferUsageFlagBits::eTransferSrc, 
             vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
             out_buffer,
             out_memory
-        );
+        ));
 
         void* memory = vk_device.mapMemory(out_memory, 0, out_size);
 
         memcpy(memory, dataToUpload.data(), out_size);
 
         vk_device.unmapMemory(out_memory);
+
+        return Result::eSuccess;
     }
 }

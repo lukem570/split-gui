@@ -1,54 +1,53 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    inline void VulkanInterface::instanceVulkan() {
+    inline Result VulkanInterface::instanceVulkan() {
         VkResult err = volkInitialize();
         if (err != VK_SUCCESS) {
-            printf("Unable to find the Vulkan runtime on the system\n");
-            throw;
+            return Result::eVulkanNotFound;
         }
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 
         std::vector<const char *> instanceLayers = {"VK_LAYER_KHRONOS_validation"};
 
-        vk::Bool32 validation_found = VK_FALSE;
+        ResultValue<vk::Bool32> validationFound = VK_FALSE;
         if (vk_validation) {
             std::vector<vk::LayerProperties> layers = vk::enumerateInstanceLayerProperties();
             
 
-            validation_found = check_layers(instanceLayers, layers);
-            if (validation_found) {
-                enabled_layers.push_back("VK_LAYER_KHRONOS_validation");
+            validationFound = checkLayers(instanceLayers, layers);
+
+            TRY(validationFound);
+
+            if (validationFound.value) {
+                enabledLayers.push_back("VK_LAYER_KHRONOS_validation");
             } else {
-                printf("Error: Could not find validation layers\n");
-                throw;
+                return Result::eFailedToGetLayer;
             }
         }
 
-        auto instance_extensions_return = vk::enumerateInstanceExtensionProperties();
+        auto instanceExtensionsReturn = vk::enumerateInstanceExtensionProperties();
 
         bool surfaceExtFound = false;
         bool platformSurfaceExtFound = false;
 
-        for (const auto &extension : instance_extensions_return) {
+        for (const auto &extension : instanceExtensionsReturn) {
             if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
                 surfaceExtFound = true;
-                enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+                enabledInstanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
             } else if (!strcmp(VK_KHR_WM_SURFACE_EXTENSION_NAME, extension.extensionName)) {
                 platformSurfaceExtFound = true;
-                enabled_instance_extensions.push_back(VK_KHR_WM_SURFACE_EXTENSION_NAME);
+                enabledInstanceExtensions.push_back(VK_KHR_WM_SURFACE_EXTENSION_NAME);
             }
         }
 
         if (!surfaceExtFound) {
-            printf("Error: failed to find: " VK_KHR_SURFACE_EXTENSION_NAME "\n");
-            throw;
+            return Result::eFailedToFindSurfaceExtension;
         }
 
         if (!platformSurfaceExtFound) {
-            printf("Error: failed to find: " VK_KHR_WM_SURFACE_EXTENSION_NAME "\n");
-            throw;
+            return Result::eFailedToFindSurfaceExtension;
         }
 
         vk::ApplicationInfo appInfo;
@@ -62,15 +61,17 @@ namespace SplitGui {
         createInfo.pApplicationInfo = &appInfo;
 
         if (vk_validation) {
-            createInfo.enabledLayerCount   = enabled_layers.size();
-            createInfo.ppEnabledLayerNames = enabled_layers.data();
+            createInfo.enabledLayerCount   = enabledLayers.size();
+            createInfo.ppEnabledLayerNames = enabledLayers.data();
         }
 
-        createInfo.setEnabledExtensionCount  (static_cast<uint32_t>(enabled_instance_extensions.size()));
-        createInfo.setPpEnabledExtensionNames(                      enabled_instance_extensions.data());
+        createInfo.setEnabledExtensionCount  (static_cast<uint32_t>(enabledInstanceExtensions.size()));
+        createInfo.setPpEnabledExtensionNames(                      enabledInstanceExtensions.data());
 
         vk_instance = vk::createInstance(createInfo);
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_instance);
+
+        return Result::eSuccess;
     }
 }

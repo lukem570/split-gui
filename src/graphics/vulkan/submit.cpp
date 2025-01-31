@@ -1,7 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    inline void VulkanInterface::vertexBufferSubmit() {
+    inline Result VulkanInterface::vertexBufferSubmit() {
 
         vk::DeviceSize   indexBufferSize;
         vk::Buffer       stagingIndexBuffer;
@@ -11,8 +11,8 @@ namespace SplitGui {
         vk::Buffer       stagingVertexBuffer;
         vk::DeviceMemory stagingVertexBufferMemory;
 
-        InstanceStagingBuffer(indices,  stagingIndexBuffer,  stagingIndexBufferMemory,  indexBufferSize );
-        InstanceStagingBuffer(vertices, stagingVertexBuffer, stagingVertexBufferMemory, vertexBufferSize);
+        TRYR(InstanceStagingBuffer(indices,  stagingIndexBuffer,  stagingIndexBufferMemory,  indexBufferSize ));
+        TRYR(InstanceStagingBuffer(vertices, stagingVertexBuffer, stagingVertexBufferMemory, vertexBufferSize));
 
         vk::Buffer       tempIndexBuffer;
         vk::DeviceMemory tempIndexBufferMemory;
@@ -20,21 +20,21 @@ namespace SplitGui {
         vk::Buffer       tempVertexBuffer;
         vk::DeviceMemory tempVertexBufferMemory;
 
-        createBuffer(
+        TRYR(createBuffer(
             indexBufferSize, 
             vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
             tempIndexBuffer,
             tempIndexBufferMemory
-        );
+        ));
 
-        createBuffer(
+        TRYR(createBuffer(
             vertexBufferSize, 
             vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
             tempVertexBuffer,
             tempVertexBufferMemory
-        );
+        ));
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
         vk::BufferCopy copyRegionIndex;
@@ -43,7 +43,7 @@ namespace SplitGui {
         copyBuffer(stagingIndexBuffer,  tempIndexBuffer, indexBufferSize,  commandBuffer, copyRegionIndex);
         copyBuffer(stagingVertexBuffer, tempVertexBuffer, vertexBufferSize, commandBuffer, copyRegionVertex);
 
-        endCopyBuffer(commandBuffer);
+        TRYR(endSingleTimeCommands(commandBuffer));
 
         vk_device.waitIdle();
         
@@ -62,6 +62,8 @@ namespace SplitGui {
         vk_device.freeMemory(stagingIndexBufferMemory);
         
         knownIndicesSize = indices.size();
+
+        return Result::eSuccess;
     }
 
     inline void VulkanInterface::updateScenes() {
@@ -83,23 +85,23 @@ namespace SplitGui {
         vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
     }
 
-    inline void VulkanInterface::scenesSubmit() {
+    inline Result VulkanInterface::scenesSubmit() {
     
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        InstanceStagingBuffer<SceneObj>(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize);
+        TRYR(InstanceStagingBuffer<SceneObj>(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
 
         vk::Buffer       tempBuffer;
         vk::DeviceMemory tempBufferMemory;
 
-        createBuffer(
+        TRYR(createBuffer(
             vk_sceneBufferSize, 
             vk::BufferUsageFlagBits::eUniformBuffer | vk::BufferUsageFlagBits::eTransferDst, 
             vk::MemoryPropertyFlagBits::eDeviceLocal, 
             tempBuffer, 
             tempBufferMemory
-        );
+        ));
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -107,14 +109,9 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  tempBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
-        endCopyBuffer(commandBuffer);
+        TRYR(endSingleTimeCommands(commandBuffer));
 
-        vk_runtimeResult = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), true, UINT64_MAX);
-
-        if (vk_runtimeResult != vk::Result::eSuccess) {
-            printf("Error Waiting for fences\n");
-            throw;
-        }
+        vk_device.waitIdle();
 
         cleanupSceneBuffer();
 
@@ -127,18 +124,22 @@ namespace SplitGui {
         updateScenes();
 
         knownScenesSize = scenes.size();
+
+        return Result::eSuccess;
     }
 
-    void VulkanInterface::submitBuffers() {
+    Result VulkanInterface::submitBuffers() {
 
         if (indices.size() != knownIndicesSize || markVerticesForUpdate) {
             markVerticesForUpdate = false;
-            vertexBufferSubmit();
+            TRYR(vertexBufferSubmit());
         }
         
         if (scenes.size() != knownScenesSize || markScenesForUpdate) {
             markScenesForUpdate = false;
-            scenesSubmit();
+            TRYR(scenesSubmit());
         }
+
+        return Result::eSuccess;
     }
 }

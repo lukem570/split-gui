@@ -1,3 +1,4 @@
+#include <splitgui/result.hpp>
 #include <splitgui/interface.hpp>
 #include <splitgui/structs.hpp>
 
@@ -45,11 +46,9 @@ namespace SplitGui {
         children[1]->update();
     }
 
-    void Default::Split::instance() {
+    Result Default::Split::instance() {
         if (maxChildren != children.size()) {
-            printf("ERROR: '%s' element doesn't have 2 children\n", name.c_str());
-            fflush(stdout);
-            throw;
+            return Result::eInvalidNumberOfChildren;
         }
 
 
@@ -94,61 +93,66 @@ namespace SplitGui {
         children[1]->setGraphics(pGraphics);
         children[1]->setExtent(childExtentTwo);
         children[1]->instance();
+
+        return Result::eSuccess;
     }
 
     void Default::Split::setVertical(bool state) {
         isVertical = state;
     }
 
-    void Default::Split::setPosition(std::string pos) {
-        position.parse(pos);
+    Result Default::Split::setPosition(std::string pos) {
+        TRY(position.parse(pos));
+
+        return Result::eSuccess;
     }
 
     void Default::List::update() {
         
     }
 
-    void Default::List::instance() {
-        
+    Result Default::List::instance() {
+        return Result::eSuccess;
     }
 
     void Default::Box::update() {
         
     }
 
-    void Default::Box::instance() {
+    Result Default::Box::instance() {
         if (Default::Box::maxChildren < Default::Box::children.size()) {
-            printf("ERROR: '%s' element has too many children", Default::Box::name.c_str());
-            throw;
+            return Result::eInvalidNumberOfChildren;
         }
 
         
         Default::Box::children[0]->setExtent(Default::Box::extent);
         Default::Box::children[0]->instance();
+
+        return Result::eSuccess;
     }
 
     void Default::Overlay::update() {
         
     }
 
-    void Default::Overlay::instance() {
-        
+    Result Default::Overlay::instance() {
+        return Result::eSuccess;
     }
 
     void Default::Mask::update() {
         
     }
 
-    void Default::Mask::instance() {
-        
+    Result Default::Mask::instance() {
+        return Result::eSuccess;
     }
 
     void Default::Transform::update() {
         
     }
 
-    void Default::Transform::instance() {
-        
+    Result Default::Transform::instance() {
+        return Result::eSuccess;
     }
 
     void Default::Rect::update() {
@@ -165,10 +169,9 @@ namespace SplitGui {
         pGraphics->updateRect(graphicsRectRef, x1, x2);
     }
 
-    void Default::Rect::instance() {
+    Result Default::Rect::instance() {
         if (maxChildren != children.size()) {
-            printf("ERROR: '%s' element doesn't have 2 children", name.c_str());
-            throw;
+            return Result::eInvalidNumberOfChildren;
         }
 
         IVec2 x1;
@@ -182,6 +185,8 @@ namespace SplitGui {
         printf("rect: (%d, %d), (%d, %d), color: (%d, %d, %d)\n", x1.x, x1.y, x2.x, x2.y, color.r, color.g, color.b);
 
         graphicsRectRef = pGraphics->drawRect(x1, x2, color);
+
+        return Result::eSuccess;
     }
 
     void Default::Rect::setColor(HexColor colorIn) {
@@ -192,8 +197,10 @@ namespace SplitGui {
         pGraphics->updateScene(graphicsSceneRef, extent.pos, extent.pos + extent.size);
     }
     
-    void Default::SceneElement::instance() {
+    Result Default::SceneElement::instance() {
         graphicsSceneRef = pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
+
+        return Result::eSuccess;
     }
 
     void Default::SceneElement::setSceneNumber(unsigned int sceneNumber) {
@@ -204,31 +211,31 @@ namespace SplitGui {
         
     }
 
-    void Default::Text::instance() {
-        
+    Result Default::Text::instance() {
+        return Result::eSuccess;
     }
 
     void Default::Media::update() {
         
     }
 
-    void Default::Media::instance() {
-        
+    Result Default::Media::instance() {
+        return Result::eSuccess;
     }
 
     void Default::Binding::update() {
         
     }
 
-    void Default::Binding::instance() {
-        
+    Result Default::Binding::instance() {
+        return Result::eSuccess;
     }
 
     void Default::Meta::update() {
         
     }
 
-    void Default::Meta::instance() {
-        
+    Result Default::Meta::instance() {
+        return Result::eSuccess;
     }
 }

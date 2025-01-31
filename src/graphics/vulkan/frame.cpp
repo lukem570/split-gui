@@ -1,35 +1,32 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    void VulkanInterface::drawFrame() {
+    Result VulkanInterface::drawFrame() {
         
         if (!vk_vertexBuffer) {
-            return;
+            return Result::eSuccess;
         }
 
         vk_runtimeResult = vk_device.waitForFences(1, &vk_inFlightFences[currentFrame], vk::True, UINT64_MAX);
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
-            printf("Error Waiting for fences\n");
-            throw;
+            return Result::eFailedToWaitForFences;
         }
 
         vk::ResultValue<uint32_t> result = vk_device.acquireNextImageKHR(vk_swapchain, UINT64_MAX, vk_imageAvailableSemaphores[currentFrame], nullptr);
 
         if (result.result != vk::Result::eSuccess) {
             if (result.result == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
-                return;
+                return Result::eSuccess; // might be a better way to do this...
             }
         
-            printf("Error getting next swapchain image\n");
-            throw;
+            return Result::eFailedToGetNextSwapchainImage;
         }
 
         vk_runtimeResult = vk_device.resetFences(1, &vk_inFlightFences[currentFrame]);
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
-            printf("Error resetting fences\n");
-            throw;
+            return Result::eFailedToResetFences;
         }
 
         imageIndex = result.value;
@@ -62,8 +59,7 @@ namespace SplitGui {
         vk_runtimeResult = vk_graphicsQueue.submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
-            printf("Error sending command to gpu\n");
-            throw;
+            return Result::eFailedToSubmitQueue;
         }
 
         vk_presentInfo.pWaitSemaphores = &vk_renderFinishedSemaphores[currentFrame];
@@ -73,13 +69,14 @@ namespace SplitGui {
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
             if (vk_runtimeResult == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
-                return;
+                return Result::eSuccess;
             }
         
-            printf("Error getting next swapchain image\n");
-            throw;
+            return Result::eFailedToGetNextSwapchainImage;
         }
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+        return Result::eSuccess;
     }
 }

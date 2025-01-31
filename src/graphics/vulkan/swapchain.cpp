@@ -54,12 +54,7 @@ namespace SplitGui {
 
     void VulkanInterface::recreateSwapchain() {
 
-        vk::Result result = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), true, UINT64_MAX);
-
-        if (result != vk::Result::eSuccess) {
-            printf("Error: error waiting for fences\n");
-            throw;
-        } 
+        vk_device.waitIdle();
 
         cleanupImageViews();
         cleanupFrameBuffers();

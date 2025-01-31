@@ -1,22 +1,21 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    inline void VulkanInterface::createVertexUniformBuffer() {
+    inline Result VulkanInterface::createVertexUniformBuffer() {
         
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        createBuffer(
+        TRYR(createBuffer(
             sizeof(VertexUniformObject), 
             vk::BufferUsageFlagBits::eTransferSrc, 
             vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
             stagingBuffer,
             stagingBufferMemory
-        );
+        ));
 
         VertexUniformObject vertexUniformObject;
         vertexUniformObject.screenSize = pWindow->getSize();
-
 
         void* memory = vk_device.mapMemory(stagingBufferMemory, 0, sizeof(VertexUniformObject));
 
@@ -24,13 +23,13 @@ namespace SplitGui {
 
         vk_device.unmapMemory(stagingBufferMemory);
 
-        createBuffer(
+        TRYR(createBuffer(
             sizeof(VertexUniformObject), 
             vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eUniformBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
             vk_vertexUniformBuffer,
             vk_vertexUniformBufferMemory
-        );
+        ));
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -38,9 +37,11 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  vk_vertexUniformBuffer, sizeof(VertexUniformObject),  commandBuffer, copyRegion);
 
-        endCopyBuffer(commandBuffer);
+        TRYR(endSingleTimeCommands(commandBuffer));
 
         vk_device.freeMemory(stagingBufferMemory);
         vk_device.destroyBuffer(stagingBuffer);
+
+        return Result::eSuccess;
     }
 }

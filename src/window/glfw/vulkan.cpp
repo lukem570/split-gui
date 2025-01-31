@@ -2,7 +2,7 @@
 
 namespace SplitGui {
 
-    vk::SurfaceKHR GlfwInterface::createSurface(vk::Instance instance) {
+    ResultValue<vk::SurfaceKHR> GlfwInterface::createSurface(vk::Instance instance) {
 
 #if defined(__linux__)
     #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
@@ -12,8 +12,7 @@ namespace SplitGui {
         createInfo.surface = glfwGetWaylandWindow(*window.handle);
 
         if (createInfo.display == nullptr || createInfo.surface == nullptr) {
-            printf("Error getting window handles for Wayland\n");
-            throw;
+            return Result::eFailedToCreateSurface;
         }
 
         return instance.createWaylandSurfaceKHR(createInfo);
@@ -25,8 +24,7 @@ namespace SplitGui {
         createInfo.window     = glfwGetX11Window(*window.handle);
 
         if (createInfo.connection == nullptr || createInfo.window == 0) {
-            printf("Error getting window handles for XCB\n");
-            throw;
+            return Result::eFailedToCreateSurface;
         }
 
         return instance.createXcbSurfaceKHR(createInfo);
@@ -38,8 +36,7 @@ namespace SplitGui {
         createInfo.window = glfwGetX11Window(*window.handle);
 
         if (createInfo.dpy == None || createInfo.window == None) {
-            printf("Error getting window handles for xlib\n");
-            throw;
+            return Result::eFailedToCreateSurface;
         }
         
         return instance.createXlibSurfaceKHR(createInfo);
@@ -52,8 +49,7 @@ namespace SplitGui {
         createInfo.hwnd      = glfwGetWin32Window(*window.handle);
 
         if (createInfo.hwnd == nullptr) {
-            printf("Error getting window handle for win32\n");
-            throw;
+            return Result::eFailedToCreateSurface;
         }
 
         return instance.createWin32SurfaceKHR(createInfo);     

@@ -1,6 +1,8 @@
 #ifndef SPLITGUI_PATH
 #define SPLITGUI_PATH
 
+#include <splitgui/result.hpp>
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -68,15 +70,15 @@ namespace SplitGui {
         return parentFolder;
     }
 
-    std::vector<char> readFile(const std::string& filename) {
+    ResultValue<std::vector<char>> readFile(const std::string& filename) {
         std::string path = remove_extension(getExecutablePath()) + '/' + filename;
 
         std::ifstream file;
         file.open(path, std::ios::ate | std::ios::binary);
 
         if (!file.is_open()) {
-            printf("Failed to open file: %s", filename.c_str());
-            throw;
+            std::string message = "Failed to open file: " + filename;
+            return ResultValue<std::vector<char>>(Result::eFailedToOpenFile, message);
         }
 
         int fileSize = file.tellg();

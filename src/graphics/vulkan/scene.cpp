@@ -50,14 +50,14 @@ namespace SplitGui {
         markScenesForUpdate = true;
     }
 
-    void VulkanInterface::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {
+    Result VulkanInterface::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {
 
         scenes[sceneNumber].cameraRotation = rotation;
 
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize);
+        TRYR(InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -65,23 +65,25 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
-        endCopyBuffer(commandBuffer);
+        TRYR(endSingleTimeCommands(commandBuffer));
         vk_graphicsQueue.waitIdle();
 
         vk_device.destroyBuffer(stagingBuffer);
         vk_device.freeMemory(stagingBufferMemory);
 
         updateScenes();
+
+        return Result::eSuccess;
     }
 
-    void VulkanInterface::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
+    Result VulkanInterface::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
 
         scenes[sceneNumber].cameraPosition = position;
 
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize);
+        TRYR(InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -89,12 +91,14 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
-        endCopyBuffer(commandBuffer);
+        TRYR(endSingleTimeCommands(commandBuffer));
         vk_graphicsQueue.waitIdle();
 
         vk_device.destroyBuffer(stagingBuffer);
         vk_device.freeMemory(stagingBufferMemory);
 
         updateScenes();
+
+        return Result::eSuccess;
     }
 }

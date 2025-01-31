@@ -1,7 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    inline void VulkanInterface::createPhysicalDevice() { 
+    inline Result VulkanInterface::createPhysicalDevice() { 
         std::vector<vk::PhysicalDevice> physicalDevices = vk_instance.enumeratePhysicalDevices();
 
         int selection = -1;
@@ -16,16 +16,17 @@ namespace SplitGui {
         }
 
         if (selection == -1) {
-            printf("ERROR: No suitable devices found for vulkan\n");
-            throw;
+            return Result::eDeviceNotFound;
         }
 
         vk_physicalDevice = physicalDevices[selection];
 
         printf("Using %s\n", vk_physicalDevice.getProperties().deviceName.data());
+
+        return Result::eSuccess;
     }
 
-    inline void VulkanInterface::getQueueFamilies() {
+    inline Result VulkanInterface::getQueueFamilies() {
         std::vector<vk::QueueFamilyProperties> queueFamilies = vk_physicalDevice.getQueueFamilyProperties();
 
         for (int i = 0; i < queueFamilies.size(); i++) {
@@ -46,18 +47,18 @@ namespace SplitGui {
         }
 
         if (graphicsQueueFamilyIndex == -1) {
-            printf("Graphics queue family not found\n");
-            throw;
+            return Result::eFailedToFindQueueFamily;
         }
 
         if (presentQueueFamilyIndex == -1) {
-            printf("Present queue family not found\n");
-            throw;
+            return Result::eFailedToFindQueueFamily;
         }
+
+        return Result::eSuccess;
     }
 
     // or logical device
-    inline void VulkanInterface::createDevice() {
+    inline Result VulkanInterface::createDevice() {
         vk::DeviceQueueCreateInfo queueCreateInfo;
         queueCreateInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
         queueCreateInfo.queueCount       = 1;
@@ -69,32 +70,33 @@ namespace SplitGui {
 
         bool swapchainExtFound = false;
 
-        std::vector<vk::ExtensionProperties> device_extension_return = vk_physicalDevice.enumerateDeviceExtensionProperties();
+        std::vector<vk::ExtensionProperties> deviceExtensionReturn = vk_physicalDevice.enumerateDeviceExtensionProperties();
 
-        for (const auto &extension : device_extension_return) {
+        for (const auto &extension : deviceExtensionReturn) {
             if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, extension.extensionName)) {
                 swapchainExtFound = true;
-                enabled_device_extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+                enabledDeviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
             } else if (!strcmp("VK_KHR_portability_subset", extension.extensionName)) {
-                enabled_device_extensions.push_back("VK_KHR_portability_subset");
+                enabledDeviceExtensions.push_back("VK_KHR_portability_subset");
             }
         }
 
         if (!swapchainExtFound) {
-            printf("Error: could not find swapchain extension\n");
-            throw;
+            return Result::eFailedToFindSwapchainExtension;
         }
 
         vk::DeviceCreateInfo deviceCreateInfo;
         deviceCreateInfo.queueCreateInfoCount    = 1;
         deviceCreateInfo.pQueueCreateInfos       = &queueCreateInfo;
         deviceCreateInfo.pEnabledFeatures        = &deviceFeatures;
-        deviceCreateInfo.enabledExtensionCount   = enabled_device_extensions.size();
-        deviceCreateInfo.ppEnabledExtensionNames = enabled_device_extensions.data();
+        deviceCreateInfo.enabledExtensionCount   = enabledDeviceExtensions.size();
+        deviceCreateInfo.ppEnabledExtensionNames = enabledDeviceExtensions.data();
 
         vk_device = vk_physicalDevice.createDevice(deviceCreateInfo);
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_device);
+
+        return Result::eSuccess;
     }
 
     inline void VulkanInterface::getQueues() {
@@ -102,7 +104,13 @@ namespace SplitGui {
         vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
     }
 
-    inline void VulkanInterface::createSurface(SplitGui::Window& window) {
-        vk_surface = window.createSurface(vk_instance);
+    inline Result VulkanInterface::createSurface(SplitGui::Window& window) {
+        ResultValue<vk::SurfaceKHR> surfaceRet = window.createSurface(vk_instance);
+        
+        TRY(surfaceRet);
+
+        vk_surface = surfaceRet.value;
+
+        return Result::eSuccess;
     }
 }

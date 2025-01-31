@@ -1,3 +1,4 @@
+#include <splitgui/result.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/window.hpp>
 #include "vulkan/vulkan.cpp"
@@ -14,13 +15,15 @@ namespace SplitGui {
         }
     }
     
-    void Graphics::instanceVulkan(bool validation = false) {
+    Result Graphics::instanceVulkan(bool validation = false) {
         if (!glfw::vulkanSupported()) {
-            printf("ERROR: vulkan is not supported on this device\n");
-            throw;
+            return Result::eVulkanNotSupported;
         }
+
         pInterface = (GraphicsLibInterface*) new VulkanInterface(validation);
         pInterface->instance();
+
+        return Result::eSuccess;
     }
 
     void Graphics::submitWindow(Window& window) {
@@ -75,7 +78,7 @@ namespace SplitGui {
         pInterface->resizeEvent();
     }
 
-    int Graphics::drawText(IVec2 x1, std::string text) {
+    ResultValue<int> Graphics::drawText(IVec2 x1, std::string text) {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -84,7 +87,11 @@ namespace SplitGui {
 
         printf("drawtext: (%.6f, %.6f), text: %s\n", newX1.x, newX1.y, text.c_str());
 
-        return pInterface->drawText(newX1, text) * windowSize.x;
+        ResultValue<float> ret = pInterface->drawText(newX1, text);
+
+        TRY(ret);
+
+        return ret.value * windowSize.x;
     }
 
     void Graphics::loadFont(const char* path) {

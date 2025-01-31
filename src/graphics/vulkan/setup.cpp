@@ -4,43 +4,44 @@ namespace SplitGui {
     VulkanInterface::VulkanInterface(bool validation = false) {
         vk_validation = validation;
         vk_clearColor.color = vk::ClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
-
-        ft::FT_Error error = ft::FT_Init_FreeType(&ft_lib);
-
-        if (error) {
-            printf("could not init freetype\n");
-            throw;
-        }
-
         vk_msdfExtent.width  = 64;
         vk_msdfExtent.height = 64;
     }
 
-    void VulkanInterface::instance() {
-        instanceVulkan();
-        createPhysicalDevice();
+    Result VulkanInterface::instance() {
+        
+        ft::FT_Error error = ft::FT_Init_FreeType(&ft_lib);
+
+        if (error) {
+            return Result::eFailedToInstanceFreeType;
+        }
+
+        TRYR(instanceVulkan());
+        TRYR(createPhysicalDevice());
+
+        return Result::eSuccess;
     }
 
-    void VulkanInterface::submitWindow(SplitGui::Window& window) { // need to add physical device surface support
+    Result VulkanInterface::submitWindow(SplitGui::Window& window) {
         pWindow = &window;
-        createSurface(window);
-        getQueueFamilies();
-        createDevice();
+        TRYR(createSurface(window));
+        TRYR(getQueueFamilies());
+        TRYR(createDevice());
         getQueues();
         createSwapchain();
         createImageViews();
         createRenderpass();
         createDescriptorSetLayout();
         createGraphicsPipelineLayout();
-        createGraphicsPipeline();
+        TRYR(createGraphicsPipeline());
         createFramebuffers();
         createCommandPool();
         createCommandBuffers();
         createSyncObj();
         createDescriptorPool();
         createDescriptorSet();
-        createTextGlyphImage();
-        createVertexUniformBuffer();
+        TRYR(createTextGlyphImage());
+        TRYR(createVertexUniformBuffer());
         updateDescriptorSets();
 
         setupRenderpassBeginInfo();
@@ -48,6 +49,8 @@ namespace SplitGui {
         setupScissor();
         setupSubmitInfo();
         setupPresentInfo();
+
+        return Result::eSuccess;
     }
 
     void VulkanInterface::setupRenderpassBeginInfo() {

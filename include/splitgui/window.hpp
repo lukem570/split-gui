@@ -47,7 +47,7 @@ namespace SplitGui {
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
-            virtual vk::SurfaceKHR createSurface(vk::Instance instance) { throw; }
+[[nodiscard]] virtual ResultValue<vk::SurfaceKHR> createSurface(vk::Instance instance) { throw; }
 
 #endif 
         private:
@@ -77,7 +77,7 @@ namespace SplitGui {
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
-            vk::SurfaceKHR createSurface(vk::Instance instance);
+[[nodiscard]] ResultValue<vk::SurfaceKHR> createSurface(vk::Instance instance);
 
 #endif 
 

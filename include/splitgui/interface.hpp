@@ -3,6 +3,7 @@
 
 #include "lib.hpp"
 
+#include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/events.hpp>
 #include <splitgui/graphics.hpp>
@@ -54,16 +55,16 @@ namespace SplitGui {
         public: 
             ~UnitExpressionEvaluator();
 
-            int             evaluate(int maxSize);
-            int             evaluateExpr(int maxSize, UnitExpression* expression);
-            UnitExpression* parse(std::string expression);
+              int                          evaluate(int maxSize);
+              int                          evaluateExpr(int maxSize, UnitExpression* expression);
+[[nodiscard]] ResultValue<UnitExpression*> parse(std::string expression);
 
         private:
             UnitExpression* expressionTree;
             int             index = 0;
 
-            UnitExpressionToken nextToken(std::string& expression);
-            void                cleanup(UnitExpression* expression);
+[[nodiscard]] ResultValue<UnitExpressionToken> nextToken(std::string& expression);
+              void                             cleanup(UnitExpression* expression);
     };
 
     class SPLITGUI_EXPORT InterfaceElement {
@@ -71,8 +72,8 @@ namespace SplitGui {
 
             friend class Interface;
 
-            virtual void instance();
-            virtual void update();
+[[nodiscard]] virtual Result instance();
+              virtual void update();
 
             void addChild(InterfaceElement* pChild);
             void setSize(IVec2 size);
@@ -95,11 +96,11 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Split : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()     override;
 
-                void setVertical(bool);
-                void setPosition(std::string);
+                void   setVertical(bool);
+  [[nodiscard]] Result setPosition(std::string);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eSplit;
@@ -113,8 +114,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT List : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eList;
@@ -128,8 +129,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Box : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eBox;
@@ -142,8 +143,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Overlay : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eOverlay;
@@ -156,8 +157,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Mask : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eMask;
@@ -170,8 +171,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Transform : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eTransform;
@@ -186,8 +187,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Rect : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
                 void setColor(HexColor color);
 
@@ -205,8 +206,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT SceneElement : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
                 void setSceneNumber(unsigned int sceneNumber);
 
@@ -225,8 +226,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Text : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eText;
@@ -240,8 +241,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Media : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eMedia;
@@ -254,8 +255,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Binding : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eBinding;
@@ -268,8 +269,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Meta : public InterfaceElement {
             public:
-                void instance() override;
-                void update()   override;
+  [[nodiscard]] Result instance() override;
+                void   update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eMeta;
@@ -289,14 +290,14 @@ namespace SplitGui {
             Interface();
             ~Interface();
 
-            void              parseXml(std::string& data);
-            void              setInterfaceElement(InterfaceElement* data);
-            InterfaceElement* getInterfaceElement();
-            void              submitGraphics(Graphics& graphics);
-            void              update();
-            void              instance();
-            void              setViewport(RectObj viewport);
-            void              attachEventHandler(EventHandler& handler);
+[[nodiscard]] Result            parseXml(std::string& data);
+              void              setInterfaceElement(InterfaceElement* data);
+              InterfaceElement* getInterfaceElement();
+              void              submitGraphics(Graphics& graphics);
+              void              update();
+              void              instance();
+              void              setViewport(RectObj viewport);
+              void              attachEventHandler(EventHandler& handler);
 
         private:
             InterfaceElement* interfaceElement = nullptr;

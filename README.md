@@ -51,6 +51,7 @@ ninja
 
 main.cpp
 ``` c++
+#include <splitgui/result.hpp>
 #include <splitgui/window.hpp>
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
@@ -65,6 +66,7 @@ int main(void) {
     std::ifstream indexFile("index.xml");
 
     if (!indexFile.is_open()) {
+        printf("ERROR: error opening index.xml\n");
         return -1;
     }
 
@@ -80,7 +82,7 @@ int main(void) {
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
-    graphics.instanceVulkan(true);
+    TRYRC(graphics.instanceVulkan(true));
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 
@@ -90,7 +92,7 @@ int main(void) {
     viewport.y    = 0;
     
     SplitGui::Interface interface;
-    interface.parseXml(page);
+    TRYRC(interface.parseXml(page));
     interface.submitGraphics(graphics);
     interface.setViewport(viewport);
     interface.attachEventHandler(eventHandler);
@@ -127,6 +129,7 @@ index.xml
 * add scene tree to xml
 * finish xml parser 
 * finish unit expression parser
+* make config for builds
 
 ### Optimizations
 
@@ -137,8 +140,6 @@ index.xml
 
 ### Refactoring
 
-* refactor error messages
-    * use result values
 * refactor xml parser
 * convension check
 * general refactor

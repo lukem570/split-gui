@@ -12,7 +12,7 @@ int main() {
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
-    graphics.instanceVulkan(true);
+    TRYRC(graphics.instanceVulkan(true));
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 

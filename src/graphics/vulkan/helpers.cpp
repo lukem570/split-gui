@@ -1,8 +1,8 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    inline vk::Bool32 VulkanInterface::check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers) {
-        for (const auto &name : check_names) {
+    inline ResultValue<vk::Bool32> VulkanInterface::checkLayers(const std::vector<const char *> &checkNames, const std::vector<vk::LayerProperties> &layers) {
+        for (const auto &name : checkNames) {
             vk::Bool32 found = VK_FALSE;
             for (const auto &layer : layers) {
                 if (!strcmp(name, layer.layerName)) {
@@ -11,8 +11,9 @@ namespace SplitGui {
                 }
             }
             if (!found) {
-                printf("Error: Cannot find layer: %s\n", name);
-                throw;
+                std::stringstream message;
+                message << "Error: Cannot find layer: " << name;
+                return ResultValue<vk::Bool32>(Result::eFailedToGetLayer, message.str());
             }
         }
         return VK_TRUE;
@@ -57,7 +58,7 @@ namespace SplitGui {
         return vk_device.createShaderModule(createInfo);
     }
 
-    inline uint32_t VulkanInterface::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
+    inline ResultValue<uint32_t> VulkanInterface::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
 
         vk::PhysicalDeviceMemoryProperties memProperties = vk_physicalDevice.getMemoryProperties();
 
@@ -67,8 +68,6 @@ namespace SplitGui {
             }
         }
 
-        printf("failed to find suitable memory type");
-        throw;
+        return Result::eFailedToFindSuitableMemoryType;
     }
-
 }

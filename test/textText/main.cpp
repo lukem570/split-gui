@@ -1,3 +1,4 @@
+#include <splitgui/result.hpp>
 #include <splitgui/window.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/structs.hpp>
@@ -12,7 +13,7 @@ int main() {
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
-    graphics.instanceVulkan(true);
+    TRYRC(graphics.instanceVulkan(true));
     graphics.submitWindow(window);
     graphics.loadFont("fonts/Lato/Lato-Regular.ttf");
     graphics.attachEventHandler(eventHandler);
@@ -23,10 +24,10 @@ int main() {
         0xFFFFFF
     );
 
-    graphics.drawText(
+    TRYC(graphics.drawText(
         SplitGui::IVec2{0, 0},
         "abcdefghijklmnopqrstuvwxyz"
-    );
+    ));
 
     eventHandler.instanceBuiltinEvents();
     graphics.submitBuffers();

@@ -12,13 +12,16 @@ namespace SplitGui {
         vk_graphicsPipelineLayout = vk_device.createPipelineLayout(createInfo);
     }
 
-    inline void VulkanInterface::createGraphicsPipeline() {
+    inline Result VulkanInterface::createGraphicsPipeline() {
 
-        const std::vector<char> vertexShaderFile   = readFile(VERTEX_SHADER_PATH);
-        const std::vector<char> fragmentShaderFile = readFile(FRAGMENT_SHADER_PATH);
+        ResultValue<std::vector<char>> vertexShaderFile   = readFile(VERTEX_SHADER_PATH);
+        ResultValue<std::vector<char>> fragmentShaderFile = readFile(FRAGMENT_SHADER_PATH);
 
-        vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile);
-        vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile);
+        TRY(vertexShaderFile);
+        TRY(fragmentShaderFile);
+
+        vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile.value);
+        vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile.value);
 
         vk::PipelineShaderStageCreateInfo vertexCreateInfo;
         vertexCreateInfo.stage  = vk::ShaderStageFlagBits::eVertex;
@@ -132,13 +135,14 @@ namespace SplitGui {
         vk::ResultValue<vk::Pipeline> result = vk_device.createGraphicsPipeline(nullptr, pipelineInfo);
 
         if (result.result != vk::Result::eSuccess) {
-            printf("Error: error creating graphics pipeline\n");
-            throw;
+            return Result::eFailedToCreateGraphicsPipeline;
         } 
 
         vk_device.destroyShaderModule(fragmentShader);
         vk_device.destroyShaderModule(vertexShader);
 
         vk_graphicsPipeline = result.value;
+
+        return Result::eSuccess;
     }
 }

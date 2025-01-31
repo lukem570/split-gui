@@ -30,14 +30,7 @@ namespace SplitGui {
     }
 
     void Window::instanceGlfw() {
-        #ifdef SPLIT_GUI_USE_GLFW
-
         windowLib = (WindowLibInterface*) new GlfwInterface();
-
-        #else
-        printf("Missing: \n'#define SPLIT_GUI_USE_GLFW'");
-        throw;
-        #endif
     }
 
     void Window::createWindow(const char* title) {
@@ -70,7 +63,7 @@ namespace SplitGui {
 
 #ifdef SPLIT_GUI_USE_VULKAN
 
-    vk::SurfaceKHR Window::createSurface(vk::Instance instance) {
+    ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {
         return windowLib->createSurface(instance);
     }
 

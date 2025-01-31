@@ -1,10 +1,10 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    inline void transitionImageLayout(vk::CommandBuffer commandBuffer, vk::Image image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout, int layerCount) {
+    inline void transitionImageLayout(vk::CommandBuffer commandBuffer, vk::Image image, int layerCount) {
         vk::ImageMemoryBarrier barrier;
-        barrier.oldLayout                       = oldLayout;
-        barrier.newLayout                       = newLayout;
+        barrier.oldLayout                       = vk::ImageLayout::eUndefined;
+        barrier.newLayout                       = vk::ImageLayout::eShaderReadOnlyOptimal;
         barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
         barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
         barrier.image                           = image;
@@ -13,24 +13,19 @@ namespace SplitGui {
         barrier.subresourceRange.levelCount     = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount     = layerCount;
+        barrier.srcAccessMask                   = vk::AccessFlagBits(0);
+        barrier.dstAccessMask                   = vk::AccessFlagBits::eShaderRead;
 
         vk::PipelineStageFlags sourceStage;
         vk::PipelineStageFlags destinationStage;
 
-        if (oldLayout == vk::ImageLayout::eUndefined && newLayout == vk::ImageLayout::eShaderReadOnlyOptimal) {
-            barrier.srcAccessMask = vk::AccessFlagBits(0);
-            barrier.dstAccessMask = vk::AccessFlagBits::eShaderRead;
-
-            sourceStage      = vk::PipelineStageFlagBits::eTopOfPipe;
-            destinationStage = vk::PipelineStageFlagBits::eFragmentShader;
-        } else {
-            throw std::invalid_argument("unsupported layout transition!");
-        }
+        sourceStage      = vk::PipelineStageFlagBits::eTopOfPipe;
+        destinationStage = vk::PipelineStageFlagBits::eFragmentShader;
 
         commandBuffer.pipelineBarrier(sourceStage, destinationStage, vk::DependencyFlagBits(0), 0, nullptr, 0, nullptr, 1, &barrier);
     }
 
-    inline void VulkanInterface::createTextGlyphImage() {
+    inline Result VulkanInterface::createTextGlyphImage() {
         vk::ImageCreateInfo imageInfo;
         imageInfo.imageType     = vk::ImageType::e2D;
         imageInfo.format        = vk::Format::eR8G8B8A8Unorm;
@@ -50,9 +45,13 @@ namespace SplitGui {
 
         vk::MemoryRequirements memoryRequirements = vk_device.getImageMemoryRequirements(vk_textGlyphImages);
 
+        ResultValue<uint32_t> memType = findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+
+        TRY(memType);
+
         vk::MemoryAllocateInfo allocateInfo;
         allocateInfo.allocationSize = memoryRequirements.size;
-        allocateInfo.memoryTypeIndex = findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+        allocateInfo.memoryTypeIndex = memType.value;
 
         vk_textGlyphImageMemory = vk_device.allocateMemory(allocateInfo);
         vk_device.bindImageMemory(vk_textGlyphImages, vk_textGlyphImageMemory, 0);
@@ -94,8 +93,10 @@ namespace SplitGui {
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
-        transitionImageLayout(commandBuffer, vk_textGlyphImages, vk::ImageLayout::eUndefined, vk::ImageLayout::eShaderReadOnlyOptimal, imageInfo.arrayLayers);
+        transitionImageLayout(commandBuffer, vk_textGlyphImages, imageInfo.arrayLayers);
 
-        endCopyBuffer(commandBuffer);
+        TRYR(endSingleTimeCommands(commandBuffer));
+
+        return Result::eSuccess;
     }
 }

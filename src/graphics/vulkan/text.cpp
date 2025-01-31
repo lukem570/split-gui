@@ -23,10 +23,9 @@ namespace SplitGui {
         return (unsigned char)(~int(255.5f-255.f*clamp(x)));
     }
 
-    float VulkanInterface::drawText(Vec2 x1, std::string& text) {
+    ResultValue<float> VulkanInterface::drawText(Vec2 x1, std::string& text) {
         if (!ft_fontInUse) {
-            printf("WARN: no font in use\n");
-            return -1.0;
+            return Result::eFailedToUseFont;
         }
 
         IVec2 windowSize = pWindow->getSize();
@@ -52,8 +51,7 @@ namespace SplitGui {
             ft::FT_Error loadError = ft::FT_Load_Glyph(ft_face, glyphId, (ft::FT_Int32) msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
             if (loadError) {
-                printf("WARN: could not load glyph: %c\n", text[i]);
-                return -1.0;
+                return Result::eFailedToLoadGlyph;
             }
 
             double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
@@ -61,15 +59,13 @@ namespace SplitGui {
             ft::FT_Error outlineError = msdfgen::readFreetypeOutline(shape, &ft_face->glyph->outline, fontScale);
 
             if (outlineError) {
-                printf("WARN: could not load glyph: %c\n", text[i]);
-                return -1.0;
+                return Result::eFailedToLoadGlyph;
             }
 
             ft::FT_Error loadCharError = ft::FT_Load_Char(ft_face, text[i], 0);
 
             if (loadCharError) {
-                printf("WARN: could not load glyph: %c\n", text[i]);
-                return -1.0;
+                return Result::eFailedToLoadGlyph;
             }
 
             double origin = shape.getBounds().l - shape.getBounds().r;
@@ -117,13 +113,13 @@ namespace SplitGui {
             vk::Buffer       stagingBuffer;
             vk::DeviceMemory stagingBufferMemory;
 
-            createBuffer(
+            TRYR(createBuffer(
                 stagingBufferSize, 
                 vk::BufferUsageFlagBits::eTransferSrc, 
                 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
                 stagingBuffer,
                 stagingBufferMemory
-            );
+            ));
 
             unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
 
@@ -189,7 +185,8 @@ namespace SplitGui {
             commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader, vk::DependencyFlagBits::eByRegion, nullptr, nullptr, barrier2);
 
             vk_device.waitIdle();
-            endCopyBuffer(commandBuffer);
+
+            TRYR(endSingleTimeCommands(commandBuffer));
 
             vk_device.freeMemory(stagingBufferMemory);
             vk_device.destroyBuffer(stagingBuffer);
@@ -206,8 +203,7 @@ namespace SplitGui {
             ft::FT_Error loadCharError = ft::FT_Load_Glyph(ft_face, glyphId, 0);
 
             if (loadCharError) {
-                printf("WARN: could not load char: %c\n", text[i]);
-                return -1.0;
+                return Result::eFailedToLoadGlyph;
             }
 
             ft::FT_GlyphSlot slot = ft_face->glyph;

@@ -5,7 +5,7 @@
 
 namespace SplitGui {
 
-    UnitExpressionToken UnitExpressionEvaluator::nextToken(std::string& expression) {
+    ResultValue<UnitExpressionToken> UnitExpressionEvaluator::nextToken(std::string& expression) {
         while (std::isspace(expression[index])) {
             if (expression.size() == ++index) {
                 UnitExpressionToken token;
@@ -104,33 +104,44 @@ namespace SplitGui {
             return token;
         }
 
-        throw; // invalid char
+        return Result::eInvalidToken;
     }
 
-    UnitExpression* UnitExpressionEvaluator::parse(std::string expression) {
+    ResultValue<UnitExpression*> UnitExpressionEvaluator::parse(std::string expression) {
 
-        UnitExpressionToken token;
+        ResultValue<UnitExpressionToken> token;
 
-        UnitExpression* result = nullptr;
+        UnitExpression* ret = nullptr;
 
-        while ((token = nextToken(expression)).type != UnitExpressionTokenType::eEndOfFile) {
-            switch (token.type) {
+        while (true) {
+
+            token = nextToken(expression);
+
+            TRY(token);
+
+            if (token.value.type == UnitExpressionTokenType::eEndOfFile) {
+                break;
+            }
+
+            switch (token.value.type) {
                 case UnitExpressionTokenType::eLiteral: {
                     
                     UnitExpression* newExpression = new UnitExpression();
 
                     newExpression->type          = UnitExpression::Type::eLiteral;
-                    newExpression->literal.value = std::atof(token.value.c_str());
+                    newExpression->literal.value = std::atof(token.value.value.c_str());
 
                     token = nextToken(expression);
 
-                    if (token.type != UnitExpressionTokenType::eUnit) {
-                        throw;
+                    TRY(token);
+
+                    if (token.value.type != UnitExpressionTokenType::eUnit) {
+                        return Result::eInvalidToken;
                     }
 
-                    newExpression->literal.type  = token.value == "%" ? UnitExpression::UnitType::ePercent : UnitExpression::UnitType::ePixel;
+                    newExpression->literal.type  = token.value.value == "%" ? UnitExpression::UnitType::ePercent : UnitExpression::UnitType::ePixel;
 
-                    result = newExpression;
+                    ret = newExpression;
 
                     break;
                 }
@@ -139,22 +150,26 @@ namespace SplitGui {
                     UnitExpression* newExpression = new UnitExpression();
 
                     newExpression->type         = UnitExpression::Type::eBinaryOp;
-                    newExpression->binary.left  = result;
-                    newExpression->binary.oper  = enumerateOperator(token.value[0]);
-                    newExpression->binary.right = parse(expression);
+                    newExpression->binary.left  = ret;
+                    newExpression->binary.oper  = enumerateOperator(token.value.value[0]);
 
-                    result = newExpression;
+                    ResultValue<UnitExpression*> parseRet = parse(expression);
 
+                    TRY(parseRet);
+
+                    newExpression->binary.right = parseRet.value;
+
+                    ret = newExpression;
                     
                     break;
                 }
-                default: throw; // invalid type
+                default: return Result::eInvalidType;
             }
         }
 
-        expressionTree = result;
+        expressionTree = ret;
 
-        return result;
+        return ret;
     }
 
     int UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {

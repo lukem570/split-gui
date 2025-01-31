@@ -17,9 +17,15 @@ namespace SplitGui {
         }
     }
 
-    void Interface::parseXml(std::string& data) {
+    Result Interface::parseXml(std::string& data) {
         XMLParser parser(data);
-        setInterfaceElement(parser.parse());
+        ResultValue<InterfaceElement*> parseRet = parser.parse();
+
+        TRY(parseRet);
+
+        setInterfaceElement(parseRet.value);
+
+        return Result::eSuccess;
     }
 
     void Interface::submitGraphics(Graphics& graphics) {
@@ -61,10 +67,9 @@ namespace SplitGui {
         pEventHandler = &handler;
     }
 
-    void InterfaceElement::instance() {
+    Result InterfaceElement::instance() {
         if (maxChildren < children.size()) {
-            printf("ERROR: '%s' element has too many children", name.c_str());
-            throw;
+            return Result::eInvalidNumberOfChildren;
         }
 
         for (int i = 0; i < children.size(); i++) {
@@ -79,6 +84,8 @@ namespace SplitGui {
             children[i]->instance();
             break;
         }
+
+        return Result::eSuccess;
     }
 
     void InterfaceElement::update() {

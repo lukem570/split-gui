@@ -1,6 +1,7 @@
 #ifndef SPLITGUI_VULKAN_HPP
 #define SPLITGUI_VULKAN_HPP
 
+#include <splitgui/result.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
@@ -9,6 +10,7 @@
 #include <cmath>
 #include <bits/stdc++.h>
 #include <string>
+#include <sstream>
 #include <array>
 #include <stack>
 #include <msdfgen/msdfgen.h>
@@ -45,22 +47,22 @@ namespace SplitGui {
             VulkanInterface(bool validation);
             ~VulkanInterface();
 
-            void      instance()                                                                                                  override;
-            void      submitWindow(SplitGui::Window& window)                                                                      override;
+[[nodiscard]] Result             instance()                                                                                                  override;
+[[nodiscard]] Result             submitWindow(SplitGui::Window& window)                                                                      override;
 
-            void      drawFrame()                                                                                                 override;
-            RectRef   drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    override;
-            void      updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                  override;
-            SceneObj* instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
-            void      updateScene(SceneObj* ref, IVec2 x1, IVec2 x2)                                                              override;
-            void      submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) override;
-            void      updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         override;
-            void      updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         override;
-            float     drawText(Vec2 x1, std::string& text)                                                                        override;
-            void      loadFont(const char* path)                                                                                  override;
-            void      submitBuffers()                                                                                             override;
+[[nodiscard]] Result             drawFrame()                                                                                                 override;
+              RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    override;
+              void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                  override;
+              SceneObj*          instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
+              void               updateScene(SceneObj* ref, IVec2 x1, IVec2 x2)                                                              override;
+              void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) override;
+[[nodiscard]] Result             updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         override;
+[[nodiscard]] Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         override;
+[[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                        override;
+              void               loadFont(const char* path)                                                                                  override;
+[[nodiscard]] Result             submitBuffers()                                                                                             override;
 
-            void      resizeEvent()                                                                                               override;
+              void               resizeEvent()                                                                                               override;
 
         protected:
             SplitGui::Window*                   pWindow;
@@ -118,9 +120,9 @@ namespace SplitGui {
             std::vector<vk::Fence>              vk_inFlightFences;
             unsigned int                        graphicsQueueFamilyIndex = -1;
             unsigned int                        presentQueueFamilyIndex  = -1;
-            std::vector<const char *>           enabled_layers;
-            std::vector<const char *>           enabled_instance_extensions;
-            std::vector<const char *>           enabled_device_extensions;
+            std::vector<const char *>           enabledLayers;
+            std::vector<const char *>           enabledInstanceExtensions;
+            std::vector<const char *>           enabledDeviceExtensions;
 
             // runtime variables
             vk::CommandBufferBeginInfo          vk_beginInfo;
@@ -145,44 +147,44 @@ namespace SplitGui {
             bool                                vk_validation = false;
 
 
-            inline vk::Bool32           check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
-            inline vk::Extent2D         chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
-            inline vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats);
-            inline vk::PresentModeKHR   chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes);
-            inline vk::ShaderModule     createShaderModule(const std::vector<char>& code);
-            inline uint32_t             findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
-            inline void                 createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& out_buffer, vk::DeviceMemory& out_bufferMemory);
-            inline vk::CommandBuffer    startCopyBuffer();
-            inline void                 copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion);
-            inline void                 endCopyBuffer(vk::CommandBuffer commandBuffer);
-            inline void                 vertexBufferSubmit();
-            inline void                 scenesSubmit();
-            inline void                 updateScenes();
+[[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
+              inline vk::Extent2D            chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
+              inline vk::SurfaceFormatKHR    chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats);
+              inline vk::PresentModeKHR      chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes);
+              inline vk::ShaderModule        createShaderModule(const std::vector<char>& code);
+[[nodiscard]] inline ResultValue<uint32_t>   findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
+[[nodiscard]] inline Result                  createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& out_buffer, vk::DeviceMemory& out_bufferMemory);
+              inline vk::CommandBuffer       startCopyBuffer();
+              inline void                    copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion);
+[[nodiscard]] inline Result                  endSingleTimeCommands(vk::CommandBuffer commandBuffer);
+[[nodiscard]] inline Result                  vertexBufferSubmit();
+[[nodiscard]] inline Result                  scenesSubmit();
+              inline void                    updateScenes();
 
-            template <typename T>
-            inline void InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);
+              template <typename T>
+[[nodiscard]] inline Result InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);
 
-            inline void instanceVulkan();
-            inline void createPhysicalDevice();
-            inline void getQueueFamilies();
-            inline void createDevice();
-            inline void getQueues();
-            inline void createSurface(SplitGui::Window& window);
-            inline void createSwapchain();
-            inline void createImageViews();
-            inline void createRenderpass();
-            inline void createDescriptorSetLayout();
-            inline void createGraphicsPipelineLayout();
-            inline void createGraphicsPipeline();
-            inline void createFramebuffers();
-            inline void createCommandPool();
-            inline void createCommandBuffers();
-            inline void createSyncObj();
-            inline void createDescriptorPool();
-            inline void createDescriptorSet();
-            inline void createTextGlyphImage();
-            inline void createVertexUniformBuffer();
-            inline void updateDescriptorSets();
+[[nodiscard]] inline Result instanceVulkan();
+[[nodiscard]] inline Result createPhysicalDevice();
+[[nodiscard]] inline Result getQueueFamilies();
+[[nodiscard]] inline Result createDevice();
+              inline void   getQueues();
+[[nodiscard]] inline Result createSurface(SplitGui::Window& window);
+              inline void   createSwapchain();
+              inline void   createImageViews();
+              inline void   createRenderpass();
+              inline void   createDescriptorSetLayout();
+              inline void   createGraphicsPipelineLayout();
+[[nodiscard]] inline Result createGraphicsPipeline();
+              inline void   createFramebuffers();
+              inline void   createCommandPool();
+              inline void   createCommandBuffers();
+              inline void   createSyncObj();
+              inline void   createDescriptorPool();
+              inline void   createDescriptorSet();
+[[nodiscard]] inline Result createTextGlyphImage();
+[[nodiscard]] inline Result createVertexUniformBuffer();
+              inline void   updateDescriptorSets();
 
             inline void setupRenderpassBeginInfo();
             inline void setupViewport();
