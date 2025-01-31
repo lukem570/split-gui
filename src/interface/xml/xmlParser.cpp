@@ -1,3 +1,4 @@
+#include <splitgui/result.hpp>
 #include <splitgui/interface.hpp>
 #include <splitgui/structs.hpp>
 
@@ -20,7 +21,7 @@ namespace SplitGui {
 
                     printf("position: %s\n", token.value.c_str());
 
-                    TRYR(split->setPosition(token.value));
+                    TRYR(positionRes, split->setPosition(token.value));
                     
                     return Result::eSuccess;
                 }
@@ -116,7 +117,7 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            TRYR(handleSplitParameters(newSplit, token));
+                            TRYR(splitRes, handleSplitParameters(newSplit, token));
                             token = nextToken();
                         }
 
@@ -125,11 +126,11 @@ namespace SplitGui {
                         }
 
                         ResultValue<InterfaceElement*> parseRet1 = parse(depth + 1);
-                        TRY(parseRet1);
+                        TRYD(parseRet1);
                         newSplit->addChild(parseRet1.value);
 
                         ResultValue<InterfaceElement*> parseRet2 = parse(depth + 1);
-                        TRY(parseRet2);
+                        TRYD(parseRet2);
                         newSplit->addChild(parseRet2.value);
 
                         nextToken();
@@ -166,7 +167,7 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            TRYR(handleRectParameters(newRect, token));
+                            TRYR(rectRes, handleRectParameters(newRect, token));
                             token = nextToken();
                         }
 
@@ -184,7 +185,7 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            TRYR(handleSceneParameters(newScene, token));
+                            TRYR(sceneRes, handleSceneParameters(newScene, token));
                             token = nextToken();
                         }
 
@@ -214,7 +215,7 @@ namespace SplitGui {
                         token = nextToken();
 
                         while(token.type == XmlTokenType::eText) {
-                            TRYR(handleMetaParameters(newMeta, token));
+                            TRYR(metaRes, handleMetaParameters(newMeta, token));
                             token = nextToken();
                         }
 

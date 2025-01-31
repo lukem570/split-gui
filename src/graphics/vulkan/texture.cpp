@@ -47,7 +47,7 @@ namespace SplitGui {
 
         ResultValue<uint32_t> memType = findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
 
-        TRY(memType);
+        TRYD(memType);
 
         vk::MemoryAllocateInfo allocateInfo;
         allocateInfo.allocationSize = memoryRequirements.size;
@@ -95,7 +95,7 @@ namespace SplitGui {
 
         transitionImageLayout(commandBuffer, vk_textGlyphImages, imageInfo.arrayLayers);
 
-        TRYR(endSingleTimeCommands(commandBuffer));
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
         return Result::eSuccess;
     }

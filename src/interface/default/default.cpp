@@ -102,7 +102,7 @@ namespace SplitGui {
     }
 
     Result Default::Split::setPosition(std::string pos) {
-        TRY(position.parse(pos));
+        TRY(SplitGui::UnitExpression*, parseRes, position.parse(pos));
 
         return Result::eSuccess;
     }

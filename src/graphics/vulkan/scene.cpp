@@ -57,7 +57,7 @@ namespace SplitGui {
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        TRYR(InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
+        TRYR(stagingRes, InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -65,7 +65,7 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
-        TRYR(endSingleTimeCommands(commandBuffer));
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
         vk_graphicsQueue.waitIdle();
 
         vk_device.destroyBuffer(stagingBuffer);
@@ -83,7 +83,7 @@ namespace SplitGui {
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        TRYR(InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
+        TRYR(stagingRes, InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -91,7 +91,7 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
-        TRYR(endSingleTimeCommands(commandBuffer));
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
         vk_graphicsQueue.waitIdle();
 
         vk_device.destroyBuffer(stagingBuffer);

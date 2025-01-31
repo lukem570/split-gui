@@ -21,7 +21,7 @@ namespace SplitGui {
         XMLParser parser(data);
         ResultValue<InterfaceElement*> parseRet = parser.parse();
 
-        TRY(parseRet);
+        TRYD(parseRet);
 
         setInterfaceElement(parseRet.value);
 

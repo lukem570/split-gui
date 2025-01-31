@@ -18,7 +18,7 @@ namespace SplitGui {
 
             validationFound = checkLayers(instanceLayers, layers);
 
-            TRY(validationFound);
+            TRYD(validationFound);
 
             if (validationFound.value) {
                 enabledLayers.push_back("VK_LAYER_KHRONOS_validation");

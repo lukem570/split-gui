@@ -12,7 +12,7 @@ int main() {
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
-    TRYRC(graphics.instanceVulkan(true));
+    TRYRC(instanceRes, graphics.instanceVulkan(true));
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 
@@ -29,12 +29,12 @@ int main() {
     split1.addChild(&rect2);
     split1.addChild(&rect3);
     split1.setVertical(true);
-    TRYRC(split1.setPosition("50%"));
+    TRYRC(split1Res, split1.setPosition("50%"));
 
     SplitGui::Default::Split split2;
     split2.addChild(&split1);
     split2.addChild(&rect1);
-    TRYRC(split2.setPosition("50%"));
+    TRYRC(split2Res, split2.setPosition("50%"));
 
     SplitGui::InterfaceElement root;
     root.addChild(&split2);
@@ -43,7 +43,7 @@ int main() {
     root.setPosition({0, 0});
 
     eventHandler.instanceBuiltinEvents();
-    TRYRC(root.instance());
+    TRYRC(interfaceRes, root.instance());
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {

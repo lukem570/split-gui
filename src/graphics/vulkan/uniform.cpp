@@ -6,7 +6,7 @@ namespace SplitGui {
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        TRYR(createBuffer(
+        TRYR(bufferRes1, createBuffer(
             sizeof(VertexUniformObject), 
             vk::BufferUsageFlagBits::eTransferSrc, 
             vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
@@ -23,7 +23,7 @@ namespace SplitGui {
 
         vk_device.unmapMemory(stagingBufferMemory);
 
-        TRYR(createBuffer(
+        TRYR(bufferRes2, createBuffer(
             sizeof(VertexUniformObject), 
             vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eUniformBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
@@ -37,7 +37,7 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  vk_vertexUniformBuffer, sizeof(VertexUniformObject),  commandBuffer, copyRegion);
 
-        TRYR(endSingleTimeCommands(commandBuffer));
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
         vk_device.freeMemory(stagingBufferMemory);
         vk_device.destroyBuffer(stagingBuffer);

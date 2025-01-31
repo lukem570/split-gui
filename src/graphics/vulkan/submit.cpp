@@ -11,8 +11,8 @@ namespace SplitGui {
         vk::Buffer       stagingVertexBuffer;
         vk::DeviceMemory stagingVertexBufferMemory;
 
-        TRYR(InstanceStagingBuffer(indices,  stagingIndexBuffer,  stagingIndexBufferMemory,  indexBufferSize ));
-        TRYR(InstanceStagingBuffer(vertices, stagingVertexBuffer, stagingVertexBufferMemory, vertexBufferSize));
+        TRYR(stagingRes1, InstanceStagingBuffer(indices,  stagingIndexBuffer,  stagingIndexBufferMemory,  indexBufferSize ));
+        TRYR(stagingRes2, InstanceStagingBuffer(vertices, stagingVertexBuffer, stagingVertexBufferMemory, vertexBufferSize));
 
         vk::Buffer       tempIndexBuffer;
         vk::DeviceMemory tempIndexBufferMemory;
@@ -20,7 +20,7 @@ namespace SplitGui {
         vk::Buffer       tempVertexBuffer;
         vk::DeviceMemory tempVertexBufferMemory;
 
-        TRYR(createBuffer(
+        TRYR(bufferRes1, createBuffer(
             indexBufferSize, 
             vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
@@ -28,7 +28,7 @@ namespace SplitGui {
             tempIndexBufferMemory
         ));
 
-        TRYR(createBuffer(
+        TRYR(bufferRes2, createBuffer(
             vertexBufferSize, 
             vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
@@ -43,7 +43,7 @@ namespace SplitGui {
         copyBuffer(stagingIndexBuffer,  tempIndexBuffer, indexBufferSize,  commandBuffer, copyRegionIndex);
         copyBuffer(stagingVertexBuffer, tempVertexBuffer, vertexBufferSize, commandBuffer, copyRegionVertex);
 
-        TRYR(endSingleTimeCommands(commandBuffer));
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
         vk_device.waitIdle();
         
@@ -90,12 +90,12 @@ namespace SplitGui {
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 
-        TRYR(InstanceStagingBuffer<SceneObj>(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
+        TRYR(stagingRes, InstanceStagingBuffer<SceneObj>(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
 
         vk::Buffer       tempBuffer;
         vk::DeviceMemory tempBufferMemory;
 
-        TRYR(createBuffer(
+        TRYR(bufferRes, createBuffer(
             vk_sceneBufferSize, 
             vk::BufferUsageFlagBits::eUniformBuffer | vk::BufferUsageFlagBits::eTransferDst, 
             vk::MemoryPropertyFlagBits::eDeviceLocal, 
@@ -109,7 +109,7 @@ namespace SplitGui {
 
         copyBuffer(stagingBuffer,  tempBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
-        TRYR(endSingleTimeCommands(commandBuffer));
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
         vk_device.waitIdle();
 
@@ -132,12 +132,12 @@ namespace SplitGui {
 
         if (indices.size() != knownIndicesSize || markVerticesForUpdate) {
             markVerticesForUpdate = false;
-            TRYR(vertexBufferSubmit());
+            TRYR(vertexRes, vertexBufferSubmit());
         }
         
         if (scenes.size() != knownScenesSize || markScenesForUpdate) {
             markScenesForUpdate = false;
-            TRYR(scenesSubmit());
+            TRYR(sceneRes, scenesSubmit());
         }
 
         return Result::eSuccess;

@@ -89,7 +89,7 @@ namespace SplitGui {
 
         ResultValue<float> ret = pInterface->drawText(newX1, text);
 
-        TRY(ret);
+        TRYD(ret);
 
         return ret.value * windowSize.x;
     }

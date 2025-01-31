@@ -107,7 +107,7 @@ namespace SplitGui {
     inline Result VulkanInterface::createSurface(SplitGui::Window& window) {
         ResultValue<vk::SurfaceKHR> surfaceRet = window.createSurface(vk_instance);
         
-        TRY(surfaceRet);
+        TRYD(surfaceRet);
 
         vk_surface = surfaceRet.value;
 

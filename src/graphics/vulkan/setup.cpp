@@ -16,32 +16,32 @@ namespace SplitGui {
             return Result::eFailedToInstanceFreeType;
         }
 
-        TRYR(instanceVulkan());
-        TRYR(createPhysicalDevice());
+        TRYR(instanceRes, instanceVulkan());
+        TRYR(deviceRes, createPhysicalDevice());
 
         return Result::eSuccess;
     }
 
     Result VulkanInterface::submitWindow(SplitGui::Window& window) {
         pWindow = &window;
-        TRYR(createSurface(window));
-        TRYR(getQueueFamilies());
-        TRYR(createDevice());
+        TRYR(surfaceRes, createSurface(window));
+        TRYR(queueRes, getQueueFamilies());
+        TRYR(deviceRes, createDevice());
         getQueues();
         createSwapchain();
         createImageViews();
         createRenderpass();
         createDescriptorSetLayout();
         createGraphicsPipelineLayout();
-        TRYR(createGraphicsPipeline());
+        TRYR(pipelineRes, createGraphicsPipeline());
         createFramebuffers();
         createCommandPool();
         createCommandBuffers();
         createSyncObj();
         createDescriptorPool();
         createDescriptorSet();
-        TRYR(createTextGlyphImage());
-        TRYR(createVertexUniformBuffer());
+        TRYR(glyphRes, createTextGlyphImage());
+        TRYR(vertexRes, createVertexUniformBuffer());
         updateDescriptorSets();
 
         setupRenderpassBeginInfo();

@@ -13,7 +13,7 @@ int main() {
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;
-    TRYRC(graphics.instanceVulkan(true));
+    TRYRC(instanceRes, graphics.instanceVulkan(true));
     graphics.submitWindow(window);
     graphics.loadFont("fonts/Lato/Lato-Regular.ttf");
     graphics.attachEventHandler(eventHandler);
@@ -24,7 +24,7 @@ int main() {
         0xFFFFFF
     );
 
-    TRYC(graphics.drawText(
+    TRYC(int, textRes, graphics.drawText(
         SplitGui::IVec2{0, 0},
         "abcdefghijklmnopqrstuvwxyz"
     ));

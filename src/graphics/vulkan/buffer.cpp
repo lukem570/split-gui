@@ -35,7 +35,7 @@ namespace SplitGui {
 
         ResultValue<uint32_t> memType = findMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-        TRY(memType);
+        TRYD(memType);
 
         vk::MemoryAllocateInfo allocInfo;
         allocInfo.allocationSize  = memoryRequirements.size;
@@ -102,7 +102,7 @@ namespace SplitGui {
         
         out_size = sizeof(dataToUpload[0]) * dataToUpload.size();
 
-        TRYR(createBuffer(
+        TRYR(bufferRes, createBuffer(
             out_size, 
             vk::BufferUsageFlagBits::eTransferSrc, 
             vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,

@@ -17,8 +17,8 @@ namespace SplitGui {
         ResultValue<std::vector<char>> vertexShaderFile   = readFile(VERTEX_SHADER_PATH);
         ResultValue<std::vector<char>> fragmentShaderFile = readFile(FRAGMENT_SHADER_PATH);
 
-        TRY(vertexShaderFile);
-        TRY(fragmentShaderFile);
+        TRYD(vertexShaderFile);
+        TRYD(fragmentShaderFile);
 
         vk::ShaderModule vertexShader   = createShaderModule(vertexShaderFile.value);
         vk::ShaderModule fragmentShader = createShaderModule(fragmentShaderFile.value);

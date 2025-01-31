@@ -117,7 +117,7 @@ namespace SplitGui {
 
             token = nextToken(expression);
 
-            TRY(token);
+            TRYD(token);
 
             if (token.value.type == UnitExpressionTokenType::eEndOfFile) {
                 break;
@@ -133,7 +133,7 @@ namespace SplitGui {
 
                     token = nextToken(expression);
 
-                    TRY(token);
+                    TRYD(token);
 
                     if (token.value.type != UnitExpressionTokenType::eUnit) {
                         return Result::eInvalidToken;
@@ -155,7 +155,7 @@ namespace SplitGui {
 
                     ResultValue<UnitExpression*> parseRet = parse(expression);
 
-                    TRY(parseRet);
+                    TRYD(parseRet);
 
                     newExpression->binary.right = parseRet.value;
 

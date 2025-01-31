@@ -113,7 +113,7 @@ namespace SplitGui {
             vk::Buffer       stagingBuffer;
             vk::DeviceMemory stagingBufferMemory;
 
-            TRYR(createBuffer(
+            TRYR(bufferRes, createBuffer(
                 stagingBufferSize, 
                 vk::BufferUsageFlagBits::eTransferSrc, 
                 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
@@ -186,7 +186,7 @@ namespace SplitGui {
 
             vk_device.waitIdle();
 
-            TRYR(endSingleTimeCommands(commandBuffer));
+            TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
             vk_device.freeMemory(stagingBufferMemory);
             vk_device.destroyBuffer(stagingBuffer);
