@@ -3,6 +3,11 @@
 namespace SplitGui {
     inline Result VulkanInterface::createVertexUniformBuffer() {
         
+        if (vk_vertexUniformBufferMemory) {
+            vk_device.freeMemory(vk_vertexUniformBufferMemory);
+            vk_device.destroyBuffer(vk_vertexUniformBuffer);
+        }
+
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
 

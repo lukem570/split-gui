@@ -137,6 +137,8 @@ index.xml
 * staging buffer caching
 * make staging buffer allocate extra space for update events
 * multithreading?
+* fix scenes buffers recreating on updateposition and updaterotation
+    * use a custom copy region for specific indices
 
 ### Refactoring
 
@@ -151,8 +153,3 @@ index.xml
     * check memory allignment and buffer creation
 * slowness
     * performance testing and checking for bottlenecks
-* scenes buffers recreating on updateposition and updaterotation
-    * use a custom copy region for specific indices
-* scene + rects causing crash when resizing
-* scenes warping 
-    * check algorithm for errors

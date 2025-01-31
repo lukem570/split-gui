@@ -64,6 +64,12 @@ mat3 rotateZ(float angle) {
                 0.0, 0.0, 1.0);
 }
 
+float conformToScene(float imin, float imax, float x) {
+    float m = (imin - imax) / -2.0f;
+    float b = imax - m;
+    return m * x + b;
+}
+
 void main() {
     out_fragColor     = in_inColor.rgb;
     out_flags         = flags;
@@ -87,10 +93,6 @@ void main() {
         // rotate points
         pos *= rotationX * rotationY * rotationZ;
 
-        // conform points to viewport
-        pos.x *= float(scene.size.x) / float(vub.screenSize.x);
-        pos.y *= float(scene.size.y) / float(vub.screenSize.y);
-
         // adjust points for aspect ratio
         if (scene.size.x > scene.size.y) {
             pos.x *= float(scene.size.y) / float(scene.size.x);
@@ -98,9 +100,15 @@ void main() {
             pos.y *= float(scene.size.x) / float(scene.size.y);
         }
 
-        // move points to viewport
-        pos.x += float(scene.position.x) / float(vub.screenSize.x);
-        pos.y += float(scene.position.y) / float(vub.screenSize.y);
+        // conform points to viewport
+        float iminx = float(scene.position.x) / float(vub.screenSize.x) * 2.0f - 1.0f;
+        float imaxx = float(scene.size.x + scene.position.x) / float(vub.screenSize.x) * 2.0f - 1.0f;
+
+        float iminy = float(scene.position.y) / float(vub.screenSize.y) * 2.0f - 1.0f;
+        float imaxy = float(scene.size.y + scene.position.y) / float(vub.screenSize.y) * 2.0f - 1.0f;
+
+        pos.x = conformToScene(iminx, imaxx, pos.x);
+        pos.y = conformToScene(iminy, imaxy, pos.y);
     }
 
     gl_Position = vec4(pos.xy, 0.0, 1.0);
