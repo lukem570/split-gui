@@ -142,7 +142,6 @@ index.xml
 
 ### Refactoring
 
-* refactor xml parser
 * convension check
 * general refactor
 * refactor text code
