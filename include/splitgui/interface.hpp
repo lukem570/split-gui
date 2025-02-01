@@ -51,7 +51,7 @@ namespace SplitGui {
         }
     }
 
-    class UnitExpressionEvaluator {
+    class SPLITGUI_EXPORT UnitExpressionEvaluator {
         public: 
             ~UnitExpressionEvaluator();
 

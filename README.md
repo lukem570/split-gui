@@ -113,7 +113,6 @@ index.xml
 ``` xml
 <meta version="0.1.0"/>
 
-
 <split direction="vertical" position="20px + 50%"> 
     <rect color="ivec3(255, 100, 100)"/>
     <rect color="ivec3(100, 255, 100)"/>
@@ -130,6 +129,7 @@ index.xml
 * finish xml parser 
 * finish unit expression parser
 * make config for builds
+* finish default interface elements
 
 ### Optimizations
 
