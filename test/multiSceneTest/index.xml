@@ -1,0 +1,6 @@
+<meta version="0.1.0"/>
+
+<split direction="horizontal" position="50%">
+    <scene number="0"/>
+    <scene number="1"/>
+</split>

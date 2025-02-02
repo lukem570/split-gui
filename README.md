@@ -126,7 +126,6 @@ index.xml
 * create >1 3d scene
 * write documentation
 * add scene tree to xml
-* finish xml parser 
 * finish unit expression parser
 * make config for builds
 * finish default interface elements
@@ -149,7 +148,5 @@ index.xml
 
 ### Bugs
 
-* rot x not working in scenes  
-    * check memory allignment and buffer creation
 * slowness
     * performance testing and checking for bottlenecks

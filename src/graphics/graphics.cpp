@@ -70,7 +70,7 @@ namespace SplitGui {
         pInterface->submitBuffers();
     }
 
-    SceneObj* Graphics::instanceScene(IVec2 x1, IVec2 x2) {
+    unsigned int Graphics::instanceScene(IVec2 x1, IVec2 x2) {
         return pInterface->instanceScene(x1, x2);
     }
 
@@ -115,7 +115,7 @@ namespace SplitGui {
         pEventHandler = &handler;
     }
 
-    void Graphics::updateScene(SceneObj* ref, IVec2 x1, IVec2 x2) {
-        pInterface->updateScene(ref, x1, x2);
+    void Graphics::updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2) {
+        pInterface->updateScene(sceneNumber, x1, x2);
     }
 }

@@ -53,8 +53,8 @@ namespace SplitGui {
 [[nodiscard]] Result             drawFrame()                                                                                                 override;
               RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    override;
               void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                  override;
-              SceneObj*          instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
-              void               updateScene(SceneObj* ref, IVec2 x1, IVec2 x2)                                                              override;
+              unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
+              void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                           override;
               void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) override;
 [[nodiscard]] Result             updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         override;
 [[nodiscard]] Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         override;

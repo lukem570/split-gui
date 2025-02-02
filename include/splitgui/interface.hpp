@@ -222,7 +222,7 @@ namespace SplitGui {
                 // TODO:
 
                 // state
-                SceneObj*                      graphicsSceneRef;
+                unsigned int                   graphicsSceneRef;
         };
 
         class SPLITGUI_EXPORT Text : public InterfaceElement {

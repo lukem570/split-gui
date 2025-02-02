@@ -1,7 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    SceneObj* VulkanInterface::instanceScene(IVec2 x1, IVec2 x2) {
+    unsigned int VulkanInterface::instanceScene(IVec2 x1, IVec2 x2) {
         SceneObj scene;
         scene.viewport.width    = std::abs(x1.x - x2.x);
         scene.viewport.height   = std::abs(x1.y - x2.y);
@@ -14,7 +14,7 @@ namespace SplitGui {
 
         scenes.push_back(scene);
         
-        return &scenes.back();
+        return scenes.size() - 1;
     }
 
     void VulkanInterface::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices) {
@@ -41,11 +41,11 @@ namespace SplitGui {
         printf("submitted triangles\n");
     }
 
-    void VulkanInterface::updateScene(SceneObj* ref, IVec2 x1, IVec2 x2) {
-        ref->viewport.width    = std::abs(x1.x - x2.x);
-        ref->viewport.height   = std::abs(x1.y - x2.y);
-        ref->viewport.x        = std::min(x1.x,  x2.x);
-        ref->viewport.y        = std::min(x1.y,  x2.y);
+    void VulkanInterface::updateScene(unsigned int ref, IVec2 x1, IVec2 x2) {
+        scenes[ref].viewport.width    = std::abs(x1.x - x2.x);
+        scenes[ref].viewport.height   = std::abs(x1.y - x2.y);
+        scenes[ref].viewport.x        = std::min(x1.x,  x2.x);
+        scenes[ref].viewport.y        = std::min(x1.y,  x2.y);
 
         markScenesForUpdate = true;
     }
