@@ -71,15 +71,22 @@ int main() {
     interface.instance();
     graphics.submitBuffers();
 
-    SplitGui::Vec3 rotation = {0, 0, 0};
+    SplitGui::Vec3 rotation1 = {0, 0, 0};
+    SplitGui::Vec3 rotation2 = {0, 0, 0};
 
     while (!window.shouldClose()) {
 
         
-        rotation.x += degToRad(2);
-        rotation.y += degToRad(3);
-        rotation.z += degToRad(2);
-        graphics.updateSceneCameraRotation(0, rotation);
+        rotation1.x += degToRad(2);
+        rotation1.y += degToRad(3);
+        rotation1.z += degToRad(2);
+
+        rotation2.x += degToRad(2);
+        rotation2.y += degToRad(3);
+        rotation2.z += degToRad(3);
+
+        graphics.updateSceneCameraRotation(0, rotation1);
+        graphics.updateSceneCameraRotation(1, rotation2);
 
         graphics.drawFrame();
         window.update();

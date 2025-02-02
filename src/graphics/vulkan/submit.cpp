@@ -79,8 +79,6 @@ namespace SplitGui {
         descriptorWrite.descriptorType   = vk::DescriptorType::eUniformBuffer;
         descriptorWrite.descriptorCount  = 1;
         descriptorWrite.pBufferInfo      = &bufferInfo;
-        descriptorWrite.pImageInfo       = nullptr;
-        descriptorWrite.pTexelBufferView = nullptr;
 
         vk_device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
     }

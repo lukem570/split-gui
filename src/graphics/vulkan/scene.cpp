@@ -7,7 +7,6 @@ namespace SplitGui {
         scene.viewport.height   = std::abs(x1.y - x2.y);
         scene.viewport.x        = std::min(x1.x,  x2.x);
         scene.viewport.y        = std::min(x1.y,  x2.y);
-        scene.cameraPosition    = {0, 0, 0};
         scene.cameraRotation    = {0, 0, 0};
 
         printf("scene: (%d, %d, %d, %d) (%d, %d) (%d, %d)\n", scene.viewport.x, scene.viewport.y, scene.viewport.width, scene.viewport.height, x1.x, x1.y, x2.x, x2.y);
@@ -78,7 +77,9 @@ namespace SplitGui {
 
     Result VulkanInterface::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
 
-        scenes[sceneNumber].cameraPosition = position;
+        //scenes[sceneNumber].cameraPosition = position;
+
+        return Result::eInvalidSetting;
 
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;

@@ -11,7 +11,6 @@
 struct Scene {
     ivec2 size;
     ivec2 position;
-    vec3  cameraPosition;
     vec3  cameraRotation;
 };
 

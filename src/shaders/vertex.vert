@@ -29,7 +29,6 @@ struct Scene {
     ivec2 size;
     ivec2 position;
     vec3  cameraRotation;
-    vec3  cameraPosition;
 };
 
 layout(binding = 0) uniform ScenesBuffer {
@@ -86,9 +85,9 @@ void main() {
     if (useScene) {
         Scene scene = sb.scenes[sceneNumber];
 
-        mat3 rotationX = rotateX(scene.cameraRotation.x);
-        mat3 rotationY = rotateY(scene.cameraRotation.y);
-        mat3 rotationZ = rotateZ(scene.cameraRotation.z); 
+        mat3 rotationX = rotateY(scene.cameraRotation.x);
+        mat3 rotationY = rotateZ(scene.cameraRotation.y);
+        mat3 rotationZ = rotateX(scene.cameraRotation.z); 
 
         // rotate points
         pos *= rotationX * rotationY * rotationZ;

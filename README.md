@@ -123,7 +123,6 @@ index.xml
 
 ### Features
 
-* create >1 3d scene
 * write documentation
 * add scene tree to xml
 * finish unit expression parser
@@ -141,8 +140,8 @@ index.xml
 
 ### Refactoring
 
-* convension check
 * general refactor
+    * convension check
 * refactor text code
 * use std::nothrow with all news
 
