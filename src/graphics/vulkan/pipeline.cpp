@@ -109,10 +109,17 @@ namespace SplitGui {
         colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eG;
         colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eB;
         colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eA;
-        colorBlendAttachment.blendEnable         = vk::False;
+        colorBlendAttachment.blendEnable         = vk::True;
+        colorBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
+        colorBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+        colorBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
+        colorBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eSrcAlpha;
+        colorBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+        colorBlendAttachment.alphaBlendOp        = vk::BlendOp::eAdd;
 
         vk::PipelineColorBlendStateCreateInfo colorBlending;
         colorBlending.logicOpEnable   = vk::False;
+        colorBlending.logicOp         = vk::LogicOp::eCopy;
         colorBlending.attachmentCount = 1;
         colorBlending.pAttachments    = &colorBlendAttachment;
 
