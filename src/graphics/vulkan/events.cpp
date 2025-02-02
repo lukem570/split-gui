@@ -5,5 +5,6 @@ namespace SplitGui {
         recreateSwapchain();
 
         Result TODO = createVertexUniformBuffer();
+        updateDescriptorSets();
     }
 }
