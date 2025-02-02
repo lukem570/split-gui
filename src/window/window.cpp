@@ -41,8 +41,6 @@ namespace SplitGui {
         return windowLib->getWindowData();
     }
 
-    // TODO: move to windowlib
-
     bool Window::shouldClose() {
         return windowLib->shouldClose();
     }

@@ -117,13 +117,14 @@ namespace SplitGui {
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
+                void   setVertical(bool);
+
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eList;
                 std::string                    name        = "list";
                 const static unsigned int      maxChildren = -1;
 
             private: // props
-                UnitExpression itemWidth;
                 bool           isVertical;
         };
 
@@ -257,6 +258,8 @@ namespace SplitGui {
             public:
   [[nodiscard]] Result instance() override;
                 void   update()   override;
+
+                void   setAlias(std::string& inAlias);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eBinding;

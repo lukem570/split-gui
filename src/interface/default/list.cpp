@@ -10,4 +10,8 @@ namespace SplitGui {
     Result Default::List::instance() {
         return Result::eSuccess;
     }
+
+    void Default::List::setVertical(bool verticalIn) {
+        isVertical = verticalIn;
+    }
 }

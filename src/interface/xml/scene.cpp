@@ -1,13 +1,42 @@
 #include "xmlParser.hpp"
 
 namespace SplitGui {
+    ResultValue<InterfaceElement*> XmlParser::handleSceneTag() {
+        Default::SceneElement* newScene = new Default::SceneElement();
+
+        ResultValue<XmlToken> tokenRes = nextToken();
+        TRYD(tokenRes);
+        XmlToken token = tokenRes.value;
+
+        while (token.type == XmlTokenType::eText) {
+            TRYR(sceneRes, handleSceneParameters(newScene, token));
+        }
+
+        if (token.type != XmlTokenType::eTagClose) {
+            return Result::eInvalidPrematureClosure;
+        }
+
+        return newScene;
+    }
+
     Result XmlParser::handleSceneParameters(Default::SceneElement* scene, XmlToken& token) {
 
         if (token.value == "number") {
-            nextToken();
-            nextToken();
+            ResultValue<XmlToken> attributeTokenRes = nextToken();
+            TRYD(attributeTokenRes);
+            token = attributeTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
 
-            // TODO:
+            ResultValue<XmlToken> valueTokenRes = nextToken();
+            TRYD(valueTokenRes);
+            token = valueTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            scene->setSceneNumber(std::atoi(token.value.c_str()));
+
+            ResultValue<XmlToken> finalTokenRes = nextToken();
+            TRYD(finalTokenRes);
+            token = finalTokenRes.value;
 
             return Result::eSuccess;
         }

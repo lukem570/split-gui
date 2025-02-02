@@ -10,4 +10,8 @@ namespace SplitGui {
     Result Default::Binding::instance() {
         return Result::eSuccess;
     }
+
+    void Default::Binding::setAlias(std::string& inAlias) {
+        alias = inAlias;
+    }
 }

@@ -4,171 +4,100 @@ namespace SplitGui {
 
     ResultValue<InterfaceElement*> XmlParser::parse(const std::string& xmlInput) {
         file = xmlInput;
-        return parse(0);
+        return parse();
     }
 
-    ResultValue<InterfaceElement*> XmlParser::parse(int depth) {
+    inline void XmlParser::fillHandleTagInterfaces(std::unordered_map<std::string, HandleTagInterface>& map) {
+        map["binding"]   = &SplitGui::XmlParser::handleBindingTag;
+        map["box"]       = &SplitGui::XmlParser::handleBoxTag;
+        map["list"]      = &SplitGui::XmlParser::handleListTag;
+        map["mask"]      = &SplitGui::XmlParser::handleMaskTag;
+        map["media"]     = &SplitGui::XmlParser::handleMediaTag;
+        map["meta"]      = &SplitGui::XmlParser::handleMetaTag;
+        map["overlay"]   = &SplitGui::XmlParser::handleOverlayTag;
+        map["rect"]      = &SplitGui::XmlParser::handleRectTag;
+        map["scene"]     = &SplitGui::XmlParser::handleSceneTag;
+        map["split"]     = &SplitGui::XmlParser::handleSplitTag;
+        map["text"]      = &SplitGui::XmlParser::handleTextTag;
+        map["transform"] = &SplitGui::XmlParser::handleTransformTag;
+    }
 
-        ResultValue<XmlToken> ___tokenRes = nextToken();
-        TRYD(___tokenRes);
-        XmlToken token = ___tokenRes.value;
+    ResultValue<InterfaceElement*> XmlParser::parse() {
 
-        do {
-            Begin:
+        ResultValue<XmlToken> tokenRes = nextToken();
+        TRYD(tokenRes);
+        XmlToken token = tokenRes.value;
 
-            if (token.value != "<") {
-                return Result::eInvalidToken;
+        if (token.type != XmlTokenType::eTagOpen) {
+            return Result::eInvalidToken;
+        }
+
+        std::unordered_map<std::string, HandleTagInterface> handleTagInterfaces;
+        fillHandleTagInterfaces(handleTagInterfaces);
+
+        while (token.type != XmlTokenType::eEndOfFile) {
+        printf("begin2: %s, %d\n", token.value.c_str(), index);
+
+            ResultValue<XmlToken> nameTokenRes = nextToken();
+            TRYD(nameTokenRes);
+            token = nameTokenRes.value;
+            
+            if (handleTagInterfaces.find(token.value) == handleTagInterfaces.end()) {
+                return Result::eInvalidTag;
             }
 
-            ResultValue<XmlToken> __tokenRes = nextToken();
-            TRYD(__tokenRes);
-            token = __tokenRes.value;
+            printf("parse: %s\n", token.value.c_str());
 
-            if (token.value == "split") {
-                
-                Default::Split* newSplit = new Default::Split();
-
-                ResultValue<XmlToken> _tokenRes = nextToken();
-                TRYD(_tokenRes);
-                token = _tokenRes.value;
-
-                while(token.type == XmlTokenType::eText) {
-                    TRYR(splitRes, handleSplitParameters(newSplit, token));
-
-                    ResultValue<XmlToken> tokenRes = nextToken();
-                    TRYD(tokenRes);
-                    token = tokenRes.value;
-                }
-
-                if (token.type == XmlTokenType::eTagClose) {
-                    return Result::eInvalidPrematureClosure;
-                }
-
-                ResultValue<InterfaceElement*> parseRet1 = parse(depth + 1);
-                TRYD(parseRet1);
-                newSplit->addChild(parseRet1.value);
-                
-                ResultValue<InterfaceElement*> parseRet2 = parse(depth + 1);
-                TRYD(parseRet2);
-                newSplit->addChild(parseRet2.value);
-
-                nextToken();
-                nextToken();
-                nextToken();
-
-                return newSplit;
-            }
-
-            if (token.value == "list") {
-
-            }
-
-            if (token.value == "box") {
-
-            }
-
-            if (token.value == "overlay") {
-
-            }
-
-            if (token.value == "mask") {
-
-            }
-
-            if (token.value == "transform") {
-
-            }
-
-            if (token.value == "rect") {
-
-                Default::Rect* newRect = new Default::Rect();
-
-                ResultValue<XmlToken> _tokenRes = nextToken();
-                TRYD(_tokenRes);
-                token = _tokenRes.value;
-
-                while(token.type == XmlTokenType::eText) {
-                    TRYR(rectRes, handleRectParameters(newRect, token));
-
-                    ResultValue<XmlToken> tokenRes = nextToken();
-                    TRYD(tokenRes);
-                    token = tokenRes.value;
-                }
-
-                if (token.type != XmlTokenType::eTagClose) {
-                    return Result::eInvalidPrematureClosure;
-                }
-
-                return newRect;
-            }
-
-            if (token.value == "scene") {
-
-                Default::SceneElement* newScene = new Default::SceneElement();
-
-                ResultValue<XmlToken> _tokenRes = nextToken();
-                TRYD(_tokenRes);
-                token = _tokenRes.value;
-
-                while(token.type == XmlTokenType::eText) {
-                    TRYR(sceneRes, handleSceneParameters(newScene, token));
-
-                    ResultValue<XmlToken> tokenRes = nextToken();
-                    TRYD(tokenRes);
-                    token = tokenRes.value;
-                }
-
-                if (token.type != XmlTokenType::eTagClose) {
-                    return Result::eInvalidPrematureClosure;
-                }
-
-                return newScene;
-            }
-
-            if (token.value == "text") {
-
-            }
-
-            if (token.value == "media") {
-
+            if (token.value == "meta") { // TODO: fix
+                ResultValue<InterfaceElement*> metaRet = handleMetaTag();
+                TRYD(metaRet);
+                delete metaRet.value;
+                continue;
             }
 
             if (token.value == "binding") {
-
+                ResultValue<InterfaceElement*> bindingRet = handleBindingTag();
+                TRYD(bindingRet);
+                delete bindingRet.value;
+                continue;
             }
 
-            if (token.value == "meta") {
-
-                Default::Meta* newMeta = new Default::Meta();
-
-                ResultValue<XmlToken> _tokenRes = nextToken();
-                TRYD(_tokenRes);
-                token = _tokenRes.value;
-
-                while(token.type == XmlTokenType::eText) {
-                    TRYR(metaRes, handleMetaParameters(newMeta, token));
-
-                    ResultValue<XmlToken> tokenRes = nextToken();
-                    TRYD(tokenRes);
-                    token = tokenRes.value;
-                }
-
-                if (token.type != XmlTokenType::eTagClose) {
-                    return Result::eInvalidPrematureClosure;
-                }
-
-                ResultValue<XmlToken> tokenRes_ = nextToken();
-                TRYD(tokenRes_);
-                token = tokenRes_.value;
-
-                goto Begin;
-            }
-
-            return Result::eInvalidTag;
-
-        } while (token.type != XmlTokenType::eEndOfFile && depth != 0);
+            return (this->*handleTagInterfaces[token.value])();
+        } 
 
         return Result::eInvalidXml;
     }
 
+    ResultValue<bool> XmlParser::checkClosingTag(std::string name) {
+        int startIndex = index;
+
+        ResultValue<XmlToken> closeTokenRes = nextToken();
+        TRYD(closeTokenRes);
+        XmlToken token = closeTokenRes.value;
+
+        if (token.type != XmlTokenType::eTagClose) {
+            index = startIndex;
+            return false;
+        }
+
+        ResultValue<XmlToken> nameTokenRes = nextToken();
+        TRYD(nameTokenRes);
+        token = nameTokenRes.value;
+
+        if (token.value != name) {
+            index = startIndex;
+            return false;
+        }
+
+        ResultValue<XmlToken> finalTokenRes = nextToken();
+        TRYD(finalTokenRes);
+        token = finalTokenRes.value;
+
+        if (token.type != XmlTokenType::eTagOpen) {
+            index = startIndex;
+            return false;
+        }
+        
+        return true;
+    }
 }

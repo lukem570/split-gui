@@ -145,6 +145,7 @@ index.xml
 * convension check
 * general refactor
 * refactor text code
+* use std::nothrow with all news
 
 ### Bugs
 
