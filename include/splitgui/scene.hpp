@@ -4,47 +4,54 @@
 #include "lib.hpp"
 
 #include <splitgui/structs.hpp>
+#include <splitgui/graphics.hpp>
+
+#include <vector>
 
 namespace SplitGui {
 
-    class Node {
-        Transform transform;
-        std::vector<Node*> children;
+    class SPLITGUI_EXPORT Node {
+        public:
+
+            void setTransform(Transform& transform);
+            void addChild(Node& child);
+            void submitGraphics(Graphics& graphics);
+
+            virtual void submit(int sceneNumber) {};
+
+        protected:
+            Graphics*              pGraphics;
+
+            Transform transform;
+            std::vector<Node*> children;
     };
     
-    class Mesh : Node {
+    class SPLITGUI_EXPORT Mesh : public Node {
+        public:
 
+            void submit(int sceneNumber) override;
+
+        protected:
+
+            std::vector<Vertex>   vertices;
+            std::vector<uint16_t> indices;
     };
 
-    class Cube : Mesh {
+    class SPLITGUI_EXPORT Cube : public Mesh {
+        public:
+            Cube();
 
+            void setSize(float size);
+            void setColor(HexColor color);
+            void generate();
+
+        protected:
+
+            float size = 1;
+            HexColor color;
     };
 
-    class Prism : Mesh {
-
-    };
-
-    class Cylinder : Mesh {
-
-    };
-
-    class Hedron : Mesh {
-
-    };
-
-    class Sphere : Mesh {
-
-    };
-
-    class Pyramid : Mesh {
-
-    };
-
-    class Cone : Mesh {
-
-    };
-
-    class Scene {
+    class SPLITGUI_EXPORT Scene {
         public:
 
         private:

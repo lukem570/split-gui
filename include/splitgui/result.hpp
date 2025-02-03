@@ -1,6 +1,8 @@
 #ifndef SPLITGUI_RESULT_HPP
 #define SPLITGUI_RESULT_HPP
 
+#include "lib.hpp"
+
 #include <string>
 
 namespace SplitGui {
@@ -49,7 +51,7 @@ namespace SplitGui {
 
     // Similar to vulkan's result values
     template <typename T>
-    class ResultValue {
+    class SPLITGUI_EXPORT ResultValue {
         public:
             T value;
             std::string message;
