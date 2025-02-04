@@ -49,23 +49,48 @@ int main() {
     interface.setViewport(viewport);
     interface.attachEventHandler(eventHandler);
 
-    SplitGui::Cube cube;
-    cube.submitGraphics(graphics);
-    cube.setSize(0.25);
-    cube.setColor(0xFF00FF);
-    cube.generate();
 
-    cube.submit(0);
+    //SplitGui::Cube cube;
+    //cube.submitGraphics(graphics);
+    //cube.setSize(0.5);
+    //cube.setColor(0xFF00FF);
+    //cube.generate();
 
-    SplitGui::Vec3 rotation;
+    //cube.submit(0);
+
+    SplitGui::Vertex vert1;
+    vert1.color = SplitGui::HexColor(0xFF0000).normalize();
+    vert1.pos = {0.0, -0.5};
+
+    SplitGui::Vertex vert2;
+    vert2.color = SplitGui::HexColor(0x00FF00).normalize();
+    vert2.pos = {0.5, 0.5};
+
+    SplitGui::Vertex vert3;
+    vert3.color = SplitGui::HexColor(0x0000FF).normalize();
+    vert3.pos = {-0.5, 0.5};
+
+    std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
+    std::vector<uint16_t> indices          = {0, 1, 2, 1, 0, 2};
+
+    graphics.submitTriangleData(0, vertices, indices);
+
+    SplitGui::Vec3 rotation = {0, 0, 0};
+    SplitGui::Vec3 position = {0, 0, 0};
+
+    position.x = 0;
+    position.y = 0;
+    position.z = 0;
 
     eventHandler.instanceBuiltinEvents();
     interface.instance();
     graphics.submitBuffers();
 
+    graphics.updateSceneCameraPosition(0, position);
+
     while (!window.shouldClose()) {
 
-        rotation.x += degToRad(2);
+        rotation.y += degToRad(2);
 
         graphics.updateSceneCameraRotation(0, rotation);
 

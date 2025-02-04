@@ -149,3 +149,4 @@ index.xml
 
 * slowness
     * performance testing and checking for bottlenecks
+* camera position bug

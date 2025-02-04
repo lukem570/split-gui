@@ -12,6 +12,7 @@ struct Scene {
     ivec2 size;
     ivec2 position;
     vec3  cameraRotation;
+    vec3  cameraPosition;
 };
 
 layout(location = 0)      in vec3 in_fragColor;

@@ -79,7 +79,7 @@ int main() {
         
         rotation1.x += degToRad(2);
         rotation1.y += degToRad(3);
-        rotation1.z += degToRad(2);
+        rotation1.z += degToRad(3);
 
         rotation2.x += degToRad(2);
         rotation2.y += degToRad(3);

@@ -170,6 +170,7 @@ namespace SplitGui {
     struct alignas(16) SceneObj {
         RectObj  viewport;
         Vec3     cameraRotation;
+        Vec3     cameraPosition;
     };
 
     struct Vertex {

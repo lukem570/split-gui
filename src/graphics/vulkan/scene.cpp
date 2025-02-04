@@ -8,6 +8,7 @@ namespace SplitGui {
         scene.viewport.x        = std::min(x1.x,  x2.x);
         scene.viewport.y        = std::min(x1.y,  x2.y);
         scene.cameraRotation    = {0, 0, 0};
+        scene.cameraPosition    = {0, 0, 0};
 
         printf("scene: (%d, %d, %d, %d) (%d, %d) (%d, %d)\n", scene.viewport.x, scene.viewport.y, scene.viewport.width, scene.viewport.height, x1.x, x1.y, x2.x, x2.y);
 
@@ -37,7 +38,7 @@ namespace SplitGui {
             indices[oldIndicesSize + i] = oldVerticesSize + newIndices[i];
         }
 
-        printf("submitted triangles\n");
+        printf("submitted triangles: verts: %d indices: %d\n", newVertices.size(), newIndices.size());
     }
 
     void VulkanInterface::updateScene(unsigned int ref, IVec2 x1, IVec2 x2) {
@@ -65,7 +66,6 @@ namespace SplitGui {
         copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
-        vk_graphicsQueue.waitIdle();
 
         vk_device.destroyBuffer(stagingBuffer);
         vk_device.freeMemory(stagingBufferMemory);
@@ -77,9 +77,7 @@ namespace SplitGui {
 
     Result VulkanInterface::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
 
-        //scenes[sceneNumber].cameraPosition = position;
-
-        return Result::eInvalidSetting;
+        scenes[sceneNumber].cameraPosition = position;
 
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
@@ -93,7 +91,6 @@ namespace SplitGui {
         copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
-        vk_graphicsQueue.waitIdle();
 
         vk_device.destroyBuffer(stagingBuffer);
         vk_device.freeMemory(stagingBufferMemory);
