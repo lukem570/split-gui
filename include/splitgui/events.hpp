@@ -39,6 +39,9 @@ namespace SplitGui {
 
             enum class WindowType {
                 eResize,
+                eKeypress,
+                eMouseButton,
+                eMouseMove,
             };
 
             enum class GraphicsType {
@@ -133,31 +136,52 @@ namespace SplitGui {
             friend class EventHandler;
 
             ~Event() {
-                if (callback) {
-                    free(callback);
-                    callback = nullptr;
+                for (int i = 0; i < callbacks.size(); i++) {
+                    free(callbacks[i]);
                 }
             }
 
-            template <typename Return = void, typename... Args>
-            Return call(Args... args) {
-                if(enumerateReturnType<Return>() != callbackData.returnType) {
-                    printf("WARN: return type provided doesn't match callback return type\n");
-                    return Return();
+            template <typename Return, typename... Args>
+            std::vector<Return> callRet(Args... args) {
+                std::vector<Return> ret;
+
+                for (int i = 0; i < callbacks.size(); i++) {
+                    if(enumerateReturnType<Return>() != callbackDatas[i].returnType) {
+                        printf("WARN: return type provided doesn't match callback return type\n");
+                        return {};
+                    }
+                    
+                    if(sizeof...(args) != callbackDatas[i].paramCount) {
+                        printf("WARN: invalid number of parameters in call\n");
+                        return {};
+                    }
+
+                    ret.push_back(((Callback<Return>*)callbacks[i])->function(args...));
                 }
                 
-                if(sizeof...(args) != callbackData.paramCount) {
-                    printf("WARN: invalid number of parameters in call\n");
-                    return Return();
-                }
+                return ret;
+            }
 
-                return ((Callback<Return>*)callback)->function(args...);
+            template <typename... Args>
+            void call(Args... args) {
+                for (int i = 0; i < callbacks.size(); i++) {
+                    if(enumerateReturnType<void>() != callbackDatas[i].returnType) {
+                        printf("WARN: return type provided doesn't match callback return type\n");
+                        return;
+                    }
+                    
+                    if(sizeof...(args) != callbackDatas[i].paramCount) {
+                        printf("WARN: invalid number of parameters in call\n");
+                        return;
+                    }
+
+                    ((Callback<void>*)callbacks[i])->function(args...);
+                }
             }
 
         private:
-            void*           callback = nullptr;
-            CallbackData    callbackData;
-            EventAttachment attachment;
+            std::vector<void*>        callbacks;
+            std::vector<CallbackData> callbackDatas;
     };
 
     class EventHandler {
@@ -178,14 +202,24 @@ namespace SplitGui {
                 Callback<ReturnType>* callback = (Callback<ReturnType>*)malloc(sizeof(Callback<ReturnType>));
                 callback->function             = (ReturnType (*)(...))function;
 
-                events.push_back({});
+                int event;
 
-                events.back().callback     = callback;
-                events.back().callbackData = callbackData;
-                events.back().attachment   = attachment;
+                if (stringMappings.find(alias) != stringMappings.end()) {
+                    event = stringMappings[alias];
+                } else if (attachmentMappings.find(attachment) != attachmentMappings.end()) {
+                    if (attachment.category != EventAttachment::Category::eNone) {
+                        event = attachmentMappings[attachment];
+                    }
+                } else {
+                    event = events.size();
+                    events.push_back({});
+                }
 
-                stringMappings[alias] = &events.back();
-                attachmentMappings[attachment] = &events.back();
+                events[event].callbacks.push_back(callback);
+                events[event].callbackDatas.push_back(callbackData);
+
+                stringMappings[alias] = event;
+                attachmentMappings[attachment] = event;
             }
 
             Event* fetchEvent(std::string alias) {
@@ -193,11 +227,15 @@ namespace SplitGui {
                     return nullptr;
                 }
 
-                return stringMappings[alias];
+                return &events[stringMappings[alias]];
             }
 
             Event* fetchEvent(EventAttachment attachment) {
-                return attachmentMappings[attachment];
+                if (attachmentMappings.find(attachment) == attachmentMappings.end()) {
+                    return nullptr;
+                }
+
+                return &events[attachmentMappings[attachment]];
             }
 
             void attachWindow(Window* pWindow) {
@@ -221,9 +259,9 @@ namespace SplitGui {
             }
         
         private:
-            std::vector<Event>                          events;
-            std::unordered_map<std::string, Event*>     stringMappings;
-            std::unordered_map<EventAttachment, Event*> attachmentMappings;
+            std::vector<Event>                       events;
+            std::unordered_map<std::string, int>     stringMappings;
+            std::unordered_map<EventAttachment, int> attachmentMappings;
 
             Context                                     eventContext;
     };

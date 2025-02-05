@@ -38,6 +38,8 @@ namespace SplitGui {
 
 
             static void resize_callback(glfw::Window& window, int width, int height);
+            static void key_callback(glfw::Window& window, glfw::KeyCode key, int scancode, glfw::KeyState action, glfw::ModifierKeyBit mods);
+            static void mouseButton_callback(glfw::Window& window, glfw::MouseButton mouseButton, glfw::MouseButtonState mouseState, glfw::ModifierKeyBit mods);
 
     };
 }

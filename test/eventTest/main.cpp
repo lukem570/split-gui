@@ -15,7 +15,7 @@ int main() {
     handler.bindFunction(event, "event");
 
     SplitGui::Event* event = handler.fetchEvent("event");
-    int ret = event->call<int>(10, 20);
+    int ret = event->callRet<int>(10, 20).back();
 
     printf("return: %d\n", ret);
 
