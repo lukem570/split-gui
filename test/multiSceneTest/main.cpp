@@ -67,7 +67,6 @@ int main() {
     graphics.submitTriangleData(0, vertices, indices);
     graphics.submitTriangleData(1, vertices, indices);
 
-    eventHandler.instanceBuiltinEvents();
     interface.instance();
     graphics.submitBuffers();
 
@@ -75,7 +74,9 @@ int main() {
     SplitGui::Vec3 rotation2 = {0, 0, 0};
 
     while (!window.shouldClose()) {
-
+        while (eventHandler.popEvent()) {
+            
+        }  
         
         rotation1.x += degToRad(2);
         rotation1.y += degToRad(3);

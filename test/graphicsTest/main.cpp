@@ -15,9 +15,11 @@ int main() {
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 
-    eventHandler.instanceBuiltinEvents();
-
     while (!window.shouldClose()) {
+        while (eventHandler.popEvent()) {
+            
+        }  
+
         graphics.drawFrame();
         window.update();
     }

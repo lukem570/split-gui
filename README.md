@@ -97,7 +97,6 @@ int main(void) {
     interface.setViewport(viewport);
     interface.attachEventHandler(eventHandler);
 
-    eventHandler.instanceBuiltinEvents();
     interface.instance();
     graphics.submitBuffers();
 

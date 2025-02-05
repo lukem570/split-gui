@@ -42,11 +42,14 @@ int main() {
     root.setSize(window.getSize());
     root.setPosition({0, 0});
 
-    eventHandler.instanceBuiltinEvents();
     TRYRC(interfaceRes, root.instance());
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {
+        while (eventHandler.popEvent()) {
+            
+        }  
+        
         graphics.drawFrame();
         window.update();
     }

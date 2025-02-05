@@ -44,11 +44,14 @@ int main() {
     interface.setViewport(viewport);
     interface.attachEventHandler(eventHandler);
 
-    eventHandler.instanceBuiltinEvents();
     interface.instance();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {
+        while (eventHandler.popEvent()) {
+            
+        }  
+
         graphics.drawFrame();
         window.update();
     }

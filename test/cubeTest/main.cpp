@@ -82,13 +82,15 @@ int main() {
     position.y = 0;
     position.z = 0;
 
-    eventHandler.instanceBuiltinEvents();
     interface.instance();
     graphics.submitBuffers();
 
     graphics.updateSceneCameraPosition(0, position);
 
     while (!window.shouldClose()) {
+        while (eventHandler.popEvent()) {
+            
+        }   
 
         rotation.y += degToRad(2);
 

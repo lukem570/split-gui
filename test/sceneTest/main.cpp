@@ -66,13 +66,15 @@ int main() {
 
     graphics.submitTriangleData(0, vertices, indices);
 
-    eventHandler.instanceBuiltinEvents();
     interface.instance();
     graphics.submitBuffers();
 
     SplitGui::Vec3 rotation = {0, 0, 0};
 
     while (!window.shouldClose()) {
+        while (eventHandler.popEvent()) {
+            
+        }  
         
         rotation.y += degToRad(2);
         graphics.updateSceneCameraRotation(0, rotation);

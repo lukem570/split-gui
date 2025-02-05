@@ -27,7 +27,22 @@ namespace SplitGui {
         eventContext.pGraphics->submitBuffers();
     }
 
-    void EventHandler::instanceBuiltinEvents() {
-        bindFunction(resizeEvent, "builtin-resize", EventAttachment(EventAttachment::Category::eWindow, EventAttachment::WindowType::eResize));
+    void EventHandler::callBuiltinEvent(Event event) {
+
+        switch (event.category) {
+            case Event::Category::eWindow: {
+                
+                switch (event.window) {
+                    case Event::WindowType::eResize: {
+                        resizeEvent(eventContext);
+                        break;
+                    }
+                    default: break;
+                }
+
+                break;
+            }
+            default: break;
+        }
     }
 }

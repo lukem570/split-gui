@@ -7,19 +7,12 @@ namespace SplitGui {
 
         EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
 
-        Event* pEvent = pEventHandler->fetchEvent(
-                EventAttachment(
-                    EventAttachment::Category::eWindow, 
-                    EventAttachment::WindowType::eResize
-                )
-            );
-
-        if (!pEvent) {
-            printf("invalid event\n");
-            return;
-        }
-
-        pEvent->call(pEventHandler->getContext());
+        pEventHandler->pushEvent(
+            Event(
+                Event::Category::eWindow, 
+                Event::WindowType::eResize
+            )
+        );
         
         printf("Window resized to %d x %d\n", width, height);
     }
@@ -30,22 +23,36 @@ namespace SplitGui {
 
         EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
 
-        Event* pEvent = pEventHandler->fetchEvent(
-                EventAttachment(
-                    EventAttachment::Category::eWindow, 
-                    EventAttachment::WindowType::eMouseButton
-                )
-            );
-        
-        if (!pEvent) {
-            return;
-        }
-
+        pEventHandler->pushEvent(
+            Event(
+                Event::Category::eWindow, 
+                Event::WindowType::eKeypress
+            )
+        );
     }
 
     void GlfwInterface::mouseButton_callback(glfw::Window& window, glfw::MouseButton mouseButton, glfw::MouseButtonState mouseState, glfw::ModifierKeyBit mods) {
         printf("mouse button press: %d\n", mouseButton);
 
+        EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
+
+        pEventHandler->pushEvent(
+            Event(
+                Event::Category::eWindow, 
+                Event::WindowType::eMouseButton
+            )
+        );
     }
 
+    void GlfwInterface::mouseMove_callback(glfw::Window& window, double posX, double posY) {
+
+        EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
+
+        pEventHandler->pushEvent(
+            Event(
+                Event::Category::eWindow, 
+                Event::WindowType::eMouseMove
+            )
+        );
+    }
 }
