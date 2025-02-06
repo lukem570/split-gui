@@ -6,13 +6,13 @@ to be expanded to other libraries and systems not implementing Vulkan or Glfw.
 
 ## Builds 
 
-| Operating system |                            Build Status                            |      Notes      |
-|------------------|--------------------------------------------------------------------|-----------------|
-| Linux            | ![Passing](https://img.shields.io/badge/build-passing-brightgreen) |                 |
-| Windows          | ![Unknown](https://img.shields.io/badge/build-unknown-yellow)      | not tested      |
-| IOS              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
-| Mac              | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
-| Android          | ![Failing](https://img.shields.io/badge/build-failing-red)         | not implemented |
+| Operating system |                                 Build Status                           |      Notes      |
+|------------------|------------------------------------------------------------------------|-----------------|
+| Linux            | ![Passing](https://img.shields.io/badge/build-passing-brightgreen)     |                 |
+| Windows          | ![Compiling](https://img.shields.io/badge/build-compiling-green)       | not tested      |
+| IOS              | ![Failing](https://img.shields.io/badge/build-failing-red)             | not implemented |
+| Mac              | ![Failing](https://img.shields.io/badge/build-failing-red)             | not implemented |
+| Android          | ![Failing](https://img.shields.io/badge/build-failing-red)             | not implemented |
 
 ## Documentation
 
@@ -91,16 +91,20 @@ int main(void) {
     viewport.x    = 0;
     viewport.y    = 0;
     
-    SplitGui::Interface interface;
-    TRYRC(parseRes, interface.parseXml(page));
-    interface.submitGraphics(graphics);
-    interface.setViewport(viewport);
-    interface.attachEventHandler(eventHandler);
+    SplitGui::Interface ui;
+    TRYRC(parseRes, ui.parseXml(page));
+    ui.submitGraphics(graphics);
+    ui.setViewport(viewport);
+    ui.attachEventHandler(eventHandler);
 
-    interface.instance();
+    ui.instance();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {
+        while (eventHandler.popEvent()) {
+            
+        }  
+
         graphics.drawFrame();
         window.update();
     }

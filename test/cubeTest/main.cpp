@@ -43,11 +43,11 @@ int main() {
     viewport.x      = 0;
     viewport.y      = 0;
     
-    SplitGui::Interface interface;
-    TRYRC(interfaceRes, interface.parseXml(page));
-    interface.submitGraphics(graphics);
-    interface.setViewport(viewport);
-    interface.attachEventHandler(eventHandler);
+    SplitGui::Interface ui;
+    TRYRC(interfaceRes, ui.parseXml(page));
+    ui.submitGraphics(graphics);
+    ui.setViewport(viewport);
+    ui.attachEventHandler(eventHandler);
 
 
     //SplitGui::Cube cube;
@@ -82,7 +82,7 @@ int main() {
     position.y = 0;
     position.z = 0;
 
-    interface.instance();
+    ui.instance();
     graphics.submitBuffers();
 
     graphics.updateSceneCameraPosition(0, position);

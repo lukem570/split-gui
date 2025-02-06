@@ -104,7 +104,7 @@
     // This is wonderful 
     #include <vulkan/vulkan_core.h>
     #undef VK_HEADER_VERSION
-    #define VK_HEADER_VERSION 306
+    #define VK_HEADER_VERSION 307
     #include <vulkan/vulkan.hpp>
 
     // dispatch loader
@@ -254,5 +254,11 @@ namespace ft {
     #include FT_FREETYPE_H
     #include FT_OUTLINE_H
 }
+
+#include <stdint.h>
+
+#ifndef UINT8_WIDTH
+#define UINT8_WIDTH 8
+#endif
 
 #endif // !SPLITGUI_EXPORT

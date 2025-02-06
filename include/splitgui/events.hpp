@@ -45,7 +45,7 @@ namespace SplitGui {
             union {
                 WindowType    window;
                 GraphicsType  graphics;
-                InterfaceType interface;
+                Event::InterfaceType interface_;
                 SceneType     scene;
                 int raw;
             };
@@ -54,14 +54,14 @@ namespace SplitGui {
             Event() : category(Category::eNone) {}
             Event(Category category, WindowType window)       : category(category), window(window) {}
             Event(Category category, GraphicsType graphics)   : category(category), graphics(graphics) {}
-            Event(Category category, InterfaceType interface) : category(category), interface(interface) {}
+            Event(Category category, InterfaceType interface_) : category(category), interface_(interface_) {}
             Event(Category category, SceneType scene)         : category(category), scene(scene) {}
 
             bool operator==(const Event& operand) const {
                 switch (operand.category) {
                     case Category::eWindow: return operand.window == window; break;
                     case Category::eGraphics: return operand.graphics == graphics; break;
-                    case Category::eInterface: return operand.interface == interface; break;
+                    case Category::eInterface: return operand.interface_ == interface_; break;
                     case Category::eScene: return operand.scene == scene; break;
                     default: return false; break;
                 }
@@ -75,7 +75,7 @@ namespace SplitGui {
         Scene*     pScene     = nullptr;
     };
 
-    class EventHandler {
+    class SPLITGUI_EXPORT EventHandler {
         public:
 
             int   popEvent();

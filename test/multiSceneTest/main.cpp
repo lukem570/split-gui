@@ -43,11 +43,11 @@ int main() {
     viewport.x      = 0;
     viewport.y      = 0;
     
-    SplitGui::Interface interface;
-    TRYRC(interfaceRes, interface.parseXml(page));
-    interface.submitGraphics(graphics);
-    interface.setViewport(viewport);
-    interface.attachEventHandler(eventHandler);
+    SplitGui::Interface ui;
+    TRYRC(interfaceRes, ui.parseXml(page));
+    ui.submitGraphics(graphics);
+    ui.setViewport(viewport);
+    ui.attachEventHandler(eventHandler);
 
     SplitGui::Vertex vert1;
     vert1.color = SplitGui::HexColor(0xFF0000).normalize();
@@ -67,7 +67,7 @@ int main() {
     graphics.submitTriangleData(0, vertices, indices);
     graphics.submitTriangleData(1, vertices, indices);
 
-    interface.instance();
+    ui.instance();
     graphics.submitBuffers();
 
     SplitGui::Vec3 rotation1 = {0, 0, 0};

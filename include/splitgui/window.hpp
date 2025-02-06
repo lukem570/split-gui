@@ -72,7 +72,6 @@ namespace SplitGui {
             void       update();
             IVec2      getSize();
             RawWindow* getWindowData();
-            void       submitInterface(Interface& interface);
             void       attachEventHandler(EventHandler& handler);
 
 #ifdef SPLIT_GUI_USE_VULKAN
@@ -84,7 +83,6 @@ namespace SplitGui {
         private:
             Graphics*           pGraphics     = nullptr;
             WindowLibInterface* windowLib     = nullptr;
-            Interface*          pInterface    = nullptr;
             EventHandler*       pEventHandler = nullptr;
             
     };

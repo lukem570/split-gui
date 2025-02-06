@@ -38,13 +38,13 @@ int main() {
     viewport.x    = 0;
     viewport.y    = 0;
     
-    SplitGui::Interface interface;
-    TRYRC(parseRes, interface.parseXml(page));
-    interface.submitGraphics(graphics);
-    interface.setViewport(viewport);
-    interface.attachEventHandler(eventHandler);
+    SplitGui::Interface ui;
+    TRYRC(parseRes, ui.parseXml(page));
+    ui.submitGraphics(graphics);
+    ui.setViewport(viewport);
+    ui.attachEventHandler(eventHandler);
 
-    interface.instance();
+    ui.instance();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {

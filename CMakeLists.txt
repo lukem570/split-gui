@@ -196,14 +196,22 @@ message(STATUS "window manager: ${VK_WINDOW_MANAGER}")
 
 include_directories(${INCLUDE_PATHS})
 
+link_directories(
+    ${CMAKE_BINARY_DIR}/glfw/build/src
+    ${CMAKE_BINARY_DIR}/volk/build
+    ${CMAKE_BINARY_DIR}/msdfgen/build
+    ${CMAKE_BINARY_DIR}/freetype/build
+)
+
 add_library(splitgui SHARED ${CMAKE_SOURCE_DIR}/src/splitgui.cpp)
 
-target_link_libraries(splitgui PRIVATE 
-    ${CMAKE_BINARY_DIR}/glfw/build/src/libglfw3.a 
-    ${CMAKE_BINARY_DIR}/volk/build/libvolk.a 
-    ${CMAKE_BINARY_DIR}/msdfgen/build/libmsdfgen-core.a
-    ${CMAKE_BINARY_DIR}/freetype/build/libfreetype.a
+target_link_libraries(splitgui
+    glfw3
+    volk
+    msdfgen-core
+    freetype
 )
+
 
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${VK_WINDOW_MANAGER})
 
