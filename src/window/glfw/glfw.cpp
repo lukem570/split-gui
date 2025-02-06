@@ -2,6 +2,7 @@
 
 #include "callbacks.cpp"
 #include "cleanup.cpp"
+#include "converters.cpp"
 #include "getters.cpp"
 #include "setup.cpp"
 
