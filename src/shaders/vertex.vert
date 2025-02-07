@@ -87,7 +87,7 @@ void main() {
         Scene scene = sb.scenes[sceneNumber];
 
         // transform points around position
-        pos -= scene.cameraPosition;
+        //pos -= scene.cameraPosition;
 
         mat3 rotationX = rotateX(scene.cameraRotation.x);
         mat3 rotationY = rotateY(scene.cameraRotation.y);

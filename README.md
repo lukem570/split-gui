@@ -129,8 +129,8 @@ index.xml
 * write documentation
 * add scene tree to xml
 * finish unit expression parser
-* make config for builds
 * finish default interface elements
+* add svgs 
 
 ### Optimizations
 
@@ -147,9 +147,11 @@ index.xml
     * convension check
 * refactor text code
 * use std::nothrow with all news
+* refactor lib to accomidate builds without vulkan or glfw
+* refactor scene projection
+    * camera position bug
 
 ### Bugs
 
 * slowness
     * performance testing and checking for bottlenecks
-* camera position bug

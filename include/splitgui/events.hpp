@@ -6,6 +6,7 @@
 #include <splitgui/structs.hpp>
 #include <string>
 #include <stack>
+#include <vector>
 
 namespace SplitGui {
 
@@ -162,6 +163,72 @@ namespace SplitGui {
         eZ            = 'z',
     };
 
+    enum class MouseState {
+        ePress,
+        eRelease,
+    };
+
+    enum class MouseCode {
+        eUnknown = 255,
+
+        eOne,   // left
+        eTwo,   // right
+        eThree, // middle
+
+        eFour,
+        eFive,
+        eSix,
+        eSeven,
+        eEight,
+    };
+
+    union WindowEventData {
+
+        struct {
+            IVec2 size;
+        } resize;
+
+        struct {
+            KeyCode  keyCode;
+            KeyState keyState;
+        } keypress;
+
+        struct {
+            MouseCode mouseCode;
+            MouseState mouseState;
+        } mouseButton;
+
+        struct {
+            int xPos;
+            int yPos;
+        } mouseMove;
+    };
+
+    union InterfaceEventData {
+
+        struct {
+            //std::string alias;
+            //std::vector<UnitExpression::Literal> params;
+            UnitExpression::Literal* returnValue;
+        } functionCall;
+    };
+
+    struct EventData {
+        enum class Type {
+            eWindow,
+            eInterface,
+        };
+
+        union {
+            WindowEventData window;
+            InterfaceEventData interface;
+        };
+        Type type;
+
+        EventData() : window{} {}
+        ~EventData();
+    };
+
     class Event {
         public:
             enum class Category{
@@ -184,7 +251,7 @@ namespace SplitGui {
             };
 
             enum class InterfaceType {
-                eBinding
+                eFunctionCall
             };
 
             enum class SceneType {
@@ -199,19 +266,7 @@ namespace SplitGui {
                 int raw;
             };
             Category category;
-
-            union {
-                union {
-                    struct {
-                        IVec2 size;
-                    } resize;
-                    struct {
-                        KeyCode  keyCode;
-                        KeyState keyState;
-                    } keypress;
-                } window;
-                
-            } data;
+            EventData data;
 
             Event() : category(Category::eNone) {}
             Event(Category category, WindowType window)       : category(category), window(window) {}

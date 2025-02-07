@@ -1,7 +1,7 @@
 #include "glfw.hpp"
 
 namespace SplitGui {
-    KeyCode convertGlfwKeyCode(glfw::KeyCode code) {
+    KeyCode GlfwInterface::convertGlfwKeyCode(glfw::KeyCode code) {
         switch (code) {
             case glfw::KeyCode::Unknown:        return KeyCode::eUnknown;           break;
             case glfw::KeyCode::Space:          return KeyCode::eSpace;             break;
@@ -10,6 +10,7 @@ namespace SplitGui {
             case glfw::KeyCode::Minus:          return KeyCode::eMinus;             break;
             case glfw::KeyCode::Period:         return KeyCode::ePeriod;            break;
             case glfw::KeyCode::Slash:          return KeyCode::eForwardSlash;      break;
+            case glfw::KeyCode::Backslash:      return KeyCode::eBackslash;         break;
             case glfw::KeyCode::Zero:           return KeyCode::eZero;              break;
             case glfw::KeyCode::One:            return KeyCode::eOne;               break;
             case glfw::KeyCode::Two:            return KeyCode::eTwo;               break;
@@ -125,11 +126,38 @@ namespace SplitGui {
         }
     }
 
-    inline KeyState convertGlfwKeyState(glfw::KeyState state) {
+    inline KeyState GlfwInterface::convertGlfwKeyState(glfw::KeyState state) {
         switch (state) {
             case glfw::KeyState::Press:   return KeyState::ePress;   break;
             case glfw::KeyState::Release: return KeyState::eRelease; break;
             case glfw::KeyState::Repeat:  return KeyState::eHold;    break;
         }
+
+        return KeyState::eHold; // TODO: fix
     }
+
+    inline MouseCode GlfwInterface::convertGlfwMouseButton(glfw::MouseButton code) {
+        switch (code) {
+            case glfw::MouseButton::One:   return MouseCode::eOne;   break;
+            case glfw::MouseButton::Two:   return MouseCode::eTwo;   break;
+            case glfw::MouseButton::Three: return MouseCode::eThree; break;
+            case glfw::MouseButton::Four:  return MouseCode::eFour;  break;
+            case glfw::MouseButton::Five:  return MouseCode::eFive;  break;
+            case glfw::MouseButton::Six:   return MouseCode::eSix;   break;
+            case glfw::MouseButton::Seven: return MouseCode::eSeven; break;
+            case glfw::MouseButton::Eight: return MouseCode::eEight; break;
+        }
+
+        return MouseCode::eUnknown;
+    }
+
+    inline MouseState GlfwInterface::convertGlfwMouseState(glfw::MouseButtonState state) {
+        switch (state) {
+            case glfw::MouseButtonState::Press:   return MouseState::ePress;   break;
+            case glfw::MouseButtonState::Release: return MouseState::eRelease; break;
+        }
+
+        return MouseState::ePress; // TODO: fix
+    }
+
 }

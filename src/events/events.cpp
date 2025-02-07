@@ -38,5 +38,12 @@ namespace SplitGui {
     Event EventHandler::getEvent() {
         return eventBuffer;
     }
+
+    EventData::~EventData() {
+        switch (type) {
+            case Type::eWindow: window.~WindowEventData(); break;
+            case Type::eInterface: interface.~InterfaceEventData(); break;
+        }
+    }
     
 }
