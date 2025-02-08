@@ -1,10 +1,12 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    void VulkanInterface::resizeEvent() {
+    Result VulkanInterface::resizeEvent() {
         recreateSwapchain();
 
-        Result TODO = createVertexUniformBuffer();
+        TRYR(vertexUniformRes, createVertexUniformBuffer());
         updateDescriptorSets();
+
+        return Result::eSuccess;
     }
 }

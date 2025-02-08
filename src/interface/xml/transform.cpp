@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleTransformTag() {
-        Default::Transform* newTransform = new Default::Transform();
+        Default::Transform* newTransform = new(std::nothrow) Default::Transform();
+
+        if (!newTransform) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -35,6 +39,13 @@ namespace SplitGui {
     }
 
     inline Result XmlParser::handleTransformParameters(Default::Transform* transform, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)transform, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

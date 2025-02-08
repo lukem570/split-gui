@@ -29,12 +29,20 @@ namespace SplitGui {
 
     }
 
-    void Window::instanceGlfw() {
-        windowLib = (WindowLibInterface*) new GlfwInterface();
+    Result Window::instanceGlfw() {
+        windowLib = (WindowLibInterface*) new(std::nothrow) GlfwInterface();
+        
+        if (!windowLib) {
+            return Result::eHeapAllocFailed;
+        }
+
+        return Result::eSuccess;
     }
 
-    void Window::createWindow(const char* title) {
-        windowLib->createWindow(title);
+    Result Window::createWindow(const char* title) {
+        TRYR(windowRes, windowLib->createWindow(title));
+
+        return Result::eSuccess;
     }
 
     RawWindow* Window::getWindowData() {

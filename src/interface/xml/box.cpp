@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleBoxTag() {
-        Default::Box* newBox = new Default::Box();
+        Default::Box* newBox = new(std::nothrow) Default::Box();
+
+        if (!newBox) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -35,6 +39,12 @@ namespace SplitGui {
     }
 
     inline Result XmlParser::handleBoxParameters(Default::Box* box, XmlToken& token) {
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)box, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

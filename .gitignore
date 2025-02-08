@@ -39,3 +39,6 @@ build
 
 # Fonts
 fonts
+
+#valgrind
+vgcore.*

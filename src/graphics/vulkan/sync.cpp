@@ -16,5 +16,7 @@ namespace SplitGui {
             vk_renderFinishedSemaphores[i] = vk_device.createSemaphore(semaphoreInfo);
             vk_inFlightFences[i]           = vk_device.createFence(fenceInfo);
         }
+
+        SPLITGUI_LOG("Created Sync Objects");
     }
 }

@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleSplitTag() {
-        Default::Split* newSplit = new Default::Split();
+        Default::Split* newSplit = new(std::nothrow) Default::Split();
+
+        if (!newSplit) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -35,6 +39,12 @@ namespace SplitGui {
     }
 
     Result XmlParser::handleSplitParameters(Default::Split* split, XmlToken& token) {
+
+        //ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)split, token);
+        //TRYD(defaultRes);
+        //if (defaultRes.value) {
+        //    return Result::eSuccess;
+        //}
 
         if (token.value == "position") {
             ResultValue<XmlToken> attributeTokenRes = nextToken();

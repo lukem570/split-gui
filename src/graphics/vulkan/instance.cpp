@@ -72,6 +72,8 @@ namespace SplitGui {
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_instance);
 
+        SPLITGUI_LOG("Instanced Vulkan");
+
         return Result::eSuccess;
     }
 }

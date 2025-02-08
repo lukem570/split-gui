@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleListTag() {
-        Default::List* newList = new Default::List();
+        Default::List* newList = new(std::nothrow) Default::List();
+
+        if (!newList) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -35,6 +39,12 @@ namespace SplitGui {
     }
 
     inline Result XmlParser::handleListParameters(Default::List* list, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)list, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
 
         if (token.value == "direction") {
             ResultValue<XmlToken> attributeTokenRes = nextToken();

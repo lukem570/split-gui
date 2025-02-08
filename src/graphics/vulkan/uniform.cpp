@@ -47,6 +47,8 @@ namespace SplitGui {
         vk_device.freeMemory(stagingBufferMemory);
         vk_device.destroyBuffer(stagingBuffer);
 
+        SPLITGUI_LOG("Created Vertex Uniform Buffer");
+
         return Result::eSuccess;
     }
 }

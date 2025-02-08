@@ -250,6 +250,7 @@ namespace SplitGui {
         eVector,
         eBinaryOp,
         eCall,
+        eComma,
     };
 
     struct UnitExpressionToken {
@@ -269,6 +270,7 @@ namespace SplitGui {
         enum class UnitType {
             ePercent,
             ePixel,
+            eUnsigned,
         };
 
         enum class BinaryOpType {
@@ -307,8 +309,8 @@ namespace SplitGui {
         };
         Type type;
 
-        UnitExpression() {}
-        ~UnitExpression() {}
+        UnitExpression(Type);
+        ~UnitExpression();
     };
 
     struct UnitExpressionValue {
@@ -336,14 +338,14 @@ namespace SplitGui {
 
         UnitExpressionValue() = default;
 
-        UnitExpressionValue(double number) : type(Type::eNumber), number(number) {} 
+        UnitExpressionValue(double number) : number(number), type(Type::eNumber) {} 
 
-        UnitExpressionValue(IVec4 vec) : type(Type::eVector), vector{.size = 4, .isInt = true,  .ivec4 = vec} {} 
-        UnitExpressionValue( Vec4 vec) : type(Type::eVector), vector{.size = 4, .isInt = false,  .vec4 = vec} {} 
-        UnitExpressionValue(IVec3 vec) : type(Type::eVector), vector{.size = 3, .isInt = true,  .ivec3 = vec} {} 
-        UnitExpressionValue( Vec3 vec) : type(Type::eVector), vector{.size = 3, .isInt = false,  .vec3 = vec} {} 
-        UnitExpressionValue(IVec2 vec) : type(Type::eVector), vector{.size = 2, .isInt = true,  .ivec2 = vec} {} 
-        UnitExpressionValue( Vec2 vec) : type(Type::eVector), vector{.size = 2, .isInt = false,  .vec2 = vec} {} 
+        UnitExpressionValue(IVec4 vec) : vector{.size = 4, .isInt = true,  .ivec4 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue( Vec4 vec) : vector{.size = 4, .isInt = false,  .vec4 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue(IVec3 vec) : vector{.size = 3, .isInt = true,  .ivec3 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue( Vec3 vec) : vector{.size = 3, .isInt = false,  .vec3 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue(IVec2 vec) : vector{.size = 2, .isInt = true,  .ivec2 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue( Vec2 vec) : vector{.size = 2, .isInt = false,  .vec2 = vec}, type(Type::eVector) {} 
 
         UnitExpressionValue operator+(const UnitExpressionValue& operand);
         UnitExpressionValue operator-(const UnitExpressionValue& operand);

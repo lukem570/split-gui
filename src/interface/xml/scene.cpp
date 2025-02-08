@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleSceneTag() {
-        Default::SceneElement* newScene = new Default::SceneElement();
+        Default::SceneElement* newScene = new(std::nothrow) Default::SceneElement();
+
+        if (!newScene) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -20,6 +24,12 @@ namespace SplitGui {
     }
 
     Result XmlParser::handleSceneParameters(Default::SceneElement* scene, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)scene, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
 
         if (token.value == "number") {
             ResultValue<XmlToken> attributeTokenRes = nextToken();

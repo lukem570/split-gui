@@ -31,6 +31,8 @@ namespace SplitGui {
         createInfo.pBindings    = bindings.data();
         
         vk_descriptorSetLayout = vk_device.createDescriptorSetLayout(createInfo);
+
+        SPLITGUI_LOG("Created Descriptor Set Layout");
     }
 
     void VulkanInterface::createDescriptorPool() {
@@ -49,11 +51,14 @@ namespace SplitGui {
         std::array<vk::DescriptorPoolSize, 3> poolSizes = { scenePoolSize, texturePoolSize, vertexUniformPoolSize };
 
         vk::DescriptorPoolCreateInfo createInfo;
+        createInfo.flags         = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
         createInfo.poolSizeCount = poolSizes.size();
         createInfo.pPoolSizes    = poolSizes.data();
         createInfo.maxSets       = 1;
         
         vk_descriptorPool = vk_device.createDescriptorPool(createInfo);
+
+        SPLITGUI_LOG("Created Descriptor Pool");
     }
 
     void VulkanInterface::createDescriptorSet() {
@@ -63,6 +68,8 @@ namespace SplitGui {
         allocInfo.pSetLayouts        = &vk_descriptorSetLayout;
 
         vk_descriptorSet = vk_device.allocateDescriptorSets(allocInfo).back();
+
+        SPLITGUI_LOG("Created Descriptor Set");
     }
 
     inline void VulkanInterface::updateDescriptorSets() {
@@ -93,5 +100,7 @@ namespace SplitGui {
         descriptorWrites[1].pBufferInfo     = &vertexUniformBufferInfo;
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
+
+        SPLITGUI_LOG("Updated Descriptor Sets");
     }
 }

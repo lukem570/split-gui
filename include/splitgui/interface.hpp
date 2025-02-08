@@ -61,7 +61,7 @@ namespace SplitGui {
 
         private:
             UnitExpression* expressionTree;
-            int             index = 0;
+            unsigned int    index = 0;
 
 [[nodiscard]] ResultValue<UnitExpressionToken> nextToken(std::string& expression);
               void                             cleanup(UnitExpression* expression);
@@ -69,6 +69,8 @@ namespace SplitGui {
 
     class SPLITGUI_EXPORT InterfaceElement {
         public:
+
+            virtual ~InterfaceElement() = default;
 
             friend class Interface;
 
@@ -80,6 +82,7 @@ namespace SplitGui {
             void setPosition(IVec2 position);
             void setExtent(RectObj extent);
             void setGraphics(Graphics* pgGraphics);
+            void setRef(std::string string);
             void cleanup();
 
         protected:
@@ -88,6 +91,8 @@ namespace SplitGui {
             const static unsigned int      maxChildren = -1;
             std::vector<InterfaceElement*> children;
             RectObj                        extent;
+            std::string                    ref         = "";
+            
 
             Graphics*                      pGraphics   = nullptr;
     };
@@ -96,8 +101,10 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Split : public InterfaceElement {
             public:
+                      ~Split()    override = default;
+
   [[nodiscard]] Result instance() override;
-                void   update()     override;
+                void   update()   override;
 
                 void   setVertical(bool);
   [[nodiscard]] Result setPosition(std::string);
@@ -114,6 +121,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT List : public InterfaceElement {
             public:
+                      ~List()     override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
@@ -130,6 +139,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Box : public InterfaceElement {
             public:
+                      ~Box()      override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
@@ -144,6 +155,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Overlay : public InterfaceElement {
             public:
+                      ~Overlay()    override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
@@ -158,6 +171,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Mask : public InterfaceElement {
             public:
+                      ~Mask()     override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
@@ -172,8 +187,10 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Transform : public InterfaceElement {
             public:
-  [[nodiscard]] Result instance() override;
-                void   update()   override;
+                      ~Transform() override = default;
+
+  [[nodiscard]] Result instance()  override;
+                void   update()    override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eTransform;
@@ -188,10 +205,13 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Rect : public InterfaceElement {
             public:
+                      ~Rect()     override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
-                void setColor(HexColor color);
+                void   setColor(HexColor);
+  [[nodiscard]] Result setColor(std::string);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eRect;
@@ -199,6 +219,7 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 0;
 
             private: // props
+                UnitExpressionEvaluator        colorStatement;
                 HexColor                       color = 0;
                 
                 // state
@@ -207,8 +228,10 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT SceneElement : public InterfaceElement {
             public:
-  [[nodiscard]] Result instance() override;
-                void   update()   override;
+                      ~SceneElement() override = default;
+
+  [[nodiscard]] Result instance()     override;
+                void   update()       override;
 
                 void setSceneNumber(unsigned int sceneNumber);
 
@@ -227,6 +250,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Text : public InterfaceElement {
             public:
+                      ~Text()     override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
@@ -242,6 +267,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Media : public InterfaceElement {
             public:
+                      ~Media()    override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
@@ -256,6 +283,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Binding : public InterfaceElement {
             public:
+                      ~Binding()  override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
@@ -272,6 +301,8 @@ namespace SplitGui {
 
         class SPLITGUI_EXPORT Meta : public InterfaceElement {
             public:
+                      ~Meta()     override = default;
+
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 

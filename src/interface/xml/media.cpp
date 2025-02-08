@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleMediaTag() {
-        Default::Media* newMedia = new Default::Media();
+        Default::Media* newMedia = new(std::nothrow) Default::Media();
+
+        if (!newMedia) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -20,6 +24,13 @@ namespace SplitGui {
     }
 
     inline Result XmlParser::handleMediaParameters(Default::Media* media, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)media, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

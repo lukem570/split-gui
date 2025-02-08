@@ -2,6 +2,8 @@
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
 
+#include "../unitExpression.cpp"
+
 namespace SplitGui {
     void Default::Rect::update() {
         IVec2 x1;
@@ -39,5 +41,19 @@ namespace SplitGui {
 
     void Default::Rect::setColor(HexColor colorIn) {
         color = colorIn;
+    }
+
+    Result Default::Rect::setColor(std::string colorIn) {
+        TRY(SplitGui::UnitExpression*, parseRes, colorStatement.parse(colorIn));
+        // todo check size
+
+
+        UnitExpressionValue colorEval = colorStatement.evaluate(extent.height);
+        color = colorEval.vector.ivec3;
+
+        printf("rect color: (%d, %d, %d)\n", color.r, color.g, color.b);
+        fflush(stdout);
+
+        return Result::eSuccess;
     }
 }

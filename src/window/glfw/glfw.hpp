@@ -19,16 +19,16 @@ namespace SplitGui {
 
     class GlfwInterface : WindowLibInterface {
         public:
-            GlfwInterface();
-            ~GlfwInterface();
+                          GlfwInterface();
+                         ~GlfwInterface() override;
 
-            inline void createWindow(const char* title) override;
+[[nodiscard]] inline Result createWindow(const char* title) override;
             
-            RawWindow* getWindowData() override;
-            IVec2      getSize() override;
-            bool       shouldClose() override;
-            void       update() override;
-            void       submitEventHandler(EventHandler* pEventHandler) override;
+            RawWindow*    getWindowData() override;
+            IVec2         getSize() override;
+            bool          shouldClose() override;
+            void          update() override;
+            void          submitEventHandler(EventHandler* pEventHandler) override;
 
 #ifdef SPLIT_GUI_USE_VULKAN
             

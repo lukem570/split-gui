@@ -2,8 +2,8 @@
 
 <split direction="horizontal" position="50%"> 
     <split direction="vertical" position="100px"> 
-        <rect color="ivec3(255, 100, 100)"/>
-        <rect color="ivec3(100, 100, 255)"/>
+        <rect color="ivec3(255u, 100u, 100u)"/>
+        <rect color="ivec3(100u, 100u, 255u)"/>
     </split>
-    <rect color="ivec3(100, 255, 100)"/>
+    <rect color="ivec3(100u, 255u, 100u)"/>
 </split>

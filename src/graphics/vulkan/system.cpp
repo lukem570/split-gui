@@ -6,7 +6,7 @@ namespace SplitGui {
 
         int selection = -1;
         
-        for (int i = 0; i < physicalDevices.size(); i++) {
+        for (unsigned int i = 0; i < physicalDevices.size(); i++) {
             if (physicalDevices[i].getProperties().apiVersion < vk::ApiVersion12) {
                 continue;
             }
@@ -21,7 +21,8 @@ namespace SplitGui {
 
         vk_physicalDevice = physicalDevices[selection];
 
-        printf("Using %s\n", vk_physicalDevice.getProperties().deviceName.data());
+        SPLITGUI_LOG("Created Physical Device");
+        SPLITGUI_LOG("Using: %s", vk_physicalDevice.getProperties().deviceName.data());
 
         return Result::eSuccess;
     }
@@ -29,30 +30,32 @@ namespace SplitGui {
     inline Result VulkanInterface::getQueueFamilies() {
         std::vector<vk::QueueFamilyProperties> queueFamilies = vk_physicalDevice.getQueueFamilyProperties();
 
-        for (int i = 0; i < queueFamilies.size(); i++) {
+        for (unsigned int i = 0; i < queueFamilies.size(); i++) {
 
             vk::Bool32 result = vk_physicalDevice.getSurfaceSupportKHR(i, vk_surface);
 
-            if (queueFamilies[i].queueFlags & vk::QueueFlagBits::eGraphics && graphicsQueueFamilyIndex == -1){
+            if (queueFamilies[i].queueFlags & vk::QueueFlagBits::eGraphics && graphicsQueueFamilyIndex == (unsigned int)-1){
                 graphicsQueueFamilyIndex = i;
             }
 
-            if (result && presentQueueFamilyIndex == -1) {
+            if (result && presentQueueFamilyIndex == (unsigned int)-1) {
                 presentQueueFamilyIndex = i;
             }
             
-            if (graphicsQueueFamilyIndex != -1 && presentQueueFamilyIndex != -1) {
+            if (graphicsQueueFamilyIndex != (unsigned int)-1 && presentQueueFamilyIndex != (unsigned int)-1) {
                 break;
             }
         }
 
-        if (graphicsQueueFamilyIndex == -1) {
+        if (graphicsQueueFamilyIndex == (unsigned int)-1) {
             return Result::eFailedToFindQueueFamily;
         }
 
-        if (presentQueueFamilyIndex == -1) {
+        if (presentQueueFamilyIndex == (unsigned int)-1) {
             return Result::eFailedToFindQueueFamily;
         }
+
+        SPLITGUI_LOG("Queue Families: graphics= %ld, present= %ld", graphicsQueueFamilyIndex, presentQueueFamilyIndex);
 
         return Result::eSuccess;
     }
@@ -96,12 +99,16 @@ namespace SplitGui {
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_device);
 
+        SPLITGUI_LOG("Created Logical Device");
+
         return Result::eSuccess;
     }
 
     inline void VulkanInterface::getQueues() {
         vk_graphicsQueue = vk_device.getQueue(graphicsQueueFamilyIndex, 0);
         vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
+
+        SPLITGUI_LOG("Instanced Queue Objects");
     }
 
     inline Result VulkanInterface::createSurface(SplitGui::Window& window) {
@@ -110,6 +117,8 @@ namespace SplitGui {
         TRYD(surfaceRet);
 
         vk_surface = surfaceRet.value;
+
+        SPLITGUI_LOG("Created Scene");
 
         return Result::eSuccess;
     }

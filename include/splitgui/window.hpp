@@ -35,15 +35,15 @@ namespace SplitGui {
     class SPLITGUI_EXPORT WindowLibInterface {
         public:
 
-            WindowLibInterface() {}
-            ~WindowLibInterface() {}
+                                 WindowLibInterface() {}
+              virtual           ~WindowLibInterface() {}
 
-            virtual void       createWindow(const char* title)                 { throw; }
-            virtual RawWindow* getWindowData()                                 { throw; }
-            virtual IVec2      getSize()                                       { throw; }
-            virtual void       update()                                        { throw; }
-            virtual bool       shouldClose()                                   { throw; }
-            virtual void       submitEventHandler(EventHandler* pEventHandler) { throw; }
+[[nodiscard]] virtual Result     createWindow(const char* title)                 { throw; }
+              virtual RawWindow* getWindowData()                                 { throw; }
+              virtual IVec2      getSize()                                       { throw; }
+              virtual void       update()                                        { throw; }
+              virtual bool       shouldClose()                                   { throw; }
+              virtual void       submitEventHandler(EventHandler* pEventHandler) { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
@@ -63,16 +63,16 @@ namespace SplitGui {
             friend class GraphicsLibInterface;
             friend class Interface;
 
-            Window();
-            ~Window();
+                         Window();
+                        ~Window();
 
-            void       instanceGlfw();
-            void       createWindow(const char* title);
-            bool       shouldClose();
-            void       update();
-            IVec2      getSize();
-            RawWindow* getWindowData();
-            void       attachEventHandler(EventHandler& handler);
+[[nodiscard]] Result     instanceGlfw();
+[[nodiscard]] Result     createWindow(const char* title);
+              bool       shouldClose();
+              void       update();
+              IVec2      getSize();
+              RawWindow* getWindowData();
+              void       attachEventHandler(EventHandler& handler);
 
 #ifdef SPLIT_GUI_USE_VULKAN
             

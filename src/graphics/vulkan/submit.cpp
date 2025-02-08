@@ -63,6 +63,8 @@ namespace SplitGui {
         
         knownIndicesSize = indices.size();
 
+        SPLITGUI_LOG("Submitted Vertex Buffer");
+
         return Result::eSuccess;
     }
 
@@ -123,6 +125,8 @@ namespace SplitGui {
 
         knownScenesSize = scenes.size();
 
+        SPLITGUI_LOG("Submited Scene Buffer");
+
         return Result::eSuccess;
     }
 
@@ -137,6 +141,8 @@ namespace SplitGui {
             markScenesForUpdate = false;
             TRYR(sceneRes, scenesSubmit());
         }
+
+        SPLITGUI_LOG("Submited Buffers");
 
         return Result::eSuccess;
     }

@@ -1,9 +1,28 @@
+#ifndef SPLITGUI_UNIT_EXPRESSION_CPP
+#define SPLITGUI_UNIT_EXPRESSION_CPP
+
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
 
 #include <cctype>
+#include <vector>
+#include <string>
 
 namespace SplitGui {
+
+    UnitExpression::UnitExpression(Type typeIn) {
+        type = typeIn;
+    }
+
+    UnitExpression::~UnitExpression() {
+        switch (type) {
+            case Type::eLiteral:  literal.~Literal(); break;
+            case Type::eVector:   vector.~Vector();   break;
+            case Type::eCall:     call.~Call();       break;
+            case Type::eBinaryOp: binary.~BinaryOp(); break;
+            default:                                  break;
+        }
+    }
 
     ResultValue<UnitExpressionToken> UnitExpressionEvaluator::nextToken(std::string& expression) {
         while (std::isspace(expression[index])) {
@@ -30,6 +49,16 @@ namespace SplitGui {
             return token;
         }
 
+        if (expression[index] == ',') {
+            UnitExpressionToken token;
+            token.type  = UnitExpressionTokenType::eComma;
+            token.value = ',';
+
+            index++;
+
+            return token;
+        }
+
         if (expression[index] == '(') {
             UnitExpressionToken token;
             token.type  = UnitExpressionTokenType::eBeginBracket;
@@ -50,10 +79,10 @@ namespace SplitGui {
             return token;
         }
 
-        if (expression.substr(index, 2) == "px" || expression[index] == '%') {
+        if (expression.substr(index, 2) == "px" || expression[index] == '%' || expression[index] == 'u') {
             UnitExpressionToken token;
             token.type  = UnitExpressionTokenType::eUnit;
-            token.value = expression[index] == '%' ? "%" : "px";
+            token.value = expression[index] == '%' ? "%" : (expression[index] == 'u' ? "u" : "px");
 
             index += token.value.size();
 
@@ -116,7 +145,7 @@ namespace SplitGui {
         while (true) {
 
             token = nextToken(expression);
-
+            
             TRYD(token);
 
             if (token.value.type == UnitExpressionTokenType::eEndOfFile) {
@@ -126,35 +155,80 @@ namespace SplitGui {
             switch (token.value.type) {
                 case UnitExpressionTokenType::eLiteral: {
                     
-                    UnitExpression* newExpression = new UnitExpression();
+                    UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eLiteral);
 
-                    newExpression->type          = UnitExpression::Type::eLiteral;
+                    if (!newExpression) {
+                        return Result::eHeapAllocFailed;
+                    }
+
                     newExpression->literal.value = std::atof(token.value.value.c_str());
 
                     token = nextToken(expression);
-
                     TRYD(token);
 
                     if (token.value.type != UnitExpressionTokenType::eUnit) {
                         return Result::eInvalidToken;
                     }
 
-                    newExpression->literal.type  = token.value.value == "%" ? UnitExpression::UnitType::ePercent : UnitExpression::UnitType::ePixel;
+                    newExpression->literal.type  = token.value.value == "%" ? UnitExpression::UnitType::ePercent : (token.value.value == "u" ? UnitExpression::UnitType::eUnsigned : UnitExpression::UnitType::ePixel);
 
                     ret = newExpression;
 
                     break;
                 }
+                case UnitExpressionTokenType::eCall: {
+                    // TODO:
+                    break;
+                }
+                case UnitExpressionTokenType::eVector: {
+
+                    UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eVector);
+
+                    if (!newExpression) {
+                        return Result::eHeapAllocFailed;
+                    }
+
+                    newExpression->vector.isIVec = token.value.value[0] == 'i';
+
+                    unsigned int size = token.value.value[newExpression->vector.isIVec ? 4 : 3] - '0';
+
+                    if (size > 4 || size <= 1) {
+                        return Result::eInvalidToken;
+                    }
+
+                    token = nextToken(expression);
+                    TRYD(token);
+
+                    if (token.value.type != UnitExpressionTokenType::eBeginBracket) {
+                        return Result::eInvalidToken;
+                    }
+                    
+                    std::vector<SplitGui::UnitExpression*> values(size);
+
+                    for (unsigned int i = 0; i < size; i++) {
+
+                        ResultValue<UnitExpression*> parseRet = parse(expression);
+                        TRYD(parseRet);
+
+                        values[i] = parseRet.value;
+                    }
+                    newExpression->vector.values = values;
+
+                    ret = newExpression;
+                    break;
+                }
                 case UnitExpressionTokenType::eBinaryOp: {
                     
-                    UnitExpression* newExpression = new UnitExpression();
+                    UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eBinaryOp);
 
-                    newExpression->type         = UnitExpression::Type::eBinaryOp;
+                    if (!newExpression) {
+                        return Result::eHeapAllocFailed;
+                    }
+
                     newExpression->binary.left  = ret;
                     newExpression->binary.oper  = enumerateOperator(token.value.value[0]);
 
                     ResultValue<UnitExpression*> parseRet = parse(expression);
-
                     TRYD(parseRet);
 
                     newExpression->binary.right = parseRet.value;
@@ -163,16 +237,40 @@ namespace SplitGui {
                     
                     break;
                 }
+                case UnitExpressionTokenType::eComma: {
+                    expressionTree = ret;
+
+                    if (ret == nullptr) {
+                        return Result::eInvalidToken;
+                    }
+
+                    return ret;
+                }
+                case UnitExpressionTokenType::eEndBracket: {
+                    expressionTree = ret;
+
+                    if (ret == nullptr) {
+                        return Result::eInvalidToken;
+                    }
+
+                    return ret;
+                }
                 default: return Result::eInvalidType;
             }
         }
 
         expressionTree = ret;
 
+        if (ret == nullptr) {
+            return Result::eInvalidToken;
+        }
+
         return ret;
     }
 
     UnitExpressionValue UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {
+
+        SPLITGUI_LOG("Evaluate: %d", expression->type);
 
         switch (expression->type) {
             case UnitExpression::Type::eBinaryOp: {
@@ -187,18 +285,46 @@ namespace SplitGui {
                 break;
             }
             case UnitExpression::Type::eCall: {
-                
+                // TODO:
+                break;
+            }
+            case UnitExpression::Type::eVector: {
+                  
+                switch (expression->vector.values.size()) {
+                    case 2:
+                        if (expression->vector.isIVec) {
+                            return IVec2{(int) evaluateExpr(maxSize, expression->vector.values[0]).number, (int) evaluateExpr(maxSize, expression->vector.values[1]).number};
+                        } else {
+                            return Vec2{(float) evaluateExpr(maxSize, expression->vector.values[0]).number, (float) evaluateExpr(maxSize, expression->vector.values[1]).number};
+                        }
+                        break;
+                    case 3:
+                        if (expression->vector.isIVec) {
+                            return IVec3{(int) evaluateExpr(maxSize, expression->vector.values[0]).number, (int) evaluateExpr(maxSize, expression->vector.values[1]).number, (int) evaluateExpr(maxSize, expression->vector.values[2]).number};
+                        } else {
+                            return Vec3{(float) evaluateExpr(maxSize, expression->vector.values[0]).number, (float) evaluateExpr(maxSize, expression->vector.values[1]).number, (float) evaluateExpr(maxSize, expression->vector.values[2]).number};
+                        }
+                        break;
+                    case 4:
+                        if (expression->vector.isIVec) {
+                            return IVec4{(int) evaluateExpr(maxSize, expression->vector.values[0]).number, (int) evaluateExpr(maxSize, expression->vector.values[1]).number, (int) evaluateExpr(maxSize, expression->vector.values[2]).number, (int) evaluateExpr(maxSize, expression->vector.values[3]).number};
+                        } else {
+                            return Vec4{(float) evaluateExpr(maxSize, expression->vector.values[0]).number, (float) evaluateExpr(maxSize, expression->vector.values[1]).number, (float) evaluateExpr(maxSize, expression->vector.values[2]).number, (float) evaluateExpr(maxSize, expression->vector.values[3]).number};
+                        }
+                        break;
+                } 
+
+                break;     
             }
             case UnitExpression::Type::eLiteral: {
 
                 if (expression->literal.type == UnitExpression::UnitType::ePercent) {
                     return (int)((expression->literal.value / 100.0) * (double)maxSize);
-                } else if (expression->literal.type == UnitExpression::UnitType::ePixel) {
+                } else if (expression->literal.type == UnitExpression::UnitType::ePixel || expression->literal.type == UnitExpression::UnitType::eUnsigned) {
                     return (int)expression->literal.value;
-                }
+                } 
             }
-            default:
-                break;
+            default: break;
         }
 
         return 0;
@@ -216,14 +342,14 @@ namespace SplitGui {
         switch (expression->type) {
             case UnitExpression::Type::eVector:
 
-                for (int i = 0; i < expression->vector.values.size(); i++) {
+                for (unsigned int i = 0; i < expression->vector.values.size(); i++) {
                     cleanup(expression->vector.values[i]);
                 }
                 
                 break;
             case UnitExpression::Type::eCall:
 
-                for (int i = 0; i < expression->call.params.size(); i++) {
+                for (unsigned int i = 0; i < expression->call.params.size(); i++) {
                     cleanup(expression->call.params[i]);
                 }
 
@@ -234,45 +360,48 @@ namespace SplitGui {
                 cleanup(expression->binary.right);
 
                 break;
+            default: break;
         }
 
         delete expression;
     }
 
-#define UNIT_EXPRESSION_OPERATOR(sign) \
-\
-    switch (type) { \
-        case Type::eNumber: return number + operand.number; break; \
-        case Type::eVector: {\
-            \
-            switch (vector.size) {\
-                case 2:\
-                    if (vector.isInt) {\
-                        return vector.ivec2 sign operand.vector.ivec2;\
-                    } else {\
-                        return vector.vec2 sign operand.vector.vec2;\
-                    }\
-                    break;\
-                case 3:\
-                    if (vector.isInt) {\
-                        return vector.ivec3 sign operand.vector.ivec3;\
-                    } else {\
-                        return vector.vec3 sign operand.vector.vec3;\
-                    }\
-                    break;\
-                case 4:\
-                    if (vector.isInt) {\
-                        return vector.ivec4 sign operand.vector.ivec4;\
-                    } else {\
-                        return vector.vec4 sign operand.vector.vec4;\
-                    }\
-                    break;\
-            }\
-\
-            break;\
-        }\
-    }\
-\
+#define UNIT_EXPRESSION_OPERATOR(sign)                                  \
+                                                                        \
+    switch (type) {                                                     \
+        case Type::eNumber: return number + operand.number; break;      \
+        case Type::eVector: {                                           \
+                                                                        \
+            switch (vector.size) {                                      \
+                case 2:                                                 \
+                    if (vector.isInt) {                                 \
+                        return vector.ivec2 sign operand.vector.ivec2;  \
+                    } else {                                            \
+                        return vector.vec2 sign operand.vector.vec2;    \
+                    }                                                   \
+                    break;                                              \
+                case 3:                                                 \
+                    if (vector.isInt) {                                 \
+                        return vector.ivec3 sign operand.vector.ivec3;  \
+                    } else {                                            \
+                        return vector.vec3 sign operand.vector.vec3;    \
+                    }                                                   \
+                    break;                                              \
+                case 4:                                                 \
+                    if (vector.isInt) {                                 \
+                        return vector.ivec4 sign operand.vector.ivec4;  \
+                    } else {                                            \
+                        return vector.vec4 sign operand.vector.vec4;    \
+                    }                                                   \
+                    break;                                              \
+                default: break;                                         \
+            }                                                           \
+                                                                        \
+            break;                                                      \
+        default: break;                                                 \
+        }                                                               \
+    }                                                                   \
+                                                                        \
     return -1.0;
 
 // END UNIT_EXPRESSION_OPERATOR
@@ -283,3 +412,5 @@ namespace SplitGui {
     UnitExpressionValue UnitExpressionValue::operator*(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(*) }// TODO errors / results
     UnitExpressionValue UnitExpressionValue::operator/(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(/) }// TODO errors / results
 }
+
+#endif

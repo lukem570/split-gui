@@ -39,5 +39,7 @@ namespace SplitGui {
         createInfo.pDependencies            = &dependency;
 
         vk_renderpass = vk_device.createRenderPass(createInfo);
+
+        SPLITGUI_LOG("Created Renderpass");
     }
 }

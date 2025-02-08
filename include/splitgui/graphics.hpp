@@ -14,8 +14,8 @@ namespace SplitGui {
 
     class SPLITGUI_EXPORT GraphicsLibInterface {
         public:
-            GraphicsLibInterface() {}
-            ~GraphicsLibInterface() {}
+                       GraphicsLibInterface() {}
+              virtual ~GraphicsLibInterface() {}
 
 [[nodiscard]] virtual Result             instance()                                                                                                  { throw; }
 [[nodiscard]] virtual Result             submitWindow(Window& window)                                                                                { throw; }
@@ -31,7 +31,7 @@ namespace SplitGui {
               virtual void               loadFont(const char* path)                                                                                  { throw; }
               virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                 { throw; }
 [[nodiscard]] virtual Result             submitBuffers()                                                                                             { throw; }
-              virtual void               resizeEvent()                                                                                               { throw; }
+[[nodiscard]] virtual Result             resizeEvent()                                                                                               { throw; }
 
         protected:
             SplitGui::Window* pWindow;
@@ -59,7 +59,7 @@ namespace SplitGui {
               void             loadFont(const char* path);
               void             drawMedia(Vec2 x1, Vec2 x2);
               void             submitBuffers();
-              void             resizeEvent();
+[[nodiscard]] Result           resizeEvent();
               void             attachEventHandler(EventHandler& handler);
 
         private:

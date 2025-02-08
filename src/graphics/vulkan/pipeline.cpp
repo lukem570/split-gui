@@ -5,11 +5,11 @@ namespace SplitGui {
         vk::PipelineLayoutCreateInfo createInfo;
         createInfo.setLayoutCount         = 1;
         createInfo.pSetLayouts            = &vk_descriptorSetLayout;
-        //createInfo.setLayoutCount         = 0;
-        //createInfo.pSetLayouts            = nullptr;
         createInfo.pushConstantRangeCount = 0;
 
         vk_graphicsPipelineLayout = vk_device.createPipelineLayout(createInfo);
+
+        SPLITGUI_LOG("Created Pipeline Layout");
     }
 
     inline Result VulkanInterface::createGraphicsPipeline() {
@@ -149,6 +149,8 @@ namespace SplitGui {
         vk_device.destroyShaderModule(vertexShader);
 
         vk_graphicsPipeline = result.value;
+
+        SPLITGUI_LOG("Created Graphics Pipeline");
 
         return Result::eSuccess;
     }

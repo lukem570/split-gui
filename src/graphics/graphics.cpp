@@ -20,7 +20,11 @@ namespace SplitGui {
             return Result::eVulkanNotSupported;
         }
 
-        pInterface = (GraphicsLibInterface*) new VulkanInterface(validation);
+        pInterface = (GraphicsLibInterface*) new(std::nothrow) VulkanInterface(validation);
+        if (!pInterface) {
+            return Result::eHeapAllocFailed;
+        }
+
         pInterface->instance();
 
         return Result::eSuccess;
@@ -47,8 +51,6 @@ namespace SplitGui {
         newX2.x = (float)x2.x / windowSize.x * 2.0 - 1.0f;
         newX2.y = (float)x2.y / windowSize.y * 2.0 - 1.0f;
 
-        printf("drawrect: (%.6f, %.6f), (%.6f, %.6f), color: (%.6f, %.6f, %.6f)\n", newX1.x, newX1.y, newX2.x, newX2.y, color.normalize().x, color.normalize().y, color.normalize().z);
-
         return pInterface->drawRect(newX1, newX2, color.normalize());
     }
 
@@ -74,8 +76,9 @@ namespace SplitGui {
         return pInterface->instanceScene(x1, x2);
     }
 
-    void Graphics::resizeEvent() {
-        pInterface->resizeEvent();
+    Result Graphics::resizeEvent() {
+        TRYR(resizeRes, pInterface->resizeEvent());
+        return Result::eSuccess;
     }
 
     ResultValue<int> Graphics::drawText(IVec2 x1, std::string text) {
@@ -84,8 +87,6 @@ namespace SplitGui {
         Vec2 newX1;
         newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
         newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
-
-        printf("drawtext: (%.6f, %.6f), text: %s\n", newX1.x, newX1.y, text.c_str());
 
         ResultValue<float> ret = pInterface->drawText(newX1, text);
 

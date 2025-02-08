@@ -7,21 +7,6 @@ namespace SplitGui {
         return parse();
     }
 
-    inline void XmlParser::fillHandleTagInterfaces(std::unordered_map<std::string, HandleTagInterface>& map) {
-        map["binding"]   = &SplitGui::XmlParser::handleBindingTag;
-        map["box"]       = &SplitGui::XmlParser::handleBoxTag;
-        map["list"]      = &SplitGui::XmlParser::handleListTag;
-        map["mask"]      = &SplitGui::XmlParser::handleMaskTag;
-        map["media"]     = &SplitGui::XmlParser::handleMediaTag;
-        map["meta"]      = &SplitGui::XmlParser::handleMetaTag;
-        map["overlay"]   = &SplitGui::XmlParser::handleOverlayTag;
-        map["rect"]      = &SplitGui::XmlParser::handleRectTag;
-        map["scene"]     = &SplitGui::XmlParser::handleSceneTag;
-        map["split"]     = &SplitGui::XmlParser::handleSplitTag;
-        map["text"]      = &SplitGui::XmlParser::handleTextTag;
-        map["transform"] = &SplitGui::XmlParser::handleTransformTag;
-    }
-
     ResultValue<InterfaceElement*> XmlParser::parse() {
 
         ResultValue<XmlToken> tokenRes = nextToken();
@@ -32,11 +17,7 @@ namespace SplitGui {
             return Result::eInvalidToken;
         }
 
-        std::unordered_map<std::string, HandleTagInterface> handleTagInterfaces;
-        fillHandleTagInterfaces(handleTagInterfaces);
-
         while (token.type != XmlTokenType::eEndOfFile) {
-        printf("begin2: %s, %d\n", token.value.c_str(), index);
 
             ResultValue<XmlToken> nameTokenRes = nextToken();
             TRYD(nameTokenRes);
@@ -45,8 +26,6 @@ namespace SplitGui {
             if (handleTagInterfaces.find(token.value) == handleTagInterfaces.end()) {
                 return Result::eInvalidTag;
             }
-
-            printf("parse: %s\n", token.value.c_str());
 
             if (token.value == "meta") { // TODO: fix
                 ResultValue<InterfaceElement*> metaRet = handleMetaTag();
@@ -62,7 +41,11 @@ namespace SplitGui {
                 continue;
             }
 
-            return (this->*handleTagInterfaces[token.value])();
+            ResultValue<InterfaceElement*> tagRes = (this->*handleTagInterfaces[token.value])();
+            TRYD(tagRes);
+
+
+            return tagRes.value;
         } 
 
         return Result::eInvalidXml;

@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleMaskTag() {
-        Default::Mask* newMask = new Default::Mask();
+        Default::Mask* newMask = new(std::nothrow) Default::Mask();
+
+        if (!newMask) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -20,6 +24,13 @@ namespace SplitGui {
     }
     
     inline Result XmlParser::handleMaskParameters(Default::Mask* mask, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)mask, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

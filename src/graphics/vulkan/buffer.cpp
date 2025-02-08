@@ -4,7 +4,7 @@ namespace SplitGui {
     inline void VulkanInterface::createFramebuffers() {
         vk_swapchainFramebuffers.resize(vk_swapchainImageViews.size());
 
-        for (int i = 0; i < vk_swapchainImageViews.size(); i++) {
+        for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
             vk::FramebufferCreateInfo framebufferInfo;
             framebufferInfo.renderPass      = vk_renderpass;
             framebufferInfo.attachmentCount = 1;
@@ -15,6 +15,8 @@ namespace SplitGui {
 
             vk_swapchainFramebuffers[i] = vk_device.createFramebuffer(framebufferInfo);
         }
+
+        SPLITGUI_LOG("Created Framebuffers");
     }
 
     inline Result VulkanInterface::createBuffer(

@@ -11,9 +11,7 @@ namespace SplitGui {
                 }
             }
             if (!found) {
-                std::stringstream message;
-                message << "Error: Cannot find layer: " << name;
-                return ResultValue<vk::Bool32>(Result::eFailedToGetLayer, message.str());
+                return Result::eFailedToGetLayer;
             }
         }
         return VK_TRUE;

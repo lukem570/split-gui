@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleTextTag() {
-        Default::Text* newText = new Default::Text();
+        Default::Text* newText = new(std::nothrow) Default::Text();
+
+        if (!newText) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -20,6 +24,13 @@ namespace SplitGui {
     }
 
     inline Result XmlParser::handleTextParameters(Default::Text* text, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)text, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

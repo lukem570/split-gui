@@ -27,12 +27,14 @@ namespace SplitGui {
 
         vk_swapchain       = vk_device.createSwapchainKHR(createInfo);
         vk_swapchainImages = vk_device.getSwapchainImagesKHR(vk_swapchain);
+
+        SPLITGUI_LOG("Created Swapchain");
     }
 
     inline void VulkanInterface::createImageViews() {
         vk_swapchainImageViews.resize(vk_swapchainImages.size());
 
-        for (int i = 0; i < vk_swapchainImageViews.size(); i++){
+        for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++){
 
             vk::ImageViewCreateInfo createInfo;
             createInfo.image                            = vk_swapchainImages[i];
@@ -50,6 +52,8 @@ namespace SplitGui {
 
             vk_swapchainImageViews[i] = vk_device.createImageView(createInfo);
         }
+
+        SPLITGUI_LOG("Created Image Views");
     }
 
     void VulkanInterface::recreateSwapchain() {
@@ -69,6 +73,6 @@ namespace SplitGui {
         setupViewport();
         setupScissor();
 
-        printf("recreated swapchain\n");
+        SPLITGUI_LOG("Recreated Swapchain");
     }
 }

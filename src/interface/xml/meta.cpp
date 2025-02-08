@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleMetaTag() {
-        Default::Meta* newMeta = new Default::Meta();
+        Default::Meta* newMeta = new(std::nothrow) Default::Meta();
+
+        if (!newMeta) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -24,6 +28,12 @@ namespace SplitGui {
     }
 
     Result XmlParser::handleMetaParameters(Default::Meta* meta, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)meta, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
 
         if (token.value == "version") {
             ResultValue<XmlToken> attributeTokenRes = nextToken();

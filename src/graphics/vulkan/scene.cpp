@@ -10,7 +10,7 @@ namespace SplitGui {
         scene.cameraRotation    = {0, 0, 0};
         scene.cameraPosition    = {0, 0, 0};
 
-        printf("scene: (%d, %d, %d, %d) (%d, %d) (%d, %d)\n", scene.viewport.x, scene.viewport.y, scene.viewport.width, scene.viewport.height, x1.x, x1.y, x2.x, x2.y);
+        SPLITGUI_LOG("Created Scene: %ld", scenes.size());
 
         scenes.push_back(scene);
         
@@ -24,7 +24,7 @@ namespace SplitGui {
         vertices.resize(oldVerticesSize + newVertices.size());
         indices.resize(oldIndicesSize + newIndices.size());
 
-        for (int i = 0; i < newVertices.size(); i++) {
+        for (unsigned int i = 0; i < newVertices.size(); i++) {
             VertexBufferObject vbo;
             vbo.vertex        = newVertices[i];
             vbo.flags         = VertexFlagsBits::eScene;
@@ -34,11 +34,11 @@ namespace SplitGui {
             vertices[oldVerticesSize + i] = vbo;
         }
 
-        for (int i = 0; i < newIndices.size(); i++) {
+        for (unsigned int i = 0; i < newIndices.size(); i++) {
             indices[oldIndicesSize + i] = oldVerticesSize + newIndices[i];
         }
 
-        printf("submitted triangles: verts: %d indices: %d\n", newVertices.size(), newIndices.size());
+        SPLITGUI_LOG("Submitted Triangles: Verts= %ld Indices= %ld", newVertices.size(), newIndices.size());
     }
 
     void VulkanInterface::updateScene(unsigned int ref, IVec2 x1, IVec2 x2) {
@@ -48,6 +48,8 @@ namespace SplitGui {
         scenes[ref].viewport.y        = std::min(x1.y,  x2.y);
 
         markScenesForUpdate = true;
+
+        SPLITGUI_LOG("Updated Scene: %ld", ref);
     }
 
     Result VulkanInterface::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {

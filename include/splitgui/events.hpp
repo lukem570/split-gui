@@ -263,7 +263,7 @@ namespace SplitGui {
             };
 
             enum class GraphicsType {
-
+                
             };
 
             enum class InterfaceType {
@@ -285,10 +285,10 @@ namespace SplitGui {
             EventData data;
 
             Event() : category(Category::eNone) {}
-            Event(Category category, WindowType window)       : category(category), window(window) {}
-            Event(Category category, GraphicsType graphics)   : category(category), graphics(graphics) {}
-            Event(Category category, InterfaceType interface_) : category(category), interface_(interface_) {}
-            Event(Category category, SceneType scene)         : category(category), scene(scene) {}
+            Event(Category category, WindowType window)        : window(window),         category(category) {}
+            Event(Category category, GraphicsType graphics)    : graphics(graphics),     category(category) {}
+            Event(Category category, InterfaceType interface_) : interface_(interface_), category(category) {}
+            Event(Category category, SceneType scene)          : scene(scene),           category(category) {}
 
             bool operator==(const Event& operand) const {
                 switch (operand.category) {

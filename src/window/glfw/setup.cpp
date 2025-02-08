@@ -6,7 +6,7 @@ namespace SplitGui {
         window.type = FormatType::eGlfw;
     }
 
-    inline void GlfwInterface::createWindow(const char* title) {
+    inline Result GlfwInterface::createWindow(const char* title) {
         glfw::WindowHints hints;
         hints.clientApi = (glfw::ClientApi) 0L;
         hints.resizable = true;
@@ -15,7 +15,11 @@ namespace SplitGui {
 
         hints.apply();
         
-        window.handle = new glfw::Window(640, 480, title);
+        window.handle = new(std::nothrow) glfw::Window(640, 480, title);
+
+        if (!window.handle) {
+            return Result::eHeapAllocFailed;
+        }
 
         glfw::makeContextCurrent(*window.handle);
 
@@ -25,6 +29,8 @@ namespace SplitGui {
         window.handle->cursorPosEvent.setCallback(mouseMove_callback);
         
         window.handle->swapBuffers();
+
+        return Result::eSuccess;
     }
 
     void GlfwInterface::submitEventHandler(EventHandler* pEventHandler) {

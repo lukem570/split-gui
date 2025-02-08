@@ -44,8 +44,8 @@ namespace SplitGui {
 
     class VulkanInterface : GraphicsLibInterface {
         public:
-            VulkanInterface(bool validation);
-            ~VulkanInterface();
+                                 VulkanInterface(bool validation);
+                                ~VulkanInterface()                                                                                           override;
 
 [[nodiscard]] Result             instance()                                                                                                  override;
 [[nodiscard]] Result             submitWindow(SplitGui::Window& window)                                                                      override;
@@ -62,7 +62,7 @@ namespace SplitGui {
               void               loadFont(const char* path)                                                                                  override;
 [[nodiscard]] Result             submitBuffers()                                                                                             override;
 
-              void               resizeEvent()                                                                                               override;
+[[nodiscard]] Result             resizeEvent()                                                                                               override;
 
         protected:
             SplitGui::Window*                   pWindow;

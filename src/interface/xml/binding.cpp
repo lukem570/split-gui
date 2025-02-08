@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleBindingTag() {
-        Default::Binding* newBinding = new Default::Binding();
+        Default::Binding* newBinding = new(std::nothrow) Default::Binding();
+
+        if (!newBinding) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -24,6 +28,12 @@ namespace SplitGui {
     }
 
     inline Result XmlParser::handleBindingParameters(Default::Binding* binding, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)binding, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
 
         if (token.value == "alias") {
 

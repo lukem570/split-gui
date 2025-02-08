@@ -261,4 +261,6 @@ namespace ft {
 #define UINT8_WIDTH 8
 #endif
 
+#define SPLITGUI_LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__); fflush(stdout);
+
 #endif // !SPLITGUI_EXPORT

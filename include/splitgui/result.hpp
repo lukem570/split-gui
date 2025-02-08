@@ -18,6 +18,7 @@ namespace SplitGui {
 
         // system
         eFailedToOpenFile,
+        eHeapAllocFailed,
 
         // vulkan
         eVulkanNotSupported,
@@ -60,8 +61,8 @@ namespace SplitGui {
             ResultValue() : value(), message(), result(Result::eSuccess) {}
 
             ResultValue(T value) :                           value(value), message(),        result(Result::eSuccess) {}
-            ResultValue(Result error) :                      value(),      message(),        result(result) {}
-            ResultValue(Result error, std::string message) : value(),      message(message), result(result) {}
+            ResultValue(Result error) :                      value(),      message(),        result(error) {}
+            ResultValue(Result error, std::string message) : value(),      message(message), result(error) {}
 
             ResultValue<T> operator=(const Result inputResult) { return ResultValue<T>(inputResult); }
     

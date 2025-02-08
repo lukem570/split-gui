@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(SplitGui)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -g -D_GLIBCXX_DEBUG")
 
 file(GLOB_RECURSE TESTS test/*/main.cpp)
 
@@ -42,13 +42,13 @@ set(DEPENDENCIES_DO_BUILD
 )
 
 set(DEPENDENCIES_INCLUDE
-    "include"                          # freetype
-    "include"                          # glfw
-    ""                         # vulkan hpp
-    "include"                         # vulkan headers
-    "include"                         # glfwpp
-    "../"                          # volk
-    "../"                          # msdfgen
+    "include"                       # freetype
+    "include"                       # glfw
+    ""                              # vulkan hpp
+    "include"                       # vulkan headers
+    "include"                       # glfwpp
+    "../"                           # volk
+    "../"                           # msdfgen
 )
 
 set(INCLUDE_PATHS ${CMAKE_SOURCE_DIR}/include)

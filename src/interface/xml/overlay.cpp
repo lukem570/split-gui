@@ -2,7 +2,11 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleOverlayTag() {
-        Default::Overlay* newOverlay = new Default::Overlay();
+        Default::Overlay* newOverlay = new(std::nothrow) Default::Overlay();
+
+        if (!newOverlay) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -35,6 +39,13 @@ namespace SplitGui {
     }
 
     inline Result XmlParser::handleOverlayParameters(Default::Overlay* overlay, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)overlay, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

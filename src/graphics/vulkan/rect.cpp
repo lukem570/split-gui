@@ -47,6 +47,8 @@ namespace SplitGui {
         refRet.topLeft     = oldSize + 2;
         refRet.topRight    = oldSize + 3;
 
+        SPLITGUI_LOG("Created Rect: %d", refRet.bottomLeft);
+
         return refRet;
     }
 
@@ -58,5 +60,7 @@ namespace SplitGui {
         vertices[ref.topRight].vertex.pos    = {std::max(x1.x, x2.x), std::max(x1.y, x2.y), 0};
 
         markVerticesForUpdate = true;
+
+        SPLITGUI_LOG("Updated Rect: %d", ref.bottomLeft);
     }
 }

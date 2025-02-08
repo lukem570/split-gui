@@ -47,10 +47,12 @@ namespace SplitGui {
         }
 
         FT_Done_FreeType(ft_lib);
+
+        SPLITGUI_LOG("Cleaned Up Vulkan");
     }
 
     void VulkanInterface::cleanupFrameBuffers() {
-        for (int i = 0; i < vk_swapchainFramebuffers.size(); i++) {
+        for (unsigned int i = 0; i < vk_swapchainFramebuffers.size(); i++) {
             vk_device.destroyFramebuffer(vk_swapchainFramebuffers[i]);
         }
         vk_swapchainFramebuffers.clear();
@@ -69,7 +71,7 @@ namespace SplitGui {
     }
 
     void VulkanInterface::cleanupImageViews() {
-        for (int i = 0; i < vk_swapchainImageViews.size(); i++) {
+        for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
             vk_device.destroyImageView(vk_swapchainImageViews[i]);
         }
         vk_swapchainImageViews.clear();

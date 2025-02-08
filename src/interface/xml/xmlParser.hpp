@@ -27,51 +27,54 @@ namespace SplitGui {
 
     class XmlParser {
         public:
-            XmlParser()  = default;
-            ~XmlParser() = default;
+              XmlParser();
+              ~XmlParser() = default;
 
-            ResultValue<InterfaceElement*> parse(const std::string& xmlInput);
+[[nodiscard]] ResultValue<InterfaceElement*> parse(const std::string& xmlInput);
         
         private:
-            std::string file;
-            int         index = 0;
+              std::unordered_map<std::string, HandleTagInterface> handleTagInterfaces;
+              std::string                                          file;
+              unsigned int                                         index = 0;
 
-            char currentChar();
-            void advance();
+              char currentChar();
+              void advance();
 
-            ResultValue<XmlToken> nextToken();
+[[nodiscard]] ResultValue<XmlToken> nextToken();
 
-            ResultValue<InterfaceElement*> parse();
+[[nodiscard]] ResultValue<InterfaceElement*> parse();
 
-            inline void fillHandleTagInterfaces(std::unordered_map<std::string, HandleTagInterface>& map);
+              inline void fillHandleTagInterfaces(std::unordered_map<std::string, HandleTagInterface>& map);
 
-            ResultValue<bool> checkClosingTag(std::string name);
+[[nodiscard]] ResultValue<bool> checkClosingTag(std::string name);
 
-            ResultValue<InterfaceElement*> handleBindingTag();
-            ResultValue<InterfaceElement*> handleBoxTag();
-            ResultValue<InterfaceElement*> handleListTag();
-            ResultValue<InterfaceElement*> handleMaskTag();
-            ResultValue<InterfaceElement*> handleMediaTag();
-            ResultValue<InterfaceElement*> handleMetaTag();
-            ResultValue<InterfaceElement*> handleOverlayTag();
-            ResultValue<InterfaceElement*> handleRectTag();
-            ResultValue<InterfaceElement*> handleSceneTag();
-            ResultValue<InterfaceElement*> handleSplitTag();
-            ResultValue<InterfaceElement*> handleTextTag();
-            ResultValue<InterfaceElement*> handleTransformTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleBindingTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleBoxTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleListTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleMaskTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleMediaTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleMetaTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleOverlayTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleRectTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleSceneTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleSplitTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleTextTag();
+[[nodiscard]] ResultValue<InterfaceElement*> handleTransformTag();
 
-            inline Result handleBindingParameters(Default::Binding* binding, XmlToken& token);
-            inline Result handleBoxParameters(Default::Box* box, XmlToken& token);
-            inline Result handleListParameters(Default::List* list, XmlToken& token);
-            inline Result handleMaskParameters(Default::Mask* mask, XmlToken& token);
-            inline Result handleMediaParameters(Default::Media* media, XmlToken& token);
-            inline Result handleMetaParameters(Default::Meta* meta, XmlToken& token);
-            inline Result handleOverlayParameters(Default::Overlay* overlay, XmlToken& token);
-            inline Result handleRectParameters(Default::Rect* rect, XmlToken& token);
-            inline Result handleSceneParameters(Default::SceneElement* scene, XmlToken& token);
-            inline Result handleSplitParameters(Default::Split* split, XmlToken& token);
-            inline Result handleTextParameters(Default::Text* text, XmlToken& token);
-            inline Result handleTransformParameters(Default::Transform* transform, XmlToken& token);
+[[nodiscard]] ResultValue<bool> handleDefaultParameters(InterfaceElement* element, XmlToken& token);
+
+[[nodiscard]] inline Result handleBindingParameters(Default::Binding* binding, XmlToken& token);
+[[nodiscard]] inline Result handleBoxParameters(Default::Box* box, XmlToken& token);
+[[nodiscard]] inline Result handleListParameters(Default::List* list, XmlToken& token);
+[[nodiscard]] inline Result handleMaskParameters(Default::Mask* mask, XmlToken& token);
+[[nodiscard]] inline Result handleMediaParameters(Default::Media* media, XmlToken& token);
+[[nodiscard]] inline Result handleMetaParameters(Default::Meta* meta, XmlToken& token);
+[[nodiscard]] inline Result handleOverlayParameters(Default::Overlay* overlay, XmlToken& token);
+[[nodiscard]] inline Result handleRectParameters(Default::Rect* rect, XmlToken& token);
+[[nodiscard]] inline Result handleSceneParameters(Default::SceneElement* scene, XmlToken& token);
+[[nodiscard]] inline Result handleSplitParameters(Default::Split* split, XmlToken& token);
+[[nodiscard]] inline Result handleTextParameters(Default::Text* text, XmlToken& token);
+[[nodiscard]] inline Result handleTransformParameters(Default::Transform* transform, XmlToken& token);
     };
 }
 

@@ -16,7 +16,7 @@ namespace SplitGui {
 
     void Cube::generate() {
 
-        for (int i = 0; i < vertices.size(); i++) {
+        for (unsigned int i = 0; i < vertices.size(); i++) {
             vertices[i].color = color.normalize();
         }
 

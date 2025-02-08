@@ -97,6 +97,8 @@ namespace SplitGui {
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
+        SPLITGUI_LOG("Created Glyph Texture Image");
+
         return Result::eSuccess;
     }
 }

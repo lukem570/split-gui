@@ -128,7 +128,7 @@ index.xml
 
 * write documentation
 * add scene tree to xml
-* finish unit expression parser
+* add calls to unit expression parser
 * finish default interface elements
 * add svgs 
 
@@ -146,7 +146,6 @@ index.xml
 * general refactor
     * convension check
 * refactor text code
-* use std::nothrow with all news
 * refactor lib to accomidate builds without vulkan or glfw
 * refactor scene projection
     * camera position bug

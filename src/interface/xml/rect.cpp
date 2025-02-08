@@ -2,7 +2,15 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleRectTag() {
-        Default::Rect* newRect = new Default::Rect();
+        SPLITGUI_LOG("Rect Created1");
+
+        Default::Rect* newRect = new(std::nothrow) Default::Rect();
+
+        SPLITGUI_LOG("Rect Created2");
+
+        if (!newRect) {
+            return Result::eHeapAllocFailed;
+        }
 
         ResultValue<XmlToken> tokenRes = nextToken();
         TRYD(tokenRes);
@@ -16,10 +24,18 @@ namespace SplitGui {
             return Result::eInvalidPrematureClosure;
         }
 
-        return newRect;
+        SPLITGUI_LOG("Rect Created");
+
+        return (InterfaceElement*)newRect;
     }
 
     Result XmlParser::handleRectParameters(Default::Rect* rect, XmlToken& token) {
+
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)rect, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
 
         if (token.value == "color") {
             ResultValue<XmlToken> attributeTokenRes = nextToken();
@@ -32,14 +48,9 @@ namespace SplitGui {
             token = valueTokenRes.value;
             ASSERT_ATTRIBUTE(token);
 
-            IVec3 vec3;
-            std::string numbersPart = token.value.substr(6, token.value.size() - 7);
-            std::stringstream ss(numbersPart);
-
-            char comma;
-            ss >> vec3.x >> comma >> vec3.y >> comma >> vec3.z;
-
-            rect->setColor(vec3);
+            TRYR(setColorRes, rect->setColor(token.value));
+            printf("rect color: %s\n", token.value.c_str());
+            fflush(stdout);
 
             ResultValue<XmlToken> finalTokenRes = nextToken();
             TRYD(finalTokenRes);

@@ -2,6 +2,7 @@
 
 #include "binding.cpp"
 #include "box.cpp"
+#include "default.cpp"
 #include "list.cpp"
 #include "mask.cpp"
 #include "media.cpp"
@@ -10,6 +11,7 @@
 #include "parse.cpp"
 #include "rect.cpp"
 #include "scene.cpp"
+#include "setup.cpp"
 #include "split.cpp"
 #include "text.cpp"
 #include "tokens.cpp"

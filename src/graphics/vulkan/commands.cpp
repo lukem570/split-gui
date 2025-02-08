@@ -7,6 +7,8 @@ namespace SplitGui {
         commandPoolInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
 
         vk_commandPool = vk_device.createCommandPool(commandPoolInfo);
+
+        SPLITGUI_LOG("Created Command Pool");
     }
 
     inline void VulkanInterface::createCommandBuffers() {
@@ -18,5 +20,7 @@ namespace SplitGui {
         vk_commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
         
         vk_commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
+
+        SPLITGUI_LOG("Created Command Buffer");
     }
 }

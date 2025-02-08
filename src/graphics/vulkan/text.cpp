@@ -6,12 +6,14 @@ namespace SplitGui {
             ft::FT_Done_Face(ft_face);
         }
 
-        ft::FT_Error error = ft::FT_New_Face(ft_lib, path, 0, &ft_face);
+        ft::FT_Error error = ft::FT_New_Face(ft_lib, path, 0, &ft_face); // TODO: Result
         if (error) {
             printf("WARN: could not load font: %s\n", path);
             return;
         }
         ft_fontInUse = true;
+
+        SPLITGUI_LOG("Loaded Font");
     }
 
     template <typename T>
@@ -35,7 +37,7 @@ namespace SplitGui {
         float pos = 0;
         ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, windowSize.x, windowSize.y);
 
-        for (int i = 0; i < text.size(); i++) {
+        for (unsigned int i = 0; i < text.size(); i++) {
             if (charImageMappings.find(text[i]) != charImageMappings.end() || std::isspace(text[i])) {
                 continue;
             }
@@ -85,9 +87,6 @@ namespace SplitGui {
 
             double offsetX = -((double)ft_face->glyph->metrics.horiBearingX / (double)std::pow(2, 16)) / normalScaleFactor * 5;
 
-            printf("dim(%c): (%.6f, %.6f)\n", text[i], dim.x, dim.y);
-            printf("off(%c): (%.6f)\n", text[i], offsetX);
-
             dim.normalize();
 
             scale.set(vk_msdfExtent.width / std::abs(bounds.l - bounds.r), vk_msdfExtent.height);
@@ -102,9 +101,7 @@ namespace SplitGui {
 
             msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
             msdfgen::generateMTSDF(msdf, shape, transformation);
-
-            msdfgen::BitmapConstRef<float, 4> ref = msdf;
-
+            
             int subPixels = 4 * vk_msdfExtent.width * vk_msdfExtent.height;
 
             // ------ vulkan code ------
@@ -124,8 +121,8 @@ namespace SplitGui {
             unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
 
             int index = 0;
-            for (int x = vk_msdfExtent.width - 1; x >= 0; x--) {
-                for (int y = 0; y < vk_msdfExtent.height; y++) {
+            for (unsigned int x = vk_msdfExtent.width - 1; x >= 0; x--) {
+                for (unsigned int y = 0; y < vk_msdfExtent.height; y++) {
                     for (int j = 0; j < 4; j++) {
                         memory[index] = pixelFloatToByte(msdf(y,x)[j]);
                         index++;
@@ -192,7 +189,7 @@ namespace SplitGui {
             vk_device.destroyBuffer(stagingBuffer);
         }
 
-        for (int i = 0; i < text.size(); i++) {
+        for (unsigned int i = 0; i < text.size(); i++) {
             if (std::isspace(text[i])) {
                 pos += (float)fontSize / (float)windowSize.x;
                 continue;
@@ -235,6 +232,8 @@ namespace SplitGui {
 
             pos += width + ((float)7 / (float)windowSize.x);
         }
+
+        SPLITGUI_LOG("Drew Text");
 
         return pos;
     }
