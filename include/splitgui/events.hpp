@@ -204,13 +204,27 @@ namespace SplitGui {
         } mouseMove;
     };
 
-    union InterfaceEventData {
+    struct InterfaceEventData {
 
-        struct {
-            //std::string alias;
-            //std::vector<UnitExpression::Literal> params;
-            UnitExpression::Literal* returnValue;
-        } functionCall;
+        enum class Type {
+            eFunctionCall,
+        };
+
+        struct FunctionCall{
+            std::string alias;
+            std::vector<UnitExpressionValue> params;
+            UnitExpressionValue* returnValue;
+        };
+
+        union {
+            FunctionCall functionCall;
+        };
+        Type type;
+
+        InterfaceEventData operator=(const InterfaceEventData& data);
+        InterfaceEventData(const InterfaceEventData& data);
+        InterfaceEventData() : functionCall{} {}
+        ~InterfaceEventData();
     };
 
     struct EventData {
@@ -225,6 +239,8 @@ namespace SplitGui {
         };
         Type type;
 
+        EventData operator=(const EventData& data);
+        EventData(const EventData& data);
         EventData() : window{} {}
         ~EventData();
     };

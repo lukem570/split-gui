@@ -8,7 +8,7 @@ namespace SplitGui {
         RectObj childExtentOne;
         RectObj childExtentTwo;
 
-        int divide;
+        UnitExpressionValue divide;
 
         if (isVertical) {
             divide = position.evaluate(extent.height);
@@ -16,28 +16,28 @@ namespace SplitGui {
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
             childExtentOne.width  = extent.width;
-            childExtentOne.height = divide;
+            childExtentOne.height = divide.number;
 
             childExtentTwo.x      = extent.x;
-            childExtentTwo.y      = extent.y + divide;
+            childExtentTwo.y      = extent.y + divide.number;
             childExtentTwo.width  = extent.width;
-            childExtentTwo.height = extent.height - divide;
+            childExtentTwo.height = extent.height - divide.number;
 
         } else {
             divide = position.evaluate(extent.width);
             
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
-            childExtentOne.width  = divide;
+            childExtentOne.width  = divide.number;
             childExtentOne.height = extent.height;
 
-            childExtentTwo.x      = extent.x + divide;
+            childExtentTwo.x      = extent.x + divide.number;
             childExtentTwo.y      = extent.y;
-            childExtentTwo.width  = extent.width - divide;
+            childExtentTwo.width  = extent.width - divide.number;
             childExtentTwo.height = extent.height;
         }
         
-        printf("split update: e.w:%d e.h:%d v?:%d, d:%d\n", extent.width, extent.height, isVertical, divide);
+        printf("split update: e.w:%d e.h:%d v?:%d, d:%d\n", extent.width, extent.height, isVertical, divide.number);
 
         children[0]->setExtent(childExtentOne);
         children[0]->update();
@@ -55,32 +55,40 @@ namespace SplitGui {
         RectObj childExtentOne;
         RectObj childExtentTwo;
 
-        int divide;
+        UnitExpressionValue divide;
 
         if (isVertical) {
             divide = position.evaluate(extent.height);
 
+            if (divide.type != UnitExpressionValue::Type::eNumber) {
+                return Result::eInvalidType;
+            }
+
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
             childExtentOne.width  = extent.width;
-            childExtentOne.height = divide;
+            childExtentOne.height = divide.number;
 
             childExtentTwo.x      = extent.x;
-            childExtentTwo.y      = extent.y + divide;
+            childExtentTwo.y      = extent.y + divide.number;
             childExtentTwo.width  = extent.width;
-            childExtentTwo.height = extent.height - divide;
+            childExtentTwo.height = extent.height - divide.number;
 
         } else {
             divide = position.evaluate(extent.width);
+
+            if (divide.type != UnitExpressionValue::Type::eNumber) {
+                return Result::eInvalidType;
+            }
             
             childExtentOne.x      = extent.x;
             childExtentOne.y      = extent.y;
-            childExtentOne.width  = divide;
+            childExtentOne.width  = divide.number;
             childExtentOne.height = extent.height;
 
-            childExtentTwo.x      = extent.x + divide;
+            childExtentTwo.x      = extent.x + divide.number;
             childExtentTwo.y      = extent.y;
-            childExtentTwo.width  = extent.width - divide;
+            childExtentTwo.width  = extent.width - divide.number;
             childExtentTwo.height = extent.height;
         }
         

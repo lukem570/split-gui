@@ -172,7 +172,7 @@ namespace SplitGui {
         return ret;
     }
 
-    int UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {
+    UnitExpressionValue UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {
 
         switch (expression->type) {
             case UnitExpression::Type::eBinaryOp: {
@@ -185,6 +185,9 @@ namespace SplitGui {
                 }
 
                 break;
+            }
+            case UnitExpression::Type::eCall: {
+                
             }
             case UnitExpression::Type::eLiteral: {
 
@@ -201,7 +204,7 @@ namespace SplitGui {
         return 0;
     }
 
-    int UnitExpressionEvaluator::evaluate(int maxSize) {
+    UnitExpressionValue UnitExpressionEvaluator::evaluate(int maxSize) {
         return evaluateExpr(maxSize, expressionTree);
     }
 
@@ -235,4 +238,48 @@ namespace SplitGui {
 
         delete expression;
     }
+
+#define UNIT_EXPRESSION_OPERATOR(sign) \
+\
+    switch (type) { \
+        case Type::eNumber: return number + operand.number; break; \
+        case Type::eVector: {\
+            \
+            switch (vector.size) {\
+                case 2:\
+                    if (vector.isInt) {\
+                        return vector.ivec2 sign operand.vector.ivec2;\
+                    } else {\
+                        return vector.vec2 sign operand.vector.vec2;\
+                    }\
+                    break;\
+                case 3:\
+                    if (vector.isInt) {\
+                        return vector.ivec3 sign operand.vector.ivec3;\
+                    } else {\
+                        return vector.vec3 sign operand.vector.vec3;\
+                    }\
+                    break;\
+                case 4:\
+                    if (vector.isInt) {\
+                        return vector.ivec4 sign operand.vector.ivec4;\
+                    } else {\
+                        return vector.vec4 sign operand.vector.vec4;\
+                    }\
+                    break;\
+            }\
+\
+            break;\
+        }\
+    }\
+\
+    return -1.0;
+
+// END UNIT_EXPRESSION_OPERATOR
+
+
+    UnitExpressionValue UnitExpressionValue::operator+(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(+) }// TODO errors / results
+    UnitExpressionValue UnitExpressionValue::operator-(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(-) }// TODO errors / results
+    UnitExpressionValue UnitExpressionValue::operator*(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(*) }// TODO errors / results
+    UnitExpressionValue UnitExpressionValue::operator/(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(/) }// TODO errors / results
 }

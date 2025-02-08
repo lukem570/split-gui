@@ -59,6 +59,11 @@ namespace SplitGui {
         union {float y; float g;};
         union {float z; float b;};
         union {float w; float a;};
+
+        Vec4 operator+(Vec4 operand);
+        Vec4 operator-(Vec4 operand);
+        Vec4 operator*(Vec4 operand);
+        Vec4 operator/(Vec4 operand);
     };
 
     struct IVec4 {
@@ -66,45 +71,84 @@ namespace SplitGui {
         union {int y; int g;};
         union {int z; int b;};
         union {int w; int a;};
+
+        IVec4 operator+(IVec4 operand);
+        IVec4 operator-(IVec4 operand);
+        IVec4 operator*(IVec4 operand);
+        IVec4 operator/(IVec4 operand);
     };
 
     struct Vec3 {
         union {float x; float r;};
         union {float y; float g;};
         union {float z; float b;};
+
+        Vec3 operator+(Vec3 operand);
+        Vec3 operator-(Vec3 operand);
+        Vec3 operator*(Vec3 operand);
+        Vec3 operator/(Vec3 operand);
     };
 
     struct IVec3 {
         union {int x; int r;};
         union {int y; int g;};
         union {int z; int b;};
+
+        IVec3 operator+(IVec3 operand);
+        IVec3 operator-(IVec3 operand);
+        IVec3 operator*(IVec3 operand);
+        IVec3 operator/(IVec3 operand);
     };
 
     struct Vec2 {
         union {float x; float r;};
         union {float y; float g;};
 
-        Vec2 operator+(const Vec2& operand) const {
-            return {operand.x + x, operand.y + y};
-        }
+        Vec2 operator+(Vec2 operand);
+        Vec2 operator-(Vec2 operand);
+        Vec2 operator*(Vec2 operand);
+        Vec2 operator/(Vec2 operand);
     };
 
     struct IVec2 {
         union {int x; int r;};
         union {int y; int g;};
 
-        IVec2 operator+(IVec2 operand) { return { x + operand.x, y + operand.y }; }
-        IVec2 operator-(IVec2 operand) { return { x - operand.x, y - operand.y }; }
-        IVec2 operator*(IVec2 operand) { return { x * operand.x, y * operand.y }; }
-        IVec2 operator/(IVec2 operand) { return { x / operand.x, y / operand.y }; }
-
-        Vec2 operator+(Vec2 operand) { return { (float)x + operand.x, (float)y + operand.y }; }
-        Vec2 operator-(Vec2 operand) { return { (float)x - operand.x, (float)y - operand.y }; }
-        Vec2 operator*(Vec2 operand) { return { (float)x * operand.x, (float)y * operand.y }; }
-        Vec2 operator/(Vec2 operand) { return { (float)x / operand.x, (float)y / operand.y }; }
-        
+        IVec2 operator+(IVec2 operand);
+        IVec2 operator-(IVec2 operand);
+        IVec2 operator*(IVec2 operand);
+        IVec2 operator/(IVec2 operand);
     };
 
+    Vec4 Vec4::operator+(Vec4 operand) { return { (float)x + operand.x, (float)y + operand.y, (float)z + operand.z, (float)w + operand.w }; }
+    Vec4 Vec4::operator-(Vec4 operand) { return { (float)x - operand.x, (float)y - operand.y, (float)z + operand.z, (float)w + operand.w }; }
+    Vec4 Vec4::operator*(Vec4 operand) { return { (float)x * operand.x, (float)y * operand.y, (float)z + operand.z, (float)w + operand.w }; }
+    Vec4 Vec4::operator/(Vec4 operand) { return { (float)x / operand.x, (float)y / operand.y, (float)z + operand.z, (float)w + operand.w }; }
+
+    IVec4 IVec4::operator+(IVec4 operand) { return { (int)x + operand.x, (int)y + operand.y, (int)z + operand.z, (int)w + operand.w }; }
+    IVec4 IVec4::operator-(IVec4 operand) { return { (int)x - operand.x, (int)y - operand.y, (int)z + operand.z, (int)w + operand.w }; }
+    IVec4 IVec4::operator*(IVec4 operand) { return { (int)x * operand.x, (int)y * operand.y, (int)z + operand.z, (int)w + operand.w }; }
+    IVec4 IVec4::operator/(IVec4 operand) { return { (int)x / operand.x, (int)y / operand.y, (int)z + operand.z, (int)w + operand.w }; }
+
+    Vec3 Vec3::operator+(Vec3 operand) { return { (float)x + operand.x, (float)y + operand.y, (float)z + operand.z }; }
+    Vec3 Vec3::operator-(Vec3 operand) { return { (float)x - operand.x, (float)y - operand.y, (float)z + operand.z }; }
+    Vec3 Vec3::operator*(Vec3 operand) { return { (float)x * operand.x, (float)y * operand.y, (float)z + operand.z }; }
+    Vec3 Vec3::operator/(Vec3 operand) { return { (float)x / operand.x, (float)y / operand.y, (float)z + operand.z }; }
+
+    IVec3 IVec3::operator+(IVec3 operand) { return { (int)x + operand.x, (int)y + operand.y, (int)z + operand.z }; }
+    IVec3 IVec3::operator-(IVec3 operand) { return { (int)x - operand.x, (int)y - operand.y, (int)z + operand.z }; }
+    IVec3 IVec3::operator*(IVec3 operand) { return { (int)x * operand.x, (int)y * operand.y, (int)z + operand.z }; }
+    IVec3 IVec3::operator/(IVec3 operand) { return { (int)x / operand.x, (int)y / operand.y, (int)z + operand.z }; }
+
+    Vec2 Vec2::operator+(Vec2 operand) { return { (float)x + operand.x, (float)y + operand.y }; }
+    Vec2 Vec2::operator-(Vec2 operand) { return { (float)x - operand.x, (float)y - operand.y }; }
+    Vec2 Vec2::operator*(Vec2 operand) { return { (float)x * operand.x, (float)y * operand.y }; }
+    Vec2 Vec2::operator/(Vec2 operand) { return { (float)x / operand.x, (float)y / operand.y }; }
+
+    IVec2 IVec2::operator+(IVec2 operand) { return { (int)x + operand.x, (int)y + operand.y }; }
+    IVec2 IVec2::operator-(IVec2 operand) { return { (int)x - operand.x, (int)y - operand.y }; }
+    IVec2 IVec2::operator*(IVec2 operand) { return { (int)x * operand.x, (int)y * operand.y }; }
+    IVec2 IVec2::operator/(IVec2 operand) { return { (int)x / operand.x, (int)y / operand.y }; }
 
     struct HexColor {
         HexColor() {}
@@ -265,6 +309,46 @@ namespace SplitGui {
 
         UnitExpression() {}
         ~UnitExpression() {}
+    };
+
+    struct UnitExpressionValue {
+        enum class Type {
+            eVector,
+            eNumber
+        };
+
+        union {
+            double number;
+            struct {
+                int  size;
+                bool isInt;
+                union {
+                    IVec4 ivec4;
+                    IVec3 ivec3;
+                    IVec2 ivec2;
+                    Vec4   vec4;
+                    Vec3   vec3;
+                    Vec2   vec2;
+                };
+            } vector;
+        };
+        Type type;
+
+        UnitExpressionValue() = default;
+
+        UnitExpressionValue(double number) : type(Type::eNumber), number(number) {} 
+
+        UnitExpressionValue(IVec4 vec) : type(Type::eVector), vector{.size = 4, .isInt = true,  .ivec4 = vec} {} 
+        UnitExpressionValue( Vec4 vec) : type(Type::eVector), vector{.size = 4, .isInt = false,  .vec4 = vec} {} 
+        UnitExpressionValue(IVec3 vec) : type(Type::eVector), vector{.size = 3, .isInt = true,  .ivec3 = vec} {} 
+        UnitExpressionValue( Vec3 vec) : type(Type::eVector), vector{.size = 3, .isInt = false,  .vec3 = vec} {} 
+        UnitExpressionValue(IVec2 vec) : type(Type::eVector), vector{.size = 2, .isInt = true,  .ivec2 = vec} {} 
+        UnitExpressionValue( Vec2 vec) : type(Type::eVector), vector{.size = 2, .isInt = false,  .vec2 = vec} {} 
+
+        UnitExpressionValue operator+(const UnitExpressionValue& operand);
+        UnitExpressionValue operator-(const UnitExpressionValue& operand);
+        UnitExpressionValue operator*(const UnitExpressionValue& operand);
+        UnitExpressionValue operator/(const UnitExpressionValue& operand);
     };
 
     struct XmlToken {

@@ -55,8 +55,8 @@ namespace SplitGui {
         public: 
             ~UnitExpressionEvaluator();
 
-              int                          evaluate(int maxSize);
-              int                          evaluateExpr(int maxSize, UnitExpression* expression);
+              UnitExpressionValue          evaluate(int maxSize);
+              UnitExpressionValue          evaluateExpr(int maxSize, UnitExpression* expression);
 [[nodiscard]] ResultValue<UnitExpression*> parse(std::string expression);
 
         private:
