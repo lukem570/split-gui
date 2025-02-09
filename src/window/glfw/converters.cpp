@@ -133,7 +133,7 @@ namespace SplitGui {
             case glfw::KeyState::Repeat:  return KeyState::eHold;    break;
         }
 
-        return KeyState::eHold; // TODO: fix
+        return KeyState::eUnknown;
     }
 
     inline MouseCode GlfwInterface::convertGlfwMouseButton(glfw::MouseButton code) {
@@ -157,7 +157,7 @@ namespace SplitGui {
             case glfw::MouseButtonState::Release: return MouseState::eRelease; break;
         }
 
-        return MouseState::ePress; // TODO: fix
+        return MouseState::eUnknown;
     }
 
 }

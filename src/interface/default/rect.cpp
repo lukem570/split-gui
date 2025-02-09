@@ -44,8 +44,15 @@ namespace SplitGui {
     }
 
     Result Default::Rect::setColor(std::string colorIn) {
-        TRY(SplitGui::UnitExpression*, parseRes, colorStatement.parse(colorIn));
-        // todo check size
+        SplitGui::ResultValue<SplitGui::UnitExpression*> parseRes = colorStatement.parse(colorIn);
+        TRYD(parseRes);
+
+        if (parseRes.value->type != SplitGui::UnitExpression::Type::eVector || 
+            parseRes.value->vector.isIVec != true                           || 
+            parseRes.value->vector.size != 3) {
+
+            return Result::eInvalidExpression;
+        }
 
 
         UnitExpressionValue colorEval = colorStatement.evaluate(extent.height);

@@ -50,14 +50,13 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
+    SplitGui::Cube cube;
+    cube.submitGraphics(graphics);
+    cube.setSize(0.5);
+    cube.setColor(0xFF00FF);
+    cube.generate();
 
-    //SplitGui::Cube cube;
-    //cube.submitGraphics(graphics);
-    //cube.setSize(0.5);
-    //cube.setColor(0xFF00FF);
-    //cube.generate();
-
-    //cube.submit(0);
+    cube.submit(0);
 
     SplitGui::Vertex vert1;
     vert1.color = SplitGui::HexColor(0xFF0000).normalize();

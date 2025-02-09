@@ -17,6 +17,7 @@ namespace SplitGui {
     class Scene;
 
     enum class KeyState {
+        eUnknown = 255,
         ePress,
         eRelease,
         eHold,
@@ -165,6 +166,7 @@ namespace SplitGui {
     };
 
     enum class MouseState {
+        eUnknown = 255,
         ePress,
         eRelease,
     };
@@ -205,22 +207,10 @@ namespace SplitGui {
         } mouseMove;
     };
 
-    struct InterfaceEventData {
-
-        enum class Type {
-            eFunctionCall,
-        };
-
-        struct FunctionCall{
-            //std::string alias;
-            //std::vector<UnitExpressionValue> params;
-            UnitExpressionValue* returnValue;
-        };
-
-        union {
-            FunctionCall functionCall;
-        };
-        Type type;
+    union InterfaceEventData {
+        struct {
+            //TODO:
+        } functionCall;
     };
 
     struct EventData {
@@ -273,7 +263,7 @@ namespace SplitGui {
                 int raw;
             };
             Category category;
-            //EventData data;
+            EventData data;
 
             Event() : category(Category::eNone) {}
             Event(Category category, WindowType window)        : window(window),         category(category) {}

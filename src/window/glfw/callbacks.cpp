@@ -16,10 +16,10 @@ namespace SplitGui {
 
         Event event = Event(Event::Category::eWindow, Event::WindowType::eKeypress);
 
-        //event.data.type = EventData::Type::eWindow;
+        event.data.type = EventData::Type::eWindow;
 
-        //event.data.window.keypress.keyCode  = convertGlfwKeyCode(key);
-        //event.data.window.keypress.keyState = convertGlfwKeyState(state);
+        event.data.window.keypress.keyCode  = convertGlfwKeyCode(key);
+        event.data.window.keypress.keyState = convertGlfwKeyState(state);
 
         pEventHandler->pushResult(pEventHandler->pushEvent(event));
     }
@@ -30,10 +30,10 @@ namespace SplitGui {
 
         Event event = Event(Event::Category::eWindow, Event::WindowType::eMouseButton);
 
-        //event.data.type = EventData::Type::eWindow;
+        event.data.type = EventData::Type::eWindow;
         
-        //event.data.window.mouseButton.mouseCode  = convertGlfwMouseButton(button);
-        //event.data.window.mouseButton.mouseState = convertGlfwMouseState(state);
+        event.data.window.mouseButton.mouseCode  = convertGlfwMouseButton(button);
+        event.data.window.mouseButton.mouseState = convertGlfwMouseState(state);
 
         pEventHandler->pushResult(pEventHandler->pushEvent(event));
     }
@@ -44,10 +44,10 @@ namespace SplitGui {
 
         Event event = Event(Event::Category::eWindow, Event::WindowType::eMouseMove);
 
-        //event.data.type = EventData::Type::eWindow;
+        event.data.type = EventData::Type::eWindow;
         
-        //event.data.window.mouseMove.xPos = (int) posX;
-        //event.data.window.mouseMove.yPos = (int) posY;
+        event.data.window.mouseMove.xPos = (int) posX;
+        event.data.window.mouseMove.yPos = (int) posY;
 
         pEventHandler->pushResult(pEventHandler->pushEvent(event));
     }

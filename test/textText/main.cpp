@@ -15,7 +15,7 @@ int main() {
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(true));
     graphics.submitWindow(window);
-    graphics.loadFont("fonts/Lato/Lato-Regular.ttf");
+    TRYRC(fontRes, graphics.loadFont("fonts/Lato/Lato-Regular.ttf"));
     graphics.attachEventHandler(eventHandler);
 
     graphics.drawRect(

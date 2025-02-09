@@ -414,10 +414,10 @@ namespace SplitGui {
 // END UNIT_EXPRESSION_OPERATOR
 
 
-    UnitExpressionValue UnitExpressionValue::operator+(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(+) }// TODO errors / results
-    UnitExpressionValue UnitExpressionValue::operator-(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(-) }// TODO errors / results
-    UnitExpressionValue UnitExpressionValue::operator*(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(*) }// TODO errors / results
-    UnitExpressionValue UnitExpressionValue::operator/(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(/) }// TODO errors / results
+    UnitExpressionValue UnitExpressionValue::operator+(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(+) }
+    UnitExpressionValue UnitExpressionValue::operator-(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(-) }
+    UnitExpressionValue UnitExpressionValue::operator*(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(*) }
+    UnitExpressionValue UnitExpressionValue::operator/(const UnitExpressionValue& operand) { UNIT_EXPRESSION_OPERATOR(/) }
 }
 
 #endif
