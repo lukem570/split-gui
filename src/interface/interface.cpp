@@ -21,8 +21,6 @@ namespace SplitGui {
     Result Interface::parseXml(std::string& data) {
         XmlParser parser;
         ResultValue<InterfaceElement*> parseRet = parser.parse(data);
-        printf("end\n");
-        fflush(stdout);
         TRYD(parseRet);
 
         setInterfaceElement(parseRet.value);

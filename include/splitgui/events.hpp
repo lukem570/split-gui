@@ -4,6 +4,7 @@
 #include "lib.hpp"
 
 #include <splitgui/structs.hpp>
+#include <splitgui/result.hpp>
 #include <string>
 #include <stack>
 #include <vector>
@@ -211,8 +212,8 @@ namespace SplitGui {
         };
 
         struct FunctionCall{
-            std::string alias;
-            std::vector<UnitExpressionValue> params;
+            //std::string alias;
+            //std::vector<UnitExpressionValue> params;
             UnitExpressionValue* returnValue;
         };
 
@@ -220,11 +221,6 @@ namespace SplitGui {
             FunctionCall functionCall;
         };
         Type type;
-
-        InterfaceEventData operator=(const InterfaceEventData& data);
-        InterfaceEventData(const InterfaceEventData& data);
-        InterfaceEventData() : functionCall{} {}
-        ~InterfaceEventData();
     };
 
     struct EventData {
@@ -238,11 +234,6 @@ namespace SplitGui {
             InterfaceEventData interface;
         };
         Type type;
-
-        EventData operator=(const EventData& data);
-        EventData(const EventData& data);
-        EventData() : window{} {}
-        ~EventData();
     };
 
     class Event {
@@ -282,7 +273,7 @@ namespace SplitGui {
                 int raw;
             };
             Category category;
-            EventData data;
+            //EventData data;
 
             Event() : category(Category::eNone) {}
             Event(Category category, WindowType window)        : window(window),         category(category) {}
@@ -311,21 +302,25 @@ namespace SplitGui {
     class SPLITGUI_EXPORT EventHandler {
         public:
 
-            int   popEvent();
-            void  pushEvent(Event event);
-            Event getEvent();
+              int    popEvent();
+[[nodiscard]] Result pushEvent(Event event);
+              Event  getEvent();
 
-            void attachWindow(Window* pWindow);
-            void attachGraphics(Graphics* pGraphics);
-            void attachInterface(Interface* pInterface);
-            void attachScene(Scene* pScene);
+[[nodiscard]] Result getResult();
+              void   pushResult(Result res);
+
+              void attachWindow(Window* pWindow);
+              void attachGraphics(Graphics* pGraphics);
+              void attachInterface(Interface* pInterface);
+              void attachScene(Scene* pScene);
 
         private:
-            std::stack<Event> events;
-            Event             eventBuffer;
-            Context           eventContext;
+              std::stack<Event> events;
+              Event             eventBuffer;
+              Result            currentResult = Result::eSuccess;
+              Context           eventContext;
 
-            void callBuiltinEvent(Event event);
+[[nodiscard]] Result callBuiltinEvent(Event event);
 
     };
 }

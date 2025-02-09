@@ -2,11 +2,7 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleRectTag() {
-        SPLITGUI_LOG("Rect Created1");
-
         Default::Rect* newRect = new(std::nothrow) Default::Rect();
-
-        SPLITGUI_LOG("Rect Created2");
 
         if (!newRect) {
             return Result::eHeapAllocFailed;
@@ -23,8 +19,6 @@ namespace SplitGui {
         if (token.type != XmlTokenType::eTagClose) {
             return Result::eInvalidPrematureClosure;
         }
-
-        SPLITGUI_LOG("Rect Created");
 
         return (InterfaceElement*)newRect;
     }
@@ -49,8 +43,6 @@ namespace SplitGui {
             ASSERT_ATTRIBUTE(token);
 
             TRYR(setColorRes, rect->setColor(token.value));
-            printf("rect color: %s\n", token.value.c_str());
-            fflush(stdout);
 
             ResultValue<XmlToken> finalTokenRes = nextToken();
             TRYD(finalTokenRes);

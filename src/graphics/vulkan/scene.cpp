@@ -49,7 +49,7 @@ namespace SplitGui {
 
         markScenesForUpdate = true;
 
-        SPLITGUI_LOG("Updated Scene: %ld", ref);
+        SPLITGUI_LOG("Updated Scene: %d", ref);
     }
 
     Result VulkanInterface::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {

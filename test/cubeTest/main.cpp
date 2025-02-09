@@ -1,4 +1,5 @@
 #include <splitgui/window.hpp>
+#include <splitgui/result.hpp>
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/structs.hpp>
@@ -29,8 +30,8 @@ int main() {
     SplitGui::EventHandler eventHandler;
 
     SplitGui::Window window;
-    window.instanceGlfw();
-    window.createWindow("cube test");
+    TRYRC(glfwRes, window.instanceGlfw());
+    TRYRC(windowRes, window.createWindow("cube test"));
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;

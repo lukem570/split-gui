@@ -121,8 +121,8 @@ namespace SplitGui {
             unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
 
             int index = 0;
-            for (unsigned int x = vk_msdfExtent.width - 1; x >= 0; x--) {
-                for (unsigned int y = 0; y < vk_msdfExtent.height; y++) {
+            for (int x = (int)vk_msdfExtent.width - 1; x >= 0; x--) {
+                for (int y = 0; y < (int)vk_msdfExtent.height; y++) {
                     for (int j = 0; j < 4; j++) {
                         memory[index] = pixelFloatToByte(msdf(y,x)[j]);
                         index++;
@@ -211,8 +211,6 @@ namespace SplitGui {
 
             float height = (float)heightInPixels / (float)windowSize.y;
             float width  = (float)widthInPixels  / (float)windowSize.x;
-
-            printf("wid(%c): (%.6f)\n", text[i], width);
 
             VulkanInterface::drawRect(
                 x1 + Vec2{pos , 0}, 

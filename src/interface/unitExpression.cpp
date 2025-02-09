@@ -10,20 +10,6 @@
 
 namespace SplitGui {
 
-    UnitExpression::UnitExpression(Type typeIn) {
-        type = typeIn;
-    }
-
-    UnitExpression::~UnitExpression() {
-        switch (type) {
-            case Type::eLiteral:  literal.~Literal(); break;
-            case Type::eVector:   vector.~Vector();   break;
-            case Type::eCall:     call.~Call();       break;
-            case Type::eBinaryOp: binary.~BinaryOp(); break;
-            default:                                  break;
-        }
-    }
-
     ResultValue<UnitExpressionToken> UnitExpressionEvaluator::nextToken(std::string& expression) {
         while (std::isspace(expression[index])) {
             if (expression.size() == ++index) {
@@ -177,7 +163,15 @@ namespace SplitGui {
                     break;
                 }
                 case UnitExpressionTokenType::eCall: {
+                    UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eCall);
+
+                    if (!newExpression) {
+                        return Result::eHeapAllocFailed;
+                    }
+
                     // TODO:
+
+                    ret = newExpression;
                     break;
                 }
                 case UnitExpressionTokenType::eVector: {
@@ -203,7 +197,11 @@ namespace SplitGui {
                         return Result::eInvalidToken;
                     }
                     
-                    std::vector<SplitGui::UnitExpression*> values(size);
+                    SplitGui::UnitExpression** values = (SplitGui::UnitExpression**)std::malloc(size * sizeof(SplitGui::UnitExpression*));
+
+                    if (values == nullptr) {
+                        return Result::eHeapAllocFailed;
+                    }
 
                     for (unsigned int i = 0; i < size; i++) {
 
@@ -213,6 +211,7 @@ namespace SplitGui {
                         values[i] = parseRet.value;
                     }
                     newExpression->vector.values = values;
+                    newExpression->vector.size = size;
 
                     ret = newExpression;
                     break;
@@ -270,7 +269,7 @@ namespace SplitGui {
 
     UnitExpressionValue UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {
 
-        SPLITGUI_LOG("Evaluate: %d", expression->type);
+        SPLITGUI_LOG("Evaluate: %d", (int)expression->type);
 
         switch (expression->type) {
             case UnitExpression::Type::eBinaryOp: {
@@ -290,7 +289,7 @@ namespace SplitGui {
             }
             case UnitExpression::Type::eVector: {
                   
-                switch (expression->vector.values.size()) {
+                switch (expression->vector.size) {
                     case 2:
                         if (expression->vector.isIVec) {
                             return IVec2{(int) evaluateExpr(maxSize, expression->vector.values[0]).number, (int) evaluateExpr(maxSize, expression->vector.values[1]).number};
@@ -339,19 +338,27 @@ namespace SplitGui {
     }
 
     void UnitExpressionEvaluator::cleanup(UnitExpression* expression) {
+        if (!expression) {
+            return;
+        }
+        
         switch (expression->type) {
             case UnitExpression::Type::eVector:
 
-                for (unsigned int i = 0; i < expression->vector.values.size(); i++) {
+                for (unsigned int i = 0; i < expression->vector.size; i++) {
                     cleanup(expression->vector.values[i]);
                 }
+
+                free(expression->vector.values);
                 
                 break;
             case UnitExpression::Type::eCall:
 
-                for (unsigned int i = 0; i < expression->call.params.size(); i++) {
-                    cleanup(expression->call.params[i]);
-                }
+                // TODO:
+
+                //for (unsigned int i = 0; i < expression->call.params.size(); i++) {
+                    //cleanup(expression->call.params[i]);
+                //}
 
                 break;
             case UnitExpression::Type::eBinaryOp:

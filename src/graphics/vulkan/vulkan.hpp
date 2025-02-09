@@ -87,8 +87,6 @@ namespace SplitGui {
             vk::DescriptorSetLayout             vk_descriptorSetLayout;
             vk::PipelineLayout                  vk_graphicsPipelineLayout;
             vk::Pipeline                        vk_graphicsPipeline;
-            vk::PipelineLayout                  vk_computePipelineLayout;
-            vk::Pipeline                        vk_computePipeline;
             vk::CommandPool                     vk_commandPool;
             vk::ClearValue                      vk_clearColor;
             vk::RenderPassBeginInfo             vk_renderpassBeginInfo;
@@ -186,19 +184,19 @@ namespace SplitGui {
 [[nodiscard]] inline Result createVertexUniformBuffer();
               inline void   updateDescriptorSets();
 
-            inline void setupRenderpassBeginInfo();
-            inline void setupViewport();
-            inline void setupScissor();
-            inline void setupSubmitInfo();
-            inline void setupPresentInfo();
+              inline void setupRenderpassBeginInfo();
+              inline void setupViewport();
+              inline void setupScissor();
+              inline void setupSubmitInfo();
+              inline void setupPresentInfo();
 
-            inline void cleanupFrameBuffers();
-            inline void cleanupSyncObj();
-            inline void cleanupImageViews();
-            inline void cleanupVertexAndIndexBuffers();
-            inline void cleanupSceneBuffer();
+              inline void cleanupFrameBuffers();
+              inline void cleanupSyncObj();
+              inline void cleanupImageViews();
+              inline void cleanupVertexAndIndexBuffers();
+              inline void cleanupSceneBuffer();
 
-            void recreateSwapchain();
+              void recreateSwapchain();
     };
 }
 

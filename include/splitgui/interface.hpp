@@ -60,7 +60,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<UnitExpression*> parse(std::string expression);
 
         private:
-            UnitExpression* expressionTree;
+            UnitExpression* expressionTree = nullptr;
             unsigned int    index = 0;
 
 [[nodiscard]] ResultValue<UnitExpressionToken> nextToken(std::string& expression);

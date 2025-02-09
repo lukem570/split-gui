@@ -30,60 +30,23 @@ namespace SplitGui {
         }
     }
 
-    void EventHandler::pushEvent(Event event) {
+    Result EventHandler::pushEvent(Event event) {
+        TRYR(builtinRes, callBuiltinEvent(event));
         events.push(event);
-        callBuiltinEvent(event);
+
+        return Result::eSuccess;
     }
 
     Event EventHandler::getEvent() {
         return eventBuffer;
     }
-
-    EventData::~EventData() {
-        switch (type) {
-            case Type::eWindow:    window.~WindowEventData();       break;
-            case Type::eInterface: interface.~InterfaceEventData(); break;
-        }
+    
+    Result EventHandler::getResult() {
+        return currentResult;
     }
-
-    EventData EventData::operator=(const EventData& data) {
-        EventData dataRet = data;
-
-        switch (data.type) {
-            case Type::eWindow:    dataRet.window    = data.window;    break;
-            case Type::eInterface: dataRet.interface = data.interface; break;
-        }
-
-        return dataRet;
-    }
-
-    EventData::EventData(const EventData& data) {
-        switch (data.type) {
-            case Type::eWindow:    type = data.type; window    = data.window;    break;
-            case Type::eInterface: type = data.type; interface = data.interface; break;
-        }
-    }
-
-    InterfaceEventData InterfaceEventData::operator=(const InterfaceEventData& data) {
-        InterfaceEventData dataRet = data;
-
-        switch (data.type) {
-            case Type::eFunctionCall: dataRet.functionCall = data.functionCall; break;
-        }
-
-        return dataRet;
-    }
-
-    InterfaceEventData::InterfaceEventData(const InterfaceEventData& data) {
-        switch (data.type) {
-            case Type::eFunctionCall: functionCall.alias = data.functionCall.alias; functionCall.params = data.functionCall.params; functionCall.returnValue = data.functionCall.returnValue; break;
-        }
-    }
-
-    InterfaceEventData::~InterfaceEventData() {
-        switch (type) {
-            case Type::eFunctionCall: functionCall.~FunctionCall(); break;
-        }
+    
+    void EventHandler::pushResult(Result res) {
+        currentResult = res;
     }
     
 }

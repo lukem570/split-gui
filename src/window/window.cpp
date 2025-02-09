@@ -17,16 +17,9 @@ namespace SplitGui {
     }
 
     Window::~Window() {     
-        #ifdef SPLIT_GUI_USE_GLFW
-        
         if (windowLib) {
             delete windowLib;
         }
-
-        #else
-            #error "not implemented"
-        #endif
-
     }
 
     Result Window::instanceGlfw() {

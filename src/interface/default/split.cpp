@@ -37,8 +37,6 @@ namespace SplitGui {
             childExtentTwo.height = extent.height;
         }
         
-        printf("split update: e.w:%d e.h:%d v?:%d, d:%f\n", extent.width, extent.height, isVertical, divide.number);
-
         children[0]->setExtent(childExtentOne);
         children[0]->update();
 
@@ -92,7 +90,7 @@ namespace SplitGui {
             childExtentTwo.height = extent.height;
         }
         
-        printf("split\n");
+        SPLITGUI_LOG("Instanced Split");
 
         children[0]->setGraphics(pGraphics);
         children[0]->setExtent(childExtentOne);

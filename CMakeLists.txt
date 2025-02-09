@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(SplitGui)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -g -D_GLIBCXX_DEBUG")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -g")
 
 file(GLOB_RECURSE TESTS test/*/main.cpp)
 

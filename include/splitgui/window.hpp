@@ -35,8 +35,8 @@ namespace SplitGui {
     class SPLITGUI_EXPORT WindowLibInterface {
         public:
 
-                                 WindowLibInterface() {}
-              virtual           ~WindowLibInterface() {}
+                                 WindowLibInterface() = default;
+              virtual           ~WindowLibInterface() = default;
 
 [[nodiscard]] virtual Result     createWindow(const char* title)                 { throw; }
               virtual RawWindow* getWindowData()                                 { throw; }

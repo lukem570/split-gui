@@ -40,12 +40,8 @@ namespace SplitGui {
                 delete bindingRet.value;
                 continue;
             }
-
-            ResultValue<InterfaceElement*> tagRes = (this->*handleTagInterfaces[token.value])();
-            TRYD(tagRes);
-
-
-            return tagRes.value;
+            
+            return (this->*handleTagInterfaces[token.value])();
         } 
 
         return Result::eInvalidXml;

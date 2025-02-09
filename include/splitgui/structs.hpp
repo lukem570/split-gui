@@ -287,12 +287,13 @@ namespace SplitGui {
 
         struct Vector {
             bool isIVec;
-            std::vector<UnitExpression*> values;
+            unsigned int size;
+            UnitExpression** values;
         };
 
         struct Call {
-            std::string alias;
-            std::vector<UnitExpression*> params;
+            //std::string alias;
+            //std::vector<UnitExpression*> params;
         };
 
         struct BinaryOp {
@@ -309,8 +310,8 @@ namespace SplitGui {
         };
         Type type;
 
-        UnitExpression(Type);
-        ~UnitExpression();
+        UnitExpression(Type type) : type(type) {}
+        ~UnitExpression() = default;
     };
 
     struct UnitExpressionValue {

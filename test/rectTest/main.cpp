@@ -7,8 +7,8 @@ int main() {
     SplitGui::EventHandler eventHandler;
 
     SplitGui::Window window;
-    window.instanceGlfw();
-    window.createWindow("quad test");
+    TRYRC(glfwRes, window.instanceGlfw());
+    TRYRC(windowRes, window.createWindow("quad test"));
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;

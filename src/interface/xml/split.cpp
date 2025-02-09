@@ -57,8 +57,6 @@ namespace SplitGui {
             token = valueTokenRes.value;
             ASSERT_ATTRIBUTE(token);
 
-            printf("position: %s\n", token.value.c_str());
-
             TRYR(positionRes, split->setPosition(token.value));
 
             ResultValue<XmlToken> finalTokenRes = nextToken();

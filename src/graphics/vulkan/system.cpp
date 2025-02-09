@@ -55,7 +55,7 @@ namespace SplitGui {
             return Result::eFailedToFindQueueFamily;
         }
 
-        SPLITGUI_LOG("Queue Families: graphics= %ld, present= %ld", graphicsQueueFamilyIndex, presentQueueFamilyIndex);
+        SPLITGUI_LOG("Queue Families: graphics= %d, present= %d", graphicsQueueFamilyIndex, presentQueueFamilyIndex);
 
         return Result::eSuccess;
     }

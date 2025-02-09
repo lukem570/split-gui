@@ -13,9 +13,11 @@ namespace SplitGui {
         vk_device.freeMemory(vk_textGlyphImageMemory);
         vk_device.destroyImage(vk_textGlyphImages);
 
-        vk_device.freeMemory(vk_sceneBufferMemory);
-        vk_device.destroyBuffer(vk_sceneBuffer);
-
+        if (vk_sceneBufferMemory) {
+            vk_device.freeMemory(vk_sceneBufferMemory);
+            vk_device.destroyBuffer(vk_sceneBuffer);
+        }
+        
         vk_device.freeMemory(vk_vertexUniformBufferMemory);
         vk_device.destroyBuffer(vk_vertexUniformBuffer);
 
@@ -43,10 +45,10 @@ namespace SplitGui {
         vk_instance.destroy();
 
         if (ft_fontInUse) {
-            FT_Done_Face(ft_face);
+            ft::FT_Done_Face(ft_face);
         }
 
-        FT_Done_FreeType(ft_lib);
+        ft::FT_Done_FreeType(ft_lib);
 
         SPLITGUI_LOG("Cleaned Up Vulkan");
     }

@@ -29,8 +29,8 @@ int main() {
     SplitGui::EventHandler eventHandler;
 
     SplitGui::Window window;
-    window.instanceGlfw();
-    window.createWindow("scene test");
+    TRYRC(glfwRes, window.instanceGlfw());
+    TRYRC(windowRes, window.createWindow("scene test"));
     window.attachEventHandler(eventHandler);
 
     SplitGui::Graphics graphics;

@@ -5,15 +5,15 @@
 #include <splitgui/window.hpp>
 
 namespace SplitGui {
-    static void resizeEvent(Context eventContext) {
+    Result resizeEvent(Context eventContext) {
         if (!eventContext.pGraphics) {
-            return;
+            return Result::eSuccess;
         }
 
-        eventContext.pGraphics->resizeEvent();
+        TRYR(resizeRes, eventContext.pGraphics->resizeEvent());
 
         if (!eventContext.pInterface) {
-            return;
+            return Result::eSuccess;
         }
         
         // TODO: fix for not full window viewport sizes
@@ -25,16 +25,18 @@ namespace SplitGui {
         eventContext.pInterface->setViewport(viewport);
         eventContext.pInterface->update();
         eventContext.pGraphics->submitBuffers();
+
+        return Result::eSuccess;
     }
 
-    void EventHandler::callBuiltinEvent(Event event) {
+    Result EventHandler::callBuiltinEvent(Event event) {
 
         switch (event.category) {
             case Event::Category::eWindow: {
                 
                 switch (event.window) {
                     case Event::WindowType::eResize: {
-                        resizeEvent(eventContext);
+                        TRYR(resizeRes, resizeEvent(eventContext));
                         break;
                     }
                     default: break;
@@ -44,5 +46,7 @@ namespace SplitGui {
             }
             default: break;
         }
+
+        return Result::eSuccess;
     }
 }
