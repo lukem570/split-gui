@@ -28,7 +28,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result             updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         { throw; }
 [[nodiscard]] virtual Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         { throw; }
 [[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                        { throw; }
-              virtual void               loadFont(const char* path)                                                                                  { throw; }
+[[nodiscard]] virtual Result             loadFont(const char* path)                                                                                  { throw; }
               virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                 { throw; }
 [[nodiscard]] virtual Result             submitBuffers()                                                                                             { throw; }
 [[nodiscard]] virtual Result             resizeEvent()                                                                                               { throw; }
@@ -56,7 +56,7 @@ namespace SplitGui {
               void             updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation);
               void             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position);
 [[nodiscard]] ResultValue<int> drawText(IVec2 x1, std::string text); // Returns the width in pixels of the text
-              void             loadFont(const char* path);
+[[nodiscard]] Result           loadFont(const char* path);
               void             drawMedia(Vec2 x1, Vec2 x2);
               void             submitBuffers();
 [[nodiscard]] Result           resizeEvent();

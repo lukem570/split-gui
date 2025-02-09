@@ -59,7 +59,7 @@ namespace SplitGui {
 [[nodiscard]] Result             updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation)                                         override;
 [[nodiscard]] Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         override;
 [[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                        override;
-              void               loadFont(const char* path)                                                                                  override;
+[[nodiscard]] Result             loadFont(const char* path)                                                                                  override;
 [[nodiscard]] Result             submitBuffers()                                                                                             override;
 
 [[nodiscard]] Result             resizeEvent()                                                                                               override;

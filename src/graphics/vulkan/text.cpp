@@ -1,19 +1,20 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    void VulkanInterface::loadFont(const char* path) {
+    Result VulkanInterface::loadFont(const char* path) {
         if (ft_fontInUse) {
             ft::FT_Done_Face(ft_face);
         }
 
-        ft::FT_Error error = ft::FT_New_Face(ft_lib, path, 0, &ft_face); // TODO: Result
+        ft::FT_Error error = ft::FT_New_Face(ft_lib, path, 0, &ft_face);
         if (error) {
-            printf("WARN: could not load font: %s\n", path);
-            return;
+            return Result::eFailedToLoadFont;
         }
         ft_fontInUse = true;
 
         SPLITGUI_LOG("Loaded Font");
+
+        return Result::eSuccess;
     }
 
     template <typename T>

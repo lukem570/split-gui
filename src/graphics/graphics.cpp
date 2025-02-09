@@ -95,8 +95,8 @@ namespace SplitGui {
         return ret.value * windowSize.x;
     }
 
-    void Graphics::loadFont(const char* path) {
-        pInterface->loadFont(path);
+    Result Graphics::loadFont(const char* path) {
+        return pInterface->loadFont(path);
     }
 
     void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) {
