@@ -10,6 +10,6 @@ namespace SplitGui {
     }
 
     void Node::submitGraphics(Graphics& graphics) {
-        pGraphics = & graphics;
+        pGraphics = &graphics;
     }
 }

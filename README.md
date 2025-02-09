@@ -117,8 +117,8 @@ index.xml
 <meta version="0.1.0"/>
 
 <split direction="vertical" position="20px + 50%"> 
-    <rect color="ivec3(255, 100, 100)"/>
-    <rect color="ivec3(100, 255, 100)"/>
+    <rect color="ivec3(255u, 100u, 100u)"/>
+    <rect color="ivec3(100u, 255u, 100u)"/>
 </split>
 ```
 
@@ -154,3 +154,4 @@ index.xml
 
 * slowness
     * performance testing and checking for bottlenecks
+* fix rotation in cube test

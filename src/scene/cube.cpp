@@ -16,16 +16,13 @@ namespace SplitGui {
 
     void Cube::generate() {
 
-        for (unsigned int i = 0; i < vertices.size(); i++) {
-            vertices[i].color = color.normalize();
-        }
-
         int idx = 0;
 
         for (int x = -1; x <= 1; x += 2) {
             for (int y = -1; y <= 1; y += 2) {
                 for (int z = -1; z <= 1; z += 2) {
-                    vertices[idx++] = {x * size, y * size, z * size};
+                    vertices[idx].pos     = {x * size, y * size, z * size};
+                    vertices[idx++].color = {(x + 1.0) / 2.0, (y + 1.0) / 2.0, (z + 1.0) / 2.0};
                 }
             }
         }
@@ -35,19 +32,19 @@ namespace SplitGui {
         indices[idx++] = 0, indices[idx++] = 1, indices[idx++] = 2;
         indices[idx++] = 1, indices[idx++] = 3, indices[idx++] = 2;
 
-        indices[idx++] = 4, indices[idx++] = 5, indices[idx++] = 6;
-        indices[idx++] = 5, indices[idx++] = 7, indices[idx++] = 6;
+        indices[idx++] = 4, indices[idx++] = 6, indices[idx++] = 5;
+        indices[idx++] = 5, indices[idx++] = 6, indices[idx++] = 7;
 
         indices[idx++] = 2, indices[idx++] = 3, indices[idx++] = 6;
         indices[idx++] = 3, indices[idx++] = 7, indices[idx++] = 6;
 
-        indices[idx++] = 5, indices[idx++] = 0, indices[idx++] = 3;
-        indices[idx++] = 5, indices[idx++] = 2, indices[idx++] = 0;
+        indices[idx++] = 5, indices[idx++] = 0, indices[idx++] = 4;
+        indices[idx++] = 1, indices[idx++] = 0, indices[idx++] = 5;
 
-        indices[idx++] = 1, indices[idx++] = 5, indices[idx++] = 7;
-        indices[idx++] = 1, indices[idx++] = 7, indices[idx++] = 3;
+        indices[idx++] = 1, indices[idx++] = 5, indices[idx++] = 3;
+        indices[idx++] = 5, indices[idx++] = 7, indices[idx++] = 3;
 
-        indices[idx++] = 4, indices[idx++] = 0, indices[idx++] = 6;
-        indices[idx++] = 6, indices[idx++] = 0, indices[idx++] = 2;
+        indices[idx++] = 0, indices[idx++] = 2, indices[idx++] = 4;
+        indices[idx++] = 2, indices[idx++] = 6, indices[idx++] = 4;
     }
 }

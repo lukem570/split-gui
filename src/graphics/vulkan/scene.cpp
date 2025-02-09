@@ -18,8 +18,8 @@ namespace SplitGui {
     }
 
     void VulkanInterface::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices) {
-        int oldVerticesSize = vertices.size();
-        int oldIndicesSize  = indices.size();
+        unsigned int oldVerticesSize = vertices.size();
+        unsigned int oldIndicesSize  = indices.size();
 
         vertices.resize(oldVerticesSize + newVertices.size());
         indices.resize(oldIndicesSize + newIndices.size());
@@ -38,7 +38,7 @@ namespace SplitGui {
             indices[oldIndicesSize + i] = oldVerticesSize + newIndices[i];
         }
 
-        SPLITGUI_LOG("Submitted Triangles: Verts= %ld Indices= %ld", newVertices.size(), newIndices.size());
+        SPLITGUI_LOG("Submitted Triangles: Verts= %ld, Indices= %ld, Total Verts= %ld, Total Indices= %ld", newVertices.size(), newIndices.size(), vertices.size(), indices.size());
     }
 
     void VulkanInterface::updateScene(unsigned int ref, IVec2 x1, IVec2 x2) {

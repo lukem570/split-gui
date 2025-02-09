@@ -10,7 +10,7 @@
 #include <string>
 #include <cmath>
 
-constexpr double degToRad(double degrees) {
+double degToRad(double degrees) {
     return degrees * (M_PI / 180.0);
 }
 
@@ -52,47 +52,72 @@ int main() {
 
     SplitGui::Cube cube;
     cube.submitGraphics(graphics);
-    cube.setSize(0.5);
-    cube.setColor(0xFF00FF);
+    cube.setSize(0.25);
+    cube.setColor(SplitGui::HexColor(0xFF0000));
     cube.generate();
-
-    cube.submit(0);
-
-    SplitGui::Vertex vert1;
-    vert1.color = SplitGui::HexColor(0xFF0000).normalize();
-    vert1.pos = {0.0, -0.5};
-
-    SplitGui::Vertex vert2;
-    vert2.color = SplitGui::HexColor(0x00FF00).normalize();
-    vert2.pos = {0.5, 0.5};
-
-    SplitGui::Vertex vert3;
-    vert3.color = SplitGui::HexColor(0x0000FF).normalize();
-    vert3.pos = {-0.5, 0.5};
-
-    std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
-    std::vector<uint16_t> indices          = {0, 1, 2, 1, 0, 2};
-
-    graphics.submitTriangleData(0, vertices, indices);
 
     SplitGui::Vec3 rotation = {0, 0, 0};
     SplitGui::Vec3 position = {0, 0, 0};
 
-    position.x = 0;
-    position.y = 0;
-    position.z = 0;
-
     ui.instance();
+    cube.submit(0);
     graphics.submitBuffers();
 
     graphics.updateSceneCameraPosition(0, position);
 
+    int prevXPos = 0;
+    int prevYPos = 0;
+
+    int xPos = 0;
+    int yPos = 0;
+
+    bool mouseDown = false;
+
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
-            
+            switch (eventHandler.getEvent().category) {
+
+                case SplitGui::Event::Category::eWindow:
+
+                    switch (eventHandler.getEvent().window) {
+
+                        case SplitGui::Event::WindowType::eMouseMove:
+                            xPos = eventHandler.getEvent().data.window.mouseMove.xPos;
+                            yPos = eventHandler.getEvent().data.window.mouseMove.yPos;
+
+                            break;
+                        case SplitGui::Event::WindowType::eMouseButton:
+
+                            if (eventHandler.getEvent().data.window.mouseButton.mouseCode == SplitGui::MouseCode::eOne) {
+
+                                if (eventHandler.getEvent().data.window.mouseButton.mouseState == SplitGui::MouseState::ePress) {
+
+                                    mouseDown = true;
+
+                                } else if (eventHandler.getEvent().data.window.mouseButton.mouseState == SplitGui::MouseState::eRelease) {
+
+                                    mouseDown = false;
+
+                                }
+                            }
+                            break;
+                        
+                        default:break;
+                    }
+                    break;
+                
+                default:break;
+            }
         }   
 
-        rotation.y += degToRad(2);
+        if (mouseDown) {
+            rotation.y -= degToRad(prevXPos - xPos);
+            rotation.x -= degToRad(prevYPos - yPos);
+            rotation.z -= degToRad(prevYPos - yPos);
+        }
+
+        prevXPos = xPos;
+        prevYPos = yPos;
 
         graphics.updateSceneCameraRotation(0, rotation);
 
