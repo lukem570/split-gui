@@ -70,6 +70,9 @@ int main() {
     graphics.submitBuffers();
 
     SplitGui::Vec3 rotation = {0, 0, 0};
+    SplitGui::Vec3 position = {0, 0, 0};
+
+    graphics.updateSceneCameraPosition(0, position);
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
@@ -77,7 +80,8 @@ int main() {
         }  
         
         rotation.y += degToRad(2);
-        graphics.updateSceneCameraRotation(0, rotation);
+        SplitGui::Mat3 rotMat = SplitGui::Mat3::eulerRotationMatrix(rotation);
+        graphics.updateSceneCameraRotation(0, rotMat);
 
         graphics.drawFrame();
         window.update();

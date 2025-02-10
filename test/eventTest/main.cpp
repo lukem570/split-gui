@@ -56,7 +56,7 @@ int main() {
                     switch (eventHandler.getEvent().window) {
 
                         case SplitGui::Event::WindowType::eKeypress:
-                            SPLITGUI_LOG("Pressed key: %c", eventHandler.getEvent().data.window.keypress.keyCode);
+                            SPLITGUI_LOG("Pressed key: %c", (char)eventHandler.getEvent().data.window.keypress.keyCode);
                             break;
                         
                         default:break;

@@ -134,7 +134,6 @@ index.xml
 
 ### Optimizations
 
-* pass in matrix to vertex shader for scenes
 * staging buffer caching
 * make staging buffer allocate extra space for update events
 * multithreading?

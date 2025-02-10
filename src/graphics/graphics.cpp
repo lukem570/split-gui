@@ -103,7 +103,7 @@ namespace SplitGui {
         pInterface->submitTriangleData(sceneNumber, vertices, indices);
     }
 
-    void Graphics::updateSceneCameraRotation(unsigned int sceneNumber, Vec3& rotation) {
+    void Graphics::updateSceneCameraRotation(unsigned int sceneNumber, Mat3& rotation) {
         pInterface->updateSceneCameraRotation(sceneNumber, rotation);
     }
 

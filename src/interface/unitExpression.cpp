@@ -269,8 +269,6 @@ namespace SplitGui {
 
     UnitExpressionValue UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {
 
-        SPLITGUI_LOG("Evaluate: %d", (int)expression->type);
-
         switch (expression->type) {
             case UnitExpression::Type::eBinaryOp: {
 

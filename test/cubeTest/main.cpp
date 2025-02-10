@@ -119,7 +119,8 @@ int main() {
         prevXPos = xPos;
         prevYPos = yPos;
 
-        graphics.updateSceneCameraRotation(0, rotation);
+        SplitGui::Mat3 rotMat = SplitGui::Mat3::eulerRotationMatrix(rotation);
+        graphics.updateSceneCameraRotation(0, rotMat);
 
         graphics.drawFrame();
         window.update();

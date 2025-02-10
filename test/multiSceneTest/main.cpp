@@ -86,8 +86,11 @@ int main() {
         rotation2.y += degToRad(3);
         rotation2.z += degToRad(3);
 
-        graphics.updateSceneCameraRotation(0, rotation1);
-        graphics.updateSceneCameraRotation(1, rotation2);
+        SplitGui::Mat3 rotMat1 = SplitGui::Mat3::eulerRotationMatrix(rotation1);
+        SplitGui::Mat3 rotMat2 = SplitGui::Mat3::eulerRotationMatrix(rotation2);
+        
+        graphics.updateSceneCameraRotation(0, rotMat1);
+        graphics.updateSceneCameraRotation(1, rotMat2);
 
         graphics.drawFrame();
         window.update();

@@ -28,41 +28,17 @@ layout(location = 4) out uint out_sceneNumber;
 struct Scene {
     ivec2 size;
     ivec2 position;
-    vec3  cameraRotation;
+    mat3  cameraRotation;
     vec3  cameraPosition;
 };
 
-layout(binding = 0) uniform ScenesBuffer {
+layout(std140, binding = 0) uniform ScenesBuffer {
     Scene scenes[MAX_SCENES];
 } sb;
 
 layout(binding = 2) uniform VertexUniform {
     ivec2 screenSize;
 } vub;
-
-mat3 rotateX(float angle) {
-    float c = cos(angle);
-    float s = sin(angle);
-    return mat3(1.0, 0.0, 0.0,
-                0.0, c,   -s,
-                0.0, s,   c);
-}
-
-mat3 rotateY(float angle) {
-    float c = cos(angle);
-    float s = sin(angle);
-    return mat3(c,   0.0, s,
-                0.0, 1.0, 0.0,
-                -s,  0.0, c);
-}
-
-mat3 rotateZ(float angle) {
-    float c = cos(angle);
-    float s = sin(angle);
-    return mat3(c,   -s,  0.0,
-                s,   c,   0.0,
-                0.0, 0.0, 1.0);
-}
 
 float conformToScene(float imin, float imax, float x) {
     float m = (imin - imax) / -2.0f;
@@ -87,14 +63,10 @@ void main() {
         Scene scene = sb.scenes[sceneNumber];
 
         // transform points around position
-        //pos -= scene.cameraPosition;
-
-        mat3 rotationX = rotateX(scene.cameraRotation.x);
-        mat3 rotationY = rotateY(scene.cameraRotation.y);
-        mat3 rotationZ = rotateZ(scene.cameraRotation.z); 
+        pos -= scene.cameraPosition;
 
         // rotate points
-        pos *= rotationX * rotationY * rotationZ;
+        pos *= scene.cameraRotation;
 
         // adjust points for aspect ratio
         if (scene.size.x > scene.size.y) {

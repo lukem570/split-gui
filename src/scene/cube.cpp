@@ -22,7 +22,7 @@ namespace SplitGui {
             for (int y = -1; y <= 1; y += 2) {
                 for (int z = -1; z <= 1; z += 2) {
                     vertices[idx].pos     = {x * size, y * size, z * size};
-                    vertices[idx++].color = {(x + 1.0) / 2.0, (y + 1.0) / 2.0, (z + 1.0) / 2.0};
+                    vertices[idx++].color = {((float)x + 1.0f) / 2.0f, ((float)y + 1.0f) / 2.0f, ((float)z + 1.0f) / 2.0f}; // TODO: switch to color
                 }
             }
         }

@@ -150,6 +150,58 @@ namespace SplitGui {
     IVec2 IVec2::operator*(IVec2 operand) { return { (int)x * operand.x, (int)y * operand.y }; }
     IVec2 IVec2::operator/(IVec2 operand) { return { (int)x / operand.x, (int)y / operand.y }; }
 
+    struct Mat2 {
+        float a1, a2;
+        float b1, b2;
+    };
+
+    struct Mat3 {
+        alignas(16) Vec3 a;
+        alignas(16) Vec3 b;
+        alignas(16) Vec3 c;
+
+        static Mat3 eulerRotationMatrix(Vec3 rotVec) {
+            Mat3 rotation;
+
+            float sinX = std::sin(rotVec.x);
+            float cosX = std::cos(rotVec.x);
+
+            float sinY = std::sin(rotVec.y);
+            float cosY = std::cos(rotVec.y);
+
+            float sinZ = std::sin(rotVec.z);
+            float cosZ = std::cos(rotVec.z);
+
+            rotation.a.x = cosY * cosZ;
+            rotation.a.y = sinX * sinY * cosZ - cosX * sinZ;
+            rotation.a.z = cosX * sinY * cosZ + sinX * sinZ;
+
+            rotation.b.x = cosY * sinZ;
+            rotation.b.y = sinX * sinY * sinZ + cosX * cosZ;
+            rotation.b.z = cosX * sinY * sinZ - sinX * cosZ;
+
+            rotation.c.x = -sinY;
+            rotation.c.y = sinX * cosY;
+            rotation.c.z = cosX * cosY;
+
+            return rotation;
+        }
+    };
+
+    struct Mat4 {
+        float a1, a2, a3, a4;
+        float b1, b2, b3, b4;
+        float c1, c2, c3, c4;
+        float d1, d2, d3, d4;
+    };
+
+    struct Quaternion {
+        float x, y, z, w;
+
+        Mat3 convertToMatrix();
+        void rotate(Vec3 axis, float angle);
+    };
+
     struct HexColor {
         HexColor() {}
 
@@ -212,9 +264,9 @@ namespace SplitGui {
     };
 
     struct alignas(16) SceneObj {
-        RectObj  viewport;
-        Vec3     cameraRotation;
-        Vec3     cameraPosition;
+        RectObj viewport;
+        Mat3    cameraRotation;
+        Vec3    cameraPosition;
     };
 
     struct Vertex {
