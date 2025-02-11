@@ -57,13 +57,10 @@ int main() {
     cube.generate();
 
     SplitGui::Vec3 rotation = {0, 0, 0};
-    SplitGui::Vec3 position = {0, 0, 0};
 
     ui.instance();
     cube.submit(0);
     graphics.submitBuffers();
-
-    graphics.updateSceneCameraPosition(0, position);
 
     int prevXPos = 0;
     int prevYPos = 0;
@@ -72,6 +69,11 @@ int main() {
     int yPos = 0;
 
     bool mouseDown = false;
+
+    SplitGui::Mat4 projection = SplitGui::Mat4::orthographicProjection();
+    TRYRC(projectionRes, graphics.updateSceneCameraProjection(0, projection));
+
+    SplitGui::Camera cam;
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
@@ -111,16 +113,19 @@ int main() {
         }   
 
         if (mouseDown) {
-            rotation.y -= degToRad(prevXPos - xPos);
-            rotation.x -= degToRad(prevYPos - yPos);
-            rotation.z -= degToRad(prevYPos - yPos);
+            rotation.y += degToRad(prevXPos - xPos);
+            rotation.x += degToRad(prevYPos - yPos);
         }
 
         prevXPos = xPos;
         prevYPos = yPos;
 
-        SplitGui::Mat3 rotMat = SplitGui::Mat3::eulerRotationMatrix(rotation);
-        graphics.updateSceneCameraRotation(0, rotMat);
+        cam.setRotation(rotation);
+
+        cam.update();
+
+        SplitGui::Mat4 view = cam.getView();
+        TRYRC(viewRes, graphics.updateSceneCameraView(0, view));
 
         graphics.drawFrame();
         window.update();

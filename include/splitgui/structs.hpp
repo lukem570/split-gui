@@ -54,7 +54,7 @@ namespace SplitGui {
         eScene       = 0x08,
     };
 
-    struct Vec4 {
+    struct SPLITGUI_EXPORT Vec4 {
         union {float x; float r;};
         union {float y; float g;};
         union {float z; float b;};
@@ -64,9 +64,12 @@ namespace SplitGui {
         Vec4 operator-(Vec4 operand);
         Vec4 operator*(Vec4 operand);
         Vec4 operator/(Vec4 operand);
+
+        float dot(const Vec4& operand);
+        void normalize();
     };
 
-    struct IVec4 {
+    struct SPLITGUI_EXPORT IVec4 {
         union {int x; int r;};
         union {int y; int g;};
         union {int z; int b;};
@@ -76,9 +79,11 @@ namespace SplitGui {
         IVec4 operator-(IVec4 operand);
         IVec4 operator*(IVec4 operand);
         IVec4 operator/(IVec4 operand);
+
+        float dot(const IVec4& operand);
     };
 
-    struct Vec3 {
+    struct SPLITGUI_EXPORT Vec3 {
         union {float x; float r;};
         union {float y; float g;};
         union {float z; float b;};
@@ -87,9 +92,20 @@ namespace SplitGui {
         Vec3 operator-(Vec3 operand);
         Vec3 operator*(Vec3 operand);
         Vec3 operator/(Vec3 operand);
+
+        Vec3 cross(const Vec3& operand) const {
+            return Vec3{
+                y * operand.z - z * operand.y,
+                z * operand.x - x * operand.z,
+                x * operand.y - y * operand.x,
+            };
+        }
+
+        float dot(const Vec3& operand);
+        void normalize();
     };
 
-    struct IVec3 {
+    struct SPLITGUI_EXPORT IVec3 {
         union {int x; int r;};
         union {int y; int g;};
         union {int z; int b;};
@@ -98,9 +114,11 @@ namespace SplitGui {
         IVec3 operator-(IVec3 operand);
         IVec3 operator*(IVec3 operand);
         IVec3 operator/(IVec3 operand);
+
+        float dot(const IVec3& operand);
     };
 
-    struct Vec2 {
+    struct SPLITGUI_EXPORT Vec2 {
         union {float x; float r;};
         union {float y; float g;};
 
@@ -108,9 +126,12 @@ namespace SplitGui {
         Vec2 operator-(Vec2 operand);
         Vec2 operator*(Vec2 operand);
         Vec2 operator/(Vec2 operand);
+
+        float dot(const Vec2& operand);
+        void normalize();
     };
 
-    struct IVec2 {
+    struct SPLITGUI_EXPORT IVec2 {
         union {int x; int r;};
         union {int y; int g;};
 
@@ -118,88 +139,34 @@ namespace SplitGui {
         IVec2 operator-(IVec2 operand);
         IVec2 operator*(IVec2 operand);
         IVec2 operator/(IVec2 operand);
+
+        float dot(const IVec2& operand);
     };
 
-    Vec4 Vec4::operator+(Vec4 operand) { return { (float)x + operand.x, (float)y + operand.y, (float)z + operand.z, (float)w + operand.w }; }
-    Vec4 Vec4::operator-(Vec4 operand) { return { (float)x - operand.x, (float)y - operand.y, (float)z + operand.z, (float)w + operand.w }; }
-    Vec4 Vec4::operator*(Vec4 operand) { return { (float)x * operand.x, (float)y * operand.y, (float)z + operand.z, (float)w + operand.w }; }
-    Vec4 Vec4::operator/(Vec4 operand) { return { (float)x / operand.x, (float)y / operand.y, (float)z + operand.z, (float)w + operand.w }; }
-
-    IVec4 IVec4::operator+(IVec4 operand) { return { (int)x + operand.x, (int)y + operand.y, (int)z + operand.z, (int)w + operand.w }; }
-    IVec4 IVec4::operator-(IVec4 operand) { return { (int)x - operand.x, (int)y - operand.y, (int)z + operand.z, (int)w + operand.w }; }
-    IVec4 IVec4::operator*(IVec4 operand) { return { (int)x * operand.x, (int)y * operand.y, (int)z + operand.z, (int)w + operand.w }; }
-    IVec4 IVec4::operator/(IVec4 operand) { return { (int)x / operand.x, (int)y / operand.y, (int)z + operand.z, (int)w + operand.w }; }
-
-    Vec3 Vec3::operator+(Vec3 operand) { return { (float)x + operand.x, (float)y + operand.y, (float)z + operand.z }; }
-    Vec3 Vec3::operator-(Vec3 operand) { return { (float)x - operand.x, (float)y - operand.y, (float)z + operand.z }; }
-    Vec3 Vec3::operator*(Vec3 operand) { return { (float)x * operand.x, (float)y * operand.y, (float)z + operand.z }; }
-    Vec3 Vec3::operator/(Vec3 operand) { return { (float)x / operand.x, (float)y / operand.y, (float)z + operand.z }; }
-
-    IVec3 IVec3::operator+(IVec3 operand) { return { (int)x + operand.x, (int)y + operand.y, (int)z + operand.z }; }
-    IVec3 IVec3::operator-(IVec3 operand) { return { (int)x - operand.x, (int)y - operand.y, (int)z + operand.z }; }
-    IVec3 IVec3::operator*(IVec3 operand) { return { (int)x * operand.x, (int)y * operand.y, (int)z + operand.z }; }
-    IVec3 IVec3::operator/(IVec3 operand) { return { (int)x / operand.x, (int)y / operand.y, (int)z + operand.z }; }
-
-    Vec2 Vec2::operator+(Vec2 operand) { return { (float)x + operand.x, (float)y + operand.y }; }
-    Vec2 Vec2::operator-(Vec2 operand) { return { (float)x - operand.x, (float)y - operand.y }; }
-    Vec2 Vec2::operator*(Vec2 operand) { return { (float)x * operand.x, (float)y * operand.y }; }
-    Vec2 Vec2::operator/(Vec2 operand) { return { (float)x / operand.x, (float)y / operand.y }; }
-
-    IVec2 IVec2::operator+(IVec2 operand) { return { (int)x + operand.x, (int)y + operand.y }; }
-    IVec2 IVec2::operator-(IVec2 operand) { return { (int)x - operand.x, (int)y - operand.y }; }
-    IVec2 IVec2::operator*(IVec2 operand) { return { (int)x * operand.x, (int)y * operand.y }; }
-    IVec2 IVec2::operator/(IVec2 operand) { return { (int)x / operand.x, (int)y / operand.y }; }
-
-    struct Mat2 {
-        float a1, a2;
-        float b1, b2;
+    struct SPLITGUI_EXPORT Mat2 {
+        alignas(8) Vec2 a;
+        alignas(8) Vec2 b;
     };
 
-    struct Mat3 {
+    struct SPLITGUI_EXPORT Mat3 {
         alignas(16) Vec3 a;
         alignas(16) Vec3 b;
         alignas(16) Vec3 c;
-
-        static Mat3 eulerRotationMatrix(Vec3 rotVec) {
-            Mat3 rotation;
-
-            float sinX = std::sin(rotVec.x);
-            float cosX = std::cos(rotVec.x);
-
-            float sinY = std::sin(rotVec.y);
-            float cosY = std::cos(rotVec.y);
-
-            float sinZ = std::sin(rotVec.z);
-            float cosZ = std::cos(rotVec.z);
-
-            rotation.a.x = cosY * cosZ;
-            rotation.a.y = sinX * sinY * cosZ - cosX * sinZ;
-            rotation.a.z = cosX * sinY * cosZ + sinX * sinZ;
-
-            rotation.b.x = cosY * sinZ;
-            rotation.b.y = sinX * sinY * sinZ + cosX * cosZ;
-            rotation.b.z = cosX * sinY * sinZ - sinX * cosZ;
-
-            rotation.c.x = -sinY;
-            rotation.c.y = sinX * cosY;
-            rotation.c.z = cosX * cosY;
-
-            return rotation;
-        }
     };
 
-    struct Mat4 {
-        float a1, a2, a3, a4;
-        float b1, b2, b3, b4;
-        float c1, c2, c3, c4;
-        float d1, d2, d3, d4;
-    };
+    struct SPLITGUI_EXPORT Mat4 {
+        alignas(16) Vec4 a;
+        alignas(16) Vec4 b;
+        alignas(16) Vec4 c;
+        alignas(16) Vec4 d;
 
-    struct Quaternion {
-        float x, y, z, w;
+        Mat4 operator*(const Mat4& operand);
 
-        Mat3 convertToMatrix();
-        void rotate(Vec3 axis, float angle);
+        static Mat4 xRotationMatrix(float theta);
+        static Mat4 yRotationMatrix(float theta);
+        static Mat4 zRotationMatrix(float theta);
+
+        static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
     };
 
     struct HexColor {
@@ -265,8 +232,8 @@ namespace SplitGui {
 
     struct alignas(16) SceneObj {
         RectObj viewport;
-        Mat3    cameraRotation;
-        Vec3    cameraPosition;
+        Mat4    cameraView;
+        Mat4    cameraProjection;
     };
 
     struct Vertex {

@@ -131,12 +131,12 @@ index.xml
 * add calls to unit expression parser
 * finish default interface elements
 * add svgs 
+* add z to cam
 
 ### Optimizations
 
 * staging buffer caching
 * make staging buffer allocate extra space for update events
-* multithreading?
 * fix scenes buffers recreating on updateposition and updaterotation
     * use a custom copy region for specific indices
 
@@ -146,11 +146,8 @@ index.xml
     * convension check
 * refactor text code
 * refactor lib to accomidate builds without vulkan or glfw
-* refactor scene projection
-    * camera position bug
 
 ### Bugs
 
 * slowness
     * performance testing and checking for bottlenecks
-* fix rotation in cube test

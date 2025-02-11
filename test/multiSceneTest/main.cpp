@@ -70,27 +70,37 @@ int main() {
     ui.instance();
     graphics.submitBuffers();
 
-    SplitGui::Vec3 rotation1 = {0, 0, 0};
-    SplitGui::Vec3 rotation2 = {0, 0, 0};
+    SplitGui::Vec3 rotation1 = {degToRad(5), 0, 0};
+    SplitGui::Vec3 rotation2 = {degToRad(5), 0, 0};
+
+    SplitGui::Mat4 projection1 = SplitGui::Mat4::orthographicProjection();
+    SplitGui::Mat4 projection2 = SplitGui::Mat4::orthographicProjection();
+
+    TRYRC(projectionRes1, graphics.updateSceneCameraProjection(0, projection1));
+    TRYRC(projectionRes2, graphics.updateSceneCameraProjection(1, projection2));
+
+    SplitGui::Camera cam1;
+    SplitGui::Camera cam2;
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
             
         }  
         
-        rotation1.x += degToRad(2);
         rotation1.y += degToRad(3);
-        rotation1.z += degToRad(3);
-
-        rotation2.x += degToRad(2);
         rotation2.y += degToRad(3);
-        rotation2.z += degToRad(3);
 
-        SplitGui::Mat3 rotMat1 = SplitGui::Mat3::eulerRotationMatrix(rotation1);
-        SplitGui::Mat3 rotMat2 = SplitGui::Mat3::eulerRotationMatrix(rotation2);
+        cam1.setRotation(rotation1);
+        cam2.setRotation(rotation2);
+
+        cam1.update();
+        cam2.update();
         
-        graphics.updateSceneCameraRotation(0, rotMat1);
-        graphics.updateSceneCameraRotation(1, rotMat2);
+        SplitGui::Mat4 view1 = cam1.getView();
+        SplitGui::Mat4 view2 = cam2.getView();
+
+        TRYRC(viewRes1, graphics.updateSceneCameraView(0, view1));
+        TRYRC(viewRes2, graphics.updateSceneCameraView(1, view2));
 
         graphics.drawFrame();
         window.update();

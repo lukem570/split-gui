@@ -28,8 +28,8 @@ layout(location = 4) out uint out_sceneNumber;
 struct Scene {
     ivec2 size;
     ivec2 position;
-    mat3  cameraRotation;
-    vec3  cameraPosition;
+    mat4  cameraView;
+    mat4  cameraProjection;
 };
 
 layout(std140, binding = 0) uniform ScenesBuffer {
@@ -57,16 +57,13 @@ void main() {
 
     bool useScene = (flags & SCENE_BIT) != 0;
 
-    vec3 pos = in_inPosition;
+    vec4 pos = vec4(in_inPosition, 1.0f);
 
     if (useScene) {
         Scene scene = sb.scenes[sceneNumber];
 
-        // transform points around position
-        pos -= scene.cameraPosition;
-
         // rotate points
-        pos *= scene.cameraRotation;
+        pos *= scene.cameraView;
 
         // adjust points for aspect ratio
         if (scene.size.x > scene.size.y) {
@@ -84,7 +81,9 @@ void main() {
 
         pos.x = conformToScene(iminx, imaxx, pos.x);
         pos.y = conformToScene(iminy, imaxy, pos.y);
+
+        pos *= scene.cameraProjection;
     }
 
-    gl_Position = vec4(pos.xy, 0.0, 1.0);
+    gl_Position = vec4(pos.xyz, 1.0);
 }

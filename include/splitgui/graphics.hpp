@@ -25,8 +25,8 @@ namespace SplitGui {
               virtual unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                           { throw; }
               virtual void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                           { throw; }
               virtual void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) { throw; }
-[[nodiscard]] virtual Result             updateSceneCameraRotation(unsigned int sceneNumber, Mat3& rotation)                                         { throw; }
-[[nodiscard]] virtual Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                         { throw; }
+[[nodiscard]] virtual Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                 { throw; }
+[[nodiscard]] virtual Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                     { throw; }
 [[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                        { throw; }
 [[nodiscard]] virtual Result             loadFont(const char* path)                                                                                  { throw; }
               virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                 { throw; }
@@ -53,8 +53,8 @@ namespace SplitGui {
               unsigned int     instanceScene(IVec2 x1, IVec2 x2);
               void             updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2);
               void             submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices);
-              void             updateSceneCameraRotation(unsigned int sceneNumber, Mat3& rotation);
-              void             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position);
+[[nodiscard]] Result           updateSceneCameraView(unsigned int sceneNumber, Mat4& view);
+[[nodiscard]] Result           updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection);
 [[nodiscard]] ResultValue<int> drawText(IVec2 x1, std::string text); // Returns the width in pixels of the text
 [[nodiscard]] Result           loadFont(const char* path);
               void             drawMedia(Vec2 x1, Vec2 x2);

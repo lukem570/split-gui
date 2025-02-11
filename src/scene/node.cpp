@@ -12,4 +12,13 @@ namespace SplitGui {
     void Node::submitGraphics(Graphics& graphics) {
         pGraphics = &graphics;
     }
+
+    void Node::setPosition(Vec3& position) {
+        transform.position = position;
+    }
+
+    void Node::setRotation(Vec3& rotation) {
+        transform.rotation = rotation;
+    }
+
 }

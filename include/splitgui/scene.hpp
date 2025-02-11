@@ -14,6 +14,8 @@ namespace SplitGui {
         public:
 
             void setTransform(Transform& transform);
+            void setPosition(Vec3& position);
+            void setRotation(Vec3& rotation);
             void addChild(Node& child);
             void submitGraphics(Graphics& graphics);
 
@@ -49,6 +51,16 @@ namespace SplitGui {
 
             float size = 1;
             HexColor color;
+    };
+
+    class SPLITGUI_EXPORT Camera : public Node {
+        public:
+            void update();
+            Mat4 getView();
+
+        protected:
+
+            Vec3 forward, right, up;
     };
 
     class SPLITGUI_EXPORT Scene {

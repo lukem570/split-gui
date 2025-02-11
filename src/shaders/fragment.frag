@@ -11,8 +11,8 @@
 struct Scene {
     ivec2 size;
     ivec2 position;
-    mat3  cameraRotation;
-    vec3  cameraPosition;
+    mat4  cameraView;
+    mat4  cameraProjection;
 };
 
 layout(location = 0)      in vec3 in_fragColor;
