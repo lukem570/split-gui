@@ -57,14 +57,12 @@ namespace SplitGui {
     class SPLITGUI_EXPORT ResultValue {
         public:
             T value;
-            std::string message;
             Result result;
 
-            ResultValue() : value(), message(), result(Result::eSuccess) {}
+            ResultValue() : value(), result(Result::eSuccess) {}
 
-            ResultValue(T value) :                           value(value), message(),        result(Result::eSuccess) {}
-            ResultValue(Result error) :                      value(),      message(),        result(error) {}
-            ResultValue(Result error, std::string message) : value(),      message(message), result(error) {}
+            ResultValue(T value)      : value(value), result(Result::eSuccess) {}
+            ResultValue(Result error) : value(),      result(error) {}
 
             ResultValue<T> operator=(const Result inputResult) { return ResultValue<T>(inputResult); }
     

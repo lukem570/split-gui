@@ -20,6 +20,8 @@ layout(location = 1) flat in uint in_flags;
 layout(location = 2) flat in uint in_textureNumber;
 layout(location = 3)      in vec2 in_textureCord;
 layout(location = 4) flat in uint in_sceneNumber;
+layout(location = 5)      in vec3 in_fragNorm;
+layout(location = 6)      in vec3 in_fragPos;
 
 layout(binding = 0) uniform ScenesBuffer {
     Scene scenes[MAX_SCENES];
@@ -66,7 +68,16 @@ void main() {
         bool bottomBound = scene.position.y + scene.size.y >= gl_FragCoord.y;
 
         if (leftBound && topBound && rightBound && bottomBound) {
-            outColor = vec4(in_fragColor, 1.0);
+
+            vec3 normal = normalize(in_fragNorm);
+
+            vec3 lightPos = vec3(2.0, -1.0, 2.0);
+
+            vec3 lightDir = normalize(lightPos - in_fragPos);
+
+            float diffuse = max(dot(normal, lightDir), 0.1);
+
+            outColor = vec4(diffuse * in_fragColor, 1.0);
         } else {
             outColor = vec4(0.0);
         }

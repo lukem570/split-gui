@@ -4,6 +4,7 @@
 #include <splitgui/graphics.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/scene.hpp>
+#include <splitgui/events.hpp>
 
 #include <fstream>
 #include <sstream>

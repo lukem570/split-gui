@@ -46,7 +46,7 @@ namespace SplitGui {
         bindingDescription.stride    = sizeof(VertexBufferObject);
         bindingDescription.inputRate = vk::VertexInputRate::eVertex;
         
-        std::array<vk::VertexInputAttributeDescription, 6> attributeDescriptions;
+        std::array<vk::VertexInputAttributeDescription, 7> attributeDescriptions;
         attributeDescriptions[VertexLayout::eVertexPos].binding          = 0;
         attributeDescriptions[VertexLayout::eVertexPos].location         = VertexLayout::eVertexPos;
         attributeDescriptions[VertexLayout::eVertexPos].format           = vk::Format::eR32G32B32Sfloat;
@@ -76,6 +76,11 @@ namespace SplitGui {
         attributeDescriptions[VertexLayout::eTextureNumber].location     = VertexLayout::eTextureNumber;
         attributeDescriptions[VertexLayout::eTextureNumber].format       = vk::Format::eR16Uint;
         attributeDescriptions[VertexLayout::eTextureNumber].offset       = offsetof(VertexBufferObject, VertexBufferObject::textureNumber);
+
+        attributeDescriptions[VertexLayout::eNormal].binding             = 0;
+        attributeDescriptions[VertexLayout::eNormal].location            = VertexLayout::eNormal;
+        attributeDescriptions[VertexLayout::eNormal].format              = vk::Format::eR32G32B32Sfloat;
+        attributeDescriptions[VertexLayout::eNormal].offset              = offsetof(VertexBufferObject, VertexBufferObject::normal);
 
         vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
         vertexInputInfo.vertexBindingDescriptionCount   = 1;

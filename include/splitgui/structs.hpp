@@ -238,7 +238,7 @@ namespace SplitGui {
 
     struct Vertex {
         Vec3 pos;
-        Vec3 color; // could be union
+        Vec3 color; // TODO: make material object
         Vec2 textureCord;
     };
 
@@ -247,6 +247,7 @@ namespace SplitGui {
         uint16_t flags;
         uint16_t sceneNumber;
         uint16_t textureNumber;
+        Vec3     normal;
     };
 
     struct RectRef {
@@ -387,12 +388,13 @@ namespace SplitGui {
     };
 
     enum VertexLayout {
-        eVertexPos = 0,
-        eVertexColor = 1,
+        eVertexPos         = 0,
+        eVertexColor       = 1,
         eVertexTextureCord = 2,
-        eFlags = 3,
-        eSceneNumber = 4,
-        eTextureNumber = 5,
+        eFlags             = 3,
+        eSceneNumber       = 4,
+        eTextureNumber     = 5,
+        eNormal            = 6,
     };
 
     struct MSDFImage {

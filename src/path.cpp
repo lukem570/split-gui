@@ -77,8 +77,7 @@ namespace SplitGui {
         file.open(path, std::ios::ate | std::ios::binary);
 
         if (!file.is_open()) {
-            std::string message = "Failed to open file: " + filename;
-            return ResultValue<std::vector<char>>(Result::eFailedToOpenFile, message);
+            return Result::eFailedToOpenFile;
         }
 
         int fileSize = file.tellg();

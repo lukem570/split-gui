@@ -1,4 +1,4 @@
-#version 450
+#version 450 core
 
 #define USE_TEXTURE_BIT 0x01
 #define USE_MSDF_BIT    0x02
@@ -15,6 +15,8 @@ layout(location = 3) in uvec2 in_flags;
 layout(location = 4) in uvec2 in_sceneNumber;
 layout(location = 5) in uvec2 in_textureNumber;
 
+layout(location = 6) in vec3 in_normal;
+
 uint flags         = uint(in_flags.x);
 uint sceneNumber   = uint(in_sceneNumber.x);
 uint textureNumber = uint(in_textureNumber.x);
@@ -24,6 +26,8 @@ layout(location = 1) out uint out_flags;
 layout(location = 2) out uint out_textureNumber;
 layout(location = 3) out vec2 out_textureCord;
 layout(location = 4) out uint out_sceneNumber;
+layout(location = 5) out vec3 out_fragNorm;
+layout(location = 6) out vec3 out_fragPos;
 
 struct Scene {
     ivec2 size;
@@ -61,6 +65,9 @@ void main() {
 
     if (useScene) {
         Scene scene = sb.scenes[sceneNumber];
+
+        out_fragPos  = in_inPosition;
+        out_fragNorm = in_normal;
 
         // rotate points
         pos *= scene.cameraView;
