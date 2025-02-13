@@ -10,6 +10,7 @@
 #define MAX_SCENES 1024
 
 const float gridCellSize = 1;
+const float gridFalloffRadius = 10;
 
 struct Scene {
     ivec2 size;
@@ -86,8 +87,10 @@ void main() {
                 outColor = vec4(diffuse * in_fragColor, 1.0);
             } else {
 
-                vec2 dvx = vec2(dFdx(in_fragPos.x), dFdy(in_fragPos.x));
-                vec2 dvy = vec2(dFdx(in_fragPos.z), dFdy(in_fragPos.z));
+                vec2 pos = in_fragPos.xz + scene.cameraPosition.xz;
+
+                vec2 dvx = vec2(dFdx(pos.x), dFdy(pos.x));
+                vec2 dvy = vec2(dFdx(pos.y), dFdy(pos.y));
 
                 float lx = length(dvx);
                 float ly = length(dvy);
@@ -96,15 +99,16 @@ void main() {
 
                 dudv *= 4.0f;
 
-                vec2 modCell =  mod(in_fragPos.xz , gridCellSize) / dudv;
+                vec2 modCell =  mod(pos , gridCellSize) / dudv;
                 vec2 modDiv = vec2(1.0) - abs(clamp(modCell, vec2(0.0), vec2(1.0)) * 2.0 - vec2(1.0));
 
                 float Lod0 = max(modDiv.x, modDiv.y);
 
-                
+                vec2 height = pos;
 
+                float falloff = max(0.0, min(0.0, -1.0 / (gridFalloffRadius * gridFalloffRadius) * (height.x * height.x + height.y * height.y) + 1.0) + 1.0);
 
-                outColor = vec4(in_fragColor, Lod0);
+                outColor = vec4(in_fragColor, Lod0 * falloff);
             }
 
         } else {

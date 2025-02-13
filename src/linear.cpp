@@ -227,7 +227,7 @@ namespace SplitGui {
     Mat4 Mat4::perspectiveProjection(float far, float near) {
         Mat4 projection;
 
-        const float fov = 5.0f;
+        const float fov = 1.0f;
 
         projection.a.x = 1.0f / fov;
         projection.a.y = 0;
