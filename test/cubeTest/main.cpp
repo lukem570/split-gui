@@ -51,11 +51,19 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
-    SplitGui::Cube cube;
-    cube.submitGraphics(graphics);
-    cube.setSize(0.25);
-    cube.setColor(SplitGui::HexColor(0xFF0000));
-    cube.generate();
+    SplitGui::Cube cube1;
+    cube1.submitGraphics(graphics);
+    cube1.setSize(0.25);
+    cube1.setPosition({0, 0, 0});
+    cube1.setColor(SplitGui::HexColor(0xFF0000));
+    cube1.generate();
+
+    SplitGui::Cube cube2;
+    cube2.submitGraphics(graphics);
+    cube2.setSize(0.25);
+    cube2.setPosition({1.0, 0, 0});
+    cube2.setColor(SplitGui::HexColor(0x00FF00));
+    cube2.generate();
 
     SplitGui::Grid grid;
     grid.submitGraphics(graphics);
@@ -64,8 +72,9 @@ int main() {
     SplitGui::Vec3 position = {0, 0, 0};
 
     ui.instance();
+    cube1.submit(0);
+    cube2.submit(0);
     grid.submit(0);
-    cube.submit(0);
     graphics.submitBuffers();
 
     int prevXPos = 0;
@@ -81,7 +90,10 @@ int main() {
     bool sDown = false;
     bool dDown = false;
 
-    SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection();
+    bool spaceDown = false;
+    bool shiftDown = false;
+
+    SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90));
     TRYRC(projectionRes, graphics.updateSceneCameraProjection(0, projection));
 
     SplitGui::Camera cam;
@@ -152,6 +164,24 @@ int main() {
                                     }
 
                                     break;
+                                case SplitGui::KeyCode::eSpace:
+
+                                    if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::ePress) {
+                                        spaceDown = true;
+                                    } else if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::eRelease) {
+                                        spaceDown = false;
+                                    }
+
+                                    break;
+                                case SplitGui::KeyCode::eLeftShift:
+
+                                    if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::ePress) {
+                                        shiftDown = true;
+                                    } else if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::eRelease) {
+                                        shiftDown = false;
+                                    }
+
+                                    break;
 
                                 default:break;
                             }
@@ -168,16 +198,17 @@ int main() {
             }
         }   
 
+        const float moveSpeed   = 0.05f;
+        const float sensitivity = 0.4f;
+
         if (mouseDown) {
-            rotation.y -= degToRad(prevXPos - xPos);
-            rotation.x += degToRad(prevYPos - yPos);
+            rotation.y -= degToRad(prevXPos - xPos) * sensitivity;
+            rotation.x += degToRad(prevYPos - yPos) * sensitivity;
         }
 
-        const float moveSpeed = 0.05f;
-
         if (wDown) {
-            position.x -= std::sin(rotation.y) * moveSpeed;
             position.z -= std::cos(rotation.y) * moveSpeed;
+            position.x += std::sin(rotation.y) * moveSpeed;
         }
 
         if (aDown) {
@@ -186,13 +217,21 @@ int main() {
         }
 
         if (sDown) {
-            position.x += std::sin(rotation.y) * moveSpeed;
             position.z += std::cos(rotation.y) * moveSpeed;
+            position.x -= std::sin(rotation.y) * moveSpeed;
         }
 
         if (dDown) {
             position.x += std::cos(rotation.y) * moveSpeed;
             position.z += std::sin(rotation.y) * moveSpeed;
+        }
+
+        if (spaceDown) {
+            position.y -= moveSpeed;
+        }
+
+        if (shiftDown) {
+            position.y += moveSpeed;
         }
 
         prevXPos = xPos;

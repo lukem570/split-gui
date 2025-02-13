@@ -1,29 +1,6 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    inline void transitionImageLayout(vk::CommandBuffer commandBuffer, vk::Image image, int layerCount) {
-        vk::ImageMemoryBarrier barrier;
-        barrier.oldLayout                       = vk::ImageLayout::eUndefined;
-        barrier.newLayout                       = vk::ImageLayout::eShaderReadOnlyOptimal;
-        barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
-        barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
-        barrier.image                           = image;
-        barrier.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
-        barrier.subresourceRange.baseMipLevel   = 0;
-        barrier.subresourceRange.levelCount     = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount     = layerCount;
-        barrier.srcAccessMask                   = vk::AccessFlagBits(0);
-        barrier.dstAccessMask                   = vk::AccessFlagBits::eShaderRead;
-
-        vk::PipelineStageFlags sourceStage;
-        vk::PipelineStageFlags destinationStage;
-
-        sourceStage      = vk::PipelineStageFlagBits::eTopOfPipe;
-        destinationStage = vk::PipelineStageFlagBits::eFragmentShader;
-
-        commandBuffer.pipelineBarrier(sourceStage, destinationStage, vk::DependencyFlagBits(0), 0, nullptr, 0, nullptr, 1, &barrier);
-    }
 
     inline Result VulkanInterface::createTextGlyphImage() {
         vk::ImageCreateInfo imageInfo;
@@ -93,7 +70,27 @@ namespace SplitGui {
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
-        transitionImageLayout(commandBuffer, vk_textGlyphImages, imageInfo.arrayLayers);
+        vk::ImageMemoryBarrier barrier;
+        barrier.oldLayout                       = vk::ImageLayout::eUndefined;
+        barrier.newLayout                       = vk::ImageLayout::eShaderReadOnlyOptimal;
+        barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
+        barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
+        barrier.image                           = vk_textGlyphImages;
+        barrier.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
+        barrier.subresourceRange.baseMipLevel   = 0;
+        barrier.subresourceRange.levelCount     = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount     = imageInfo.arrayLayers;
+        barrier.srcAccessMask                   = vk::AccessFlagBits(0);
+        barrier.dstAccessMask                   = vk::AccessFlagBits::eShaderRead;
+
+        commandBuffer.pipelineBarrier(
+            vk::PipelineStageFlagBits::eTopOfPipe, 
+            vk::PipelineStageFlagBits::eFragmentShader, 
+            vk::DependencyFlagBits(0), 
+            0, nullptr, 0, nullptr, 1, 
+            &barrier
+        );
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 

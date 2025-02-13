@@ -103,18 +103,18 @@ namespace SplitGui {
         rasterizer.lineWidth               = 1.0f;
         rasterizer.cullMode                = vk::CullModeFlagBits::eBack;
         rasterizer.frontFace               = vk::FrontFace::eClockwise;
-        rasterizer.depthBiasEnable         = vk::False;
+        rasterizer.depthBiasEnable         = vk::True;
 
         vk::PipelineMultisampleStateCreateInfo multisampling;
         multisampling.sampleShadingEnable  = vk::False;
         multisampling.rasterizationSamples = vk::SampleCountFlagBits::e1;
 
         vk::PipelineColorBlendAttachmentState colorBlendAttachment;
+        colorBlendAttachment.blendEnable         = vk::True;
         colorBlendAttachment.colorWriteMask      = vk::ColorComponentFlagBits::eR;
         colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eG;
         colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eB;
         colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eA;
-        colorBlendAttachment.blendEnable         = vk::True;
         colorBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
         colorBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
         colorBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
@@ -128,6 +128,15 @@ namespace SplitGui {
         colorBlending.attachmentCount = 1;
         colorBlending.pAttachments    = &colorBlendAttachment;
 
+        vk::PipelineDepthStencilStateCreateInfo depthStencil;
+        depthStencil.depthTestEnable       = vk::True;
+        depthStencil.depthWriteEnable      = vk::True;
+        depthStencil.depthCompareOp        = vk::CompareOp::eLess;
+        depthStencil.depthBoundsTestEnable = vk::False;
+        depthStencil.stencilTestEnable     = vk::False;
+        depthStencil.minDepthBounds        = 0.0f;
+        depthStencil.maxDepthBounds        = 1.0f;
+
         vk::GraphicsPipelineCreateInfo pipelineInfo;
         pipelineInfo.stageCount          = shaderStages.size();
         pipelineInfo.pStages             = shaderStages.data();
@@ -137,6 +146,7 @@ namespace SplitGui {
         pipelineInfo.pRasterizationState = &rasterizer;
         pipelineInfo.pMultisampleState   = &multisampling;
         pipelineInfo.pColorBlendState    = &colorBlending;
+        pipelineInfo.pDepthStencilState  = &depthStencil;
         pipelineInfo.pDynamicState       = &dynamicState;
         pipelineInfo.layout              = vk_graphicsPipelineLayout;
         pipelineInfo.renderPass          = vk_renderpass;

@@ -89,12 +89,14 @@ namespace SplitGui {
             vk::PipelineLayout                  vk_graphicsPipelineLayout;
             vk::Pipeline                        vk_graphicsPipeline;
             vk::CommandPool                     vk_commandPool;
-            vk::ClearValue                      vk_clearColor;
             vk::RenderPassBeginInfo             vk_renderpassBeginInfo;
             vk::Viewport                        vk_viewport;
             vk::DescriptorPool                  vk_descriptorPool;
             vk::Rect2D                          vk_scissor;
             vk::PipelineStageFlags              vk_waitStages;
+            vk::Image                           vk_depthImage;
+            vk::DeviceMemory                    vk_depthImageMemory;
+            vk::ImageView                       vk_depthImageView;
             vk::Buffer                          vk_vertexBuffer;
             vk::DeviceMemory                    vk_vertexBufferMemory;
             vk::Buffer                          vk_indexBuffer;
@@ -110,6 +112,7 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_textGlyphImageMemory;
             vk::ImageView                       vk_textGlyphImageView;
             vk::Sampler                         vk_textGlyphSampler;
+            std::array<vk::ClearValue, 2>       vk_clearValues;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;
@@ -159,6 +162,7 @@ namespace SplitGui {
 [[nodiscard]] inline Result                  vertexBufferSubmit();
 [[nodiscard]] inline Result                  scenesSubmit();
               inline void                    updateScenes();
+[[nodiscard]] inline ResultValue<vk::Format> findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features);
 
               template <typename T>
 [[nodiscard]] inline Result InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);
@@ -171,12 +175,13 @@ namespace SplitGui {
 [[nodiscard]] inline Result createSurface(SplitGui::Window& window);
               inline void   createSwapchain();
               inline void   createImageViews();
-              inline void   createRenderpass();
+[[nodiscard]] inline Result createRenderpass();
               inline void   createDescriptorSetLayout();
               inline void   createGraphicsPipelineLayout();
 [[nodiscard]] inline Result createGraphicsPipeline();
-              inline void   createFramebuffers();
               inline void   createCommandPool();
+[[nodiscard]] inline Result createDepthResources();
+              inline void   createFramebuffers();
               inline void   createCommandBuffers();
               inline void   createSyncObj();
               inline void   createDescriptorPool();
@@ -192,12 +197,13 @@ namespace SplitGui {
               inline void setupPresentInfo();
 
               inline void cleanupFrameBuffers();
+              inline void cleanupDepthResources();
               inline void cleanupSyncObj();
               inline void cleanupImageViews();
               inline void cleanupVertexAndIndexBuffers();
               inline void cleanupSceneBuffer();
 
-              void recreateSwapchain();
+[[nodiscard]] Result recreateSwapchain();
     };
 }
 

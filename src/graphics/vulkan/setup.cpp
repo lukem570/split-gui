@@ -3,7 +3,11 @@
 namespace SplitGui {
     VulkanInterface::VulkanInterface(bool validation = false) {
         vk_validation = validation;
-        vk_clearColor.color = vk::ClearColorValue{1.0f, 1.0f, 1.0f, 1.0f};
+
+        vk_clearValues[0].color = vk::ClearColorValue{1.0f, 1.0f, 1.0f, 1.0f};
+        vk_clearValues[1].depthStencil.depth   = 1.0f;
+        vk_clearValues[1].depthStencil.stencil = 0;
+
         vk_msdfExtent.width  = 64;
         vk_msdfExtent.height = 64;
     }
@@ -30,12 +34,13 @@ namespace SplitGui {
         getQueues();
         createSwapchain();
         createImageViews();
-        createRenderpass();
+        TRYR(renderpassRes, createRenderpass());
         createDescriptorSetLayout();
         createGraphicsPipelineLayout();
         TRYR(pipelineRes, createGraphicsPipeline());
-        createFramebuffers();
         createCommandPool();
+        TRYR(depthRes, createDepthResources());
+        createFramebuffers();
         createCommandBuffers();
         createSyncObj();
         createDescriptorPool();
@@ -58,8 +63,8 @@ namespace SplitGui {
         vk_renderpassBeginInfo.renderArea.offset.x = 0;
         vk_renderpassBeginInfo.renderArea.offset.y = 0;
         vk_renderpassBeginInfo.renderArea.extent   = vk_swapchainExtent;
-        vk_renderpassBeginInfo.clearValueCount     = 1;
-        vk_renderpassBeginInfo.pClearValues        = &vk_clearColor;
+        vk_renderpassBeginInfo.clearValueCount     = vk_clearValues.size();
+        vk_renderpassBeginInfo.pClearValues        = vk_clearValues.data();
     }
 
     void VulkanInterface::setupViewport() {

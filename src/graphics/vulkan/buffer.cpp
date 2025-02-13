@@ -5,10 +5,15 @@ namespace SplitGui {
         vk_swapchainFramebuffers.resize(vk_swapchainImageViews.size());
 
         for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
+            std::array<vk::ImageView, 2> attachments = {
+                vk_swapchainImageViews[i],
+                vk_depthImageView
+            };
+
             vk::FramebufferCreateInfo framebufferInfo;
             framebufferInfo.renderPass      = vk_renderpass;
-            framebufferInfo.attachmentCount = 1;
-            framebufferInfo.pAttachments    = &vk_swapchainImageViews[i];
+            framebufferInfo.attachmentCount = attachments.size();
+            framebufferInfo.pAttachments    = attachments.data();
             framebufferInfo.width           = vk_swapchainExtent.width;
             framebufferInfo.height          = vk_swapchainExtent.height;
             framebufferInfo.layers          = 1;

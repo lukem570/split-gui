@@ -224,14 +224,14 @@ namespace SplitGui {
         return projection;
     }
 
-    Mat4 Mat4::perspectiveProjection(float far, float near) {
+    Mat4 Mat4::perspectiveProjection(float fieldOfView, float far, float near) {
         Mat4 projection;
 
-        const float fov = 1.0f;
+        float fov = std::tan(fieldOfView / 2);
 
         projection.a.x = 1.0f / fov;
         projection.a.y = 0;
-        projection.a.z = 0; // todo: incorrect need to fix
+        projection.a.z = 0;
         projection.a.w = 0;
 
         projection.b.x = 0;
@@ -241,13 +241,13 @@ namespace SplitGui {
 
         projection.c.x = 0;
         projection.c.y = 0;
-        projection.c.z = 0;
-        projection.c.w = 0;
+        projection.c.z = far / (near - far);
+        projection.c.w = (near * far) / (near - far);
 
         projection.d.x = 0;
         projection.d.y = 0;
-        projection.d.z = -0.5;
-        projection.d.w = 1;
+        projection.d.z = -1;
+        projection.d.w = 0;
 
         return projection;
     }

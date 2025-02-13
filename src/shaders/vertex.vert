@@ -58,6 +58,8 @@ void main() {
     out_textureNumber = textureNumber;
     out_textureCord   = in_textureCord;
     out_sceneNumber   = sceneNumber;
+    out_fragPos       = in_inPosition;
+    out_fragNorm      = in_normal;
 
     int flags = int(flags);
 
@@ -70,17 +72,13 @@ void main() {
         Scene scene = sb.scenes[sceneNumber];
 
         if (worldView) {
-            pos += vec4(scene.cameraPosition, 0.0);
+            pos += vec4(scene.cameraPosition.x, 0.0, scene.cameraPosition.z, 0.0);
         }
 
         pos -= vec4(scene.cameraPosition, 0.0);
 
-        out_fragPos  = in_inPosition;
-        out_fragNorm = in_normal;
-
         // rotate points
         pos *= scene.cameraView;
-
 
         // adjust points for aspect ratio
         if (scene.size.x > scene.size.y) {
@@ -102,7 +100,5 @@ void main() {
         pos *= scene.cameraProjection;
     }
 
-    gl_Position = vec4(pos.xy, 0.0f, pos.w);
-
-    //gl_Position = pos;
+    gl_Position = pos;
 }

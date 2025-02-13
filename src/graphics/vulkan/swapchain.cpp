@@ -56,17 +56,19 @@ namespace SplitGui {
         SPLITGUI_LOG("Created Image Views");
     }
 
-    void VulkanInterface::recreateSwapchain() {
+    Result VulkanInterface::recreateSwapchain() {
 
         vk_device.waitIdle();
 
         cleanupImageViews();
+        cleanupDepthResources();
         cleanupFrameBuffers();
         
         vk_device.destroySwapchainKHR(vk_swapchain);
 
         createSwapchain();
         createImageViews();
+        TRYR(depthRes, createDepthResources());
         createFramebuffers();
 
         setupRenderpassBeginInfo();
@@ -74,5 +76,7 @@ namespace SplitGui {
         setupScissor();
 
         SPLITGUI_LOG("Recreated Swapchain");
+
+        return Result::eSuccess;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace SplitGui {
     Result VulkanInterface::resizeEvent() {
-        recreateSwapchain();
+        TRYR(recreateRes, recreateSwapchain());
 
         TRYR(vertexUniformRes, createVertexUniformBuffer());
         updateDescriptorSets();

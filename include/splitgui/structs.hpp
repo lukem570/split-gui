@@ -169,7 +169,7 @@ namespace SplitGui {
         static Mat4 zRotationMatrix(float theta);
 
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
-        static Mat4 perspectiveProjection(float far = 100.0f, float near = 0.1f);
+        static Mat4 perspectiveProjection(float fieldOfView, float far = 100.0f, float near = 0.1f);
     };
 
     struct HexColor {

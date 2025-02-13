@@ -22,7 +22,8 @@ namespace SplitGui {
         vk_device.destroyCommandPool(vk_commandPool);
         
         cleanupFrameBuffers();
-
+        cleanupDepthResources();
+        
         vk_device.freeDescriptorSets(vk_descriptorPool, 1, &vk_descriptorSet);
         vk_device.destroyDescriptorPool(vk_descriptorPool);
 
@@ -53,6 +54,12 @@ namespace SplitGui {
             vk_device.destroyFramebuffer(vk_swapchainFramebuffers[i]);
         }
         vk_swapchainFramebuffers.clear();
+    }
+
+    void VulkanInterface::cleanupDepthResources() {
+        vk_device.destroyImageView(vk_depthImageView);
+        vk_device.freeMemory(vk_depthImageMemory);
+        vk_device.destroyImage(vk_depthImage);
     }
 
     void VulkanInterface::cleanupSyncObj() {
