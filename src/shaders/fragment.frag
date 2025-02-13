@@ -9,8 +9,8 @@
 #define pxRange    6
 #define MAX_SCENES 1024
 
-const float gridCellSize = 1;
-const float gridFalloffRadius = 10;
+const float gridCellSize = 0.25;
+const float gridFalloffRadius = 15;
 
 struct Scene {
     ivec2 size;
@@ -106,7 +106,7 @@ void main() {
 
                 vec2 height = pos;
 
-                float falloff = max(0.0, min(0.0, -1.0 / (gridFalloffRadius * gridFalloffRadius) * (height.x * height.x + height.y * height.y) + 1.0) + 1.0);
+                float falloff = max(0.0, -1.0 / (gridFalloffRadius * gridFalloffRadius) * (height.x * height.x + height.y * height.y) + 1.0);
 
                 outColor = vec4(in_fragColor, Lod0 * falloff);
             }

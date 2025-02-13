@@ -12,8 +12,8 @@ namespace SplitGui {
 
         view = rotation;
 
-        TRYR(viewRes, pGraphics->updateSceneCameraView(0, view));
-        TRYR(posRes, pGraphics->updateSceneCameraPosition(0, transform.position));
+        TRYR(viewRes, pGraphics->updateSceneCameraView(sceneNumber, view));
+        TRYR(posRes, pGraphics->updateSceneCameraPosition(sceneNumber, transform.position));
 
         return Result::eSuccess;
     }
