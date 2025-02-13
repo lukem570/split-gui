@@ -87,7 +87,7 @@ void main() {
                 outColor = vec4(diffuse * in_fragColor, 1.0);
             } else {
 
-                vec2 pos = in_fragPos.xz + scene.cameraPosition.xz;
+                vec2 pos = in_fragPos.xz ;
 
                 vec2 dvx = vec2(dFdx(pos.x), dFdy(pos.x));
                 vec2 dvy = vec2(dFdx(pos.y), dFdy(pos.y));
@@ -99,7 +99,7 @@ void main() {
 
                 dudv *= 4.0f;
 
-                vec2 modCell =  mod(pos , gridCellSize) / dudv;
+                vec2 modCell =  mod(pos+ scene.cameraPosition.xz , gridCellSize) / dudv;
                 vec2 modDiv = vec2(1.0) - abs(clamp(modCell, vec2(0.0), vec2(1.0)) * 2.0 - vec2(1.0));
 
                 float Lod0 = max(modDiv.x, modDiv.y);
