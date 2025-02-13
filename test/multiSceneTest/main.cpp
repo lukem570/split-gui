@@ -64,8 +64,8 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2, 1, 0, 2};
 
-    graphics.submitTriangleData(0, vertices, indices);
-    graphics.submitTriangleData(1, vertices, indices);
+    graphics.submitTriangleData(0, vertices, indices, 0);
+    graphics.submitTriangleData(1, vertices, indices, 0);
 
     ui.instance();
     graphics.submitBuffers();
@@ -82,6 +82,9 @@ int main() {
     SplitGui::Camera cam1;
     SplitGui::Camera cam2;
 
+    cam1.submitGraphics(graphics);
+    cam2.submitGraphics(graphics);
+
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
             
@@ -93,14 +96,8 @@ int main() {
         cam1.setRotation(rotation1);
         cam2.setRotation(rotation2);
 
-        cam1.update();
-        cam2.update();
-        
-        SplitGui::Mat4 view1 = cam1.getView();
-        SplitGui::Mat4 view2 = cam2.getView();
-
-        TRYRC(viewRes1, graphics.updateSceneCameraView(0, view1));
-        TRYRC(viewRes2, graphics.updateSceneCameraView(1, view2));
+        TRYRC(updateRes1, cam1.update(0));
+        TRYRC(updateRes2, cam2.update(1));
 
         graphics.drawFrame();
         window.update();

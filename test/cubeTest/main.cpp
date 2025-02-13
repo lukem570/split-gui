@@ -57,9 +57,14 @@ int main() {
     cube.setColor(SplitGui::HexColor(0xFF0000));
     cube.generate();
 
+    SplitGui::Grid grid;
+    grid.submitGraphics(graphics);
+
     SplitGui::Vec3 rotation = {0, 0, 0};
+    SplitGui::Vec3 position = {0, 0, 0};
 
     ui.instance();
+    grid.submit(0);
     cube.submit(0);
     graphics.submitBuffers();
 
@@ -71,10 +76,16 @@ int main() {
 
     bool mouseDown = false;
 
-    SplitGui::Mat4 projection = SplitGui::Mat4::orthographicProjection();
+    bool wDown = false;
+    bool aDown = false;
+    bool sDown = false;
+    bool dDown = false;
+
+    SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection();
     TRYRC(projectionRes, graphics.updateSceneCameraProjection(0, projection));
 
     SplitGui::Camera cam;
+    cam.submitGraphics(graphics);
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
@@ -94,16 +105,60 @@ int main() {
                             if (eventHandler.getEvent().data.window.mouseButton.mouseCode == SplitGui::MouseCode::eOne) {
 
                                 if (eventHandler.getEvent().data.window.mouseButton.mouseState == SplitGui::MouseState::ePress) {
-
                                     mouseDown = true;
-
                                 } else if (eventHandler.getEvent().data.window.mouseButton.mouseState == SplitGui::MouseState::eRelease) {
-
                                     mouseDown = false;
-
                                 }
                             }
                             break;
+
+                        case SplitGui::Event::WindowType::eKeypress:
+
+                            switch (eventHandler.getEvent().data.window.keypress.keyCode)
+                            {
+                                case SplitGui::KeyCode::eW:
+
+                                    if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::ePress) {
+                                        wDown = true;
+                                    } else if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::eRelease) {
+                                        wDown = false;
+                                    }
+
+                                    break;
+                                case SplitGui::KeyCode::eA:
+
+                                    if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::ePress) {
+                                        aDown = true;
+                                    } else if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::eRelease) {
+                                        aDown = false;
+                                    }
+
+                                    break;
+                                case SplitGui::KeyCode::eS:
+
+                                    if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::ePress) {
+                                        sDown = true;
+                                    } else if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::eRelease) {
+                                        sDown = false;
+                                    }
+
+                                    break;
+                                case SplitGui::KeyCode::eD:
+
+                                    if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::ePress) {
+                                        dDown = true;
+                                    } else if (eventHandler.getEvent().data.window.keypress.keyState == SplitGui::KeyState::eRelease) {
+                                        dDown = false;
+                                    }
+
+                                    break;
+
+                                default:break;
+                            }
+
+
+                            break;
+                        
                         
                         default:break;
                     }
@@ -114,19 +169,39 @@ int main() {
         }   
 
         if (mouseDown) {
-            rotation.y += degToRad(prevXPos - xPos);
+            rotation.y -= degToRad(prevXPos - xPos);
             rotation.x += degToRad(prevYPos - yPos);
+        }
+
+        const float moveSpeed = 0.05f;
+
+        if (wDown) {
+            position.x -= std::sin(rotation.y) * moveSpeed;
+            position.z -= std::cos(rotation.y) * moveSpeed;
+        }
+
+        if (aDown) {
+            position.x -= std::cos(rotation.y) * moveSpeed;
+            position.z -= std::sin(rotation.y) * moveSpeed;
+        }
+
+        if (sDown) {
+            position.x += std::sin(rotation.y) * moveSpeed;
+            position.z += std::cos(rotation.y) * moveSpeed;
+        }
+
+        if (dDown) {
+            position.x += std::cos(rotation.y) * moveSpeed;
+            position.z += std::sin(rotation.y) * moveSpeed;
         }
 
         prevXPos = xPos;
         prevYPos = yPos;
 
         cam.setRotation(rotation);
+        cam.setPosition(position);
 
-        cam.update();
-
-        SplitGui::Mat4 view = cam.getView();
-        TRYRC(viewRes, graphics.updateSceneCameraView(0, view));
+        TRYRC(updateRes, cam.update(0));
 
         graphics.drawFrame();
         window.update();

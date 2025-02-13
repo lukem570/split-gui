@@ -9,6 +9,7 @@ namespace SplitGui {
         scene.viewport.y        = std::min(x1.y,  x2.y);
         scene.cameraView        = {0, 0, 0};
         scene.cameraProjection  = {0, 0, 0}; 
+        scene.cameraPosition    = {0, 0, 0};
 
         SPLITGUI_LOG("Created Scene: %ld", scenes.size());
 
@@ -17,14 +18,16 @@ namespace SplitGui {
         return scenes.size() - 1;
     }
 
-    void VulkanInterface::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices) {
+    void VulkanInterface::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags) {
         unsigned int oldVerticesSize = vertices.size();
         unsigned int oldIndicesSize  = indices.size();
 
         vertices.resize(oldVerticesSize + newIndices.size());
         indices.resize(oldIndicesSize + newIndices.size());
 
-        for (unsigned int i = 0; i < newIndices.size(); i += 3) { // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
+        for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
+            // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
+            // to solve: create a uniform containing surface normals and use like a geometry shader to assign normals
 
             Vec3 points[3];
 
@@ -32,7 +35,7 @@ namespace SplitGui {
 
                 VertexBufferObject vbo;
                 vbo.vertex        = newVertices[newIndices[i + j]];
-                vbo.flags         = VertexFlagsBits::eScene;
+                vbo.flags         = VertexFlagsBits::eScene ^ flags;
                 vbo.sceneNumber   = sceneNumber;
                 vbo.textureNumber = 0;
 
@@ -69,7 +72,7 @@ namespace SplitGui {
         SPLITGUI_LOG("Updated Scene: %d", ref);
     }
 
-    Result VulkanInterface::updateSceneCameraView(unsigned int sceneNumber, Mat4& view) {
+    Result VulkanInterface::updateSceneCameraView(unsigned int sceneNumber, Mat4& view) { // TODO: merge these 3 function below
 
         scenes[sceneNumber].cameraView = view;
 
@@ -97,6 +100,31 @@ namespace SplitGui {
     Result VulkanInterface::updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection) {
 
         scenes[sceneNumber].cameraProjection = projection;
+
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        TRYR(stagingRes, InstanceStagingBuffer(scenes, stagingBuffer, stagingBufferMemory, vk_sceneBufferSize));
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+
+        copyBuffer(stagingBuffer,  vk_sceneBuffer, vk_sceneBufferSize,  commandBuffer, copyRegion);
+
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.destroyBuffer(stagingBuffer);
+        vk_device.freeMemory(stagingBufferMemory);
+
+        updateScenes();
+
+        return Result::eSuccess;
+    }
+
+    Result VulkanInterface::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
+
+        scenes[sceneNumber].cameraPosition = position;
 
         vk::Buffer       stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;

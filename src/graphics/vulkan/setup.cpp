@@ -3,7 +3,7 @@
 namespace SplitGui {
     VulkanInterface::VulkanInterface(bool validation = false) {
         vk_validation = validation;
-        vk_clearColor.color = vk::ClearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
+        vk_clearColor.color = vk::ClearColorValue{1.0f, 1.0f, 1.0f, 1.0f};
         vk_msdfExtent.width  = 64;
         vk_msdfExtent.height = 64;
     }

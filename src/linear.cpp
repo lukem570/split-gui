@@ -85,6 +85,32 @@ namespace SplitGui {
         return mul;
     }
 
+    Mat4 Mat4::operator+(const Mat4& operand) {
+        Mat4 mul;
+
+        mul.a.x = a.x + operand.a.x;
+        mul.a.y = a.y + operand.a.y;
+        mul.a.z = a.z + operand.a.z;
+        mul.a.w = a.w + operand.a.w;
+
+        mul.b.x = b.x + operand.b.x;
+        mul.b.y = b.y + operand.b.y;
+        mul.b.z = b.z + operand.b.z;
+        mul.b.w = b.w + operand.b.w;
+
+        mul.c.x = c.x + operand.c.x;
+        mul.c.y = c.y + operand.c.y;
+        mul.c.z = c.z + operand.c.z;
+        mul.c.w = c.w + operand.c.w;
+
+        mul.d.x = d.x + operand.d.x;
+        mul.d.y = d.y + operand.d.y;
+        mul.d.z = d.z + operand.d.z;
+        mul.d.w = d.w + operand.d.w;
+
+        return mul;
+    }
+
     Mat4 Mat4::xRotationMatrix(float theta) {
         Mat4 rotation;
 
@@ -193,6 +219,34 @@ namespace SplitGui {
         projection.d.x = 0;
         projection.d.y = 0;
         projection.d.z = 0;
+        projection.d.w = 1;
+
+        return projection;
+    }
+
+    Mat4 Mat4::perspectiveProjection(float far, float near) {
+        Mat4 projection;
+
+        const float fov = 5.0f;
+
+        projection.a.x = 1.0f / fov;
+        projection.a.y = 0;
+        projection.a.z = 0; // todo: incorrect need to fix
+        projection.a.w = 0;
+
+        projection.b.x = 0;
+        projection.b.y = 1.0f / fov;
+        projection.b.z = 0;
+        projection.b.w = 0;
+
+        projection.c.x = 0;
+        projection.c.y = 0;
+        projection.c.z = 0;
+        projection.c.w = 0;
+
+        projection.d.x = 0;
+        projection.d.y = 0;
+        projection.d.z = -0.5;
         projection.d.w = 1;
 
         return projection;

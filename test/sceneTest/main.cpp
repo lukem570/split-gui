@@ -64,7 +64,7 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2};
 
-    graphics.submitTriangleData(0, vertices, indices);
+    graphics.submitTriangleData(0, vertices, indices, 0);
 
     ui.instance();
     graphics.submitBuffers();
@@ -75,6 +75,7 @@ int main() {
     TRYRC(projectionRes, graphics.updateSceneCameraProjection(0, projection));
 
     SplitGui::Camera cam;
+    cam.submitGraphics(graphics);
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
@@ -84,10 +85,7 @@ int main() {
         rotation.y += degToRad(2);
 
         cam.setRotation(rotation);
-        cam.update();
-
-        SplitGui::Mat4 view = cam.getView();
-        TRYRC(viewRes, graphics.updateSceneCameraView(0, view));
+        TRYRC(updateRes, cam.update(0));
 
         graphics.drawFrame();
         window.update();

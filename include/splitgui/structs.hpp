@@ -52,6 +52,7 @@ namespace SplitGui {
         eTextureMsdf = 0x02,
         eTransparent = 0x04,
         eScene       = 0x08,
+        eWorldSpace  = 0x10,
     };
 
     struct SPLITGUI_EXPORT Vec4 {
@@ -161,12 +162,14 @@ namespace SplitGui {
         alignas(16) Vec4 d;
 
         Mat4 operator*(const Mat4& operand);
+        Mat4 operator+(const Mat4& operand);
 
         static Mat4 xRotationMatrix(float theta);
         static Mat4 yRotationMatrix(float theta);
         static Mat4 zRotationMatrix(float theta);
 
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
+        static Mat4 perspectiveProjection(float far = 100.0f, float near = 0.1f);
     };
 
     struct HexColor {
@@ -234,6 +237,7 @@ namespace SplitGui {
         RectObj viewport;
         Mat4    cameraView;
         Mat4    cameraProjection;
+        Vec3    cameraPosition;
     };
 
     struct Vertex {

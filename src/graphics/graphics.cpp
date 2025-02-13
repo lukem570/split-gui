@@ -99,8 +99,12 @@ namespace SplitGui {
         return pInterface->loadFont(path);
     }
 
-    void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) {
-        pInterface->submitTriangleData(sceneNumber, vertices, indices);
+    void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags) {
+        pInterface->submitTriangleData(sceneNumber, vertices, indices, flags);
+    }
+
+    Result Graphics::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
+        return pInterface->updateSceneCameraPosition(sceneNumber, position);
     }
 
     Result Graphics::updateSceneCameraView(unsigned int sceneNumber, Mat4& view) {

@@ -17,21 +17,22 @@ namespace SplitGui {
                        GraphicsLibInterface() {}
               virtual ~GraphicsLibInterface() {}
 
-[[nodiscard]] virtual Result             instance()                                                                                                  { throw; }
-[[nodiscard]] virtual Result             submitWindow(Window& window)                                                                                { throw; }
-[[nodiscard]] virtual Result             drawFrame()                                                                                                 { throw; }
-              virtual RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    { throw; }
-              virtual void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                  { throw; }
-              virtual unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                           { throw; }
-              virtual void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                           { throw; }
-              virtual void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) { throw; }
-[[nodiscard]] virtual Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                 { throw; }
-[[nodiscard]] virtual Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                     { throw; }
-[[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                        { throw; }
-[[nodiscard]] virtual Result             loadFont(const char* path)                                                                                  { throw; }
-              virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                 { throw; }
-[[nodiscard]] virtual Result             submitBuffers()                                                                                             { throw; }
-[[nodiscard]] virtual Result             resizeEvent()                                                                                               { throw; }
+[[nodiscard]] virtual Result             instance()                                                                                                             { throw; }
+[[nodiscard]] virtual Result             submitWindow(Window& window)                                                                                           { throw; }
+[[nodiscard]] virtual Result             drawFrame()                                                                                                            { throw; }
+              virtual RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                               { throw; }
+              virtual void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                             { throw; }
+              virtual unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                                      { throw; }
+              virtual void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                                      { throw; }
+              virtual void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags) { throw; }
+[[nodiscard]] virtual Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                    { throw; }
+[[nodiscard]] virtual Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                            { throw; }
+[[nodiscard]] virtual Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                { throw; }
+[[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                                   { throw; }
+[[nodiscard]] virtual Result             loadFont(const char* path)                                                                                             { throw; }
+              virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                            { throw; }
+[[nodiscard]] virtual Result             submitBuffers()                                                                                                        { throw; }
+[[nodiscard]] virtual Result             resizeEvent()                                                                                                          { throw; }
 
         protected:
             SplitGui::Window* pWindow;
@@ -52,7 +53,8 @@ namespace SplitGui {
               void             updateRect(RectRef& ref, IVec2 x1, IVec2 x2);
               unsigned int     instanceScene(IVec2 x1, IVec2 x2);
               void             updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2);
-              void             submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices);
+              void             submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags);
+[[nodiscard]] Result           updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position);
 [[nodiscard]] Result           updateSceneCameraView(unsigned int sceneNumber, Mat4& view);
 [[nodiscard]] Result           updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection);
 [[nodiscard]] ResultValue<int> drawText(IVec2 x1, std::string text); // Returns the width in pixels of the text

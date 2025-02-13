@@ -4,6 +4,7 @@
 #define USE_MSDF_BIT    0x02
 #define TRANSPARENT_BIT 0x04
 #define SCENE_BIT       0x08
+#define WORLD_VIEW_BIT  0x10
 
 #define MAX_SCENES 1024
 
@@ -34,6 +35,7 @@ struct Scene {
     ivec2 position;
     mat4  cameraView;
     mat4  cameraProjection;
+    vec3  cameraPosition;
 };
 
 layout(std140, binding = 0) uniform ScenesBuffer {
@@ -60,17 +62,25 @@ void main() {
     int flags = int(flags);
 
     bool useScene = (flags & SCENE_BIT) != 0;
+    bool worldView = (flags & WORLD_VIEW_BIT) != 0;
 
     vec4 pos = vec4(in_inPosition, 1.0f);
 
     if (useScene) {
         Scene scene = sb.scenes[sceneNumber];
 
+        if (worldView) {
+            pos += vec4(scene.cameraPosition, 0.0);
+        }
+
+        pos -= vec4(scene.cameraPosition, 0.0);
+
         out_fragPos  = in_inPosition;
         out_fragNorm = in_normal;
 
         // rotate points
         pos *= scene.cameraView;
+
 
         // adjust points for aspect ratio
         if (scene.size.x > scene.size.y) {
@@ -92,5 +102,7 @@ void main() {
         pos *= scene.cameraProjection;
     }
 
-    gl_Position = vec4(pos.xyz, 1.0);
+    gl_Position = vec4(pos.xy, 0.0f, pos.w);
+
+    //gl_Position = pos;
 }

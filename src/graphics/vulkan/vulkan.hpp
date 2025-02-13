@@ -45,24 +45,25 @@ namespace SplitGui {
     class VulkanInterface : GraphicsLibInterface {
         public:
                                  VulkanInterface(bool validation);
-                                ~VulkanInterface()                                                                                           override;
+                                ~VulkanInterface()                                                                                                      override;
 
-[[nodiscard]] Result             instance()                                                                                                  override;
-[[nodiscard]] Result             submitWindow(SplitGui::Window& window)                                                                      override;
+[[nodiscard]] Result             instance()                                                                                                             override;
+[[nodiscard]] Result             submitWindow(SplitGui::Window& window)                                                                                 override;
 
-[[nodiscard]] Result             drawFrame()                                                                                                 override;
-              RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                    override;
-              void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                  override;
-              unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                           override;
-              void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                           override;
-              void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) override;
-[[nodiscard]] Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                 override;
-[[nodiscard]] Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                     override;
-[[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                        override;
-[[nodiscard]] Result             loadFont(const char* path)                                                                                  override;
-[[nodiscard]] Result             submitBuffers()                                                                                             override;
+[[nodiscard]] Result             drawFrame()                                                                                                            override;
+              RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                               override;
+              void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                             override;
+              unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                                      override;
+              void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                                      override;
+              void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags) override;
+[[nodiscard]] Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                    override;
+[[nodiscard]] Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                            override;
+[[nodiscard]] Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                override;
+[[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                                   override;
+[[nodiscard]] Result             loadFont(const char* path)                                                                                             override;
+[[nodiscard]] Result             submitBuffers()                                                                                                        override;
 
-[[nodiscard]] Result             resizeEvent()                                                                                               override;
+[[nodiscard]] Result             resizeEvent()                                                                                                          override;
 
         protected:
             SplitGui::Window*                   pWindow;

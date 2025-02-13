@@ -5,6 +5,7 @@
 
 #include <splitgui/structs.hpp>
 #include <splitgui/graphics.hpp>
+#include <splitgui/result.hpp>
 
 #include <vector>
 
@@ -13,13 +14,13 @@ namespace SplitGui {
     class SPLITGUI_EXPORT Node {
         public:
 
-            void setTransform(Transform& transform);
-            void setPosition(Vec3& position);
-            void setRotation(Vec3& rotation);
-            void addChild(Node& child);
-            void submitGraphics(Graphics& graphics);
+            void      setTransform(Transform& transform);
+            void      setPosition(Vec3& position);
+            void      setRotation(Vec3& rotation);
+            void      addChild(Node& child);
+            void      submitGraphics(Graphics& graphics);
 
-            virtual void submit(int sceneNumber) {};
+            virtual void submit(int sceneNumber, int flags = VertexFlagsBits::eNone) {};
 
         protected:
             Graphics*              pGraphics;
@@ -31,7 +32,7 @@ namespace SplitGui {
     class SPLITGUI_EXPORT Mesh : public Node {
         public:
 
-            void submit(int sceneNumber) override;
+            void submit(int sceneNumber, int flags = VertexFlagsBits::eNone) override;
 
         protected:
 
@@ -53,14 +54,23 @@ namespace SplitGui {
             HexColor color;
     };
 
+    class SPLITGUI_EXPORT Grid : public Mesh {
+        public:
+            Grid();
+
+            void submit(int sceneNumber, int flags = VertexFlagsBits::eWorldSpace) override;
+        
+        protected:
+    };
+
     class SPLITGUI_EXPORT Camera : public Node {
         public:
-            void update();
-            Mat4 getView();
+[[nodiscard]] Result update(int sceneNumber);
+              Mat4   getView();
 
         protected:
 
-            Vec3 forward, right, up;
+            Mat4 view;
     };
 
     class SPLITGUI_EXPORT Scene {

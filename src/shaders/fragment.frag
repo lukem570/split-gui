@@ -4,15 +4,19 @@
 #define USE_MSDF_BIT    0x02
 #define TRANSPARENT_BIT 0x04
 #define SCENE_BIT       0x08
+#define WORLD_VIEW_BIT  0x10
 
 #define pxRange    6
 #define MAX_SCENES 1024
+
+const float gridCellSize = 1;
 
 struct Scene {
     ivec2 size;
     ivec2 position;
     mat4  cameraView;
     mat4  cameraProjection;
+    vec3  cameraPosition;
 };
 
 layout(location = 0)      in vec3 in_fragColor;
@@ -47,6 +51,7 @@ void main() {
 
     bool useMsdf  = (flags & USE_MSDF_BIT) != 0;
     bool useScene = (flags & SCENE_BIT)    != 0;
+    bool worldView = (flags & WORLD_VIEW_BIT) != 0;
 
     if (useMsdf) {
         vec4 msdf = texture(glyphs, vec3(in_textureCord, in_textureNumber));
@@ -69,15 +74,39 @@ void main() {
 
         if (leftBound && topBound && rightBound && bottomBound) {
 
-            vec3 normal = normalize(in_fragNorm);
+            if (!worldView) {
+                vec3 normal = normalize(in_fragNorm);
 
-            vec3 lightPos = vec3(2.0, -1.0, 2.0);
+                vec3 lightPos = vec3(2.0, -5.0, 3.0);
 
-            vec3 lightDir = normalize(lightPos - in_fragPos);
+                vec3 lightDir = normalize(lightPos - in_fragPos);
 
-            float diffuse = max(dot(normal, lightDir), 0.1);
+                float diffuse = max(dot(normal, lightDir), 0.1);
 
-            outColor = vec4(diffuse * in_fragColor, 1.0);
+                outColor = vec4(diffuse * in_fragColor, 1.0);
+            } else {
+
+                vec2 dvx = vec2(dFdx(in_fragPos.x), dFdy(in_fragPos.x));
+                vec2 dvy = vec2(dFdx(in_fragPos.z), dFdy(in_fragPos.z));
+
+                float lx = length(dvx);
+                float ly = length(dvy);
+
+                vec2 dudv = vec2(lx, ly);
+
+                dudv *= 4.0f;
+
+                vec2 modCell =  mod(in_fragPos.xz , gridCellSize) / dudv;
+                vec2 modDiv = vec2(1.0) - abs(clamp(modCell, vec2(0.0), vec2(1.0)) * 2.0 - vec2(1.0));
+
+                float Lod0 = max(modDiv.x, modDiv.y);
+
+                
+
+
+                outColor = vec4(in_fragColor, Lod0);
+            }
+
         } else {
             outColor = vec4(0.0);
         }
