@@ -61,6 +61,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                                   override;
 [[nodiscard]] Result             loadFont(const char* path)                                                                                             override;
 [[nodiscard]] Result             submitBuffers()                                                                                                        override;
+              void               clearBuffers()                                                                                                         override;
 
 [[nodiscard]] Result             resizeEvent()                                                                                                          override;
 

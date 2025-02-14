@@ -39,6 +39,7 @@ namespace SplitGui {
               virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                            { throw; }
 [[nodiscard]] virtual Result             submitBuffers()                                                                                                        { throw; }
 [[nodiscard]] virtual Result             resizeEvent()                                                                                                          { throw; }
+              virtual void               clearBuffers()                                                                                                         { throw; }
 
         protected:
             SplitGui::Window* pWindow;
@@ -69,6 +70,7 @@ namespace SplitGui {
               void             submitBuffers();
 [[nodiscard]] Result           resizeEvent();
               void             attachEventHandler(EventHandler& handler);
+              void             clearBuffers();
 
         private:
             Window*               pWindow    = nullptr;

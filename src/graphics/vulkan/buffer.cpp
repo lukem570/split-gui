@@ -24,6 +24,13 @@ namespace SplitGui {
         SPLITGUI_LOG("Created Framebuffers");
     }
 
+    void VulkanInterface::clearBuffers() {
+        indices.clear();
+        vertices.clear();
+        scenes.clear();
+        charImageMappings.clear();
+    }
+
     inline Result VulkanInterface::createBuffer(
         vk::DeviceSize             size,
         vk::BufferUsageFlags       usage,

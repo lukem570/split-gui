@@ -99,6 +99,10 @@ namespace SplitGui {
         return pInterface->loadFont(path);
     }
 
+    void Graphics::clearBuffers() {
+        
+    }
+
     void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags) {
         pInterface->submitTriangleData(sceneNumber, vertices, indices, flags);
     }
