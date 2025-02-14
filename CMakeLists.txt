@@ -144,7 +144,7 @@ set(SHADERS
 
 foreach(SHADER_SOURCE ${SHADERS})
     get_filename_component(SHADER_NAME ${SHADER_SOURCE} NAME_WE)
-    set(SHADER_OUTPUT "${CMAKE_BINARY_DIR}/shaders/${SHADER_NAME}.spv")
+    set(SHADER_OUTPUT "${CMAKE_BINARY_DIR}/tests/shaders/${SHADER_NAME}.spv")
 
     add_custom_command(
         OUTPUT ${SHADER_OUTPUT}

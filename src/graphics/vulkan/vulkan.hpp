@@ -28,9 +28,8 @@ namespace ft {
 
 // TODO: make this accessible to the user
 #define MAX_FRAMES_IN_FLIGHT 2
-#define VERTEX_SHADER_PATH   "../shaders/vertex.spv"
-#define GEOMETRY_SHADER_PATH "../shaders/geometry.spv"
-#define FRAGMENT_SHADER_PATH "../shaders/fragment.spv"
+#define VERTEX_SHADER_PATH   "shaders/vertex.spv"
+#define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
 
 /*
 #include "vulkan.hpp"
