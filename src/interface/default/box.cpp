@@ -4,7 +4,8 @@
 
 namespace SplitGui {
     void Default::Box::update() {
-        
+        Default::Box::children[0]->setExtent(Default::Box::extent);
+        Default::Box::children[0]->update();
     }
 
     Result Default::Box::instance() {
@@ -12,9 +13,10 @@ namespace SplitGui {
             return Result::eInvalidNumberOfChildren;
         }
 
-        
         Default::Box::children[0]->setExtent(Default::Box::extent);
         Default::Box::children[0]->instance();
+
+        SPLITGUI_LOG("Instanced Box");
 
         return Result::eSuccess;
     }

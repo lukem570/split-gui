@@ -10,6 +10,8 @@ namespace SplitGui {
     Result Default::SceneElement::instance() {
         graphicsSceneRef = pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
 
+        SPLITGUI_LOG("Instanced Scene");
+
         return Result::eSuccess;
     }
 

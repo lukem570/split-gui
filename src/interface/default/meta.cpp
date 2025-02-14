@@ -8,6 +8,9 @@ namespace SplitGui {
     }
 
     Result Default::Meta::instance() {
+
+        SPLITGUI_LOG("Instanced Meta");
+
         return Result::eSuccess;
     }
 }

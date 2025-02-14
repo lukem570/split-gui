@@ -8,6 +8,9 @@ namespace SplitGui {
     }
 
     Result Default::Transform::instance() {
+
+        SPLITGUI_LOG("Instanced Transform");
+
         return Result::eSuccess;
     }
 }

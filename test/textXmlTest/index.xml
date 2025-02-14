@@ -1,0 +1,6 @@
+<meta version="0.1.0"/>
+
+<overlay>
+    <text value="Hello, World"/>
+    <rect color="ivec3(100u, 255u, 100u)"/>
+</overlay>

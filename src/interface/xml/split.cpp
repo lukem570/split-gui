@@ -40,11 +40,11 @@ namespace SplitGui {
 
     Result XmlParser::handleSplitParameters(Default::Split* split, XmlToken& token) {
 
-        //ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)split, token);
-        //TRYD(defaultRes);
-        //if (defaultRes.value) {
-        //    return Result::eSuccess;
-        //}
+        ResultValue<bool> defaultRes = handleDefaultParameters((InterfaceElement*)split, token);
+        TRYD(defaultRes);
+        if (defaultRes.value) {
+            return Result::eSuccess;
+        }
 
         if (token.value == "position") {
             ResultValue<XmlToken> attributeTokenRes = nextToken();

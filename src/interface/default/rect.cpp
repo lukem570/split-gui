@@ -32,7 +32,7 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
-        SPLITGUI_LOG("Created Rect: (%d, %d), (%d, %d), color: (%d, %d, %d)", x1.x, x1.y, x2.x, x2.y, color.r, color.g, color.b);
+        SPLITGUI_LOG("Instanced Rect: (%d, %d), (%d, %d), color: (%d, %d, %d)", x1.x, x1.y, x2.x, x2.y, color.r, color.g, color.b);
 
         graphicsRectRef = pGraphics->drawRect(x1, x2, color);
 

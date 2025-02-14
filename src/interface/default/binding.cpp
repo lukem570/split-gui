@@ -8,6 +8,9 @@ namespace SplitGui {
     }
 
     Result Default::Binding::instance() {
+
+        SPLITGUI_LOG("Instanced Binding");
+
         return Result::eSuccess;
     }
 

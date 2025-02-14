@@ -132,12 +132,12 @@ index.xml
 
 ### Features
 
-* write documentation
 * add scene tree to xml
 * add calls to unit expression parser
 * finish default interface elements
 * add svgs 
-* add z to cam
+* refactor camera rotation handling 
+* add z to interface
 
 ### Optimizations
 
@@ -157,3 +157,4 @@ index.xml
 
 * slowness
     * performance testing and checking for bottlenecks
+* text transparency

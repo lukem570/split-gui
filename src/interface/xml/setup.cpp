@@ -5,7 +5,6 @@ namespace SplitGui {
         map["binding"]   = &SplitGui::XmlParser::handleBindingTag;
         map["box"]       = &SplitGui::XmlParser::handleBoxTag;
         map["list"]      = &SplitGui::XmlParser::handleListTag;
-        map["mask"]      = &SplitGui::XmlParser::handleMaskTag;
         map["media"]     = &SplitGui::XmlParser::handleMediaTag;
         map["meta"]      = &SplitGui::XmlParser::handleMetaTag;
         map["overlay"]   = &SplitGui::XmlParser::handleOverlayTag;

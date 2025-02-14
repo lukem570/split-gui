@@ -8,6 +8,9 @@ namespace SplitGui {
     }
 
     Result Default::Media::instance() {
+
+        SPLITGUI_LOG("Instanced Media");
+
         return Result::eSuccess;
     }
 }

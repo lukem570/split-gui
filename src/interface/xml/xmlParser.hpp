@@ -51,7 +51,6 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<InterfaceElement*> handleBindingTag();
 [[nodiscard]] ResultValue<InterfaceElement*> handleBoxTag();
 [[nodiscard]] ResultValue<InterfaceElement*> handleListTag();
-[[nodiscard]] ResultValue<InterfaceElement*> handleMaskTag();
 [[nodiscard]] ResultValue<InterfaceElement*> handleMediaTag();
 [[nodiscard]] ResultValue<InterfaceElement*> handleMetaTag();
 [[nodiscard]] ResultValue<InterfaceElement*> handleOverlayTag();
@@ -66,7 +65,6 @@ namespace SplitGui {
 [[nodiscard]] inline Result handleBindingParameters(Default::Binding* binding, XmlToken& token);
 [[nodiscard]] inline Result handleBoxParameters(Default::Box* box, XmlToken& token);
 [[nodiscard]] inline Result handleListParameters(Default::List* list, XmlToken& token);
-[[nodiscard]] inline Result handleMaskParameters(Default::Mask* mask, XmlToken& token);
 [[nodiscard]] inline Result handleMediaParameters(Default::Media* media, XmlToken& token);
 [[nodiscard]] inline Result handleMetaParameters(Default::Meta* meta, XmlToken& token);
 [[nodiscard]] inline Result handleOverlayParameters(Default::Overlay* overlay, XmlToken& token);

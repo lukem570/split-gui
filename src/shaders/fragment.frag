@@ -59,7 +59,7 @@ void main() {
         float sd = median(msdf.r, msdf.g, msdf.b);
         float screenPxDistance = screenPxRange()*(sd - 0.5);
         float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
-        outColor = mix(vec4(0.0), vec4(in_fragColor, 1.0), opacity);
+        outColor = mix(vec4(1.0), vec4(in_fragColor, 1.0), opacity);
 
     } else if (useScene) {
 

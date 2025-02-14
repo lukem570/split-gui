@@ -25,7 +25,6 @@ namespace SplitGui {
         eOverlay,
 
         // Modifiers
-        eMask,
         eTransform,
 
         // Objects
@@ -169,22 +168,6 @@ namespace SplitGui {
                 std::vector<unsigned int>      order;
         };
 
-        class SPLITGUI_EXPORT Mask : public InterfaceElement {
-            public:
-                      ~Mask()     override = default;
-
-  [[nodiscard]] Result instance() override;
-                void   update()   override;
-
-            protected:
-                InterfaceElementType           type        = InterfaceElementType::eMask;
-                std::string                    name        = "mask";
-                const static unsigned int      maxChildren = 1;
-
-            private: // props
-                std::vector<std::vector<Vec4>> pixels;
-        };
-
         class SPLITGUI_EXPORT Transform : public InterfaceElement {
             public:
                       ~Transform() override = default;
@@ -233,7 +216,7 @@ namespace SplitGui {
   [[nodiscard]] Result instance()     override;
                 void   update()       override;
 
-                void setSceneNumber(unsigned int sceneNumber);
+                void   setSceneNumber(unsigned int sceneNumber);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eScene;
@@ -255,6 +238,8 @@ namespace SplitGui {
   [[nodiscard]] Result instance() override;
                 void   update()   override;
 
+                void   setText(std::string value);
+
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eText;
                 std::string                    name        = "text";
@@ -262,7 +247,8 @@ namespace SplitGui {
 
             private: // props
                 unsigned int                   fontSize;
-                std::string                    font;
+                std::string                    font; // TODO:
+                std::string                    value;
         };
 
         class SPLITGUI_EXPORT Media : public InterfaceElement {

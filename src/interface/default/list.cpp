@@ -4,10 +4,90 @@
 
 namespace SplitGui {
     void Default::List::update() {
+        int maxSize = isVertical ? extent.height : extent.width;
+        int pos     = isVertical ? extent.y : extent.x;
+        int size    = maxSize / children.size();
+
+        std::vector<RectObj> extents;
+        extents.resize(children.size());
+
+        for (unsigned int i = 0; i < children.size(); i++) {
+            
+            if (isVertical) {
+
+                extents[i].height = size;
+                extents[i].width  = extent.width;
+                extents[i].x      = extent.x;
+                extents[i].y      = pos;
+                
+            } else {
+
+                extents[i].height = extent.height;
+                extents[i].width  = size;
+                extents[i].y      = extent.y;
+                extents[i].x      = pos;
+                
+            }
+
+            pos += size;
+        }
         
+        if (isVertical) {
+            extents.back().height += maxSize - pos;
+        } else {
+            extents.back().width  += maxSize - pos;
+        }
+
+        for (unsigned int i = 0; i < children.size(); i++) {
+            children[i]->setExtent(extents[i]);
+            children[i]->update();
+        }
     }
 
     Result Default::List::instance() {
+
+        int maxSize = isVertical ? extent.height : extent.width;
+        int pos     = isVertical ? extent.y : extent.x;
+        int size    = maxSize / children.size();
+
+        std::vector<RectObj> extents;
+        extents.resize(children.size());
+
+        for (unsigned int i = 0; i < children.size(); i++) {
+            
+            if (isVertical) {
+
+                extents[i].height = size;
+                extents[i].width  = extent.width;
+                extents[i].x      = extent.x;
+                extents[i].y      = pos;
+                
+            } else {
+
+                extents[i].height = extent.height;
+                extents[i].width  = size;
+                extents[i].y      = extent.y;
+                extents[i].x      = pos;
+
+            }
+
+            pos += size;
+        }
+        
+        if (isVertical) {
+            extents.back().height += maxSize - pos;
+        } else {
+            extents.back().width  += maxSize - pos;
+        }
+
+        for (unsigned int i = 0; i < children.size(); i++) {
+            children[i]->setGraphics(pGraphics);
+            children[i]->setExtent(extents[i]);
+            children[i]->instance();
+        }
+        
+        SPLITGUI_LOG("Instanced List");
+
         return Result::eSuccess;
     }
 
