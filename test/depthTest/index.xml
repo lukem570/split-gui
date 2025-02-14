@@ -1,0 +1,9 @@
+<meta version="0.1.0"/>
+
+<overlay>
+    <rect depth="10" color="ivec3(100u, 255u, 100u)"/>
+    <list direction="vertical">
+        <text depth="0" color="ivec3(0u, 0u, 0u)" value="I'm Visible!"/>
+        <text depth="20" color="ivec3(0u, 0u, 0u)" value="I'm Not!"/>
+    </list>
+</overlay>

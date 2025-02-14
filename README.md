@@ -137,7 +137,7 @@ index.xml
 * finish default interface elements
 * add svgs 
 * refactor camera rotation handling 
-* add z to interface
+* fix transparency ordering
 
 ### Optimizations
 

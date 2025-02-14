@@ -11,6 +11,8 @@
 #include <string>
 #include <unordered_map>
 
+#define DEPTH_PLANE 255
+
 namespace SplitGui {
 
     class Window;
@@ -82,6 +84,7 @@ namespace SplitGui {
             void setExtent(RectObj extent);
             void setGraphics(Graphics* pgGraphics);
             void setRef(std::string string);
+            void setDepth(int depth);
             void cleanup();
 
         protected:
@@ -91,6 +94,7 @@ namespace SplitGui {
             std::vector<InterfaceElement*> children;
             RectObj                        extent;
             std::string                    ref         = "";
+            int                            depth       = 0;
             
 
             Graphics*                      pGraphics   = nullptr;
@@ -239,6 +243,8 @@ namespace SplitGui {
                 void   update()   override;
 
                 void   setText(std::string value);
+                void   setColor(HexColor);
+  [[nodiscard]] Result setColor(std::string);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eText;
@@ -249,6 +255,8 @@ namespace SplitGui {
                 unsigned int                   fontSize;
                 std::string                    font; // TODO:
                 std::string                    value;
+                UnitExpressionEvaluator        colorStatement;
+                HexColor                       color = 0;
         };
 
         class SPLITGUI_EXPORT Media : public InterfaceElement {

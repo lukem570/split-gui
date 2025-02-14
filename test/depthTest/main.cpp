@@ -1,15 +1,31 @@
 #include <splitgui/result.hpp>
 #include <splitgui/window.hpp>
+#include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/structs.hpp>
 
+#include <fstream>
+#include <sstream>
+#include <string>
+
 int main() {
+
+    std::ifstream indexFile("test/depthTest/index.xml");
+
+    if (!indexFile.is_open()) {
+        printf("ERROR: error opening index.xml\n");
+        return -1;
+    }
+
+    std::stringstream buffer;
+    buffer << indexFile.rdbuf();
+    std::string page = buffer.str();
 
     SplitGui::EventHandler eventHandler;
 
     SplitGui::Window window;
     TRYRC(glfwRes, window.instanceGlfw());
-    TRYRC(windowRes, window.createWindow("text test"));
+    TRYRC(windowRes, window.createWindow("depth test"));
     window.attachEventHandler(eventHandler);
 
     SplitGui::VulkanFlags vulkanFlags;
@@ -21,19 +37,18 @@ int main() {
     TRYRC(fontRes, graphics.loadFont("fonts/Lato/Lato-Regular.ttf"));
     graphics.attachEventHandler(eventHandler);
 
-    graphics.drawRect(
-        SplitGui::IVec2{0, 0}, 
-        window.getSize(),
-        0xFF00FF,
-        1
-    );
+    SplitGui::RectObj viewport;
+    viewport.size = window.getSize();
+    viewport.x    = 0;
+    viewport.y    = 0;
+    
+    SplitGui::Interface ui;
+    TRYRC(parseRes, ui.parseXml(page));
+    ui.submitGraphics(graphics);
+    ui.setViewport(viewport);
+    ui.attachEventHandler(eventHandler);
 
-    TRYC(int, textRes, graphics.drawText(
-        SplitGui::IVec2{0, 0},
-        "abcdefghijklmnopqrstuvwxyz",
-        0xFFFFFF
-    ));
-
+    ui.instance();
     graphics.submitBuffers();
 
     while (!window.shouldClose()) {
@@ -44,6 +59,6 @@ int main() {
         graphics.drawFrame();
         window.update();
     }
-
+    
     return 0;
 }

@@ -26,7 +26,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result             instance()                                                                                                             { throw; }
 [[nodiscard]] virtual Result             submitWindow(Window& window)                                                                                           { throw; }
 [[nodiscard]] virtual Result             drawFrame()                                                                                                            { throw; }
-              virtual RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                               { throw; }
+              virtual RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)           { throw; }
               virtual void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                             { throw; }
               virtual unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                                      { throw; }
               virtual void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                                      { throw; }
@@ -34,7 +34,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                    { throw; }
 [[nodiscard]] virtual Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                            { throw; }
 [[nodiscard]] virtual Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                { throw; }
-[[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                                   { throw; }
+[[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text, Vec3 color, float depth = 0.0f)                                                   { throw; }
 [[nodiscard]] virtual Result             loadFont(const char* path)                                                                                             { throw; }
               virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                            { throw; }
 [[nodiscard]] virtual Result             submitBuffers()                                                                                                        { throw; }
@@ -56,7 +56,7 @@ namespace SplitGui {
 [[nodiscard]] Result           instanceVulkan(VulkanFlags flags);
               void             submitWindow(Window& window);
               void             drawFrame();
-              RectRef          drawRect(IVec2 x1, IVec2 x2, HexColor color);
+              RectRef          drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth = 0);
               void             updateRect(RectRef& ref, IVec2 x1, IVec2 x2);
               unsigned int     instanceScene(IVec2 x1, IVec2 x2);
               void             updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2);
@@ -64,7 +64,7 @@ namespace SplitGui {
 [[nodiscard]] Result           updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position);
 [[nodiscard]] Result           updateSceneCameraView(unsigned int sceneNumber, Mat4& view);
 [[nodiscard]] Result           updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection);
-[[nodiscard]] ResultValue<int> drawText(IVec2 x1, std::string text); // Returns the width in pixels of the text
+[[nodiscard]] ResultValue<int> drawText(IVec2 x1, std::string text, HexColor color, int depth = 0); // Returns the width in pixels of the text
 [[nodiscard]] Result           loadFont(const char* path);
               void             drawMedia(Vec2 x1, Vec2 x2);
               void             submitBuffers();

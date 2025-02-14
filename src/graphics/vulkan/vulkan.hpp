@@ -50,7 +50,7 @@ namespace SplitGui {
 [[nodiscard]] Result             submitWindow(SplitGui::Window& window)                                                                                 override;
 
 [[nodiscard]] Result             drawFrame()                                                                                                            override;
-              RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags = 0, uint16_t textureIndex = 0)                               override;
+              RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)           override;
               void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2)                                                                             override;
               unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                                      override;
               void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                                      override;
@@ -58,7 +58,7 @@ namespace SplitGui {
 [[nodiscard]] Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                    override;
 [[nodiscard]] Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                            override;
 [[nodiscard]] Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                override;
-[[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text)                                                                                   override;
+[[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text, Vec3 color, float depth = 0.0f)                                                   override;
 [[nodiscard]] Result             loadFont(const char* path)                                                                                             override;
 [[nodiscard]] Result             submitBuffers()                                                                                                        override;
               void               clearBuffers()                                                                                                         override;

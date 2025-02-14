@@ -39,7 +39,7 @@ namespace SplitGui {
         pInterface->drawFrame();
     }
 
-    RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color) {
+    RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth) {
 
         IVec2 windowSize = pWindow->getSize();
 
@@ -51,7 +51,7 @@ namespace SplitGui {
         newX2.x = (float)x2.x / windowSize.x * 2.0 - 1.0f;
         newX2.y = (float)x2.y / windowSize.y * 2.0 - 1.0f;
 
-        return pInterface->drawRect(newX1, newX2, color.normalize());
+        return pInterface->drawRect(newX1, newX2, color.normalize(), (float)depth / DEPTH_PLANE);
     }
 
     void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2) {
@@ -81,14 +81,14 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<int> Graphics::drawText(IVec2 x1, std::string text) {
+    ResultValue<int> Graphics::drawText(IVec2 x1, std::string text, HexColor color, int depth) {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
         newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
         newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
 
-        ResultValue<float> ret = pInterface->drawText(newX1, text);
+        ResultValue<float> ret = pInterface->drawText(newX1, text, color.normalize(), (float)depth / DEPTH_PLANE);
 
         TRYD(ret);
 

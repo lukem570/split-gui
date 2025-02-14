@@ -62,6 +62,10 @@ namespace SplitGui {
         ref = string;
     }
 
+    void InterfaceElement::setDepth(int depthIn) {
+        depth = depthIn;
+    }
+
     void InterfaceElement::cleanup() {
         for (unsigned int i = 0; i < children.size(); i++) {
             children[i]->cleanup();

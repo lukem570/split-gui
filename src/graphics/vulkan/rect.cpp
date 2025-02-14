@@ -1,7 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    RectRef VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, VertexFlags flags, uint16_t textureIndex) {
+    RectRef VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth, VertexFlags flags, uint16_t textureIndex) {
 
         int verticesOffset = vertices.size();
 
@@ -13,22 +13,22 @@ namespace SplitGui {
         indices.push_back(verticesOffset + 1);
         
         Vertex bottomLeft;
-        bottomLeft.pos         = {std::min(x1.x, x2.x), std::min(x1.y, x2.y), 0};
+        bottomLeft.pos         = {std::min(x1.x, x2.x), std::min(x1.y, x2.y), depth};
         bottomLeft.color       = color;
         bottomLeft.textureCord = {0.0f, 0.0f};
 
         Vertex bottomRight;
-        bottomRight.pos         = {std::max(x1.x, x2.x), std::min(x1.y, x2.y), 0};
+        bottomRight.pos         = {std::max(x1.x, x2.x), std::min(x1.y, x2.y), depth};
         bottomRight.color       = color;
         bottomRight.textureCord = {1.0f, 0.0f};
 
         Vertex topLeft;
-        topLeft.pos         = {std::min(x1.x, x2.x), std::max(x1.y, x2.y), 0};
+        topLeft.pos         = {std::min(x1.x, x2.x), std::max(x1.y, x2.y), depth};
         topLeft.color       = color;
         topLeft.textureCord = {0.0f, 1.0f};
 
         Vertex topRight;
-        topRight.pos         = {std::max(x1.x, x2.x), std::max(x1.y, x2.y), 0};
+        topRight.pos         = {std::max(x1.x, x2.x), std::max(x1.y, x2.y), depth};
         topRight.color       = color;
         topRight.textureCord = {1.0f, 1.0f};
 

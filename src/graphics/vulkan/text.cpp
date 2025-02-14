@@ -26,7 +26,7 @@ namespace SplitGui {
         return (unsigned char)(~int(255.5f-255.f*clamp(x)));
     }
 
-    ResultValue<float> VulkanInterface::drawText(Vec2 x1, std::string& text) {
+    ResultValue<float> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, float depth) {
         if (!ft_fontInUse) {
             return Result::eFailedToUseFont;
         }
@@ -216,18 +216,11 @@ namespace SplitGui {
             VulkanInterface::drawRect(
                 x1 + Vec2{pos , 0}, 
                 x1 + Vec2{pos + width, height}, 
-                {0.0, 0.0, 0.0}, 
+                color, 
+                depth,
                 VertexFlagsBits::eTextureMsdf, 
                 text[i]
             );
-
-            //VulkanInterface::drawRect(
-            //    {-1.0, -1.0}, 
-            //    {1.0, 1.0}, 
-            //    {0.0, 0.0, 0.0}, 
-            //    VertexFlagsBits::eTextureMsdf, 
-            //    text[i]
-            //);
 
             pos += width + ((float)7 / (float)windowSize.x);
         }
