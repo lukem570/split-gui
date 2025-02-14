@@ -61,8 +61,6 @@ void main() {
         float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
         outColor = mix(vec4(0.0), vec4(in_fragColor, 1.0), opacity);
 
-        //outColor = vec4(texture(glyphs, vec3(in_textureCord, in_textureNumber)).rgb, 1.0);
-
     } else if (useScene) {
 
         Scene scene = sb.scenes[in_sceneNumber];

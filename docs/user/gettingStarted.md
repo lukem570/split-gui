@@ -113,10 +113,16 @@ The graphics object is responsible for managing rendering of interfaces and scen
 #### Create the Graphics Object
 
 ``` c++
+
+SplitGui::VulkanFlags vulkanFlags;
+
+// enable validation layers
+vulkanFlags.enableValidationLayers = true;
+
 SplitGui::Graphics graphics;
 
 // Use Vulkan as the graphics library
-TRYRC(instanceRes, graphics.instanceVulkan(true));
+TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
 
 // Submit the window object
 graphics.submitWindow(window);

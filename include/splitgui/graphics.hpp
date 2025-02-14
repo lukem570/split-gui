@@ -12,6 +12,12 @@ namespace SplitGui {
 
     class SPLITGUI_EXPORT Window;
 
+    struct VulkanFlags {
+        unsigned int mdsfTextureSize        = 64;
+        HexColor     clearColor             = 0x000000;
+        bool         enableValidationLayers = false;
+    };
+
     class SPLITGUI_EXPORT GraphicsLibInterface {
         public:
                        GraphicsLibInterface() {}
@@ -46,7 +52,7 @@ namespace SplitGui {
             Graphics();
             ~Graphics();
 
-[[nodiscard]] Result           instanceVulkan(bool validation);
+[[nodiscard]] Result           instanceVulkan(VulkanFlags flags);
               void             submitWindow(Window& window);
               void             drawFrame();
               RectRef          drawRect(IVec2 x1, IVec2 x2, HexColor color);

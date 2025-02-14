@@ -12,8 +12,11 @@ int main() {
     TRYRC(windowRes, window.createWindow("text test"));
     window.attachEventHandler(eventHandler);
 
+    SplitGui::VulkanFlags vulkanFlags;
+    vulkanFlags.enableValidationLayers = true;
+
     SplitGui::Graphics graphics;
-    TRYRC(instanceRes, graphics.instanceVulkan(true));
+    TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
     graphics.submitWindow(window);
     TRYRC(fontRes, graphics.loadFont("fonts/Lato/Lato-Regular.ttf"));
     graphics.attachEventHandler(eventHandler);

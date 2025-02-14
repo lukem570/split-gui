@@ -35,8 +35,12 @@ int main() {
     TRYRC(windowRes, window.createWindow("cube test"));
     window.attachEventHandler(eventHandler);
 
+    SplitGui::VulkanFlags vulkanFlags;
+    vulkanFlags.clearColor             = 0xFFFFFF;
+    vulkanFlags.enableValidationLayers = true;
+
     SplitGui::Graphics graphics;
-    TRYRC(instanceRes, graphics.instanceVulkan(true));
+    TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 
@@ -51,19 +55,12 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
-    SplitGui::Cube cube1;
-    cube1.submitGraphics(graphics);
-    cube1.setSize(0.25);
-    cube1.setPosition({0, 0, 0});
-    cube1.setColor(SplitGui::HexColor(0xFF0000));
-    cube1.generate();
-
-    SplitGui::Cube cube2;
-    cube2.submitGraphics(graphics);
-    cube2.setSize(0.25);
-    cube2.setPosition({1.0, 0, 0});
-    cube2.setColor(SplitGui::HexColor(0x00FF00));
-    cube2.generate();
+    SplitGui::Cube cube;
+    cube.submitGraphics(graphics);
+    cube.setSize(0.25);
+    cube.setPosition({0, 0, 0});
+    cube.setColor(SplitGui::HexColor(0xFF0000));
+    cube.generate();
 
     SplitGui::Grid grid;
     grid.submitGraphics(graphics);
@@ -72,8 +69,7 @@ int main() {
     SplitGui::Vec3 position = {0, 0, 0};
 
     ui.instance();
-    cube1.submit(0);
-    cube2.submit(0);
+    cube.submit(0);
     grid.submit(0);
     graphics.submitBuffers();
 

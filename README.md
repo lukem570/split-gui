@@ -1,8 +1,11 @@
 # Split gui
 
-Split gui is a GUI library that is entirely gpu focused therefore it has no dependencies 
-for specific systems making it highly portable. Split gui is built on Vulkan and Glfw but is designed
-to be expanded to other libraries and systems not implementing Vulkan or Glfw.
+Split gui is a GUI library that is entirely gpu focused making it highly portable. Split gui is built on Vulkan and Glfw, but is designed to be expanded to other libraries and systems.
+
+---
+<br/>
+
+![Cube Test](assets/cube.png)
 
 ## Builds 
 
@@ -81,8 +84,11 @@ int main(void) {
     TRYRC(windowRes, window.createWindow("xml test"));
     window.attachEventHandler(eventHandler);
 
+    SplitGui::VulkanFlags vulkanFlags;
+    vulkanFlags.enableValidationLayers = true;
+
     SplitGui::Graphics graphics;
-    TRYRC(instanceRes, graphics.instanceVulkan(true));
+    TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 

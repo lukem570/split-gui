@@ -15,12 +15,12 @@ namespace SplitGui {
         }
     }
     
-    Result Graphics::instanceVulkan(bool validation = false) {
+    Result Graphics::instanceVulkan(VulkanFlags flags) {
         if (!glfw::vulkanSupported()) {
             return Result::eVulkanNotSupported;
         }
 
-        pInterface = (GraphicsLibInterface*) new(std::nothrow) VulkanInterface(validation);
+        pInterface = (GraphicsLibInterface*) new(std::nothrow) VulkanInterface(flags);
         if (!pInterface) {
             return Result::eHeapAllocFailed;
         }

@@ -44,7 +44,7 @@ namespace SplitGui {
 
     class VulkanInterface : GraphicsLibInterface {
         public:
-                                 VulkanInterface(bool validation);
+                                 VulkanInterface(VulkanFlags flags);
                                 ~VulkanInterface()                                                                                                      override;
 
 [[nodiscard]] Result             instance()                                                                                                             override;

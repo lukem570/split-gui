@@ -1,15 +1,17 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    VulkanInterface::VulkanInterface(bool validation = false) {
-        vk_validation = validation;
+    VulkanInterface::VulkanInterface(VulkanFlags flags) {
+        vk_validation = flags.enableValidationLayers;
 
-        vk_clearValues[0].color = vk::ClearColorValue{1.0f, 1.0f, 1.0f, 1.0f};
+        Vec3 color = flags.clearColor.normalize();
+
+        vk_clearValues[0].color = vk::ClearColorValue{color.r, color.g, color.b, 1.0f};
         vk_clearValues[1].depthStencil.depth   = 1.0f;
         vk_clearValues[1].depthStencil.stencil = 0;
 
-        vk_msdfExtent.width  = 64;
-        vk_msdfExtent.height = 64;
+        vk_msdfExtent.width  = flags.mdsfTextureSize;
+        vk_msdfExtent.height = flags.mdsfTextureSize;
     }
 
     Result VulkanInterface::instance() {

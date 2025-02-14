@@ -28,8 +28,11 @@ int main() {
     TRYRC(windowRes, window.createWindow("event test"));
     window.attachEventHandler(eventHandler);
 
+    SplitGui::VulkanFlags vulkanFlags;
+    vulkanFlags.enableValidationLayers = true;
+
     SplitGui::Graphics graphics;
-    TRYRC(instanceRes, graphics.instanceVulkan(true));
+    TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
     graphics.submitWindow(window);
     graphics.attachEventHandler(eventHandler);
 
