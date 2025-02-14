@@ -100,7 +100,7 @@ namespace SplitGui {
     }
 
     void Graphics::clearBuffers() {
-        
+        pInterface->clearBuffers();
     }
 
     void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags) {

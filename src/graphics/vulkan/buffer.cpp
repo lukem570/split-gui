@@ -29,6 +29,9 @@ namespace SplitGui {
         vertices.clear();
         scenes.clear();
         charImageMappings.clear();
+
+        knownIndicesSize = 0;
+        knownScenesSize  = 0;
     }
 
     inline Result VulkanInterface::createBuffer(
