@@ -27,8 +27,6 @@ namespace SplitGui {
         
         glfw::Window* handle = nullptr;
 
-#else
-    #error "not implemented"
 #endif
     };
 

@@ -38,7 +38,9 @@
     !defined(SPLIT_GUI_USE_WAYLAND) && \
     !defined(SPLIT_GUI_USE_WIN32)
 
-    #define SPLIT_GUI_USE_GLFW
+    #ifdef BUILD_SPLITGUI
+        #define SPLIT_GUI_USE_GLFW
+    #endif
 
 #elif defined(SPLIT_GUI_USE_GLFW)
     
@@ -187,7 +189,10 @@
         // Xlib includes 
 
         #include <X11/Xlib.h>
+
+        #ifdef BUILD_SPLITGUI
         #include <vulkan/vulkan_xlib.h>
+        #endif
 
     #endif
 
@@ -240,25 +245,28 @@
     #include <windows.h>
 #endif
 
-// msdfgen 
+#ifdef BUILD_SPLITGUI
 
-#define MSDFGEN_PUBLIC
-#include <msdfgen/msdfgen.h>
+    // msdfgen 
+    #define MSDFGEN_PUBLIC
+    #include <msdfgen/msdfgen.h>
 
-// freetype
-#include <setjmp.h>
+    // freetype
+    #include <setjmp.h>
 
-namespace ft {
-    #include <ft2build.h>
+    namespace ft {
+        #include <ft2build.h>
 
-    #include FT_FREETYPE_H
-    #include FT_OUTLINE_H
-}
+        #include FT_FREETYPE_H
+        #include FT_OUTLINE_H
+    }
 
-#include <stdint.h>
+    #include <stdint.h>
 
-#ifndef UINT8_WIDTH
-#define UINT8_WIDTH 8
+    #ifndef UINT8_WIDTH
+    #define UINT8_WIDTH 8
+    #endif
+
 #endif
 
 #define SPLITGUI_LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__); fflush(stdout);
