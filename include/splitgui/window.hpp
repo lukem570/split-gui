@@ -44,9 +44,11 @@ namespace SplitGui {
               virtual void       submitEventHandler(EventHandler* pEventHandler) { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
-            
+#ifdef BUILD_SPLITGUI   
+
 [[nodiscard]] virtual ResultValue<vk::SurfaceKHR> createSurface(vk::Instance instance) { throw; }
 
+#endif
 #endif 
         private:
             RawWindow window;
@@ -73,9 +75,11 @@ namespace SplitGui {
               void       attachEventHandler(EventHandler& handler);
 
 #ifdef SPLIT_GUI_USE_VULKAN
-            
+#ifdef BUILD_SPLITGUI   
+
 [[nodiscard]] ResultValue<vk::SurfaceKHR> createSurface(vk::Instance instance);
 
+#endif 
 #endif 
 
         private:

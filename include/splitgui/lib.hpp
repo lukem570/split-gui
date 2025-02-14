@@ -99,8 +99,8 @@
         #error "Vulkan previously defined"
     #endif
 
+    #ifdef BUILD_SPLITGUI
     // includes
-
     #include <volk/volk.h>
 
     // This is wonderful 
@@ -108,11 +108,11 @@
     #undef VK_HEADER_VERSION
     #define VK_HEADER_VERSION 307
     #include <vulkan/vulkan.hpp>
-
+    
     // dispatch loader
-
     VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
-
+    #endif
+    
 #endif
 
 // platform specific includes
@@ -191,7 +191,7 @@
         #include <X11/Xlib.h>
 
         #ifdef BUILD_SPLITGUI
-        #include <vulkan/vulkan_xlib.h>
+            #include <vulkan/vulkan_xlib.h>
         #endif
 
     #endif
