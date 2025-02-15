@@ -58,7 +58,7 @@ namespace SplitGui {
 [[nodiscard]] Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                    override;
 [[nodiscard]] Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                            override;
 [[nodiscard]] Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                override;
-[[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text, Vec3 color, float depth = 0.0f)                                                   override;
+[[nodiscard]] ResultValue<float> drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                     override;
 [[nodiscard]] Result             loadFont(const char* path)                                                                                             override;
 [[nodiscard]] Result             submitBuffers()                                                                                                        override;
               void               clearBuffers()                                                                                                         override;
@@ -141,7 +141,7 @@ namespace SplitGui {
             std::vector<VertexBufferObject>     vertices;
             std::vector<uint16_t>               indices;
             std::vector<SceneObj>               scenes;
-            std::unordered_map<char, MSDFImage> charImageMappings;
+            std::unordered_map<char, double>    charWidthMap;
             bool                                markVerticesForUpdate = false;
             bool                                markScenesForUpdate   = false;
 

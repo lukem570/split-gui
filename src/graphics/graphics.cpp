@@ -81,14 +81,14 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<int> Graphics::drawText(IVec2 x1, std::string text, HexColor color, int depth) {
+    ResultValue<int> Graphics::drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth) {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
         newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
         newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
 
-        ResultValue<float> ret = pInterface->drawText(newX1, text, color.normalize(), (float)depth / DEPTH_PLANE);
+        ResultValue<float> ret = pInterface->drawText(newX1, text, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
 
         TRYD(ret);
 

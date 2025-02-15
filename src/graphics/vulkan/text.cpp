@@ -26,24 +26,20 @@ namespace SplitGui {
         return (unsigned char)(~int(255.5f-255.f*clamp(x)));
     }
 
-    ResultValue<float> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, float depth) {
+    ResultValue<float> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth) {
         if (!ft_fontInUse) {
             return Result::eFailedToUseFont;
         }
 
         IVec2 windowSize = pWindow->getSize();
 
-        int fontSize = 20;
-
         float pos = 0;
         ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, windowSize.x, windowSize.y);
 
         for (unsigned int i = 0; i < text.size(); i++) {
-            if (charImageMappings.find(text[i]) != charImageMappings.end() || std::isspace(text[i])) {
+            if (charWidthMap.find(text[i]) != charWidthMap.end() || std::isspace(text[i])) {
                 continue;
             }
-
-            charImageMappings[text[i]] = {};
 
             msdfgen::Shape shape;
 
@@ -65,37 +61,29 @@ namespace SplitGui {
                 return Result::eFailedToLoadGlyph;
             }
 
-            ft::FT_Error loadCharError = ft::FT_Load_Char(ft_face, text[i], 0);
-
-            if (loadCharError) {
-                return Result::eFailedToLoadGlyph;
-            }
-
-            double origin = shape.getBounds().l - shape.getBounds().r;
-
             shape.normalize();
 
-            double normalScaleFactor = origin / (shape.getBounds().l - shape.getBounds().r);
-
             msdfgen::edgeColoringSimple(shape, 3.0);
-
+            
             msdfgen::Vector2 scale;
             msdfgen::Range pxRange = msdfgen::Range(0.1);
-
+            
             msdfgen::Shape::Bounds bounds = shape.getBounds();
 
-            msdfgen::Vector2 dim(std::abs(bounds.l - bounds.r), std::abs(bounds.t - bounds.b));
+            bounds.l -= 0.1;
+            bounds.r += 0.1;
 
-            double offsetX = -((double)ft_face->glyph->metrics.horiBearingX / (double)std::pow(2, 16)) / normalScaleFactor * 5;
+            double width  = (bounds.r - bounds.l);
+            double height = (bounds.t - bounds.b);
 
-            dim.normalize();
-
-            scale.set(vk_msdfExtent.width / std::abs(bounds.l - bounds.r), vk_msdfExtent.height);
+            charWidthMap[text[i]] = width / height;
+            
+            scale.set((double)vk_msdfExtent.width / width, (double)vk_msdfExtent.height);
 
             msdfgen::SDFTransformation transformation(
                 msdfgen::Projection(
                     scale,
-                    msdfgen::Vector2(offsetX, 0.2)
+                    msdfgen::Vector2(-bounds.l, 0.2)
                 ), 
                 pxRange
             );
@@ -206,12 +194,12 @@ namespace SplitGui {
 
             ft::FT_GlyphSlot slot = ft_face->glyph;
             ft::FT_Fixed heightInFUnits = ft_face->size->metrics.height;
-            ft::FT_Fixed widthInFUnits = slot->metrics.width;
+            ft::FT_Fixed widthInFUnits = slot->metrics.horiAdvance;
             ft::FT_F26Dot6 heightInPixels = (heightInFUnits * 16) / ft_face->units_per_EM;
             ft::FT_F26Dot6 widthInPixels = (widthInFUnits * 16) / ft_face->units_per_EM;
 
             float height = (float)heightInPixels / (float)windowSize.y;
-            float width  = (float)widthInPixels  / (float)windowSize.x;
+            float width  = ((float)widthInPixels ) / (float)windowSize.x;
 
             VulkanInterface::drawRect(
                 x1 + Vec2{pos , 0}, 
@@ -222,7 +210,7 @@ namespace SplitGui {
                 text[i]
             );
 
-            pos += width + ((float)7 / (float)windowSize.x);
+            pos += width;
         }
 
         SPLITGUI_LOG("Drew Text");

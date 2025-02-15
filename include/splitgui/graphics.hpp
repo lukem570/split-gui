@@ -34,7 +34,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result             updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                    { throw; }
 [[nodiscard]] virtual Result             updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                            { throw; }
 [[nodiscard]] virtual Result             updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                { throw; }
-[[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text, Vec3 color, float depth = 0.0f)                                                   { throw; }
+[[nodiscard]] virtual ResultValue<float> drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                     { throw; }
 [[nodiscard]] virtual Result             loadFont(const char* path)                                                                                             { throw; }
               virtual void               drawMedia(Vec2 x1, Vec2 x2)                                                                                            { throw; }
 [[nodiscard]] virtual Result             submitBuffers()                                                                                                        { throw; }
@@ -64,7 +64,7 @@ namespace SplitGui {
 [[nodiscard]] Result           updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position);
 [[nodiscard]] Result           updateSceneCameraView(unsigned int sceneNumber, Mat4& view);
 [[nodiscard]] Result           updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection);
-[[nodiscard]] ResultValue<int> drawText(IVec2 x1, std::string text, HexColor color, int depth = 0); // Returns the width in pixels of the text
+[[nodiscard]] ResultValue<int> drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth = 0); // Returns the width in pixels of the text
 [[nodiscard]] Result           loadFont(const char* path);
               void             drawMedia(Vec2 x1, Vec2 x2);
               void             submitBuffers();

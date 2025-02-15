@@ -40,12 +40,6 @@ float median(float r, float g, float b) {
     return max(min(r, g), min(max(r, g), b));
 }
 
-float screenPxRange() {
-    vec2 unitRange = vec2(pxRange)/vec2(textureSize(glyphs, 0));
-    vec2 screenTexSize = vec2(1.0)/fwidth(in_textureCord);
-    return max(0.5*dot(unitRange, screenTexSize), 1.0);
-}
-
 void main() {
 
     int flags = int(in_flags);
@@ -56,10 +50,15 @@ void main() {
 
     if (useMsdf) {
         vec4 msdf = texture(glyphs, vec3(in_textureCord, in_textureNumber));
+        ivec2 sz = textureSize(glyphs, 0).xy;
+        float dx = dFdx(in_textureCord.x) * sz.x;
+        float dy = dFdx(in_textureCord.y) * sz.y;
+        float toPixels = 8.0 * inversesqrt(dx * dx + dy * dy);
         float sd = median(msdf.r, msdf.g, msdf.b);
-        float screenPxDistance = screenPxRange()*(sd - 0.5);
-        float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
-        outColor = mix(vec4(0), vec4(in_fragColor, 1.0), opacity);
+        float w = fwidth(sd);
+        float opacity = smoothstep(0.5 - w, 0.5 + w, sd);
+
+        outColor = mix(vec4(0.0), vec4(in_fragColor, 1.0), opacity);
 
     } else if (useScene) {
 

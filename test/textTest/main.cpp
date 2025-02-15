@@ -24,14 +24,15 @@ int main() {
     graphics.drawRect(
         SplitGui::IVec2{0, 0}, 
         window.getSize(),
-        0xFF00FF,
+        0xFFFFFF,
         1
     );
 
     TRYC(int, textRes, graphics.drawText(
         SplitGui::IVec2{0, 0},
         "abcdefghijklmnopqrstuvwxyz",
-        0xFFFFFF
+        0x000000,
+        20
     ));
 
     graphics.submitBuffers();

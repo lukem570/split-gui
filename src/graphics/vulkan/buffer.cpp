@@ -28,7 +28,6 @@ namespace SplitGui {
         indices.clear();
         vertices.clear();
         scenes.clear();
-        charImageMappings.clear();
 
         knownIndicesSize = 0;
         knownScenesSize  = 0;

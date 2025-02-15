@@ -138,6 +138,8 @@ index.xml
 * add svgs 
 * refactor camera rotation handling 
 * fix transparency ordering
+* add text updates
+* add scene references
 
 ### Optimizations
 
@@ -150,7 +152,6 @@ index.xml
 
 * general refactor
     * convension check
-* refactor text code
 * refactor lib to accomidate builds without vulkan or glfw
 
 ### Bugs
