@@ -59,8 +59,11 @@ namespace SplitGui {
             Grid();
 
             void submit(int sceneNumber, int flags = VertexFlagsBits::eWorldSpace) override;
-        
+            void setColor(HexColor color);
+
         protected:
+
+            HexColor color = 0;
     };
 
     class SPLITGUI_EXPORT Camera : public Node {
