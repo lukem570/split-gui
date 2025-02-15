@@ -5,7 +5,13 @@ namespace SplitGui {
     Grid::Grid() {
         vertices.resize(4);
         indices.resize(12); // 2 for both sides
+    }
 
+    void Grid::setColor(HexColor colorIn) {
+        color = colorIn;
+    }
+
+    void Grid::generate() {
         const float extent = 100.0f;
 
         vertices[0].pos.x = -extent;
@@ -38,10 +44,6 @@ namespace SplitGui {
         indices[idx++] = 0, indices[idx++] = 3, indices[idx++] = 1;
         indices[idx++] = 0, indices[idx++] = 2, indices[idx++] = 3;
         indices[idx++] = 0, indices[idx++] = 3, indices[idx++] = 2;
-    }
-
-    void Grid::setColor(HexColor colorIn) {
-        color = colorIn;
     }
 
     void Grid::submit(int sceneNumber, int flags) {

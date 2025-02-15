@@ -64,6 +64,7 @@ int main() {
 
     SplitGui::Grid grid;
     grid.submitGraphics(graphics);
+    grid.generate();
 
     SplitGui::Vec3 rotation = {0, 0, 0};
     SplitGui::Vec3 position = {0, 0, 0};

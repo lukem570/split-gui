@@ -47,20 +47,21 @@ namespace SplitGui {
             void setSize(float size);
             void setColor(HexColor color);
             void generate();
-
-        protected:
-
+            
+            protected:
+            
             float size = 1;
             HexColor color;
-    };
-
-    class SPLITGUI_EXPORT Grid : public Mesh {
-        public:
+        };
+        
+        class SPLITGUI_EXPORT Grid : public Mesh {
+            public:
             Grid();
-
+            
             void submit(int sceneNumber, int flags = VertexFlagsBits::eWorldSpace) override;
             void setColor(HexColor color);
-
+            void generate();
+            
         protected:
 
             HexColor color = 0;
