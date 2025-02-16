@@ -17,4 +17,17 @@ namespace SplitGui {
     void Default::Binding::setAlias(std::string& inAlias) {
         alias = inAlias;
     }
+
+    void Default::Binding::setSource(std::string& inSource) {
+        source = inSource;
+    }
+
+    std::string Default::Binding::getAlias() {
+        return alias;
+    }
+
+    std::string Default::Binding::getSource() {
+        return source;
+    }
+
 }

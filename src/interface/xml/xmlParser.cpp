@@ -2,6 +2,7 @@
 
 #include "binding.cpp"
 #include "box.cpp"
+#include "cleanup.cpp"
 #include "default.cpp"
 #include "list.cpp"
 #include "media.cpp"

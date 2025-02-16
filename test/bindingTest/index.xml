@@ -1,0 +1,9 @@
+<meta version="0.1.0"/>
+
+<binding alias="bind" src="test/bindingTest/bind.xml"/>
+
+<list direction="vertical"> 
+    <bind/>
+    <rect color="ivec3(100u, 255u, 100u)"/>
+    <bind/>
+</list>

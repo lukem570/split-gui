@@ -1,4 +1,5 @@
 #include "binding.cpp"
+#include "bindPoint.cpp"
 #include "box.cpp"
 #include "list.cpp"
 #include "media.cpp"

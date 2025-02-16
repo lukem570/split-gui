@@ -56,6 +56,27 @@ namespace SplitGui {
             return Result::eSuccess;
         }
 
+        if (token.value == "src") {
+
+            ResultValue<XmlToken> attributeTokenRes = nextToken();
+            TRYD(attributeTokenRes);
+            token = attributeTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            ResultValue<XmlToken> valueTokenRes = nextToken();
+            TRYD(valueTokenRes);
+            token = valueTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            binding->setSource(token.value);
+
+            ResultValue<XmlToken> endTokenRes = nextToken();
+            TRYD(endTokenRes);
+            token = endTokenRes.value;
+
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

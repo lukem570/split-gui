@@ -9,6 +9,8 @@
 #include <cctype>
 #include <unordered_map>
 
+#include "../../path.cpp"
+
 /*
 #include "xmlParser.hpp"
 
@@ -19,6 +21,11 @@ namespace SplitGui {
 
 namespace SplitGui {
 
+    struct BindPointContainer {
+        bool hasOwner          = false;
+        InterfaceElement* node = nullptr;
+    };
+
     #define ASSERT_ATTRIBUTE(token) if (token.type != XmlTokenType::eAttribute) { return Result::eInvalidToken; }
 
     class XmlParser;
@@ -27,15 +34,16 @@ namespace SplitGui {
 
     class XmlParser {
         public:
-              XmlParser();
-              ~XmlParser() = default;
+               XmlParser();
+              ~XmlParser();
 
 [[nodiscard]] ResultValue<InterfaceElement*> parse(const std::string& xmlInput);
         
         private:
               std::unordered_map<std::string, HandleTagInterface> handleTagInterfaces;
-              std::string                                          file;
-              unsigned int                                         index = 0;
+              std::unordered_map<std::string, BindPointContainer>  bindings;
+              std::string                                         file;
+              unsigned int                                        index = 0;
 
               char currentChar();
               void advance();

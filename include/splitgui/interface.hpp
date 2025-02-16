@@ -283,6 +283,10 @@ namespace SplitGui {
                 void   update()   override;
 
                 void   setAlias(std::string& inAlias);
+                void   setSource(std::string& inSource);
+
+                std::string   getAlias();
+                std::string   getSource();
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eBinding;
@@ -291,6 +295,7 @@ namespace SplitGui {
 
             private: // props
                 std::string                    alias;
+                std::string                    source;
         };
 
         class SPLITGUI_EXPORT Meta : public InterfaceElement {
@@ -307,6 +312,26 @@ namespace SplitGui {
 
             private: // props
                 std::string                    version;
+        };
+
+        class SPLITGUI_EXPORT BindPoint : public InterfaceElement {
+            public:
+                      ~BindPoint() override;
+
+  [[nodiscard]] Result instance()  override;
+                void   update()    override;
+
+                void   setBindPoint(InterfaceElement*);
+                void   setOwnership(bool);
+
+            protected:
+                InterfaceElementType           type        = InterfaceElementType::eMeta;
+                std::string                    name        = "meta";
+                const static unsigned int      maxChildren = 0;
+
+            private: 
+                InterfaceElement*              root = nullptr;
+                bool                           owner = false;
         };
     }
 
