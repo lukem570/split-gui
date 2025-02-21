@@ -80,6 +80,9 @@ void main() {
         // rotate points
         pos *= scene.cameraView;
 
+        // project points
+        pos *= scene.cameraProjection;
+
         // adjust points for aspect ratio
         if (scene.size.x > scene.size.y) {
             pos.x *= float(scene.size.y) / float(scene.size.x);
@@ -96,8 +99,6 @@ void main() {
 
         pos.x = conformToScene(iminx, imaxx, pos.x);
         pos.y = conformToScene(iminy, imaxy, pos.y);
-
-        pos *= scene.cameraProjection;
     }
 
     gl_Position = pos;
