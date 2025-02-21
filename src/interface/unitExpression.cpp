@@ -374,7 +374,7 @@ namespace SplitGui {
 #define UNIT_EXPRESSION_OPERATOR(sign)                                  \
                                                                         \
     switch (type) {                                                     \
-        case Type::eNumber: return number + operand.number; break;      \
+        case Type::eNumber: return number sign operand.number; break;   \
         case Type::eVector: {                                           \
                                                                         \
             switch (vector.size) {                                      \
