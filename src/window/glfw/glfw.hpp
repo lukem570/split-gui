@@ -43,6 +43,7 @@ namespace SplitGui {
             static void key_callback(glfw::Window& window, glfw::KeyCode key, int scancode, glfw::KeyState action, glfw::ModifierKeyBit mods);
             static void mouseButton_callback(glfw::Window& window, glfw::MouseButton mouseButton, glfw::MouseButtonState mouseState, glfw::ModifierKeyBit mods);
             static void mouseMove_callback(glfw::Window& window, double posX, double posY);
+            static void scroll_callback(glfw::Window& window, double offX, double offY);
 
             static inline KeyCode    convertGlfwKeyCode(glfw::KeyCode code);
             static inline KeyState   convertGlfwKeyState(glfw::KeyState state);

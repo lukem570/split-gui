@@ -27,6 +27,7 @@ namespace SplitGui {
         window.handle->keyEvent.setCallback(key_callback);
         window.handle->mouseButtonEvent.setCallback(mouseButton_callback);
         window.handle->cursorPosEvent.setCallback(mouseMove_callback);
+        window.handle->scrollEvent.setCallback(scroll_callback);
         
         window.handle->swapBuffers();
 

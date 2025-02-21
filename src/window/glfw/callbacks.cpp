@@ -51,4 +51,17 @@ namespace SplitGui {
 
         pEventHandler->pushResult(pEventHandler->pushEvent(event));
     }
+
+    void GlfwInterface::scroll_callback(glfw::Window& window, double offX, double offY) {
+        EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
+
+        Event event = Event(Event::Category::eWindow, Event::WindowType::eScroll);
+
+        event.data.type = EventData::Type::eWindow;
+
+        event.data.window.mouseScroll.xOff = (int) offX;
+        event.data.window.mouseScroll.yOff = (int) offY;
+
+        pEventHandler->pushResult(pEventHandler->pushEvent(event));
+    }
 }
