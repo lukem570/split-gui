@@ -179,15 +179,19 @@ namespace SplitGui {
   [[nodiscard]] Result instance()  override;
                 void   update()    override;
 
+  [[nodiscard]] Result setScale(std::string);
+  [[nodiscard]] Result setPosition(std::string);
+                void   setOrigin(bool isRelative);
+
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eTransform;
                 std::string                    name        = "transform";
                 const static unsigned int      maxChildren = 1;    
 
             private: // props
-                Vec2                           scale;
-                Vec2                           position;
-                Vec2                           rotation;
+                UnitExpressionEvaluator        position;
+                UnitExpressionEvaluator        scale;
+                bool                           isRelative = true;
         };
 
         class SPLITGUI_EXPORT Rect : public InterfaceElement {

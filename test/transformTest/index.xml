@@ -1,0 +1,5 @@
+<meta version="0.1.0"/>
+
+<transform origin="relative" position="ivec2(50%, 50%)" scale="ivec2(50px, 50px)">
+    <rect color="ivec3(255u, 100u, 100u)"/>
+</transform>

@@ -46,6 +46,7 @@ namespace SplitGui {
         eInvalidToken,
         eInvalidType,
         eInvalidDirection,
+        eInvalidOrigin,
         eInvalidSetting,
         eInvalidExpression,
         eInvalidPrematureClosure,

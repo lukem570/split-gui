@@ -134,12 +134,11 @@ index.xml
 
 * add scene tree to xml
 * add calls to unit expression parser
-* finish default interface elements
-* add svgs 
-* refactor camera rotation handling 
+* add svgs / media tag
 * fix transparency ordering
 * add text updates
 * add scene references
+* add transform absolute handing
 
 ### Optimizations
 
