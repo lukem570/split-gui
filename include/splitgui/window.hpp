@@ -31,7 +31,7 @@ namespace SplitGui {
     };
 
     struct WindowFlags {
-        char* title;
+        const char* title;
         bool  resizeable = true;
         bool  visible    = true;
         bool  decorated  = true;
@@ -54,6 +54,8 @@ namespace SplitGui {
               virtual void       maximize()                                      { throw; }
               virtual void       restore()                                       { throw; }
               virtual bool       maximized()                                     { throw; }
+              virtual void       setWindowPosition(IVec2 position)                { throw; }
+              virtual IVec2      getWindowPosition()                             { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
@@ -90,6 +92,8 @@ namespace SplitGui {
               void       maximize();
               void       restore();
               bool       maximized();
+              void       setWindowPosition(IVec2 position);
+              IVec2      getWindowPosition();
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   

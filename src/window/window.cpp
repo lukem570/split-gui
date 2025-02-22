@@ -80,6 +80,13 @@ namespace SplitGui {
         return windowLib->maximized();
     }
 
+    void Window::setWindowPosition(IVec2 position) {
+        windowLib->setWindowPosition(position);
+    }
+
+    IVec2 Window::getWindowPosition() {
+        return windowLib->getWindowPosition();
+    }
 
 #ifdef SPLIT_GUI_USE_VULKAN
 

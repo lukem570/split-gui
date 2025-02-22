@@ -21,4 +21,12 @@ namespace SplitGui {
         return window.handle->getAttribMaximized();
     }
 
+    void GlfwInterface::setWindowPosition(IVec2 position) {
+        window.handle->setPos(position.x, position.y);
+    }
+
+    IVec2 GlfwInterface::getWindowPosition() {
+        std::tuple<int, int> position = window.handle->getPos();
+        return {std::get<0>(position), std::get<1>(position)};
+    }
 }

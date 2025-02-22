@@ -34,6 +34,8 @@ namespace SplitGui {
             void          maximize() override;
             void          restore() override;
             bool          maximized() override;
+            void          setWindowPosition(IVec2 position) override;
+            IVec2         getWindowPosition() override;
 
 #ifdef SPLIT_GUI_USE_VULKAN
             
