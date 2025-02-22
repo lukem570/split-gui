@@ -244,6 +244,7 @@ namespace SplitGui {
         };
         
         bool inside(IVec2);
+        bool atEdge(IVec2, int);
     };
 
     struct Transform {

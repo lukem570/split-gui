@@ -273,4 +273,12 @@ namespace SplitGui {
     bool RectObj::inside(IVec2 point) {
         return x <= point.x && y <= point.y && x + width >= point.x && y + height >= point.y;
     }
+
+    bool RectObj::atEdge(IVec2 point, int edgeWidth) {
+        inline bool leftEdge = x <= point.x && x + edgeWidth >= point.x;
+        inline bool rightEdge = x + width - edgeWidth <= point.x && x + width >= point.x;
+        inline bool topEdge = y <= point.y && y + edgeWidth >= point.y;
+        inline bool bottomEdge = y + height - edgeWidth <= point.y && y + height >= point.y;
+        return (leftEdge || rightEdge) && (topEdge || bottomEdge);
+    }
 }
