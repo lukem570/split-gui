@@ -87,6 +87,8 @@ namespace SplitGui {
             void setDepth(int depth);
             void cleanup();
 
+            std::vector<InterfaceElement*> searchByReference(std::string reference);
+
         protected:
             InterfaceElementType           type        = InterfaceElementType::eRoot;
             std::string                    name        = "root";
@@ -347,14 +349,15 @@ namespace SplitGui {
             Interface();
             ~Interface();
 
-[[nodiscard]] Result            parseXml(std::string& data);
-              void              setInterfaceElement(InterfaceElement* data);
-              InterfaceElement* getInterfaceElement();
-              void              submitGraphics(Graphics& graphics);
-              void              update();
-              void              instance();
-              void              setViewport(RectObj viewport);
-              void              attachEventHandler(EventHandler& handler);
+[[nodiscard]] Result                         parseXml(std::string& data);
+              void                           setInterfaceElement(InterfaceElement* data);
+              InterfaceElement*              getInterfaceElement();
+              void                           submitGraphics(Graphics& graphics);
+              void                           update();
+              void                           instance();
+              void                           setViewport(RectObj viewport);
+              void                           attachEventHandler(EventHandler& handler);
+              std::vector<InterfaceElement*> searchByReference(std::string reference);
 
         private:
             InterfaceElement* interfaceElement = nullptr;

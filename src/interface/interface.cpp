@@ -65,8 +65,10 @@ namespace SplitGui {
     }
 
     InterfaceElement* Interface::getInterfaceElement() {
-        return Interface::interfaceElement;
+        return interfaceElement;
     }
 
-    
+    std::vector<InterfaceElement*> Interface::searchByReference(std::string reference) {
+        return interfaceElement->searchByReference(reference);
+    }
 }

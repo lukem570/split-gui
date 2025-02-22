@@ -72,4 +72,17 @@ namespace SplitGui {
             delete children[i];
         }
     }
+
+    std::vector<InterfaceElement*> InterfaceElement::searchByReference(std::string reference) {
+        std::vector<InterfaceElement*> results;
+        for (unsigned int i = 0; i < children.size(); i++) {
+            results = children[i]->searchByReference(reference);
+        }
+
+        if (reference == ref) {
+            results.push_back(this);
+        }
+
+        return results;
+    }
 };
