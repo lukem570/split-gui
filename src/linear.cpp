@@ -271,6 +271,6 @@ namespace SplitGui {
     }
 
     bool RectObj::inside(IVec2 point) {
-        return x <= point.x && y <= point.y && x + width >= point.x && y + height >= height;
+        return x <= point.x && y <= point.y && x + width >= point.x && y + height >= point.y;
     }
 }
