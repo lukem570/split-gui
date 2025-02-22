@@ -202,16 +202,41 @@ namespace SplitGui {
                     if (values == nullptr) {
                         return Result::eHeapAllocFailed;
                     }
+                    
+                    std::vector<std::string> elementStrings;
+                    elementStrings.resize(size);
+                    
+                    int idx = index;
+                    int endIdx = 0;
+
+                    for (unsigned int i = 0; i < size; i++) {
+                        int start = idx;
+                        while (expression[idx] != ',' && expression[idx] != ')') {
+                            idx++;
+                        }
+
+                        elementStrings[i] = expression.substr(start, idx - start);
+                        idx++;
+                        endIdx = idx;
+                    }
 
                     for (unsigned int i = 0; i < size; i++) {
 
-                        ResultValue<UnitExpression*> parseRet = parse(expression);
+                        int startIndex = index;
+                        index = 0;
+
+                        ResultValue<UnitExpression*> parseRet = parse(elementStrings[i]);
                         TRYD(parseRet);
+
+                        index = startIndex;
 
                         values[i] = parseRet.value;
                     }
+
                     newExpression->vector.values = values;
                     newExpression->vector.size = size;
+
+                    index = endIdx;
 
                     ret = newExpression;
                     break;
@@ -233,26 +258,8 @@ namespace SplitGui {
                     newExpression->binary.right = parseRet.value;
 
                     ret = newExpression;
-                    
+
                     break;
-                }
-                case UnitExpressionTokenType::eComma: {
-                    expressionTree = ret;
-
-                    if (ret == nullptr) {
-                        return Result::eInvalidToken;
-                    }
-
-                    return ret;
-                }
-                case UnitExpressionTokenType::eEndBracket: {
-                    expressionTree = ret;
-
-                    if (ret == nullptr) {
-                        return Result::eInvalidToken;
-                    }
-
-                    return ret;
                 }
                 default: return Result::eInvalidType;
             }
