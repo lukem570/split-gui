@@ -29,4 +29,9 @@ namespace SplitGui {
         std::tuple<int, int> position = window.handle->getPos();
         return {std::get<0>(position), std::get<1>(position)};
     }
+
+    IVec2 GlfwInterface::getCursorPosition() {
+        std::tuple<int, int> position = window.handle->getCursorPos();
+        return {std::get<0>(position), std::get<1>(position)};
+    }
 }

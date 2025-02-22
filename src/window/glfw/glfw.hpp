@@ -24,18 +24,19 @@ namespace SplitGui {
 
 [[nodiscard]] inline Result createWindow(WindowFlags flags) override;
             
-            RawWindow*    getWindowData() override;
-            IVec2         getSize() override;
-            bool          shouldClose() override;
-            void          update() override;
-            void          submitEventHandler(EventHandler* pEventHandler) override;
-            void          close() override;
-            void          minimize() override;
-            void          maximize() override;
-            void          restore() override;
-            bool          maximized() override;
-            void          setWindowPosition(IVec2 position) override;
-            IVec2         getWindowPosition() override;
+            RawWindow* getWindowData() override;
+            IVec2      getSize() override;
+            bool       shouldClose() override;
+            void       update() override;
+            void       submitEventHandler(EventHandler* pEventHandler) override;
+            void       close() override;
+            void       minimize() override;
+            void       maximize() override;
+            void       restore() override;
+            bool       maximized() override;
+            void       setWindowPosition(IVec2 position) override;
+            IVec2      getWindowPosition() override;
+            IVec2      getCursorPosition() override;
 
 #ifdef SPLIT_GUI_USE_VULKAN
             

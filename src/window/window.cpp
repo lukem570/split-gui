@@ -88,6 +88,10 @@ namespace SplitGui {
         return windowLib->getWindowPosition();
     }
 
+    IVec2 Window::getCursorPosition() {
+        return windowLib->getCursorPosition();
+    }
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {

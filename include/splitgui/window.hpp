@@ -54,8 +54,9 @@ namespace SplitGui {
               virtual void       maximize()                                      { throw; }
               virtual void       restore()                                       { throw; }
               virtual bool       maximized()                                     { throw; }
-              virtual void       setWindowPosition(IVec2 position)                { throw; }
+              virtual void       setWindowPosition(IVec2 position)               { throw; }
               virtual IVec2      getWindowPosition()                             { throw; }
+              virtual IVec2      getCursorPosition()                             { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
@@ -94,6 +95,7 @@ namespace SplitGui {
               bool       maximized();
               void       setWindowPosition(IVec2 position);
               IVec2      getWindowPosition();
+              IVec2      getCursorPosition();
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
