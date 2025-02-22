@@ -16,7 +16,7 @@ namespace SplitGui {
 
         SPLITGUI_LOG("Updated Rect: (%d, %d), (%d, %d), p:%u", x1.x, x1.y, x2.x, x2.y, graphicsRectRef.bottomLeft);
 
-        pGraphics->updateRect(graphicsRectRef, x1, x2, depth);
+        pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
     }
 
     Result Default::Rect::instance() {

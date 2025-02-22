@@ -52,12 +52,17 @@ namespace SplitGui {
         return refRet;
     }
 
-    void VulkanInterface::updateRect(RectRef& ref, Vec2 x1, Vec2 x2, float depth) {
+    void VulkanInterface::updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth) {
 
         vertices[ref.bottomLeft].vertex.pos  = {std::min(x1.x, x2.x), std::min(x1.y, x2.y), depth};
         vertices[ref.bottomRight].vertex.pos = {std::max(x1.x, x2.x), std::min(x1.y, x2.y), depth};
         vertices[ref.topLeft].vertex.pos     = {std::min(x1.x, x2.x), std::max(x1.y, x2.y), depth};
         vertices[ref.topRight].vertex.pos    = {std::max(x1.x, x2.x), std::max(x1.y, x2.y), depth};
+
+        vertices[ref.bottomLeft].vertex.color  = color;
+        vertices[ref.bottomRight].vertex.color = color;
+        vertices[ref.topLeft].vertex.color     = color;
+        vertices[ref.topRight].vertex.color    = color;
 
         markVerticesForUpdate = true;
 

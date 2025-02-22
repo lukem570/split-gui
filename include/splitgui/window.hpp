@@ -42,6 +42,9 @@ namespace SplitGui {
               virtual void       update()                                        { throw; }
               virtual bool       shouldClose()                                   { throw; }
               virtual void       submitEventHandler(EventHandler* pEventHandler) { throw; }
+              virtual void       close()                                         { throw; }
+              virtual void       minimize()                                      { throw; }
+              virtual void       maximize()                                      { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
@@ -73,6 +76,9 @@ namespace SplitGui {
               IVec2      getSize();
               RawWindow* getWindowData();
               void       attachEventHandler(EventHandler& handler);
+              void       close();
+              void       minimize();
+              void       maximize();
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   

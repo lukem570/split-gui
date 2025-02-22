@@ -29,6 +29,9 @@ namespace SplitGui {
             bool          shouldClose() override;
             void          update() override;
             void          submitEventHandler(EventHandler* pEventHandler) override;
+            void          close() override;
+            void          minimize() override;
+            void          maximize() override;
 
 #ifdef SPLIT_GUI_USE_VULKAN
             

@@ -60,6 +60,18 @@ namespace SplitGui {
         windowLib->submitEventHandler(pEventHandler);
     }
 
+    void Window::close() {
+        windowLib->close();
+    }
+
+    void Window::minimize() {
+        windowLib->minimize();
+    }
+
+    void Window::maximize() {
+        windowLib->maximize();
+    }
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {

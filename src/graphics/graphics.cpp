@@ -54,7 +54,7 @@ namespace SplitGui {
         return pInterface->drawRect(newX1, newX2, color.normalize(), (float)depth / DEPTH_PLANE);
     }
 
-    void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2, int depth) {
+    void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth) {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -65,7 +65,7 @@ namespace SplitGui {
         newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
         newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
 
-        pInterface->updateRect(ref, newX1, newX2, (float)depth / DEPTH_PLANE);
+        pInterface->updateRect(ref, newX1, newX2, color.normalize(),(float)depth / DEPTH_PLANE);
     }
 
     void Graphics::submitBuffers() {

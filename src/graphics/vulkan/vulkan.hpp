@@ -51,7 +51,7 @@ namespace SplitGui {
 
 [[nodiscard]] Result             drawFrame()                                                                                                            override;
               RectRef            drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)           override;
-              void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                         override;
+              void               updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
               unsigned int       instanceScene(IVec2 x1, IVec2 x2)                                                                                      override;
               void               updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                                      override;
               void               submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags) override;
