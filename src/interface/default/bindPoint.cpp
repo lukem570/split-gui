@@ -31,4 +31,18 @@ namespace SplitGui {
         root->setExtent(extent);
         root->update();
     }
+
+    std::vector<InterfaceElement*> Default::BindPoint::searchByReference(std::string reference) {
+        std::vector<InterfaceElement*> results;
+        if (root) {
+            std::vector<InterfaceElement*> childResults = root->searchByReference(reference);
+            results.insert(results.end(), childResults.begin(), childResults.end());
+        }
+
+        if (reference == ref) {
+            results.push_back(this);
+        }
+
+        return results;
+    }
 }

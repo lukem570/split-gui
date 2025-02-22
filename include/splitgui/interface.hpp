@@ -87,7 +87,7 @@ namespace SplitGui {
             void setDepth(int depth);
             void cleanup();
 
-            std::vector<InterfaceElement*> searchByReference(std::string reference);
+            virtual std::vector<InterfaceElement*> searchByReference(std::string reference);
 
             RectObj getExtent();
 
@@ -331,6 +331,8 @@ namespace SplitGui {
 
                 void   setBindPoint(InterfaceElement*);
                 void   setOwnership(bool);
+
+                std::vector<InterfaceElement*> searchByReference(std::string reference) override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eMeta;
