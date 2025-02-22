@@ -72,6 +72,15 @@ namespace SplitGui {
         windowLib->maximize();
     }
 
+    void Window::restore() {
+        windowLib->restore();
+    }
+
+    bool Window::maximized() {
+        return windowLib->maximized();
+    }
+
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {

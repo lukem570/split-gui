@@ -32,6 +32,8 @@ namespace SplitGui {
             void          close() override;
             void          minimize() override;
             void          maximize() override;
+            void          restore() override;
+            bool          maximized() override;
 
 #ifdef SPLIT_GUI_USE_VULKAN
             

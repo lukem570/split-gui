@@ -45,6 +45,8 @@ namespace SplitGui {
               virtual void       close()                                         { throw; }
               virtual void       minimize()                                      { throw; }
               virtual void       maximize()                                      { throw; }
+              virtual void       restore()                                       { throw; }
+              virtual bool       maximized()                                     { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
@@ -79,6 +81,8 @@ namespace SplitGui {
               void       close();
               void       minimize();
               void       maximize();
+              void       restore();
+              bool       maximized();
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
