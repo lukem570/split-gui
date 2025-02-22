@@ -269,4 +269,8 @@ namespace SplitGui {
 
         return projection;
     }
+
+    bool RectObj::inside(IVec2 point) {
+        return x <= point.x && y <= point.y && x + width >= point.x && y + height >= height;
+    }
 }

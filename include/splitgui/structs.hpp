@@ -243,6 +243,7 @@ namespace SplitGui {
             };
         };
         
+        bool inside(IVec2);
     };
 
     struct Transform {
