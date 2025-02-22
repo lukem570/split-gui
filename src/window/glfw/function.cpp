@@ -10,7 +10,11 @@ namespace SplitGui {
     }
 
     void GlfwInterface::maximize() {
-        window.handle->maximize();
+        if (window.handle->getAttribMaximized()) {
+            window.handle->restore();
+        } else {
+            window.handle->maximize();
+        }
     }
 
 }
