@@ -22,7 +22,7 @@ namespace SplitGui {
                           GlfwInterface();
                          ~GlfwInterface() override;
 
-[[nodiscard]] inline Result createWindow(const char* title) override;
+[[nodiscard]] inline Result createWindow(WindowFlags flags) override;
             
             RawWindow*    getWindowData() override;
             IVec2         getSize() override;

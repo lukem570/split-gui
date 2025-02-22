@@ -6,16 +6,16 @@ namespace SplitGui {
         window.type = FormatType::eGlfw;
     }
 
-    inline Result GlfwInterface::createWindow(const char* title) {
+    inline Result GlfwInterface::createWindow(WindowFlags flags) {
         glfw::WindowHints hints;
         hints.clientApi = (glfw::ClientApi) 0L;
-        hints.resizable = true;
-        hints.visible   = true;
-        hints.decorated = true;
+        hints.resizable = flags.resizeable;
+        hints.visible   = flags.visible;
+        hints.decorated = flags.decorated;
 
         hints.apply();
         
-        window.handle = new(std::nothrow) glfw::Window(640, 480, title);
+        window.handle = new(std::nothrow) glfw::Window(640, 480, flags.title);
 
         if (!window.handle) {
             return Result::eHeapAllocFailed;

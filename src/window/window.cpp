@@ -32,8 +32,8 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    Result Window::createWindow(const char* title) {
-        TRYR(windowRes, windowLib->createWindow(title));
+    Result Window::createWindow(WindowFlags flags) {
+        TRYR(windowRes, windowLib->createWindow(flags));
 
         return Result::eSuccess;
     }

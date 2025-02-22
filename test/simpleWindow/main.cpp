@@ -5,9 +5,12 @@ int main() {
 
     SplitGui::EventHandler eventHandler;
 
+    SplitGui::WindowFlags flags;
+    flags.title = "simple window";
+
     SplitGui::Window window;
     TRYRC(glfwRes, window.instanceGlfw());
-    TRYRC(windowRes, window.createWindow("simple window"));
+    TRYRC(windowRes, window.createWindow(flags));
     window.attachEventHandler(eventHandler);
 
     window.update();

@@ -23,9 +23,12 @@ int main() {
 
     SplitGui::EventHandler eventHandler;
 
+    SplitGui::WindowFlags flags;
+    flags.title = "list test";
+
     SplitGui::Window window;
     TRYRC(glfwRes, window.instanceGlfw());
-    TRYRC(windowRes, window.createWindow("list test"));
+    TRYRC(windowRes, window.createWindow(flags));
     window.attachEventHandler(eventHandler);
 
     SplitGui::VulkanFlags vulkanFlags;

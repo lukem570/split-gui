@@ -30,13 +30,20 @@ namespace SplitGui {
 #endif
     };
 
+    struct WindowFlags {
+        char* title;
+        bool  resizeable = true;
+        bool  visible    = true;
+        bool  decorated  = true;
+    };
+
     class SPLITGUI_EXPORT WindowLibInterface {
         public:
 
                                  WindowLibInterface() = default;
               virtual           ~WindowLibInterface() = default;
 
-[[nodiscard]] virtual Result     createWindow(const char* title)                 { throw; }
+[[nodiscard]] virtual Result     createWindow(WindowFlags flags)                 { throw; }
               virtual RawWindow* getWindowData()                                 { throw; }
               virtual IVec2      getSize()                                       { throw; }
               virtual void       update()                                        { throw; }
@@ -72,7 +79,7 @@ namespace SplitGui {
                         ~Window();
 
 [[nodiscard]] Result     instanceGlfw();
-[[nodiscard]] Result     createWindow(const char* title);
+[[nodiscard]] Result     createWindow(WindowFlags flags);
               bool       shouldClose();
               void       update();
               IVec2      getSize();
