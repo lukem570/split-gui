@@ -92,6 +92,10 @@ namespace SplitGui {
         return windowLib->getCursorPosition();
     }
 
+    void Window::setCursorShape(CursorType type) {
+        windowLib->setCursorShape(type);
+    }
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {

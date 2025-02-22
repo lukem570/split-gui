@@ -37,6 +37,7 @@ namespace SplitGui {
             void       setWindowPosition(IVec2 position) override;
             IVec2      getWindowPosition() override;
             IVec2      getCursorPosition() override;
+            void       setCursorShape(CursorType type);
 
 #ifdef SPLIT_GUI_USE_VULKAN
             

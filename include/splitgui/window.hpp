@@ -19,6 +19,15 @@ namespace SplitGui {
         eWindows,
     };
 
+    enum class CursorType {
+        eArrow,
+        eIBeam,
+        eCrosshair,
+        eHand,
+        eHorizontalArrow,
+        eVerticalArrow,
+    };
+
     struct SPLITGUI_EXPORT RawWindow {
         FormatType type;
         Graphics*  pGraphics;
@@ -57,6 +66,7 @@ namespace SplitGui {
               virtual void       setWindowPosition(IVec2 position)               { throw; }
               virtual IVec2      getWindowPosition()                             { throw; }
               virtual IVec2      getCursorPosition()                             { throw; }
+              virtual void       setCursorShape(CursorType type)                 { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
@@ -96,6 +106,7 @@ namespace SplitGui {
               void       setWindowPosition(IVec2 position);
               IVec2      getWindowPosition();
               IVec2      getCursorPosition();
+              void       setCursorShape(CursorType type);
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   

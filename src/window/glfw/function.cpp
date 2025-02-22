@@ -34,4 +34,17 @@ namespace SplitGui {
         std::tuple<int, int> position = window.handle->getCursorPos();
         return {std::get<0>(position), std::get<1>(position)};
     }
+
+    void GlfwInterface::setCursorShape(CursorType type) {
+        switch (type) {
+            case CursorType::eArrow:           window.handle->setCursor(glfw::Cursor::createStandardCursorArrow());            break;
+            case CursorType::eCrosshair:       window.handle->setCursor(glfw::Cursor::createStandardCursorCrosshair());        break;
+            case CursorType::eIBeam:           window.handle->setCursor(glfw::Cursor::createStandardCursorIBeam());            break;
+            case CursorType::eHand:            window.handle->setCursor(glfw::Cursor::createStandardCursorHand());             break;
+            case CursorType::eHorizontalArrow: window.handle->setCursor(glfw::Cursor::createStandardCursorHorizontalResize()); break;
+            case CursorType::eVerticalArrow:   window.handle->setCursor(glfw::Cursor::createStandardCursorVerticalResize());   break;
+            default: break;
+        }
+        
+    }
 }
