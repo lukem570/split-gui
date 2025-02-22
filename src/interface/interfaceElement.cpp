@@ -85,4 +85,8 @@ namespace SplitGui {
 
         return results;
     }
+
+    RectObj InterfaceElement::getExtent() {
+        return extent;
+    }
 };

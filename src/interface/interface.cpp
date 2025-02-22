@@ -50,7 +50,6 @@ namespace SplitGui {
         interfaceElement->extent = viewport;
     }
 
-
     void Interface::setInterfaceElement(InterfaceElement* data) {
         if (interfaceElement) {
             printf("WARN: interface data is being overwritten this can cause memory leaks if unhandled!\n");

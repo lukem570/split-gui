@@ -66,6 +66,9 @@ namespace SplitGui {
         Vec4 operator*(Vec4 operand);
         Vec4 operator/(Vec4 operand);
 
+        bool operator==(Vec4 operand);
+        bool operator!=(Vec4 operand);
+
         float dot(const Vec4& operand);
         void normalize();
     };
@@ -81,6 +84,9 @@ namespace SplitGui {
         IVec4 operator*(IVec4 operand);
         IVec4 operator/(IVec4 operand);
 
+        bool operator==(IVec4 operand);
+        bool operator!=(IVec4 operand);
+
         float dot(const IVec4& operand);
     };
 
@@ -93,6 +99,9 @@ namespace SplitGui {
         Vec3 operator-(Vec3 operand);
         Vec3 operator*(Vec3 operand);
         Vec3 operator/(Vec3 operand);
+
+        bool operator==(Vec3 operand);
+        bool operator!=(Vec3 operand);
 
         Vec3 cross(const Vec3& operand) const {
             return Vec3{
@@ -116,6 +125,9 @@ namespace SplitGui {
         IVec3 operator*(IVec3 operand);
         IVec3 operator/(IVec3 operand);
 
+        bool operator==(IVec3 operand);
+        bool operator!=(IVec3 operand);
+
         float dot(const IVec3& operand);
     };
 
@@ -127,6 +139,9 @@ namespace SplitGui {
         Vec2 operator-(Vec2 operand);
         Vec2 operator*(Vec2 operand);
         Vec2 operator/(Vec2 operand);
+
+        bool operator==(Vec2 operand);
+        bool operator!=(Vec2 operand);
 
         float dot(const Vec2& operand);
         void normalize();
@@ -140,6 +155,9 @@ namespace SplitGui {
         IVec2 operator-(IVec2 operand);
         IVec2 operator*(IVec2 operand);
         IVec2 operator/(IVec2 operand);
+
+        bool operator==(IVec2 operand);
+        bool operator!=(IVec2 operand);
 
         float dot(const IVec2& operand);
     };

@@ -89,6 +89,8 @@ namespace SplitGui {
 
             std::vector<InterfaceElement*> searchByReference(std::string reference);
 
+            RectObj getExtent();
+
         protected:
             InterfaceElementType           type        = InterfaceElementType::eRoot;
             std::string                    name        = "root";
