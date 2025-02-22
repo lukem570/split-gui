@@ -72,8 +72,8 @@ namespace SplitGui {
         
         RectObj childExtent;
 
-        childExtent.x      = positionXEvaluateRes.value.vector.ivec2.x;
-        childExtent.y      = positionYEvaluateRes.value.vector.ivec2.y;
+        childExtent.x      = positionXEvaluateRes.value.vector.ivec2.x + extent.x;
+        childExtent.y      = positionYEvaluateRes.value.vector.ivec2.y + extent.y;
         childExtent.height = scaleYEvaluateRes.value.vector.ivec2.y;
         childExtent.width  = scaleXEvaluateRes.value.vector.ivec2.x;
 
