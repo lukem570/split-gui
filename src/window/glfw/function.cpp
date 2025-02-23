@@ -80,6 +80,8 @@ namespace SplitGui {
                 case CursorType::eIBeam:           cursor = XCreateFontCursor(display, XC_xterm);             break;
                 case CursorType::eHorizontalArrow: cursor = XCreateFontCursor(display, XC_sb_h_double_arrow); break;
                 case CursorType::eVerticalArrow:   cursor = XCreateFontCursor(display, XC_sb_v_double_arrow); break;
+                case CursorType::eDiagonal:        cursor = XCreateFontCursor(display, XC_sizing);            break;
+                case CursorType::eDiagonalInverse: cursor = XCreateFontCursor(display, XC_sizing + 1);        break;
                 default: break;
             }
 
@@ -99,6 +101,8 @@ namespace SplitGui {
             case CursorType::eIBeam:           cursor = LoadCursor(NULL, IDC_IBEAM);  break;
             case CursorType::eHorizontalArrow: cursor = LoadCursor(NULL, IDC_SIZEWE); break;
             case CursorType::eVerticalArrow:   cursor = LoadCursor(NULL, IDC_SIZENS); break;
+            case CursorType::eDiagonal:        cursor = LoadCursor(NULL, IDC_SIZENESW); break;
+            case CursorType::eDiagonalInverse: cursor = LoadCursor(NULL, IDC_SIZENWSE); break;
             default: break;
         }
 

@@ -26,6 +26,8 @@ namespace SplitGui {
         eHand,
         eHorizontalArrow,
         eVerticalArrow,
+        eDiagonal,
+        eDiagonalInverse, // in the math sense of -1 slope
     };
 
     struct SPLITGUI_EXPORT RawWindow {
