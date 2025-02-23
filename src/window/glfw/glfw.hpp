@@ -42,6 +42,7 @@ namespace SplitGui {
 #ifdef SPLIT_GUI_USE_VULKAN
             
 [[nodiscard]] ResultValue<vk::SurfaceKHR> createSurface(vk::Instance instance) override;
+
 #endif 
 
         private:

@@ -166,6 +166,7 @@ add_custom_target(
 if(NOT DEFINED WM_MANUAL)
     if(WIN32)
         set(VK_WINDOW_MANAGER VK_USE_PLATFORM_WIN32_KHR)
+        set(WINDOW_LIB kernel32)
     elseif(APPLE)
         message(FATAL_ERROR "macOS is not supported")
     elseif(UNIX)
@@ -173,10 +174,12 @@ if(NOT DEFINED WM_MANUAL)
         if("$ENV{XDG_SESSION_TYPE}" STREQUAL "x11")
 
             set(VK_WINDOW_MANAGER VK_USE_PLATFORM_XLIB_KHR)
+            set(WINDOW_LIB X11)
 
         elseif("$ENV{XDG_SESSION_TYPE}" STREQUAL "wayland")
 
             set(VK_WINDOW_MANAGER VK_USE_PLATFORM_WAYLAND_KHR)
+            set(WINDOW_LIB wayland-client wayland-egl wayland-cursor)
 
         else()
             message(FATAL_ERROR "Unsupported Linux windowing system detected")
@@ -210,8 +213,8 @@ target_link_libraries(splitgui
     volk
     msdfgen-core
     freetype
+    ${WINDOW_LIB}
 )
-
 
 target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${VK_WINDOW_MANAGER})
 

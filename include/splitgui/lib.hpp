@@ -142,6 +142,7 @@
         // wayland includes
 
         #include <wayland-client.h>
+        #include <wayland-cursor.h>
         #include <vulkan/vulkan_wayland.h>
 
     #elif defined(VK_USE_PLATFORM_XCB_KHR)
@@ -165,6 +166,7 @@
         // xcb includes
 
         #include <xcb/xcb.h>
+        #include <xcb/xproto.h>
         #include <vulkan/vulkan_xcb.h>
         
 
@@ -189,6 +191,7 @@
         // Xlib includes 
 
         #include <X11/Xlib.h>
+        #include <X11/cursorfont.h>
 
         #ifdef BUILD_SPLITGUI
             #include <vulkan/vulkan_xlib.h>

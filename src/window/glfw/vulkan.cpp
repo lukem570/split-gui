@@ -20,7 +20,7 @@ namespace SplitGui {
     #elif defined(VK_USE_PLATFORM_XCB_KHR)
 
         vk::XcbSurfaceCreateInfoKHR createInfo;
-        createInfo.connection = glfwGetX11Display();
+        createInfo.connection = XGetXCBConnection(glfwGetX11Display());
         createInfo.window     = glfwGetX11Window(*window.handle);
 
         if (createInfo.connection == nullptr || createInfo.window == 0) {
