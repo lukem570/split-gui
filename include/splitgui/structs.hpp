@@ -243,12 +243,12 @@ namespace SplitGui {
             };
         };
         
-        inline bool inside(IVec2);
-        inline bool atEdge(IVec2, int);
-        inline bool atLeftEdge(IVec2, int);
-        inline bool atRightEdge(IVec2, int);
-        inline bool atTopEdge(IVec2, int);
-        inline bool atBottomEdge(IVec2, int);
+        bool inside(IVec2);
+        bool atEdge(IVec2, int);
+        bool atLeftEdge(IVec2, int);
+        bool atRightEdge(IVec2, int);
+        bool atTopEdge(IVec2, int);
+        bool atBottomEdge(IVec2, int);
     };
 
     struct Transform {
