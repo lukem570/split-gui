@@ -48,6 +48,14 @@ namespace SplitGui {
         private:
             RawWindow window;
 
+            #if defined(__linux__)
+                #if defined(VK_USE_PLATFORM_XLIB_KHR)
+
+                    Cursor cursor = (long unsigned int)-1; 
+
+                #endif
+            #endif
+
 
             static void resize_callback(glfw::Window& window, int width, int height);
             static void key_callback(glfw::Window& window, glfw::KeyCode key, int scancode, glfw::KeyState action, glfw::ModifierKeyBit mods);

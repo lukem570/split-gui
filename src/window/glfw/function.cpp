@@ -69,9 +69,9 @@ namespace SplitGui {
         #elif defined(VK_USE_PLATFORM_XLIB_KHR)
     
             Display*      display = glfwGetX11Display(); 
-            unsigned long xwindow = glfwGetX11Window(*window.handle); 
+            unsigned long xwindow = glfwGetX11Window(*window.handle);  
 
-            Cursor cursor; 
+            // diagonal cursors aren't in cursorfont.h and loading them from kde or gnome themes would be too much effort so fleur will do
 
             switch (type) {
                 case CursorType::eArrow:           cursor = XCreateFontCursor(display, XC_arrow);             break;
@@ -80,8 +80,8 @@ namespace SplitGui {
                 case CursorType::eIBeam:           cursor = XCreateFontCursor(display, XC_xterm);             break;
                 case CursorType::eHorizontalArrow: cursor = XCreateFontCursor(display, XC_sb_h_double_arrow); break;
                 case CursorType::eVerticalArrow:   cursor = XCreateFontCursor(display, XC_sb_v_double_arrow); break;
-                case CursorType::eDiagonal:        cursor = XCreateFontCursor(display, XC_sizing);            break;
-                case CursorType::eDiagonalInverse: cursor = XCreateFontCursor(display, XC_sizing + 1);        break;
+                case CursorType::eDiagonal:        cursor = XCreateFontCursor(display, XC_fleur);             break; 
+                case CursorType::eDiagonalInverse: cursor = XCreateFontCursor(display, XC_fleur);             break;
                 default: break;
             }
 
