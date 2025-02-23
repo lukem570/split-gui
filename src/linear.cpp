@@ -279,6 +279,6 @@ namespace SplitGui {
         bool rightEdge = x + width - edgeWidth <= point.x && x + width >= point.x;
         bool topEdge = y <= point.y && y + edgeWidth >= point.y;
         bool bottomEdge = y + height - edgeWidth <= point.y && y + height >= point.y;
-        return (leftEdge || rightEdge) && (topEdge || bottomEdge);
+        return leftEdge || rightEdge || topEdge || bottomEdge;
     }
 }
