@@ -18,7 +18,8 @@ def configure():
         [
             'cmake',
             '-B', 'build',
-            '-G', 'Ninja'
+            '-G', 'Ninja',
+            '-D', 'SPLITGUI_DEV=SPLITGUI_DEV'
         ],
         check=True,
         text=True
