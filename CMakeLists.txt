@@ -216,7 +216,7 @@ target_link_libraries(splitgui
     ${WINDOW_LIB}
 )
 
-target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${VK_WINDOW_MANAGER})
+target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI SPLITGUI_DEV ${VK_WINDOW_MANAGER})
 
 # ---- compile tests ----
 
