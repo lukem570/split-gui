@@ -151,6 +151,22 @@ namespace SplitGui {
         return MouseCode::eUnknown;
     }
 
+    inline glfw::MouseButton GlfwInterface::convertSplitGuiMouseCode(MouseCode code) {
+        switch (code) {
+            case MouseCode::eOne:   return glfw::MouseButton::One;   break;
+            case MouseCode::eTwo:   return glfw::MouseButton::Two;   break;
+            case MouseCode::eThree: return glfw::MouseButton::Three; break;
+            case MouseCode::eFour:  return glfw::MouseButton::Four;  break;
+            case MouseCode::eFive:  return glfw::MouseButton::Five;  break;
+            case MouseCode::eSix:   return glfw::MouseButton::Six;   break;
+            case MouseCode::eSeven: return glfw::MouseButton::Seven; break;
+            case MouseCode::eEight: return glfw::MouseButton::Eight; break;
+            default: break;
+        }
+
+        return glfw::MouseButton::MaxValue;
+    }
+
     inline MouseState GlfwInterface::convertGlfwMouseState(glfw::MouseButtonState state) {
         switch (state) {
             case glfw::MouseButtonState::Press:   return MouseState::ePress;   break;

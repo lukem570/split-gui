@@ -30,4 +30,8 @@ namespace SplitGui {
     bool GlfwInterface::maximized() {
         return window.handle->getAttribMaximized();
     }
+
+    MouseState GlfwInterface::getMouseState(MouseCode code) {
+        return convertGlfwMouseState((glfw::MouseButtonState)glfwGetMouseButton(*window.handle, (int)convertSplitGuiMouseCode(code)));
+    }
 }

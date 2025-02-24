@@ -100,6 +100,10 @@ namespace SplitGui {
         windowLib->setSize(size);
     }
 
+    MouseState Window::getMouseState(MouseCode code) {
+        return windowLib->getMouseState(code);
+    }
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {
