@@ -3,6 +3,12 @@
 #include <X11/cursorfont.h>
 
 namespace SplitGui {
+
+    void GlfwInterface::update() {
+        window.handle->swapBuffers();
+        glfw::pollEvents();
+    }
+
     void GlfwInterface::close() {
         window.handle->setShouldClose(true);
     }
@@ -19,22 +25,12 @@ namespace SplitGui {
         window.handle->restore();
     }
 
-    bool GlfwInterface::maximized() {
-        return window.handle->getAttribMaximized();
-    }
-
     void GlfwInterface::setWindowPosition(IVec2 position) {
         window.handle->setPos(position.x, position.y);
     }
 
-    IVec2 GlfwInterface::getWindowPosition() {
-        std::tuple<int, int> position = window.handle->getPos();
-        return {std::get<0>(position), std::get<1>(position)};
-    }
-
-    IVec2 GlfwInterface::getCursorPosition() {
-        std::tuple<int, int> position = window.handle->getCursorPos();
-        return {std::get<0>(position), std::get<1>(position)};
+    void GlfwInterface::setSize(IVec2 size) {
+        window.handle->setSize(size.x, size.y);
     }
 
     void GlfwInterface::setCursorShape(CursorType type) {

@@ -17,8 +17,17 @@ namespace SplitGui {
         return window.handle->shouldClose();
     }
 
-    void GlfwInterface::update() {
-        window.handle->swapBuffers();
-        glfw::pollEvents();
+    IVec2 GlfwInterface::getWindowPosition() {
+        std::tuple<int, int> position = window.handle->getPos();
+        return {std::get<0>(position), std::get<1>(position)};
+    }
+
+    IVec2 GlfwInterface::getCursorPosition() {
+        std::tuple<int, int> position = window.handle->getCursorPos();
+        return {std::get<0>(position), std::get<1>(position)};
+    }
+
+    bool GlfwInterface::maximized() {
+        return window.handle->getAttribMaximized();
     }
 }

@@ -26,6 +26,7 @@ namespace SplitGui {
             
             RawWindow* getWindowData() override;
             IVec2      getSize() override;
+            void       setSize(IVec2) override;
             bool       shouldClose() override;
             void       update() override;
             void       submitEventHandler(EventHandler* pEventHandler) override;

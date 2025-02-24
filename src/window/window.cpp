@@ -96,6 +96,10 @@ namespace SplitGui {
         windowLib->setCursorShape(type);
     }
 
+    void Window::setSize(IVec2 size) {
+        windowLib->setSize(size);
+    }
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {

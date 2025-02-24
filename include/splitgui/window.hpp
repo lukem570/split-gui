@@ -57,6 +57,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result     createWindow(WindowFlags flags)                 { throw; }
               virtual RawWindow* getWindowData()                                 { throw; }
               virtual IVec2      getSize()                                       { throw; }
+              virtual void       setSize(IVec2 size)                             { throw; }
               virtual void       update()                                        { throw; }
               virtual bool       shouldClose()                                   { throw; }
               virtual void       submitEventHandler(EventHandler* pEventHandler) { throw; }
@@ -98,6 +99,7 @@ namespace SplitGui {
               bool       shouldClose();
               void       update();
               IVec2      getSize();
+              void       setSize(IVec2 size);
               RawWindow* getWindowData();
               void       attachEventHandler(EventHandler& handler);
               void       close();
