@@ -48,6 +48,7 @@ namespace SplitGui {
         createDescriptorPool();
         createDescriptorSet();
         TRYR(glyphRes, createTextGlyphImage());
+        TRYR(textureRes, createTextureArray());
         TRYR(vertexRes, createVertexUniformBuffer());
         updateDescriptorSets();
 

@@ -3,6 +3,7 @@
 #include "buffer.cpp"
 #include "cleanup.cpp"
 #include "commands.cpp"
+#include "contourImage.cpp"
 #include "depth.cpp"
 #include "descriptors.cpp"
 #include "events.cpp"

@@ -127,4 +127,8 @@ namespace SplitGui {
     void Graphics::updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2) {
         pInterface->updateScene(sceneNumber, x1, x2);
     }
+
+    [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours, float aspect) {
+        return pInterface->createContourImage(contours, aspect);
+    }
 }

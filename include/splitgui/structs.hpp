@@ -7,6 +7,7 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <variant>
 
 namespace SplitGui {
 
@@ -406,6 +407,27 @@ namespace SplitGui {
         XmlTokenType type;
         std::string value;
     };
+
+    struct MoveTo {
+        Vec2 from;
+    };
+
+    struct LinearContour {
+        Vec2 to;
+    };
+
+    struct QuadraticBezierContour {
+        Vec2 control;
+        Vec2 to;
+    };
+
+    struct CubicBezierContour {
+        Vec2 controlA;
+        Vec2 controlB;
+        Vec2 to;
+    };
+
+    typedef std::variant<MoveTo, LinearContour, QuadraticBezierContour, CubicBezierContour> Contour;
 
 #ifdef SPLIT_GUI_USE_VULKAN
 

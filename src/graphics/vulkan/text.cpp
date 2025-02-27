@@ -17,15 +17,6 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    template <typename T>
-    inline T clamp(T n) {
-        return n >= T(0) && n <= T(1) ? n : T(n > T(0));
-    }
-
-    inline unsigned char pixelFloatToByte(float x) {
-        return (unsigned char)(~int(255.5f-255.f*clamp(x)));
-    }
-
     ResultValue<float> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth) {
         if (!ft_fontInUse) {
             return Result::eFailedToUseFont;
@@ -113,7 +104,7 @@ namespace SplitGui {
             for (int x = (int)vk_msdfExtent.width - 1; x >= 0; x--) {
                 for (int y = 0; y < (int)vk_msdfExtent.height; y++) {
                     for (int j = 0; j < 4; j++) {
-                        memory[index] = pixelFloatToByte(msdf(y,x)[j]);
+                        memory[index] = msdfgen::pixelFloatToByte(msdf(y,x)[j]);
                         index++;
                     }
                 }

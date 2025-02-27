@@ -12,6 +12,11 @@ namespace SplitGui {
         vk_device.destroySampler(vk_textGlyphSampler);
         vk_device.freeMemory(vk_textGlyphImageMemory);
         vk_device.destroyImage(vk_textGlyphImages);
+
+        vk_device.destroyImageView(vk_textureArrayImageView);
+        vk_device.destroySampler(vk_textureArraySampler);
+        vk_device.freeMemory(vk_textureArrayImageMemory);
+        vk_device.destroyImage(vk_textureArrayImages);
         
         vk_device.freeMemory(vk_vertexUniformBufferMemory);
         vk_device.destroyBuffer(vk_vertexUniformBuffer);
