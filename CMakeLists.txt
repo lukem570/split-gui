@@ -24,8 +24,8 @@ endfunction()
 set(DEPENDENCIES
     "https://github.com/freetype/freetype.git"
     "https://github.com/glfw/glfw.git"
-    "https://github.com/KhronosGroup/Vulkan-Hpp.git"
-    "https://github.com/KhronosGroup/Vulkan-Headers.git"
+    "https://github.com/lukem570/Vulkan-Hpp.git"
+    "https://github.com/lukem570/Vulkan-Headers.git"
     "https://github.com/lukem570/glfwpp.git"
     "https://github.com/zeux/volk.git"
     "https://github.com/Chlumsky/msdfgen.git"
