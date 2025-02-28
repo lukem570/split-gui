@@ -79,9 +79,12 @@ int main(void) {
 
     SplitGui::EventHandler eventHandler;
 
+    SplitGui::WindowFlags flags;
+    flags.title = "hello split-gui";
+
     SplitGui::Window window;
     TRYRC(glfwRes, window.instanceGlfw());
-    TRYRC(windowRes, window.createWindow("xml test"));
+    TRYRC(windowRes, window.createWindow(flags));
     window.attachEventHandler(eventHandler);
 
     SplitGui::VulkanFlags vulkanFlags;

@@ -12,6 +12,7 @@ namespace SplitGui {
     #define TRYC(type, name, resultValue) SplitGui::ResultValue<type> name = resultValue; if (name.result != SplitGui::Result::eSuccess) { SPLITGUI_LOG("Failed with code %d", (int)name.result); return (int)name.result; }
     #define TRYR(name, result) SplitGui::Result name = result; if (name != SplitGui::Result::eSuccess) { return name; }
     #define TRYRC(name, result) SplitGui::Result name = result; if (name != SplitGui::Result::eSuccess) { SPLITGUI_LOG("Failed with code %d", (int)name); return (int)name; }
+    #define TRYDC(resultValue) if (resultValue.result != SplitGui::Result::eSuccess) { SPLITGUI_LOG("Failed with code %d", (int)resultValue.result); return (int)resultValue.result; }
 
     enum class Result {
         eSuccess,

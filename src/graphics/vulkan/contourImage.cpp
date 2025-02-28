@@ -10,71 +10,68 @@ namespace SplitGui {
 
         msdfgen::Shape shape;
 
-        msdfgen::Contour contour = shape.addContour();
+        msdfgen::Contour* contour;
 
         msdfgen::Point2 position;
 
         for (unsigned int i = 0; i < contours.size(); i++) {
 
             if (std::holds_alternative<MoveTo>(contours[i])) {
-
+                
                 msdfgen::Point2 from = splitguiPoint2(std::get<MoveTo>(contours[i]).from);
-
+                
+                contour = &shape.addContour();
                 position = from;
-
-                contour = shape.addContour();
             }
 
             if (std::holds_alternative<LinearContour>(contours[i])) {
 
-                msdfgen::Point2 to   = splitguiPoint2(std::get<LinearContour>(contours[i]).to);
-
-                msdfgen::EdgeHolder linearHolder(position, to);
-
+                msdfgen::Point2 to = splitguiPoint2(std::get<LinearContour>(contours[i]).to);
+                
+                contour->addEdge(msdfgen::EdgeHolder(position, to));
                 position = to;
-
-                contour.addEdge(linearHolder);
             }
-
+            
             if (std::holds_alternative<QuadraticBezierContour>(contours[i])) {
-
+                
                 msdfgen::Point2 to      = splitguiPoint2(std::get<QuadraticBezierContour>(contours[i]).to);
                 msdfgen::Point2 control = splitguiPoint2(std::get<QuadraticBezierContour>(contours[i]).control);
-
+                
                 msdfgen::EdgeHolder quadraticHolder(position, control, to);
-
+                
+                contour->addEdge(quadraticHolder);
                 position = to;
-
-                contour.addEdge(quadraticHolder);
             }
-
+            
             if (std::holds_alternative<CubicBezierContour>(contours[i])) {
-
+                
                 msdfgen::Point2 to       = splitguiPoint2(std::get<CubicBezierContour>(contours[i]).to);
                 msdfgen::Point2 controlA = splitguiPoint2(std::get<CubicBezierContour>(contours[i]).controlA);
                 msdfgen::Point2 controlB = splitguiPoint2(std::get<CubicBezierContour>(contours[i]).controlB);
-
+                
                 msdfgen::EdgeHolder cubicHolder(position, controlA, controlB, to);
-
+                
+                contour->addEdge(cubicHolder);
                 position = to;
-
-                contour.addEdge(cubicHolder);
             }
         }
+
         
         shape.normalize();
-
+        
         msdfgen::edgeColoringSimple(shape, 3.0);
-
+        
         msdfgen::Range         pxRange = msdfgen::Range(0.1);
         msdfgen::Shape::Bounds bounds  = shape.getBounds();
-
+        
         msdfgen::Vector2 scale;
+
+        scale.set(vk_msdfExtent.width, vk_msdfExtent.height);
 
         msdfgen::SDFTransformation transformation(
             msdfgen::Projection(
                 scale,
-                msdfgen::Vector2(-bounds.l, 0.2)
+                msdfgen::Vector2(0, 0)
             ), 
             pxRange
         );
@@ -97,7 +94,6 @@ namespace SplitGui {
         ));
 
         unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
-
         int index = 0;
         for (int x = (int)vk_msdfExtent.width - 1; x >= 0; x--) {
             for (int y = 0; y < (int)vk_msdfExtent.height; y++) {

@@ -33,6 +33,7 @@ layout(binding = 0) uniform ScenesBuffer {
 } sb;
 
 layout(binding = 1) uniform sampler2DArray glyphs;
+layout(binding = 3) uniform sampler2DArray textures;
 
 layout(location = 0) out vec4 outColor;
 
@@ -44,12 +45,20 @@ void main() {
 
     int flags = int(in_flags);
 
-    bool useMsdf  = (flags & USE_MSDF_BIT) != 0;
-    bool useScene = (flags & SCENE_BIT)    != 0;
-    bool worldView = (flags & WORLD_VIEW_BIT) != 0;
+    bool useMsdf    = (flags & USE_MSDF_BIT) != 0;
+    bool useTexture = (flags & USE_TEXTURE_BIT) != 0;
+    bool useScene   = (flags & SCENE_BIT)    != 0;
+    bool worldView  = (flags & WORLD_VIEW_BIT) != 0;
 
     if (useMsdf) {
-        vec4 msdf = texture(glyphs, vec3(in_textureCord, in_textureNumber));
+        vec4 msdf;
+
+        if (useTexture) {
+            msdf = texture(textures, vec3(in_textureCord, in_textureNumber));
+        } else {
+            msdf = texture(glyphs, vec3(in_textureCord, in_textureNumber));
+        }
+
         ivec2 sz = textureSize(glyphs, 0).xy;
         float dx = dFdx(in_textureCord.x) * sz.x;
         float dy = dFdx(in_textureCord.y) * sz.y;

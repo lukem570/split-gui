@@ -56,7 +56,7 @@ namespace SplitGui {
 [[nodiscard]] Result                    instanceVulkan(VulkanFlags flags);
               void                      submitWindow(Window& window);
               void                      drawFrame();
-              RectRef                   drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth = 0);
+              RectRef                   drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth = 0, VertexFlags flags = 0, int textureIndex = 0);
               void                      updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth = 0);
               unsigned int              instanceScene(IVec2 x1, IVec2 x2);
               void                      updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2);

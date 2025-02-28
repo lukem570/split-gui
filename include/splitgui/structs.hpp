@@ -435,6 +435,7 @@ namespace SplitGui {
         eSceneData     = 0,
         eGlyphs        = 1,
         eVertexUniform = 2,
+        eTexture       = 3,
     };
 
     enum VertexLayout {

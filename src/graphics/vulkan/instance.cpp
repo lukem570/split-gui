@@ -55,7 +55,7 @@ namespace SplitGui {
         appInfo.applicationVersion = 0;
         appInfo.pEngineName        = "Split-gui";
         appInfo.engineVersion      = 0;
-        appInfo.apiVersion         = vk::ApiVersion10;
+        appInfo.apiVersion         = vk::ApiVersion13;
 
         vk::InstanceCreateInfo createInfo;
         createInfo.pApplicationInfo = &appInfo;
