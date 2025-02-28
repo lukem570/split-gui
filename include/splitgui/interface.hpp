@@ -207,6 +207,8 @@ namespace SplitGui {
 
                 void   setColor(HexColor);
   [[nodiscard]] Result setColor(std::string);
+                void   setFlags(VertexFlags flags);
+                void   setTextureIndex(int idx);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eRect;
@@ -216,6 +218,8 @@ namespace SplitGui {
             private: // props
                 UnitExpressionEvaluator        colorStatement;
                 HexColor                       color = 0;
+                VertexFlags                    flags = 0;
+                int                            textureIndex = 0;
                 
                 // state
                 RectRef                        graphicsRectRef;

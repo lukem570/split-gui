@@ -34,7 +34,7 @@ namespace SplitGui {
 
         SPLITGUI_LOG("Instanced Rect: (%d, %d), (%d, %d), color: (%d, %d, %d)", x1.x, x1.y, x2.x, x2.y, color.r, color.g, color.b);
 
-        graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth);
+        graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
 
         return Result::eSuccess;
     }
@@ -62,4 +62,13 @@ namespace SplitGui {
 
         return Result::eSuccess;
     }
+
+    void Default::Rect::setFlags(VertexFlags flagsIn) {
+        flags = flagsIn;
+    }
+
+    void Default::Rect::setTextureIndex(int idxIn) {
+        textureIndex = idxIn;
+    }
+
 }

@@ -61,8 +61,7 @@ namespace SplitGui {
         
         msdfgen::edgeColoringSimple(shape, 3.0);
         
-        msdfgen::Range         pxRange = msdfgen::Range(0.1);
-        msdfgen::Shape::Bounds bounds  = shape.getBounds();
+        msdfgen::Range pxRange = msdfgen::Range(0.1);
         
         msdfgen::Vector2 scale;
 
