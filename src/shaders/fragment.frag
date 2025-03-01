@@ -67,7 +67,7 @@ void main() {
         float w = fwidth(sd);
         float opacity = smoothstep(0.5 - w, 0.5 + w, sd);
 
-        outColor = mix(vec4(0.0), vec4(in_fragColor, 1.0), opacity);
+        outColor = mix(vec4(in_fragColor, 0.0), vec4(in_fragColor, 1.0), opacity);
 
     } else if (useScene) {
 
