@@ -21,7 +21,7 @@ int main() {
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
     graphics.submitWindow(window);
-    TRYRC(fontRes, graphics.loadFont("fonts/Lato/Lato-Regular.ttf"));
+    TRYRC(fontRes, graphics.loadFont("fonts/roboto/Roboto-Regular.ttf"));
     graphics.attachEventHandler(eventHandler);
 
     graphics.drawRect(
@@ -33,7 +33,7 @@ int main() {
 
     TRYC(int, textRes, graphics.drawText(
         SplitGui::IVec2{0, 0},
-        "abcdefghijklmnopqrstuvwxyz",
+        "Hello, world\nThis is a newline\nHi",
         0x000000,
         20
     ));

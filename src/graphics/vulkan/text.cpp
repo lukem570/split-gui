@@ -24,17 +24,19 @@ namespace SplitGui {
 
         IVec2 windowSize = pWindow->getSize();
 
-        float pos = 0;
-        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, windowSize.x, windowSize.y);
+        Vec2 pos = {0.0f, 0.0f};
+        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, windowSize.x * 1.5, windowSize.y);
+
+        double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
         for (unsigned int i = 0; i < text.size(); i++) {
-            if (charWidthMap.find(text[i]) != charWidthMap.end() || std::isspace(text[i])) {
+            if (charSet.find(text[i]) != charSet.end() || std::isspace(text[i])) {
                 continue;
             }
 
             msdfgen::Shape shape;
 
-            // recreation of the 'loadGlyph' function in msdfgen/msdfgen-ext.h to reduce bloat
+            // recreation of the 'loadGlyph' function in msdfgen/msdfgen-ext.h
 
             int glyphId = ft::FT_Get_Char_Index(ft_face, text[i]);
 
@@ -43,8 +45,6 @@ namespace SplitGui {
             if (loadError) {
                 return Result::eFailedToLoadGlyph;
             }
-
-            double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
             ft::FT_Error outlineError = msdfgen::readFreetypeOutline(shape, &ft_face->glyph->outline, fontScale);
 
@@ -57,24 +57,21 @@ namespace SplitGui {
             msdfgen::edgeColoringSimple(shape, 3.0);
             
             msdfgen::Vector2 scale;
-            msdfgen::Range pxRange = msdfgen::Range(0.1);
+            msdfgen::Range pxRange = msdfgen::Range(0.04);
             
             msdfgen::Shape::Bounds bounds = shape.getBounds();
-
-            bounds.l -= 0.1;
-            bounds.r += 0.1;
 
             double width  = (bounds.r - bounds.l);
             double height = (bounds.t - bounds.b);
 
-            charWidthMap[text[i]] = width / height;
+            charSet.insert(text[i]);
             
-            scale.set((double)vk_msdfExtent.width / width, (double)vk_msdfExtent.height);
+            scale.set((double)vk_msdfExtent.width / width, (double)vk_msdfExtent.height / height);
 
             msdfgen::SDFTransformation transformation(
                 msdfgen::Projection(
                     scale,
-                    msdfgen::Vector2(-bounds.l, 0.2)
+                    msdfgen::Vector2(-bounds.l, -bounds.b)
                 ), 
                 pxRange
             );
@@ -169,9 +166,18 @@ namespace SplitGui {
             vk_device.destroyBuffer(stagingBuffer);
         }
 
+        pos.y += ft_face->ascender >> 3;
+
         for (unsigned int i = 0; i < text.size(); i++) {
+
+            if (text[i] == '\n') {
+                pos.y += ft_face->ascender >> 3;
+                pos.x = 0;
+                continue;
+            }
+
             if (std::isspace(text[i])) {
-                pos += (float)fontSize / (float)windowSize.x;
+                pos.x += fontSize * 2;
                 continue;
             }
 
@@ -183,29 +189,33 @@ namespace SplitGui {
                 return Result::eFailedToLoadGlyph;
             }
 
-            ft::FT_GlyphSlot slot = ft_face->glyph;
-            ft::FT_Fixed heightInFUnits = ft_face->size->metrics.height;
-            ft::FT_Fixed widthInFUnits = slot->metrics.horiAdvance;
-            ft::FT_F26Dot6 heightInPixels = (heightInFUnits * 16) / ft_face->units_per_EM;
-            ft::FT_F26Dot6 widthInPixels = (widthInFUnits * 16) / ft_face->units_per_EM;
+            ft::FT_GlyphSlot slot    = ft_face->glyph;
+            unsigned int     width   = slot->bitmap.width;
+            unsigned int     height  = slot->bitmap.rows;
+            unsigned int     maxHeight = ft_face->ascender >> 6;
+            unsigned int     offsetX = slot->bitmap_left;
+            unsigned int     offsetY = slot->bitmap_top;
 
-            float height = (float)heightInPixels / (float)windowSize.y;
-            float width  = ((float)widthInPixels ) / (float)windowSize.x;
+            float outX1 = (pos.x + offsetX) / windowSize.x / 2.0f;
+            
+            float outY1 = (pos.y + maxHeight - offsetY - height) / windowSize.y / 2.0f;
+            float outX2 = (pos.x + offsetX + width) / windowSize.x / 2.0f;
+            float outY2 = (pos.y + maxHeight) / windowSize.y / 2.0f;
 
             VulkanInterface::drawRect(
-                x1 + Vec2{pos , 0}, 
-                x1 + Vec2{pos + width, height}, 
+                x1 + Vec2{outX1, outY1}, 
+                x1 + Vec2{outX2, outY2}, 
                 color, 
                 depth,
                 VertexFlagsBits::eTextureMsdf, 
                 text[i]
             );
 
-            pos += width;
+            pos.x += slot->advance.x >> 6;
         }
 
         SPLITGUI_LOG("Drew Text");
 
-        return pos;
+        return pos.x;
     }
 }

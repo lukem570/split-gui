@@ -15,6 +15,7 @@
 #include <array>
 #include <stack>
 #include <setjmp.h>
+#include <unordered_set>
 
 namespace ft {
     #include <ft2build.h>
@@ -148,7 +149,7 @@ namespace SplitGui {
             std::vector<uint16_t>               indices;
             std::vector<SceneObj>               scenes;
             std::vector<std::vector<Contour>>   vectorImages;
-            std::unordered_map<char, double>    charWidthMap;
+            std::unordered_set<char>            charSet;
             bool                                markVerticesForUpdate = false;
             bool                                markScenesForUpdate   = false;
 

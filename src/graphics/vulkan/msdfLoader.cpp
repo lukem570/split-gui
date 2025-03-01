@@ -21,7 +21,7 @@ namespace msdfgen {
         return Point2(scale*vector.x, scale*vector.y);
     }
 
-    static double getFontCoordinateScale(const ft::FT_Face &face, FontCoordinateScaling coordinateScaling) {
+    constexpr double getFontCoordinateScale(const ft::FT_Face &face, FontCoordinateScaling coordinateScaling) {
         switch (coordinateScaling) {
             case FontCoordinateScaling::eFontScalingNone:
                 return 1;
