@@ -257,6 +257,7 @@ namespace SplitGui {
                 void   setText(std::string value);
                 void   setColor(HexColor);
   [[nodiscard]] Result setColor(std::string);
+                void   setSize(unsigned int size);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eText;
@@ -264,7 +265,7 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 1;
 
             private: // props
-                unsigned int                   fontSize;
+                unsigned int                   fontSize = 12;
                 std::string                    font; // TODO:
                 std::string                    value;
                 UnitExpressionEvaluator        colorStatement;

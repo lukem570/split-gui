@@ -37,11 +37,15 @@ namespace SplitGui {
 
     Result Default::Text::instance() {
 
-        SplitGui::ResultValue<int> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, depth);
+        SplitGui::ResultValue<int> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
         TRYD(textRes);
 
         SPLITGUI_LOG("Instanced Text");
 
         return Result::eSuccess;
+    }
+
+    void Default::Text::setSize(unsigned int size) {
+        fontSize = size;
     }
 }
