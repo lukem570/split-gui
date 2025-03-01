@@ -81,18 +81,24 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<int> Graphics::drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth) {
+    ResultValue<TextRef> Graphics::drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth) {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
         newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
         newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
 
-        ResultValue<float> ret = pInterface->drawText(newX1, text, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
+        return pInterface->drawText(newX1, text, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
+    }
 
-        TRYD(ret);
+    Result Graphics::updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth) {
+        IVec2 windowSize = pWindow->getSize();
 
-        return ret.value * windowSize.x;
+        Vec2 newX1;
+        newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
+        newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
+
+        return pInterface->updateText(ref, newX1, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
     }
 
     Result Graphics::loadFont(const char* path) {
@@ -128,7 +134,7 @@ namespace SplitGui {
         pInterface->updateScene(sceneNumber, x1, x2);
     }
 
-    [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours, float aspect) {
-        return pInterface->createContourImage(contours, aspect);
+    [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {
+        return pInterface->createContourImage(contours);
     }
 }

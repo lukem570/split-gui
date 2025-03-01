@@ -286,6 +286,11 @@ namespace SplitGui {
         int topRight;
     };
 
+    struct TextRef {
+        std::vector<RectRef> rects;
+        std::string          text;
+    };
+
     struct VertexUniformObject {
         IVec2 screenSize;
     };

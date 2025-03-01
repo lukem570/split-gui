@@ -34,9 +34,10 @@ namespace SplitGui {
 [[nodiscard]] virtual Result                    updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                    { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                            { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                { throw; }
-[[nodiscard]] virtual ResultValue<float>        drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                     { throw; }
+[[nodiscard]] virtual ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                     { throw; }
+[[nodiscard]] virtual Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                        { throw; }
 [[nodiscard]] virtual Result                    loadFont(const char* path)                                                                                             { throw; }
-[[nodiscard]] virtual ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours, float aspect = 1.0f)                                                { throw; } // aspect is width/height
+[[nodiscard]] virtual ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours)                                                                     { throw; }
 [[nodiscard]] virtual Result                    submitBuffers()                                                                                                        { throw; }
 [[nodiscard]] virtual Result                    resizeEvent()                                                                                                          { throw; }
               virtual void                      clearBuffers()                                                                                                         { throw; }
@@ -64,9 +65,10 @@ namespace SplitGui {
 [[nodiscard]] Result                    updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position);
 [[nodiscard]] Result                    updateSceneCameraView(unsigned int sceneNumber, Mat4& view);
 [[nodiscard]] Result                    updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection);
-[[nodiscard]] ResultValue<int>          drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth = 0); // Returns the width in pixels of the text
+[[nodiscard]] ResultValue<TextRef>      drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth = 0);
+[[nodiscard]] Result                    updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth = 0);
 [[nodiscard]] Result                    loadFont(const char* path);
-[[nodiscard]] ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours, float aspect = 1.0f); // aspect is width/height
+[[nodiscard]] ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours);
               void                      submitBuffers();
 [[nodiscard]] Result                    resizeEvent();
               void                      attachEventHandler(EventHandler& handler);

@@ -32,13 +32,17 @@ namespace SplitGui {
     }
 
     void Default::Text::update() {
-        // TODO:
+        Result HANDLE_THIS_RESULT_TODO = pGraphics->updateText(textRef, {extent.x, extent.y}, color, fontSize, depth);
+        
+        SPLITGUI_LOG("Updated Text");
     }
 
     Result Default::Text::instance() {
 
-        SplitGui::ResultValue<int> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
+        SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
         TRYD(textRes);
+
+        textRef = textRes.value;
 
         SPLITGUI_LOG("Instanced Text");
 

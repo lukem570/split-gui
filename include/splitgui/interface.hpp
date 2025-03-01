@@ -270,6 +270,9 @@ namespace SplitGui {
                 std::string                    value;
                 UnitExpressionEvaluator        colorStatement;
                 HexColor                       color = 0;
+
+                // state
+                TextRef                        textRef;
         };
 
         class SPLITGUI_EXPORT Media : public InterfaceElement {

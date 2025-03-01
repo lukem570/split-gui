@@ -17,15 +17,78 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<float> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth) {
+    Result VulkanInterface::updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth) {
+        IVec2 windowSize = pWindow->getSize();
+
+        Vec2 pos = {0.0f, 0.0f};
+        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, 1000, 500);
+
+        pos.y += ft_face->ascender >> 3;
+
+        int rectIdx = 0;
+
+        for (unsigned int i = 0; i < ref.text.size(); i++) {
+
+            if (ref.text[i] == '\n') {
+                pos.y += ft_face->ascender >> 3;
+                pos.x = 0;
+                continue;
+            }
+
+            if (std::isspace(ref.text[i])) {
+                pos.x += fontSize * 2;
+                continue;
+            }
+
+            int glyphId = ft::FT_Get_Char_Index(ft_face, ref.text[i]);
+
+            ft::FT_Error loadCharError = ft::FT_Load_Glyph(ft_face, glyphId, 0);
+
+            if (loadCharError) {
+                return Result::eFailedToLoadGlyph;
+            }
+
+            ft::FT_GlyphSlot slot    = ft_face->glyph;
+            unsigned int     width   = slot->bitmap.width;
+            unsigned int     height  = slot->bitmap.rows;
+            unsigned int     maxHeight = ft_face->ascender >> 6;
+            unsigned int     offsetX = slot->bitmap_left;
+            unsigned int     offsetY = slot->bitmap_top;
+
+            float outX1 = (pos.x + offsetX) / windowSize.x / 2.0f;
+            
+            float outY1 = (pos.y + maxHeight - offsetY - height) / windowSize.y / 2.0f;
+            float outX2 = (pos.x + offsetX + width) / windowSize.x / 2.0f;
+            float outY2 = (pos.y + maxHeight) / windowSize.y / 2.0f;
+
+            updateRect(
+                ref.rects[rectIdx],
+                x1 + Vec2{outX1, outY1},
+                x1 + Vec2{outX2, outY2},
+                color,
+                depth
+            );
+
+            pos.x += slot->advance.x >> 6;
+
+            rectIdx++;
+        }
+
+        return Result::eSuccess;
+    }
+
+    ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth) {
         if (!ft_fontInUse) {
             return Result::eFailedToUseFont;
         }
 
+        TextRef ret;
+        ret.text = text;
+
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 pos = {0.0f, 0.0f};
-        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, windowSize.x * 1.5, windowSize.y);
+        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, 1000, 500);
 
         double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
@@ -202,20 +265,20 @@ namespace SplitGui {
             float outX2 = (pos.x + offsetX + width) / windowSize.x / 2.0f;
             float outY2 = (pos.y + maxHeight) / windowSize.y / 2.0f;
 
-            VulkanInterface::drawRect(
+            ret.rects.push_back(drawRect(
                 x1 + Vec2{outX1, outY1}, 
                 x1 + Vec2{outX2, outY2}, 
                 color, 
                 depth,
                 VertexFlagsBits::eTextureMsdf, 
                 text[i]
-            );
+            ));
 
             pos.x += slot->advance.x >> 6;
         }
 
         SPLITGUI_LOG("Drew Text");
 
-        return pos.x;
+        return ret;
     }
 }

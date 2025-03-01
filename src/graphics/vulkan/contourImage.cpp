@@ -6,7 +6,7 @@ namespace SplitGui {
         return msdfgen::Point2(vector.x, vector.y);
     }
 
-    ResultValue<unsigned int> VulkanInterface::createContourImage(std::vector<Contour>& contours, float aspect) {
+    ResultValue<unsigned int> VulkanInterface::createContourImage(std::vector<Contour>& contours) {
 
         msdfgen::Shape shape;
 
@@ -128,7 +128,7 @@ namespace SplitGui {
         copyRegion.bufferImageHeight               = 0;
         copyRegion.imageSubresource.aspectMask     = vk::ImageAspectFlagBits::eColor;
         copyRegion.imageSubresource.mipLevel       = 0;
-        copyRegion.imageSubresource.baseArrayLayer = vectorImages.size();  // layer set to index
+        copyRegion.imageSubresource.baseArrayLayer = vectorImages.size(); // layer set to index
         copyRegion.imageSubresource.layerCount     = 1;
         copyRegion.imageOffset.x                   = 0;
         copyRegion.imageOffset.y                   = 0;

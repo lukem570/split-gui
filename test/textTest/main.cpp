@@ -31,7 +31,7 @@ int main() {
         1
     );
 
-    TRYC(int, textRes, graphics.drawText(
+    TRYC(SplitGui::TextRef, textRes, graphics.drawText(
         SplitGui::IVec2{0, 0},
         "Hello, world\nThis is a newline\nHi",
         0x000000,
