@@ -36,6 +36,14 @@ namespace SplitGui {
         }
     }
 
+    Result InterfaceElement::submit() {
+        for (unsigned int i = 0; i < children.size(); i++) {
+            TRYR(childrenRes, children[i]->submit());
+        }
+
+        return Result::eSuccess;
+    }
+
     void InterfaceElement::addChild(InterfaceElement* child) {
         children.push_back(child);
     }

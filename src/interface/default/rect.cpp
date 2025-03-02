@@ -39,6 +39,10 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
+    Result Default::Rect::submit() {
+        return pGraphics->submitRect(graphicsRectRef);
+    }
+
     void Default::Rect::setColor(HexColor colorIn) {
         color = colorIn;
     }

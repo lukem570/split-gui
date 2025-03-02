@@ -76,7 +76,8 @@ namespace SplitGui {
             friend class Interface;
 
 [[nodiscard]] virtual Result instance();
-              virtual void update();
+              virtual void   update();
+[[nodiscard]] virtual Result submit();
 
             void addChild(InterfaceElement* pChild);
             void setSize(IVec2 size);
@@ -204,6 +205,7 @@ namespace SplitGui {
 
   [[nodiscard]] Result instance() override;
                 void   update()   override;
+  [[nodiscard]] Result submit()   override;
 
                 void   setColor(HexColor);
   [[nodiscard]] Result setColor(std::string);
