@@ -214,6 +214,22 @@ namespace SplitGui {
             };
         }
 
+        HexColor dim() {
+            return IVec3{
+                (int)(r * 0.80),
+                (int)(g * 0.80),
+                (int)(b * 0.80),
+            };
+        }
+
+        HexColor dark() {
+            return IVec3{
+                (int)(r * 0.50),
+                (int)(g * 0.50),
+                (int)(b * 0.50),
+            };
+        }
+
         uint8_t b;
         uint8_t g; 
         uint8_t r;
