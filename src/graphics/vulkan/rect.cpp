@@ -68,4 +68,38 @@ namespace SplitGui {
 
         SPLITGUI_LOG("Updated Rect: %d", ref.bottomLeft);
     }
+
+    Result VulkanInterface::submitRect(RectRef& ref) {
+
+        vk::DeviceSize rectSize = sizeof(VertexBufferObject) * 4;
+
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        TRYR(stagingBufferRes, createBuffer(
+            rectSize, 
+            vk::BufferUsageFlagBits::eTransferSrc, 
+            vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+            stagingBuffer,
+            stagingBufferMemory
+        ));
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+        copyRegion.size = rectSize;
+        copyRegion.srcOffset = 0;
+        copyRegion.dstOffset = sizeof(VertexBufferObject) * ref.bottomLeft;
+
+        commandBuffer.copyBuffer(stagingBuffer, vk_vertexBuffer, 1, &copyRegion);
+
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.destroyBuffer(stagingBuffer);
+        vk_device.freeMemory(stagingBufferMemory);
+
+        SPLITGUI_LOG("Submitted Rect");
+
+        return Result::eSuccess;
+    }
 }
