@@ -113,8 +113,8 @@ namespace SplitGui {
         pInterface->clearBuffers();
     }
 
-    void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags) {
-        pInterface->submitTriangleData(sceneNumber, vertices, indices, flags);
+    void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
+        pInterface->submitTriangleData(sceneNumber, vertices, indices, flags, textureNumber);
     }
 
     Result Graphics::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {

@@ -50,7 +50,7 @@ void main() {
     bool useScene   = (flags & SCENE_BIT)    != 0;
     bool worldView  = (flags & WORLD_VIEW_BIT) != 0;
 
-    if (useMsdf) {
+    if (useMsdf && !useScene) {
         vec4 msdf;
 
         if (useTexture) {
@@ -59,10 +59,6 @@ void main() {
             msdf = texture(glyphs, vec3(in_textureCord, in_textureNumber));
         }
 
-        ivec2 sz = textureSize(glyphs, 0).xy;
-        float dx = dFdx(in_textureCord.x) * sz.x;
-        float dy = dFdx(in_textureCord.y) * sz.y;
-        float toPixels = 8.0 * inversesqrt(dx * dx + dy * dy);
         float sd = median(msdf.r, msdf.g, msdf.b);
         float w = fwidth(sd);
         float opacity = smoothstep(0.5 - w, 0.5 + w, sd);
@@ -81,7 +77,17 @@ void main() {
 
         if (leftBound && topBound && rightBound && bottomBound) {
 
-            if (!worldView) {
+            if (useTexture && useMsdf) {
+
+                vec4 msdf = texture(textures, vec3(in_textureCord, in_textureNumber));
+
+                float sd = median(msdf.r, msdf.g, msdf.b);
+                float w = fwidth(sd);
+                float opacity = smoothstep(0.5 - w, 0.5 + w, sd);
+
+                outColor = mix(vec4(in_fragColor, 0.0), vec4(in_fragColor, 1.0), opacity);
+
+            } else if (!worldView) {
                 vec3 normal = normalize(in_fragNorm);
 
                 vec3 lightPos = vec3(2.0, -5.0, 3.0);

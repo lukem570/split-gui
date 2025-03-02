@@ -18,7 +18,7 @@ namespace SplitGui {
         return scenes.size() - 1;
     }
 
-    void VulkanInterface::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags) {
+    void VulkanInterface::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
         unsigned int oldVerticesSize = vertices.size();
         unsigned int oldIndicesSize  = indices.size();
 
@@ -37,7 +37,7 @@ namespace SplitGui {
                 vbo.vertex        = newVertices[newIndices[i + j]];
                 vbo.flags         = VertexFlagsBits::eScene ^ flags;
                 vbo.sceneNumber   = sceneNumber;
-                vbo.textureNumber = 0;
+                vbo.textureNumber = textureNumber;
 
                 vertices[oldVerticesSize + i + j] = vbo;
 
