@@ -128,7 +128,7 @@ namespace SplitGui {
 
         void* memory = vk_device.mapMemory(out_memory, 0, out_size);
 
-        memcpy(memory, dataToUpload.data(), out_size);
+        std::memcpy(memory, dataToUpload.data(), out_size);
 
         vk_device.unmapMemory(out_memory);
 

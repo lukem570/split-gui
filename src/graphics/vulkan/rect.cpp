@@ -84,6 +84,12 @@ namespace SplitGui {
             stagingBufferMemory
         ));
 
+        void* memory = vk_device.mapMemory(stagingBufferMemory, sizeof(VertexBufferObject) * ref.bottomLeft, rectSize);
+
+        std::memcpy(memory, vertices.data() + sizeof(VertexBufferObject) * ref.bottomLeft, rectSize);
+
+        vk_device.unmapMemory(stagingBufferMemory);
+
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
         vk::BufferCopy copyRegion;
