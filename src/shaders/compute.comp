@@ -1,0 +1,38 @@
+#version 450 core
+
+layout (binding = 4) uniform sampler2D accum;
+layout (binding = 5) uniform sampler2D reveal;
+layout (binding = 6) uniform writeonly image2D outColor;
+
+const float EPSILON = 0.00001f;
+
+bool isApproximatelyEqual(float a, float b) {
+	return abs(a - b) <= (abs(a) < abs(b) ? abs(b) : abs(a)) * EPSILON;
+}
+
+float max3(vec3 v) {
+	return max(max(v.x, v.y), v.z);
+}
+
+void main() {
+    ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
+
+    float accumulatedWeight = texelFetch(reveal, pixelCoords, 0).r;
+
+    if (isApproximatelyEqual(accumulatedWeight, 1.0f)) {
+        imageStore(outColor, pixelCoords, vec4(0.0));
+        return;
+    }
+
+    vec4 accumulatedColor = texelFetch(accum, pixelCoords, 0);
+
+    if (isinf(max3(abs(accumulatedColor.rgb)))) 
+		accumulatedColor.rgb = vec3(accumulatedColor.a);
+
+    vec3 averageColor = accumulatedColor.rgb / max(accumulatedColor.a, EPSILON);
+
+    //vec4 finalColor = vec4(averageColor, 1.0f - accumulatedWeight);
+    vec4 finalColor = accumulatedColor;
+
+    imageStore(outColor, pixelCoords, finalColor);
+}

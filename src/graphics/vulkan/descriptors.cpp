@@ -31,7 +31,36 @@ namespace SplitGui {
         textureLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
         textureLayoutBinding.pImmutableSamplers = nullptr;
 
-        std::array<vk::DescriptorSetLayoutBinding, 4> bindings = { sceneLayoutBinding, glyphLayoutBinding, vertexUniformLayoutBinding, textureLayoutBinding };
+        vk::DescriptorSetLayoutBinding colorAccumLayoutBinding;
+        colorAccumLayoutBinding.binding            = DescriporBindings::eAccumColor;
+        colorAccumLayoutBinding.descriptorCount    = 1;
+        colorAccumLayoutBinding.descriptorType     = vk::DescriptorType::eCombinedImageSampler;
+        colorAccumLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eCompute;
+        colorAccumLayoutBinding.pImmutableSamplers = nullptr;
+
+        vk::DescriptorSetLayoutBinding weightAccumLayoutBinding;
+        weightAccumLayoutBinding.binding            = DescriporBindings::eAccumWeight;
+        weightAccumLayoutBinding.descriptorCount    = 1;
+        weightAccumLayoutBinding.descriptorType     = vk::DescriptorType::eCombinedImageSampler;
+        weightAccumLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eCompute;
+        weightAccumLayoutBinding.pImmutableSamplers = nullptr;
+
+        vk::DescriptorSetLayoutBinding outputLayoutBinding;
+        outputLayoutBinding.binding            = DescriporBindings::eOutput;
+        outputLayoutBinding.descriptorCount    = 1;
+        outputLayoutBinding.descriptorType     = vk::DescriptorType::eStorageImage;
+        outputLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eCompute;
+        outputLayoutBinding.pImmutableSamplers = nullptr;
+
+        std::array<vk::DescriptorSetLayoutBinding, 7> bindings = { 
+            sceneLayoutBinding, 
+            glyphLayoutBinding, 
+            vertexUniformLayoutBinding, 
+            textureLayoutBinding,
+            colorAccumLayoutBinding,
+            weightAccumLayoutBinding,
+            outputLayoutBinding
+        };
 
         vk::DescriptorSetLayoutCreateInfo createInfo;
         createInfo.bindingCount = bindings.size();
@@ -59,7 +88,27 @@ namespace SplitGui {
         texturePoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
         texturePoolSize.descriptorCount = 1;
 
-        std::array<vk::DescriptorPoolSize, 4> poolSizes = { scenePoolSize, glyphPoolSize, vertexUniformPoolSize, texturePoolSize };
+        vk::DescriptorPoolSize colorAccumPoolSize;
+        colorAccumPoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
+        colorAccumPoolSize.descriptorCount = 1;
+
+        vk::DescriptorPoolSize weightAccumPoolSize;
+        weightAccumPoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
+        weightAccumPoolSize.descriptorCount = 1;
+
+        vk::DescriptorPoolSize outputPoolSize;
+        outputPoolSize.type            = vk::DescriptorType::eStorageImage;
+        outputPoolSize.descriptorCount = 1;
+
+        std::array<vk::DescriptorPoolSize, 7> poolSizes = { 
+            scenePoolSize,
+            glyphPoolSize,
+            vertexUniformPoolSize,
+            texturePoolSize,
+            colorAccumPoolSize,
+            weightAccumPoolSize,
+            outputPoolSize
+        };
 
         vk::DescriptorPoolCreateInfo createInfo;
         createInfo.flags         = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
@@ -99,7 +148,22 @@ namespace SplitGui {
         textureImageInfo.imageView   = vk_textureArrayImageView;
         textureImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
 
-        std::array<vk::WriteDescriptorSet, 3> descriptorWrites;
+        vk::DescriptorImageInfo colorAccumImageInfo;
+        colorAccumImageInfo.sampler     = vk_colorAccumSampler;
+        colorAccumImageInfo.imageView   = vk_colorAccumImageView;
+        colorAccumImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+
+        vk::DescriptorImageInfo weightAccumImageInfo;
+        weightAccumImageInfo.sampler     = vk_alphaAccumSampler;
+        weightAccumImageInfo.imageView   = vk_alphaAccumImageView;
+        weightAccumImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+
+        vk::DescriptorImageInfo outputImageInfo;
+        outputImageInfo.sampler     = vk::Sampler();
+        outputImageInfo.imageView   = vk_outputImageView;
+        outputImageInfo.imageLayout = vk::ImageLayout::eGeneral;
+
+        std::array<vk::WriteDescriptorSet, 6> descriptorWrites;
 
         descriptorWrites[0].dstSet          = vk_descriptorSet;
         descriptorWrites[0].dstBinding      = DescriporBindings::eGlyphs;
@@ -120,7 +184,28 @@ namespace SplitGui {
         descriptorWrites[2].dstArrayElement = 0;
         descriptorWrites[2].descriptorType  = vk::DescriptorType::eCombinedImageSampler;
         descriptorWrites[2].descriptorCount = 1;
-        descriptorWrites[2].pImageInfo     = &textureImageInfo;
+        descriptorWrites[2].pImageInfo      = &textureImageInfo;
+
+        descriptorWrites[3].dstSet          = vk_descriptorSet;
+        descriptorWrites[3].dstBinding      = DescriporBindings::eAccumColor;
+        descriptorWrites[3].dstArrayElement = 0;
+        descriptorWrites[3].descriptorType  = vk::DescriptorType::eCombinedImageSampler;
+        descriptorWrites[3].descriptorCount = 1;
+        descriptorWrites[3].pImageInfo      = &colorAccumImageInfo;
+
+        descriptorWrites[4].dstSet          = vk_descriptorSet;
+        descriptorWrites[4].dstBinding      = DescriporBindings::eAccumWeight;
+        descriptorWrites[4].dstArrayElement = 0;
+        descriptorWrites[4].descriptorType  = vk::DescriptorType::eCombinedImageSampler;
+        descriptorWrites[4].descriptorCount = 1;
+        descriptorWrites[4].pImageInfo      = &weightAccumImageInfo;
+
+        descriptorWrites[5].dstSet          = vk_descriptorSet;
+        descriptorWrites[5].dstBinding      = DescriporBindings::eOutput;
+        descriptorWrites[5].dstArrayElement = 0;
+        descriptorWrites[5].descriptorType  = vk::DescriptorType::eStorageImage;
+        descriptorWrites[5].descriptorCount = 1;
+        descriptorWrites[5].pImageInfo      = &outputImageInfo;
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 

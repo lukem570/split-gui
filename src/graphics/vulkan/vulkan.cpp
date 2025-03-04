@@ -21,4 +21,5 @@
 #include "system.cpp"
 #include "text.cpp"
 #include "texture.cpp"
+#include "transparency.cpp"
 #include "uniform.cpp"

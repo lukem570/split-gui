@@ -22,6 +22,7 @@ namespace SplitGui {
         createInfo.queueFamilyIndexCount = 1;
         createInfo.imageSharingMode      = vk::SharingMode::eExclusive;
         createInfo.imageUsage            = vk::ImageUsageFlagBits::eColorAttachment;
+        createInfo.imageUsage           |= vk::ImageUsageFlagBits::eTransferDst;
         createInfo.clipped               = true;
         createInfo.oldSwapchain          = nullptr;
 

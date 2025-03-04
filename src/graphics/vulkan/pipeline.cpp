@@ -109,24 +109,36 @@ namespace SplitGui {
         multisampling.sampleShadingEnable  = vk::False;
         multisampling.rasterizationSamples = vk::SampleCountFlagBits::e1;
 
-        vk::PipelineColorBlendAttachmentState colorBlendAttachment;
-        colorBlendAttachment.blendEnable         = vk::True;
-        colorBlendAttachment.colorWriteMask      = vk::ColorComponentFlagBits::eR;
-        colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eG;
-        colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eB;
-        colorBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eA;
-        colorBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
-        colorBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
-        colorBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
-        colorBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eSrcAlpha;
-        colorBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
-        colorBlendAttachment.alphaBlendOp        = vk::BlendOp::eAdd;
+        vk::PipelineColorBlendAttachmentState colorAccumBlendAttachment;
+        colorAccumBlendAttachment.blendEnable         = vk::True;
+        colorAccumBlendAttachment.colorWriteMask      = vk::ColorComponentFlagBits::eR;
+        colorAccumBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eG;
+        colorAccumBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eB;
+        colorAccumBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eA;
+        colorAccumBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
+        colorAccumBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+        colorAccumBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
+        colorAccumBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eSrcAlpha;
+        colorAccumBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+        colorAccumBlendAttachment.alphaBlendOp        = vk::BlendOp::eAdd;
+
+        vk::PipelineColorBlendAttachmentState weightAccumBlendAttachment;
+        weightAccumBlendAttachment.blendEnable         = vk::True;
+        weightAccumBlendAttachment.colorWriteMask      = vk::ColorComponentFlagBits::eR;
+        weightAccumBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eZero;
+        weightAccumBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcColor;
+        weightAccumBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
+        weightAccumBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eZero;
+        weightAccumBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcColor;
+        weightAccumBlendAttachment.alphaBlendOp        = vk::BlendOp::eAdd;
+
+        std::array<vk::PipelineColorBlendAttachmentState, 2> colorAttachments = { colorAccumBlendAttachment, weightAccumBlendAttachment };
 
         vk::PipelineColorBlendStateCreateInfo colorBlending;
         colorBlending.logicOpEnable   = vk::False;
         colorBlending.logicOp         = vk::LogicOp::eCopy;
-        colorBlending.attachmentCount = 1;
-        colorBlending.pAttachments    = &colorBlendAttachment;
+        colorBlending.attachmentCount = colorAttachments.size();
+        colorBlending.pAttachments    = colorAttachments.data();
 
         vk::PipelineDepthStencilStateCreateInfo depthStencil;
         depthStencil.depthTestEnable       = vk::True;
@@ -166,6 +178,38 @@ namespace SplitGui {
         vk_graphicsPipeline = result.value;
 
         SPLITGUI_LOG("Created Graphics Pipeline");
+
+        return Result::eSuccess;
+    }
+
+    inline Result VulkanInterface::createComputePipeline() {
+
+        ResultValue<std::vector<char>> computeShaderFile = readFile(COMPUTE_SHADER_PATH);
+
+        TRYD(computeShaderFile);
+
+        vk::ShaderModule computeShader = createShaderModule(computeShaderFile.value);
+
+        vk::PipelineShaderStageCreateInfo computeCreateInfo;
+        computeCreateInfo.stage  = vk::ShaderStageFlagBits::eCompute;
+        computeCreateInfo.module = computeShader;
+        computeCreateInfo.pName  = "main";
+
+        vk::ComputePipelineCreateInfo pipelineInfo;
+        pipelineInfo.stage  = computeCreateInfo;
+        pipelineInfo.layout = vk_graphicsPipelineLayout;
+
+        vk::ResultValue<vk::Pipeline> result = vk_device.createComputePipeline(nullptr, pipelineInfo);
+
+        if (result.result != vk::Result::eSuccess) {
+            return Result::eFailedToCreateGraphicsPipeline;
+        } 
+
+        vk_device.destroyShaderModule(computeShader);
+
+        vk_computePipeline = result.value;
+
+        SPLITGUI_LOG("Created Compute Pipeline");
 
         return Result::eSuccess;
     }

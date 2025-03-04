@@ -5,8 +5,9 @@ namespace SplitGui {
         vk_swapchainFramebuffers.resize(vk_swapchainImageViews.size());
 
         for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
-            std::array<vk::ImageView, 2> attachments = {
-                vk_swapchainImageViews[i],
+            std::array<vk::ImageView, 3> attachments = {
+                vk_colorAccumImageView,
+                vk_alphaAccumImageView,
                 vk_depthImageView
             };
 

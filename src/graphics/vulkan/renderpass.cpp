@@ -11,15 +11,25 @@ namespace SplitGui {
 
         TRYD(depthFormat);
 
-        vk::AttachmentDescription colorAttachment;
-        colorAttachment.format              = vk_surfaceFormat.format;
-        colorAttachment.samples             = vk::SampleCountFlagBits::e1;
-        colorAttachment.loadOp              = vk::AttachmentLoadOp::eClear;
-        colorAttachment.storeOp             = vk::AttachmentStoreOp::eStore;
-        colorAttachment.stencilLoadOp       = vk::AttachmentLoadOp::eDontCare;
-        colorAttachment.stencilStoreOp      = vk::AttachmentStoreOp::eDontCare;
-        colorAttachment.initialLayout       = vk::ImageLayout::eUndefined;
-        colorAttachment.finalLayout         = vk::ImageLayout::ePresentSrcKHR;
+        vk::AttachmentDescription colorAccumAttachment;
+        colorAccumAttachment.format              = vk::Format::eR16G16B16A16Sfloat;
+        colorAccumAttachment.samples             = vk::SampleCountFlagBits::e1;
+        colorAccumAttachment.loadOp              = vk::AttachmentLoadOp::eLoad;
+        colorAccumAttachment.storeOp             = vk::AttachmentStoreOp::eStore;
+        colorAccumAttachment.stencilLoadOp       = vk::AttachmentLoadOp::eDontCare;
+        colorAccumAttachment.stencilStoreOp      = vk::AttachmentStoreOp::eDontCare;
+        colorAccumAttachment.initialLayout       = vk::ImageLayout::eColorAttachmentOptimal;
+        colorAccumAttachment.finalLayout         = vk::ImageLayout::eShaderReadOnlyOptimal;
+
+        vk::AttachmentDescription weightAccumAttachment;
+        weightAccumAttachment.format              = vk::Format::eR16Sfloat;
+        weightAccumAttachment.samples             = vk::SampleCountFlagBits::e1;
+        weightAccumAttachment.loadOp              = vk::AttachmentLoadOp::eLoad;
+        weightAccumAttachment.storeOp             = vk::AttachmentStoreOp::eStore;
+        weightAccumAttachment.stencilLoadOp       = vk::AttachmentLoadOp::eDontCare;
+        weightAccumAttachment.stencilStoreOp      = vk::AttachmentStoreOp::eDontCare;
+        weightAccumAttachment.initialLayout       = vk::ImageLayout::eColorAttachmentOptimal;
+        weightAccumAttachment.finalLayout         = vk::ImageLayout::eShaderReadOnlyOptimal;
 
         vk::AttachmentDescription depthAttachment;
         depthAttachment.format              = depthFormat.value;
@@ -31,20 +41,26 @@ namespace SplitGui {
         depthAttachment.initialLayout       = vk::ImageLayout::eUndefined;
         depthAttachment.finalLayout         = vk::ImageLayout::eDepthStencilAttachmentOptimal;
 
-        std::array<vk::AttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
+        std::array<vk::AttachmentDescription, 3> attachments = {colorAccumAttachment, weightAccumAttachment, depthAttachment};
 
-        vk::AttachmentReference colorAttachmentReference;
-        colorAttachmentReference.attachment = 0;
-        colorAttachmentReference.layout     = vk::ImageLayout::eColorAttachmentOptimal;
+        vk::AttachmentReference colorAccumAttachmentReference;
+        colorAccumAttachmentReference.attachment = 0;
+        colorAccumAttachmentReference.layout     = vk::ImageLayout::eColorAttachmentOptimal;
+
+        vk::AttachmentReference weightAccumAttachmentReference;
+        weightAccumAttachmentReference.attachment = 1;
+        weightAccumAttachmentReference.layout     = vk::ImageLayout::eColorAttachmentOptimal;
 
         vk::AttachmentReference depthAttachmentReference;
-        depthAttachmentReference.attachment = 1;
+        depthAttachmentReference.attachment = 2;
         depthAttachmentReference.layout     = vk::ImageLayout::eDepthStencilAttachmentOptimal;
+
+        std::array<vk::AttachmentReference, 2> colorAttachments = { colorAccumAttachmentReference, weightAccumAttachmentReference };
 
         vk::SubpassDescription subpass;
         subpass.pipelineBindPoint           = vk::PipelineBindPoint::eGraphics;
-        subpass.colorAttachmentCount        = 1;
-        subpass.pColorAttachments           = &colorAttachmentReference;
+        subpass.colorAttachmentCount        = colorAttachments.size();
+        subpass.pColorAttachments           = colorAttachments.data();
         subpass.pDepthStencilAttachment     = &depthAttachmentReference;
 
         vk::SubpassDependency dependency;

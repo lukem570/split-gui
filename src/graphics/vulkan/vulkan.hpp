@@ -32,6 +32,7 @@ namespace ft {
 #define MAX_VECTOR_IMAGES 256
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
 #define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
+#define COMPUTE_SHADER_PATH "shaders/compute.spv"
 
 /*
 #include "vulkan.hpp"
@@ -93,6 +94,7 @@ namespace SplitGui {
             vk::DescriptorSetLayout             vk_descriptorSetLayout;
             vk::PipelineLayout                  vk_graphicsPipelineLayout;
             vk::Pipeline                        vk_graphicsPipeline;
+            vk::Pipeline                        vk_computePipeline;
             vk::CommandPool                     vk_commandPool;
             vk::RenderPassBeginInfo             vk_renderpassBeginInfo;
             vk::Viewport                        vk_viewport;
@@ -102,6 +104,17 @@ namespace SplitGui {
             vk::Image                           vk_depthImage;
             vk::DeviceMemory                    vk_depthImageMemory;
             vk::ImageView                       vk_depthImageView;
+            vk::Image                           vk_colorAccumImage;
+            vk::DeviceMemory                    vk_colorAccumImageMemory;
+            vk::ImageView                       vk_colorAccumImageView;
+            vk::Sampler                         vk_colorAccumSampler;
+            vk::Image                           vk_alphaAccumImage;
+            vk::DeviceMemory                    vk_alphaAccumImageMemory;
+            vk::ImageView                       vk_alphaAccumImageView;
+            vk::Sampler                         vk_alphaAccumSampler;
+            vk::Image                           vk_outputImage;
+            vk::DeviceMemory                    vk_outputImageMemory;
+            vk::ImageView                       vk_outputImageView;
             vk::Buffer                          vk_vertexBuffer;
             vk::DeviceMemory                    vk_vertexBufferMemory;
             vk::Buffer                          vk_indexBuffer;
@@ -121,7 +134,7 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_textureArrayImageMemory;
             vk::ImageView                       vk_textureArrayImageView;
             vk::Sampler                         vk_textureArraySampler;
-            std::array<vk::ClearValue, 2>       vk_clearValues;
+            std::array<vk::ClearValue, 3>       vk_clearValues;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;
@@ -174,6 +187,11 @@ namespace SplitGui {
               inline void                    updateScenes();
 [[nodiscard]] inline ResultValue<vk::Format> findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features);
 
+              inline void transitionImageToComputeWriteState(vk::CommandBuffer commandBuffer, vk::Image image);
+              inline void transitionImageToComputeReadState(vk::CommandBuffer commandBuffer, vk::Image image);
+              inline void transitionImageToTransferState(vk::CommandBuffer commandBuffer, vk::Image image);
+              inline void transitionImageToPresentState(vk::CommandBuffer commandBuffer, vk::Image image);
+
               template <typename T>
 [[nodiscard]] inline Result InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);
 
@@ -189,8 +207,10 @@ namespace SplitGui {
               inline void   createDescriptorSetLayout();
               inline void   createGraphicsPipelineLayout();
 [[nodiscard]] inline Result createGraphicsPipeline();
+[[nodiscard]] inline Result createComputePipeline();
               inline void   createCommandPool();
 [[nodiscard]] inline Result createDepthResources();
+[[nodiscard]] inline Result createTransparentResources();
               inline void   createFramebuffers();
               inline void   createCommandBuffers();
               inline void   createSyncObj();
@@ -209,6 +229,7 @@ namespace SplitGui {
 
               inline void cleanupFrameBuffers();
               inline void cleanupDepthResources();
+              inline void cleanupTransparentResources();
               inline void cleanupSyncObj();
               inline void cleanupImageViews();
               inline void cleanupVertexAndIndexBuffers();

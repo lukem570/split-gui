@@ -35,7 +35,8 @@ layout(binding = 0) uniform ScenesBuffer {
 layout(binding = 1) uniform sampler2DArray glyphs;
 layout(binding = 3) uniform sampler2DArray textures;
 
-layout(location = 0) out vec4 outColor;
+layout(location = 0) out vec4 outColorAccum;
+layout(location = 1) out float outAlphaAccum;
 
 float median(float r, float g, float b) {
     return max(min(r, g), min(max(r, g), b));
@@ -49,6 +50,8 @@ void main() {
     bool useTexture = (flags & USE_TEXTURE_BIT) != 0;
     bool useScene   = (flags & SCENE_BIT)    != 0;
     bool worldView  = (flags & WORLD_VIEW_BIT) != 0;
+
+    vec4 outColor;
 
     if (useMsdf && !useScene) {
         vec4 msdf;
@@ -130,5 +133,11 @@ void main() {
     } else {
         outColor = vec4(in_fragColor, 1.0);
     }
-    
+
+    float weight = max(min(1.0, max(max(outColor.r, outColor.g), outColor.b) * outColor.a), outColor.a) *
+    clamp(0.03 / (1e-5 + pow(gl_FragCoord.z / 200, 4.0)), 1e-2, 3e3);
+	
+	//outColorAccum = vec4(outColor.rgb * outColor.a, outColor.a) * weight;
+	outColorAccum = outColor;
+	outAlphaAccum = outColor.a;
 }

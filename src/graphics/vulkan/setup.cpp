@@ -7,8 +7,9 @@ namespace SplitGui {
         Vec3 color = flags.clearColor.normalize();
 
         vk_clearValues[0].color = vk::ClearColorValue{color.r, color.g, color.b, 1.0f};
-        vk_clearValues[1].depthStencil.depth   = 1.0f;
-        vk_clearValues[1].depthStencil.stencil = 0;
+        vk_clearValues[1].color = vk::ClearColorValue{1.0f, 0.0f, 0.0f, 0.0f};
+        vk_clearValues[2].depthStencil.depth   = 1.0f;
+        vk_clearValues[2].depthStencil.stencil = 0;
 
         vk_msdfExtent.width  = flags.mdsfTextureSize;
         vk_msdfExtent.height = flags.mdsfTextureSize;
@@ -39,9 +40,11 @@ namespace SplitGui {
         TRYR(renderpassRes, createRenderpass());
         createDescriptorSetLayout();
         createGraphicsPipelineLayout();
-        TRYR(pipelineRes, createGraphicsPipeline());
+        TRYR(graphicsRes, createGraphicsPipeline());
+        TRYR(computeRes, createComputePipeline());
         createCommandPool();
         TRYR(depthRes, createDepthResources());
+        TRYR(transparentRes, createTransparentResources());
         createFramebuffers();
         createCommandBuffers();
         createSyncObj();

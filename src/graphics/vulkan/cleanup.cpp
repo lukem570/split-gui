@@ -21,6 +21,9 @@ namespace SplitGui {
         vk_device.freeMemory(vk_vertexUniformBufferMemory);
         vk_device.destroyBuffer(vk_vertexUniformBuffer);
 
+        vk_device.destroySampler(vk_colorAccumSampler);
+        vk_device.destroySampler(vk_alphaAccumSampler);
+
         cleanupVertexAndIndexBuffers();
         cleanupSceneBuffer();
 
@@ -28,10 +31,12 @@ namespace SplitGui {
         
         cleanupFrameBuffers();
         cleanupDepthResources();
+        cleanupTransparentResources();
         
         vk_device.freeDescriptorSets(vk_descriptorPool, 1, &vk_descriptorSet);
         vk_device.destroyDescriptorPool(vk_descriptorPool);
 
+        vk_device.destroyPipeline(vk_computePipeline);
         vk_device.destroyPipeline(vk_graphicsPipeline);
         vk_device.destroyPipelineLayout(vk_graphicsPipelineLayout);
         vk_device.destroyDescriptorSetLayout(vk_descriptorSetLayout);
@@ -65,6 +70,20 @@ namespace SplitGui {
         vk_device.destroyImageView(vk_depthImageView);
         vk_device.freeMemory(vk_depthImageMemory);
         vk_device.destroyImage(vk_depthImage);
+    }
+
+    void VulkanInterface::cleanupTransparentResources() {
+        vk_device.destroyImageView(vk_colorAccumImageView);
+        vk_device.freeMemory(vk_colorAccumImageMemory);
+        vk_device.destroyImage(vk_colorAccumImage);
+
+        vk_device.destroyImageView(vk_alphaAccumImageView);
+        vk_device.freeMemory(vk_alphaAccumImageMemory);
+        vk_device.destroyImage(vk_alphaAccumImage);
+
+        vk_device.destroyImageView(vk_outputImageView);
+        vk_device.freeMemory(vk_outputImageMemory);
+        vk_device.destroyImage(vk_outputImage);
     }
 
     void VulkanInterface::cleanupSyncObj() {

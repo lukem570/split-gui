@@ -73,8 +73,8 @@ int main() {
     SplitGui::Vec3 position = {0, 0, 0};
 
     ui.instance();
-    cube.submit(0);
     grid.submit(0);
+    cube.submit(0);
     graphics.submitBuffers();
 
     int prevXPos = 0;
