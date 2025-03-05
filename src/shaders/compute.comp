@@ -32,7 +32,8 @@ void main() {
     vec3 averageColor = accumulatedColor.rgb / max(accumulatedColor.a, EPSILON);
 
     //vec4 finalColor = vec4(averageColor, 1.0f - accumulatedWeight);
-    vec4 finalColor = accumulatedColor;
+    //vec4 finalColor = accumulatedColor;
+    vec4 finalColor = vec4(vec3(accumulatedWeight), 1.0f);
 
     imageStore(outColor, pixelCoords, finalColor);
 }

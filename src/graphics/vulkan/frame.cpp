@@ -25,7 +25,9 @@ namespace SplitGui {
 
     void VulkanInterface::transitionImageToComputeReadState(vk::CommandBuffer commandBuffer, vk::Image image) {
         vk::ImageMemoryBarrier barrier;
-        barrier.oldLayout                       = vk::ImageLayout::eShaderReadOnlyOptimal;
+        barrier.srcAccessMask                   = vk::AccessFlags(0);
+        barrier.dstAccessMask                   = vk::AccessFlagBits::eTransferWrite;
+        barrier.oldLayout                       = vk::ImageLayout::eUndefined;
         barrier.newLayout                       = vk::ImageLayout::eGeneral;
         barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
         barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
@@ -52,12 +54,14 @@ namespace SplitGui {
 
         vk_commandBuffers[currentFrame].clearColorImage(vk_colorAccumImage, vk::ImageLayout::eGeneral, &vk_clearValues[0].color, 1, &subresourceRange); 
 
-        barrier.oldLayout = vk::ImageLayout::eGeneral;
-        barrier.newLayout = vk::ImageLayout::eColorAttachmentOptimal;
+        barrier.srcAccessMask = vk::AccessFlagBits::eTransferWrite;
+        barrier.dstAccessMask = vk::AccessFlagBits::eShaderRead;
+        barrier.oldLayout     = vk::ImageLayout::eGeneral;
+        barrier.newLayout     = vk::ImageLayout::eColorAttachmentOptimal;
 
         commandBuffer.pipelineBarrier(
             vk::PipelineStageFlagBits::eTransfer,
-            vk::PipelineStageFlagBits::eColorAttachmentOutput,
+            vk::PipelineStageFlagBits::eFragmentShader,
             vk::DependencyFlags(0),
             0, nullptr, 0, nullptr, 1, &barrier
         );

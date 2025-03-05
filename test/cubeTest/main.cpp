@@ -39,7 +39,7 @@ int main() {
     window.attachEventHandler(eventHandler);
 
     SplitGui::VulkanFlags vulkanFlags;
-    vulkanFlags.clearColor             = 0xFFFFFF;
+    vulkanFlags.clearColor             = 0x0;
     vulkanFlags.enableValidationLayers = true;
 
     SplitGui::Graphics graphics;

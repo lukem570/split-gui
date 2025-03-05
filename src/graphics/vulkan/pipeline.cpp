@@ -115,11 +115,11 @@ namespace SplitGui {
         colorAccumBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eG;
         colorAccumBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eB;
         colorAccumBlendAttachment.colorWriteMask     |= vk::ColorComponentFlagBits::eA;
-        colorAccumBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
-        colorAccumBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+        colorAccumBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eOne;
+        colorAccumBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOne;
         colorAccumBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
-        colorAccumBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eSrcAlpha;
-        colorAccumBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+        colorAccumBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+        colorAccumBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOne;
         colorAccumBlendAttachment.alphaBlendOp        = vk::BlendOp::eAdd;
 
         vk::PipelineColorBlendAttachmentState weightAccumBlendAttachment;
