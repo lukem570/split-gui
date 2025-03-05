@@ -134,8 +134,8 @@ void main() {
         outColor = vec4(in_fragColor, 1.0);
     }
 
-    float weight = clamp(pow(min(1.0, outColor.a * 10.0) + 0.01, 3.0) * 1e8 * pow(1.0 - gl_FragCoord.z * 0.9, 3.0), 1e-2, 3e3);
+    float weight = clamp(pow(min(1.0, outColor.a * 10.0) + 0.01, 3.0) * 1e8 * pow(1.0 - gl_FragCoord.z * 0.2, 3.0), 1e-2, 3e3);
 	
 	outColorAccum = vec4(outColor.rgb * outColor.a, outColor.a) * weight;
-	outAlphaAccum = 1;
+	outAlphaAccum = outColor.a;
 }

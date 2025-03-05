@@ -23,7 +23,7 @@ namespace SplitGui {
         );
     }
 
-    void VulkanInterface::transitionImageToComputeReadState(vk::CommandBuffer commandBuffer, vk::Image image) {
+    void VulkanInterface::transitionImageToComputeReadState(vk::CommandBuffer commandBuffer, vk::Image image, vk::ClearColorValue& clearColor) {
         vk::ImageMemoryBarrier barrier;
         barrier.srcAccessMask                   = vk::AccessFlags(0);
         barrier.dstAccessMask                   = vk::AccessFlagBits::eTransferWrite;
@@ -52,7 +52,7 @@ namespace SplitGui {
         subresourceRange.baseArrayLayer = 0;
         subresourceRange.layerCount = 1;
 
-        vk_commandBuffers[currentFrame].clearColorImage(vk_colorAccumImage, vk::ImageLayout::eGeneral, &vk_clearValues[0].color, 1, &subresourceRange); 
+        vk_commandBuffers[currentFrame].clearColorImage(vk_colorAccumImage, vk::ImageLayout::eGeneral, &clearColor, 1, &subresourceRange); 
 
         barrier.srcAccessMask = vk::AccessFlagBits::eTransferWrite;
         barrier.dstAccessMask = vk::AccessFlagBits::eShaderRead;
@@ -146,8 +146,8 @@ namespace SplitGui {
 
         vk_renderpassBeginInfo.framebuffer = vk_swapchainFramebuffers[imageIndex];
         
-        transitionImageToComputeReadState(vk_commandBuffers[currentFrame], vk_alphaAccumImage);
-        transitionImageToComputeReadState(vk_commandBuffers[currentFrame], vk_colorAccumImage);
+        transitionImageToComputeReadState(vk_commandBuffers[currentFrame], vk_colorAccumImage, vk_clearValues[0].color);
+        transitionImageToComputeReadState(vk_commandBuffers[currentFrame], vk_alphaAccumImage, vk_clearValues[1].color);
         
         vk_commandBuffers[currentFrame].beginRenderPass(vk_renderpassBeginInfo, vk::SubpassContents::eInline);
         

@@ -125,11 +125,11 @@ namespace SplitGui {
         vk::PipelineColorBlendAttachmentState weightAccumBlendAttachment;
         weightAccumBlendAttachment.blendEnable         = vk::True;
         weightAccumBlendAttachment.colorWriteMask      = vk::ColorComponentFlagBits::eR;
-        weightAccumBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eZero;
-        weightAccumBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcColor;
+        weightAccumBlendAttachment.srcColorBlendFactor = vk::BlendFactor::eOne;
+        weightAccumBlendAttachment.dstColorBlendFactor = vk::BlendFactor::eOne;
         weightAccumBlendAttachment.colorBlendOp        = vk::BlendOp::eAdd;
-        weightAccumBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eZero;
-        weightAccumBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcColor;
+        weightAccumBlendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+        weightAccumBlendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eOne;
         weightAccumBlendAttachment.alphaBlendOp        = vk::BlendOp::eAdd;
 
         std::array<vk::PipelineColorBlendAttachmentState, 2> colorAttachments = { colorAccumBlendAttachment, weightAccumBlendAttachment };

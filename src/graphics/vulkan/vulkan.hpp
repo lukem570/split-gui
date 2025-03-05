@@ -188,7 +188,7 @@ namespace SplitGui {
 [[nodiscard]] inline ResultValue<vk::Format> findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features);
 
               inline void transitionImageToComputeWriteState(vk::CommandBuffer commandBuffer, vk::Image image);
-              inline void transitionImageToComputeReadState(vk::CommandBuffer commandBuffer, vk::Image image);
+              inline void transitionImageToComputeReadState(vk::CommandBuffer commandBuffer, vk::Image image, vk::ClearColorValue& clearColor);
               inline void transitionImageToTransferState(vk::CommandBuffer commandBuffer, vk::Image image);
               inline void transitionImageToPresentState(vk::CommandBuffer commandBuffer, vk::Image image);
 
