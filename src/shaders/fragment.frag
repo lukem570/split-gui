@@ -131,4 +131,7 @@ void main() {
         outColor = vec4(in_fragColor, 1.0);
     }
     
+    if (outColor.a == 0) {
+        discard;
+    }
 }
