@@ -310,15 +310,12 @@ namespace SplitGui {
 
     struct SceneRef {
         unsigned int sceneNumber;
+        RectRef      rect;
     };
 
     struct TextRef {
         std::vector<RectRef> rects;
         std::string          text;
-    };
-
-    struct VertexUniformObject {
-        IVec2 screenSize;
     };
 
     enum class UnitExpressionTokenType {
@@ -464,10 +461,9 @@ namespace SplitGui {
 
     struct DescriporBindings {
         enum {
-            eSceneData     = 0,
-            eGlyphs        = 1,
-            eVertexUniform = 2,
-            eTexture       = 3,
+            eGlyphs  = 0,
+            eScenes  = 1,
+            eTexture = 2,
         };
     };
 

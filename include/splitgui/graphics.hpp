@@ -29,7 +29,7 @@ namespace SplitGui {
               virtual RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       { throw; }
               virtual void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         { throw; }
 [[nodiscard]] virtual Result                    submitRect(RectRef& ref)                                                                                                           { throw; }
-[[nodiscard]] virtual ResultValue<SceneRef>     instanceScene(IVec2 x1, IVec2 x2)                                                                                                  { throw; }
+[[nodiscard]] virtual ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2)                                                                                                  { throw; }
 [[nodiscard]] virtual Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2)                                                                                     { throw; }
               virtual void                      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }

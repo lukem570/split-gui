@@ -30,7 +30,6 @@ namespace SplitGui {
         scenes.clear();
 
         knownIndicesSize = 0;
-        knownScenesSize  = 0;
     }
 
     inline Result VulkanInterface::createBuffer(

@@ -76,7 +76,7 @@ int main() {
     graphics.submitTriangleData(sceneRef, vertices, indices, 0);
 
     ui.instance();
-    graphics.submitBuffers();
+    TRYRC(submitRes, graphics.submitBuffers());
 
     SplitGui::Vec3 rotation = {0, 0, 0};
 
@@ -84,7 +84,7 @@ int main() {
     TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
 
     SplitGui::Camera cam;
-    TRYRC(submitRes, graphics.submitBuffers());
+    cam.submitGraphics(graphics);
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {

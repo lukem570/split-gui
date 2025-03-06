@@ -34,6 +34,29 @@ namespace SplitGui {
         vk_commandBuffers[currentFrame].reset();
         vk_commandBuffers[currentFrame].begin(vk_beginInfo);
 
+        for (unsigned int i = 0; i < scenes.size(); i++) {
+
+            if (!scenes[i].vertexBuffer) {
+                continue;
+            }
+
+            vk_renderpassBeginInfo.framebuffer = scenes[i].framebuffers[imageIndex];
+
+            vk_commandBuffers[currentFrame].beginRenderPass(vk_renderpassBeginInfo, vk::SubpassContents::eInline);
+
+            vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, scenes[i].pipeline);
+            vk_commandBuffers[currentFrame].bindVertexBuffers(0, 1, &scenes[i].vertexBuffer, &vk_vertexBufferOffsets);
+            vk_commandBuffers[currentFrame].bindIndexBuffer(scenes[i].indexBuffer, 0, vk::IndexType::eUint16);
+            vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, vk_scenePipelineLayout, 0, 1, &scenes[i].descriptorSet, 0, nullptr);
+
+            vk_commandBuffers[currentFrame].setViewport(0, 1, &vk_viewport);
+            vk_commandBuffers[currentFrame].setScissor(0, 1, &vk_scissor);
+            
+            vk_commandBuffers[currentFrame].drawIndexed(scenes[i].knownIndicesSize, 1, 0, 0, 0);
+
+            vk_commandBuffers[currentFrame].endRenderPass();
+        }
+
         vk_renderpassBeginInfo.framebuffer = vk_swapchainFramebuffers[imageIndex];
         
         vk_commandBuffers[currentFrame].beginRenderPass(vk_renderpassBeginInfo, vk::SubpassContents::eInline);

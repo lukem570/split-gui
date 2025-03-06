@@ -27,4 +27,3 @@
 #include "system.cpp"
 #include "text.cpp"
 #include "texture.cpp"
-#include "uniform.cpp"

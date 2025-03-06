@@ -30,6 +30,7 @@ namespace ft {
 // TODO: make this accessible to the user
 #define MAX_FRAMES_IN_FLIGHT 2
 #define MAX_VECTOR_IMAGES 256
+#define MAX_SCENES 16
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
 #define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
 #define SCENE_VERTEX_SHADER_PATH   "shaders/scene-vertex.spv"
@@ -57,8 +58,8 @@ namespace SplitGui {
               RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
               void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
 [[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
-              ResultValue<SceneRef>     instanceScene(IVec2 x1, IVec2 x2)                                                                                                  override;
-              Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2)                                                                                     override;
+              ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2)                                                                                                  override;
+[[nodiscard]] Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2)                                                                                     override;
               void                      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
@@ -108,17 +109,16 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_vertexBufferMemory;
             vk::Buffer                          vk_indexBuffer;
             vk::DeviceMemory                    vk_indexBufferMemory;
-            vk::DeviceSize                      vk_sceneBufferSize;
-            vk::Buffer                          vk_sceneBuffer;
-            vk::DeviceMemory                    vk_sceneBufferMemory;
-            vk::Buffer                          vk_vertexUniformBuffer;
-            vk::DeviceMemory                    vk_vertexUniformBufferMemory;
             vk::DescriptorSet                   vk_descriptorSet;
             vk::Extent2D                        vk_msdfExtent;
             vk::Image                           vk_textGlyphImages;
             vk::DeviceMemory                    vk_textGlyphImageMemory;
             vk::ImageView                       vk_textGlyphImageView;
             vk::Sampler                         vk_textGlyphSampler;
+            vk::Image                           vk_scenesImageArrayImages;
+            vk::DeviceMemory                    vk_scenesImageArrayImageMemory;
+            vk::ImageView                       vk_scenesImageArrayImageView;
+            vk::Sampler                         vk_scenesImageArraySampler;
             vk::Image                           vk_textureArrayImages;
             vk::DeviceMemory                    vk_textureArrayImageMemory;
             vk::ImageView                       vk_textureArrayImageView;
@@ -146,9 +146,7 @@ namespace SplitGui {
             vk::Result                          vk_runtimeResult;
             unsigned int                        currentFrame     =  0;
             unsigned int                        knownIndicesSize =  0;
-            unsigned int                        knownScenesSize  =  0;
             uint32_t                            imageIndex       = -1;
-            VertexUniformObject                 vertexUniformObject;
             std::vector<VertexBufferObject>     vertices;
             std::vector<uint16_t>               indices;
             std::vector<std::vector<Contour>>   vectorImages;
@@ -175,6 +173,8 @@ namespace SplitGui {
 
                 std::vector<SceneVertexBufferObject> vertices;
                 std::vector<uint16_t>                indices;
+
+                unsigned int knownIndicesSize = 0;
             };
 
             // scene variables
@@ -222,14 +222,15 @@ namespace SplitGui {
               inline void   createDescriptorPool();
               inline void   createDescriptorSet();
 [[nodiscard]] inline Result createTextGlyphImage();
+[[nodiscard]] inline Result createScenesImageArray();
 [[nodiscard]] inline Result createTextureArray();
-[[nodiscard]] inline Result createVertexUniformBuffer();
               inline void   updateDescriptorSets();
 
               inline void   createSceneDescriptorSetLayout();
               inline void   createSceneDescriptorPool();
               inline void   createScenePipelineLayout();
 [[nodiscard]] inline Result createScenePipelineModules();
+              
 [[nodiscard]] inline Result createScenePipeline(SceneObject& scene);
 [[nodiscard]] inline Result createSceneDepthResources(SceneObject& scene);
 [[nodiscard]] inline Result createSceneOutputResources(SceneObject& scene);
@@ -248,7 +249,7 @@ namespace SplitGui {
               inline void cleanupSyncObj();
               inline void cleanupImageViews();
               inline void cleanupVertexAndIndexBuffers();
-              inline void cleanupSceneBuffer();
+              inline void cleanupScenesImageArray();
               inline void cleanupScenes();
 
 [[nodiscard]] Result recreateSwapchain();

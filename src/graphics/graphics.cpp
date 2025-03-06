@@ -77,7 +77,17 @@ namespace SplitGui {
     }
 
     ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2) {
-        return pInterface->instanceScene(x1, x2);
+        IVec2 windowSize = pWindow->getSize();
+
+        Vec2 newX1;
+        newX1.x = (float)x1.x / (float)windowSize.x * 2.0f - 1.0f;
+        newX1.y = (float)x1.y / (float)windowSize.y * 2.0f - 1.0f;
+
+        Vec2 newX2;
+        newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
+        newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
+
+        return pInterface->instanceScene(newX1, newX2);
     }
 
     Result Graphics::resizeEvent() {

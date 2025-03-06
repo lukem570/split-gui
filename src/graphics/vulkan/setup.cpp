@@ -48,8 +48,8 @@ namespace SplitGui {
         createDescriptorPool();
         createDescriptorSet();
         TRYR(glyphRes, createTextGlyphImage());
+        TRYR(sceneRes, createScenesImageArray());
         TRYR(textureRes, createTextureArray());
-        TRYR(vertexRes, createVertexUniformBuffer());
         updateDescriptorSets();
         
         createSceneDescriptorSetLayout();
