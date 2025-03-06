@@ -108,28 +108,23 @@ namespace SplitGui {
 
     inline void VulkanInterface::cleanupScenes() {
 
-        vk_device.freeDescriptorSets(vk_sceneDescriptorPool, vk_sceneDepthImageViews.size(), vk_sceneDescriptorSets.data());
+        for (unsigned int i = 0; i < scenes.size(); i++) {
 
-        for (unsigned int i = 0; i < vk_sceneDepthImages.size(); i++) {
-            vk_device.destroyImageView(vk_sceneDepthImageViews[i]);
-            vk_device.freeMemory(vk_sceneDepthImageMemories[i]);
-            vk_device.destroyImage(vk_sceneDepthImages[i]);
-        }
+            vk_device.freeDescriptorSets(vk_sceneDescriptorPool, 1, &scenes[i].descriptorSet);
 
-        for (unsigned int i = 0; i < vk_sceneOutputImages.size(); i++) {
-            vk_device.destroyImageView(vk_sceneOutputImageViews[i]);
-            vk_device.freeMemory(vk_sceneOutputImageMemories[i]);
-            vk_device.destroyImage(vk_sceneOutputImages[i]);
-        }
+            vk_device.destroyImageView(scenes[i].depthImageView);
+            vk_device.freeMemory(scenes[i].depthImageMemory);
+            vk_device.destroyImage(scenes[i].depthImage);
+            
+            vk_device.destroyImageView(scenes[i].outputImageView);
+            vk_device.freeMemory(scenes[i].outputImageMemory);
+            vk_device.destroyImage(scenes[i].outputImage);
 
-        for (unsigned int i = 0; i < vk_sceneFrameBuffers.size(); i++) {
-            for (unsigned int j = 0; j < vk_sceneFrameBuffers[i].size(); j++) {
-                vk_device.destroyFramebuffer(vk_sceneFrameBuffers[i][j]);
+            for (unsigned int j = 0; j < scenes[i].framebuffers.size(); j++) {
+                vk_device.destroyFramebuffer(scenes[i].framebuffers[j]);
             }
-        }
-
-        for (unsigned int i = 0; i < vk_scenePipelines.size(); i++) {
-            vk_device.destroyPipeline(vk_scenePipelines[i]);
+            
+            vk_device.destroyPipeline(scenes[i].pipeline);
         }
 
         vk_device.destroyShaderModule(vk_sceneVertexModule);

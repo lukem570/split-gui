@@ -30,13 +30,13 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    void Graphics::submitWindow(Window& window) {
+    Result Graphics::submitWindow(Window& window) {
         pWindow = &window;
-        pInterface->submitWindow(window);
+        return pInterface->submitWindow(window);
     }
 
-    void Graphics::drawFrame() {
-        pInterface->drawFrame();
+    Result Graphics::drawFrame() {
+        return pInterface->drawFrame();
     }
 
     RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth, VertexFlags flags,  int textureIndex) {
@@ -72,11 +72,11 @@ namespace SplitGui {
         return pInterface->submitRect(ref);
     }
 
-    void Graphics::submitBuffers() {
-        pInterface->submitBuffers();
+    Result Graphics::submitBuffers() {
+        return pInterface->submitBuffers();
     }
 
-    unsigned int Graphics::instanceScene(IVec2 x1, IVec2 x2) {
+    ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2) {
         return pInterface->instanceScene(x1, x2);
     }
 
@@ -113,20 +113,20 @@ namespace SplitGui {
         pInterface->clearBuffers();
     }
 
-    void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
-        pInterface->submitTriangleData(sceneNumber, vertices, indices, flags, textureNumber);
+    void Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
+        pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
     }
 
-    Result Graphics::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
-        return pInterface->updateSceneCameraPosition(sceneNumber, position);
+    Result Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
+        return pInterface->updateSceneCameraPosition(ref, position);
     }
 
-    Result Graphics::updateSceneCameraView(unsigned int sceneNumber, Mat4& view) {
-        return pInterface->updateSceneCameraView(sceneNumber, view);
+    Result Graphics::updateSceneCameraView(SceneRef& ref, Mat4& view) {
+        return pInterface->updateSceneCameraView(ref, view);
     }
 
-    Result Graphics::updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection) {
-        return pInterface->updateSceneCameraProjection(sceneNumber, projection);
+    Result Graphics::updateSceneCameraProjection(SceneRef& ref, Mat4& projection) {
+        return pInterface->updateSceneCameraProjection(ref, projection);
     }
 
     void Graphics::attachEventHandler(EventHandler& handler) {
@@ -134,8 +134,8 @@ namespace SplitGui {
         pEventHandler = &handler;
     }
 
-    void Graphics::updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2) {
-        pInterface->updateScene(sceneNumber, x1, x2);
+    Result Graphics::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2) {
+        return pInterface->updateScene(ref, x1, x2);
     }
 
     [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {

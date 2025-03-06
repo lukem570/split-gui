@@ -5,7 +5,6 @@
 #include "cleanup.cpp"
 #include "default.cpp"
 #include "list.cpp"
-#include "media.cpp"
 #include "meta.cpp"
 #include "overlay.cpp"
 #include "parse.cpp"

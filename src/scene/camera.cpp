@@ -3,7 +3,7 @@
 #include <cmath>
 
 namespace SplitGui {
-    Result Camera::update(int sceneNumber) {
+    Result Camera::update(SceneRef& ref) {
 
         Mat4 rotationX = Mat4::xRotationMatrix(transform.rotation.x);
         Mat4 rotationY = Mat4::yRotationMatrix(transform.rotation.y);
@@ -12,8 +12,8 @@ namespace SplitGui {
 
         view = rotation;
 
-        TRYR(viewRes, pGraphics->updateSceneCameraView(sceneNumber, view));
-        TRYR(posRes, pGraphics->updateSceneCameraPosition(sceneNumber, transform.position));
+        TRYR(viewRes, pGraphics->updateSceneCameraView(ref, view));
+        TRYR(posRes, pGraphics->updateSceneCameraPosition(ref, transform.position));
 
         return Result::eSuccess;
     }

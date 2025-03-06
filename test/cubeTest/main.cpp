@@ -44,7 +44,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     graphics.attachEventHandler(eventHandler);
 
     SplitGui::RectObj viewport;
@@ -72,10 +72,13 @@ int main() {
     SplitGui::Vec3 rotation = {0, 0, 0};
     SplitGui::Vec3 position = {0, 0, 0};
 
+    SplitGui::Default::SceneElement* scene = (SplitGui::Default::SceneElement*)ui.searchByReference("scene").back();
+    SplitGui::SceneRef sceneRef = scene->getSceneRef();
+
     ui.instance();
-    cube.submit(0);
-    grid.submit(0);
-    graphics.submitBuffers();
+    cube.submit(sceneRef);
+    grid.submit(sceneRef);
+    TRYRC(submitRes, graphics.submitBuffers());
 
     int prevXPos = 0;
     int prevYPos = 0;
@@ -94,7 +97,7 @@ int main() {
     bool shiftDown = false;
 
     SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90));
-    TRYRC(projectionRes, graphics.updateSceneCameraProjection(0, projection));
+    TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
 
     SplitGui::Camera cam;
     cam.submitGraphics(graphics);
@@ -240,9 +243,9 @@ int main() {
         cam.setRotation(rotation);
         cam.setPosition(position);
 
-        TRYRC(updateRes, cam.update(0));
+        TRYRC(updateRes, cam.update(sceneRef));
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
     

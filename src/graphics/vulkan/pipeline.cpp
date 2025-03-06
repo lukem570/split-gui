@@ -46,7 +46,7 @@ namespace SplitGui {
         bindingDescription.stride    = sizeof(VertexBufferObject);
         bindingDescription.inputRate = vk::VertexInputRate::eVertex;
         
-        std::array<vk::VertexInputAttributeDescription, 7> attributeDescriptions;
+        std::array<vk::VertexInputAttributeDescription, 5> attributeDescriptions;
         attributeDescriptions[VertexLayout::eVertexPos].binding          = 0;
         attributeDescriptions[VertexLayout::eVertexPos].location         = VertexLayout::eVertexPos;
         attributeDescriptions[VertexLayout::eVertexPos].format           = vk::Format::eR32G32B32Sfloat;
@@ -67,20 +67,10 @@ namespace SplitGui {
         attributeDescriptions[VertexLayout::eFlags].format               = vk::Format::eR16Uint;
         attributeDescriptions[VertexLayout::eFlags].offset               = offsetof(VertexBufferObject, VertexBufferObject::flags);
 
-        attributeDescriptions[VertexLayout::eSceneNumber].binding        = 0;
-        attributeDescriptions[VertexLayout::eSceneNumber].location       = VertexLayout::eSceneNumber;
-        attributeDescriptions[VertexLayout::eSceneNumber].format         = vk::Format::eR16Uint;
-        attributeDescriptions[VertexLayout::eSceneNumber].offset         = offsetof(VertexBufferObject, VertexBufferObject::sceneNumber);
-
-        attributeDescriptions[VertexLayout::eTextureNumber].binding      = 0;
-        attributeDescriptions[VertexLayout::eTextureNumber].location     = VertexLayout::eTextureNumber;
-        attributeDescriptions[VertexLayout::eTextureNumber].format       = vk::Format::eR16Uint;
-        attributeDescriptions[VertexLayout::eTextureNumber].offset       = offsetof(VertexBufferObject, VertexBufferObject::textureNumber);
-
-        attributeDescriptions[VertexLayout::eNormal].binding             = 0;
-        attributeDescriptions[VertexLayout::eNormal].location            = VertexLayout::eNormal;
-        attributeDescriptions[VertexLayout::eNormal].format              = vk::Format::eR32G32B32Sfloat;
-        attributeDescriptions[VertexLayout::eNormal].offset              = offsetof(VertexBufferObject, VertexBufferObject::normal);
+        attributeDescriptions[VertexLayout::eIndex].binding              = 0;
+        attributeDescriptions[VertexLayout::eIndex].location             = VertexLayout::eIndex;
+        attributeDescriptions[VertexLayout::eIndex].format               = vk::Format::eR16Uint;
+        attributeDescriptions[VertexLayout::eIndex].offset               = offsetof(VertexBufferObject, VertexBufferObject::index);
 
         vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
         vertexInputInfo.vertexBindingDescriptionCount   = 1;

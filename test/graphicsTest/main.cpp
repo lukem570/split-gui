@@ -18,7 +18,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     graphics.attachEventHandler(eventHandler);
 
     while (!window.shouldClose()) {
@@ -26,7 +26,7 @@ int main() {
             
         }  
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
 

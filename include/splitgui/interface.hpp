@@ -76,7 +76,7 @@ namespace SplitGui {
             friend class Interface;
 
 [[nodiscard]] virtual Result instance();
-              virtual void   update();
+[[nodiscard]] virtual Result update();
 [[nodiscard]] virtual Result submit();
 
             void addChild(InterfaceElement* pChild);
@@ -112,7 +112,7 @@ namespace SplitGui {
                       ~Split()    override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
 
                 void   setVertical(bool);
   [[nodiscard]] Result setPosition(std::string);
@@ -132,7 +132,7 @@ namespace SplitGui {
                       ~List()     override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
 
                 void   setVertical(bool);
 
@@ -150,7 +150,7 @@ namespace SplitGui {
                       ~Box()      override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eBox;
@@ -166,7 +166,7 @@ namespace SplitGui {
                       ~Overlay()    override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eOverlay;
@@ -182,7 +182,7 @@ namespace SplitGui {
                       ~Transform() override = default;
 
   [[nodiscard]] Result instance()  override;
-                void   update()    override;
+  [[nodiscard]] Result update()   override;
 
   [[nodiscard]] Result setScale(std::string);
   [[nodiscard]] Result setPosition(std::string);
@@ -204,7 +204,7 @@ namespace SplitGui {
                       ~Rect()     override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
   [[nodiscard]] Result submit()   override;
 
                 void   setColor(HexColor);
@@ -231,10 +231,10 @@ namespace SplitGui {
             public:
                       ~SceneElement() override = default;
 
-  [[nodiscard]] Result instance()     override;
-                void   update()       override;
+  [[nodiscard]] Result instance() override;
+  [[nodiscard]] Result update()   override;
 
-                void   setSceneNumber(unsigned int sceneNumber);
+                SceneRef getSceneRef();
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eScene;
@@ -242,11 +242,9 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 0; // TODO:
 
             private: // props
-                unsigned int                   number = 0;
-                // TODO:
 
                 // state
-                unsigned int                   graphicsSceneRef;
+                SceneRef                       graphicsSceneRef;
         };
 
         class SPLITGUI_EXPORT Text : public InterfaceElement {
@@ -254,7 +252,7 @@ namespace SplitGui {
                       ~Text()     override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
 
                 void   setText(std::string value);
                 void   setColor(HexColor);
@@ -277,28 +275,12 @@ namespace SplitGui {
                 TextRef                        textRef;
         };
 
-        class SPLITGUI_EXPORT Media : public InterfaceElement {
-            public:
-                      ~Media()    override = default;
-
-  [[nodiscard]] Result instance() override;
-                void   update()   override;
-
-            protected:
-                InterfaceElementType           type        = InterfaceElementType::eMedia;
-                std::string                    name        = "media";
-                const static unsigned int      maxChildren = 0;
-
-            private: // props
-                // TODO:
-        };
-
         class SPLITGUI_EXPORT Binding : public InterfaceElement {
             public:
                       ~Binding()  override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
 
                 void   setAlias(std::string& inAlias);
                 void   setSource(std::string& inSource);
@@ -321,7 +303,7 @@ namespace SplitGui {
                       ~Meta()     override = default;
 
   [[nodiscard]] Result instance() override;
-                void   update()   override;
+  [[nodiscard]] Result update()   override;
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eMeta;
@@ -337,7 +319,7 @@ namespace SplitGui {
                       ~BindPoint() override;
 
   [[nodiscard]] Result instance()  override;
-                void   update()    override;
+  [[nodiscard]] Result update()   override;
 
                 void   setBindPoint(InterfaceElement*);
                 void   setOwnership(bool);

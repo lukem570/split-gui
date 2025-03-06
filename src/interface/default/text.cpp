@@ -22,7 +22,6 @@ namespace SplitGui {
             return Result::eInvalidExpression;
         }
 
-
         UnitExpressionValue colorEval = colorStatement.evaluate(extent.height);
         color = colorEval.vector.ivec3;
 
@@ -31,15 +30,14 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    void Default::Text::update() {
-        Result HANDLE_THIS_RESULT_TODO = pGraphics->updateText(textRef, {extent.x, extent.y}, color, fontSize, depth);
-
-        SPLITGUI_LOG("Updated Text %d", (int)HANDLE_THIS_RESULT_TODO);
+    Result Default::Text::update() {
+        return pGraphics->updateText(textRef, {extent.x, extent.y}, color, fontSize, depth);
     }
 
     Result Default::Text::instance() {
 
         SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
+
         TRYD(textRes);
 
         textRef = textRes.value;

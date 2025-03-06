@@ -2,11 +2,11 @@
 
 <split direction="horizontal" position="50%">
     <split direction="vertical" position="50%">
-        <scene number="0"/>
+        <scene ref="scene-1"/>
         <rect color="ivec3(100u, 255u, 100u)"/>
     </split>
     <split direction="vertical" position="50%">
         <rect color="ivec3(255u, 100u, 100u)"/>
-        <scene number="1"/>
+        <scene ref="scene-2"/>
     </split>
 </split>

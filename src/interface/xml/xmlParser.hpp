@@ -73,7 +73,6 @@ namespace SplitGui {
 [[nodiscard]] inline Result handleBindingParameters(Default::Binding* binding, XmlToken& token);
 [[nodiscard]] inline Result handleBoxParameters(Default::Box* box, XmlToken& token);
 [[nodiscard]] inline Result handleListParameters(Default::List* list, XmlToken& token);
-[[nodiscard]] inline Result handleMediaParameters(Default::Media* media, XmlToken& token);
 [[nodiscard]] inline Result handleMetaParameters(Default::Meta* meta, XmlToken& token);
 [[nodiscard]] inline Result handleOverlayParameters(Default::Overlay* overlay, XmlToken& token);
 [[nodiscard]] inline Result handleRectParameters(Default::Rect* rect, XmlToken& token);

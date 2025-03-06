@@ -20,7 +20,7 @@ namespace SplitGui {
             void      addChild(Node& child);
             void      submitGraphics(Graphics& graphics);
 
-            virtual void submit(int sceneNumber, int flags = VertexFlagsBits::eNone) {};
+            virtual void submit(SceneRef& ref, int flags = VertexFlagsBits::eNone) {};
 
         protected:
             Graphics*              pGraphics;
@@ -32,7 +32,7 @@ namespace SplitGui {
     class SPLITGUI_EXPORT Mesh : public Node {
         public:
 
-            void submit(int sceneNumber, int flags = VertexFlagsBits::eNone) override;
+            void submit(SceneRef& ref, int flags = VertexFlagsBits::eNone) override;
 
         protected:
 
@@ -58,7 +58,7 @@ namespace SplitGui {
             public:
             Grid();
             
-            void submit(int sceneNumber, int flags = VertexFlagsBits::eWorldSpace) override;
+            void submit(SceneRef& ref, int flags = VertexFlagsBits::eWorldSpace) override;
             void setColor(HexColor color);
             void generate();
             
@@ -69,7 +69,7 @@ namespace SplitGui {
 
     class SPLITGUI_EXPORT Camera : public Node {
         public:
-[[nodiscard]] Result update(int sceneNumber);
+[[nodiscard]] Result update(SceneRef& ref);
               Mat4   getView();
 
         protected:

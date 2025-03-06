@@ -1,14 +1,14 @@
 #include "../vulkan.hpp"
 
 namespace SplitGui {
-    inline void VulkanInterface::createSceneFramebuffers() {
+    inline void VulkanInterface::createSceneFramebuffers(SceneObject& scene) {
         std::vector<vk::Framebuffer> framebuffers;
 
         framebuffers.resize(vk_swapchainImageViews.size());
 
         std::array<vk::ImageView, 2> attachments = {
-            vk_sceneOutputImageViews.back(),
-            vk_sceneDepthImageViews.back()
+            scene.outputImageView,
+            scene.depthImageView
         };
 
         for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
@@ -24,7 +24,7 @@ namespace SplitGui {
             framebuffers[i] = vk_device.createFramebuffer(framebufferInfo);
         }
 
-        vk_sceneFrameBuffers.push_back(framebuffers);
+        scene.framebuffers = framebuffers;
 
         SPLITGUI_LOG("Created Scene Framebuffers");
     }

@@ -21,7 +21,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     graphics.attachEventHandler(eventHandler);
 
     std::vector<SplitGui::Contour> contours;
@@ -59,14 +59,14 @@ int main() {
         textureIndex.value
     );
 
-    graphics.submitBuffers();
+    TRYRC(submitRes, graphics.submitBuffers());
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
             
         }  
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
 

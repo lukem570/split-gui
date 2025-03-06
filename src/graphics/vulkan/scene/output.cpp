@@ -1,7 +1,7 @@
 #include "../vulkan.hpp"
 
 namespace SplitGui {
-    inline Result VulkanInterface::createSceneOutputResources() {
+    inline Result VulkanInterface::createSceneOutputResources(SceneObject& scene) {
 
         vk::ImageCreateInfo outputImageInfo;
         outputImageInfo.imageType     = vk::ImageType::e2D;
@@ -45,9 +45,9 @@ namespace SplitGui {
 
         vk::ImageView outputImageView = vk_device.createImageView(outputImageViewInfo);
 
-        vk_sceneOutputImages.push_back(outputImage);
-        vk_sceneOutputImageMemories.push_back(outputImageMemory);
-        vk_sceneOutputImageViews.push_back(outputImageView);
+        scene.outputImage       = outputImage;
+        scene.outputImageMemory = outputImageMemory;
+        scene.outputImageView   = outputImageView;
 
         SPLITGUI_LOG("Created Scene Output Resources");
 

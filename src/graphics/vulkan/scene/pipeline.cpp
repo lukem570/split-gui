@@ -28,7 +28,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    inline Result VulkanInterface::createScenePipeline() {
+    inline Result VulkanInterface::createScenePipeline(SceneObject& scene) {
 
         vk::PipelineShaderStageCreateInfo vertexCreateInfo;
         vertexCreateInfo.stage  = vk::ShaderStageFlagBits::eVertex;
@@ -167,7 +167,7 @@ namespace SplitGui {
             return Result::eFailedToCreateGraphicsPipeline;
         } 
 
-        vk_scenePipelines.push_back(result.value);
+        scene.pipeline = result.value;
 
         SPLITGUI_LOG("Created Scene Graphics Pipeline");
 

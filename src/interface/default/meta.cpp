@@ -3,8 +3,8 @@
 #include <splitgui/interface.hpp>
 
 namespace SplitGui {
-    void Default::Meta::update() {
-        
+    Result Default::Meta::update() {
+        return Result::eSuccess;
     }
 
     Result Default::Meta::instance() {

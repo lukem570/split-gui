@@ -36,10 +36,10 @@ namespace SplitGui {
 
         vertices.resize(oldSize + 4);
 
-        vertices[oldSize + 0] = {bottomLeft,  flags, 0, textureIndex};
-        vertices[oldSize + 1] = {bottomRight, flags, 0, textureIndex};
-        vertices[oldSize + 2] = {topLeft,     flags, 0, textureIndex};
-        vertices[oldSize + 3] = {topRight,    flags, 0, textureIndex};
+        vertices[oldSize + 0] = {bottomLeft,  flags, textureIndex};
+        vertices[oldSize + 1] = {bottomRight, flags, textureIndex};
+        vertices[oldSize + 2] = {topLeft,     flags, textureIndex};
+        vertices[oldSize + 3] = {topRight,    flags, textureIndex};
 
         RectRef refRet;
         refRet.bottomLeft  = oldSize + 0;

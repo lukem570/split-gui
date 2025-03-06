@@ -22,7 +22,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    void InterfaceElement::update() {
+    Result InterfaceElement::update() {
         for (unsigned int i = 0; i < children.size(); i++) {
             if (children[i]->type == InterfaceElementType::eMeta    ||
                 children[i]->type == InterfaceElementType::eBinding) {
@@ -31,9 +31,11 @@ namespace SplitGui {
             }
 
             children[i]->setExtent(extent);
-            children[i]->update();
+            TRYR(updateRes, children[i]->update());
             break;
         }
+
+        return Result::eSuccess;
     }
 
     Result InterfaceElement::submit() {

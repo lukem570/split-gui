@@ -41,7 +41,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     graphics.attachEventHandler(eventHandler);
 
     SplitGui::RectObj viewport;
@@ -54,6 +54,11 @@ int main() {
     ui.submitGraphics(graphics);
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
+
+    SplitGui::Default::SceneElement* scene1 = (SplitGui::Default::SceneElement*)ui.searchByReference("scene-1").back();
+    SplitGui::Default::SceneElement* scene2 = (SplitGui::Default::SceneElement*)ui.searchByReference("scene-2").back();
+    SplitGui::SceneRef sceneRef1 = scene1->getSceneRef();
+    SplitGui::SceneRef sceneRef2 = scene2->getSceneRef();
 
     SplitGui::Vertex vert1;
     vert1.color = SplitGui::HexColor(0xFF0000).normalize();
@@ -70,11 +75,11 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2, 1, 0, 2};
 
-    graphics.submitTriangleData(0, vertices, indices, 0);
-    graphics.submitTriangleData(1, vertices, indices, 0);
+    graphics.submitTriangleData(sceneRef1, vertices, indices, 0);
+    graphics.submitTriangleData(sceneRef2, vertices, indices, 0);
 
     ui.instance();
-    graphics.submitBuffers();
+    TRYRC(submitRes, graphics.submitBuffers());
 
     SplitGui::Vec3 rotation1 = {degToRad(5), 0, 0};
     SplitGui::Vec3 rotation2 = {degToRad(5), 0, 0};
@@ -82,8 +87,8 @@ int main() {
     SplitGui::Mat4 projection1 = SplitGui::Mat4::orthographicProjection();
     SplitGui::Mat4 projection2 = SplitGui::Mat4::orthographicProjection();
 
-    TRYRC(projectionRes1, graphics.updateSceneCameraProjection(0, projection1));
-    TRYRC(projectionRes2, graphics.updateSceneCameraProjection(1, projection2));
+    TRYRC(projectionRes1, graphics.updateSceneCameraProjection(sceneRef1, projection1));
+    TRYRC(projectionRes2, graphics.updateSceneCameraProjection(sceneRef2, projection2));
 
     SplitGui::Camera cam1;
     SplitGui::Camera cam2;
@@ -102,10 +107,10 @@ int main() {
         cam1.setRotation(rotation1);
         cam2.setRotation(rotation2);
 
-        TRYRC(updateRes1, cam1.update(0));
-        TRYRC(updateRes2, cam2.update(1));
+        TRYRC(updateRes1, cam1.update(sceneRef1));
+        TRYRC(updateRes2, cam2.update(sceneRef2));
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
     

@@ -5,5 +5,5 @@
         <rect color="ivec3(255u, 100u, 100u)"/>
         <rect color="ivec3(100u, 255u, 100u)"/>
     </split>
-    <scene number="0"/>
+    <scene ref="scene"/>
 </split>

@@ -27,9 +27,9 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    void Default::BindPoint::update() {
+    Result Default::BindPoint::update() {
         root->setExtent(extent);
-        root->update();
+        return root->update();
     }
 
     std::vector<InterfaceElement*> Default::BindPoint::searchByReference(std::string reference) {

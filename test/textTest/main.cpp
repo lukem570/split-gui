@@ -20,7 +20,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     TRYRC(fontRes, graphics.loadFont("fonts/roboto/Roboto-Regular.ttf"));
     graphics.attachEventHandler(eventHandler);
 
@@ -38,14 +38,14 @@ int main() {
         20
     ));
 
-    graphics.submitBuffers();
+    TRYRC(submitRes, graphics.submitBuffers());
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
             
         }  
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
 

@@ -1,7 +1,7 @@
 #include "../vulkan.hpp"
 
 namespace SplitGui {
-    inline Result VulkanInterface::createSceneDepthResources() {
+    inline Result VulkanInterface::createSceneDepthResources(SceneObject& scene) {
 
         ResultValue<vk::Format> depthFormat = findSupportedFormat(
             {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
@@ -53,9 +53,9 @@ namespace SplitGui {
 
         vk::ImageView depthImageView = vk_device.createImageView(depthImageViewInfo);
 
-        vk_sceneDepthImages.push_back(depthImage);
-        vk_sceneDepthImageMemories.push_back(depthImageMemory);
-        vk_sceneDepthImageViews.push_back(depthImageView);
+        scene.depthImage       = depthImage;
+        scene.depthImageMemory = depthImageMemory;
+        scene.depthImageView   = depthImageView;
 
         SPLITGUI_LOG("Created Scene Depth Resources");
 

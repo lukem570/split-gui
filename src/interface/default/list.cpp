@@ -3,7 +3,7 @@
 #include <splitgui/interface.hpp>
 
 namespace SplitGui {
-    void Default::List::update() {
+    Result Default::List::update() {
         int maxSize = isVertical ? extent.height : extent.width;
         int pos     = isVertical ? extent.y : extent.x;
         int size    = maxSize / children.size();
@@ -40,8 +40,10 @@ namespace SplitGui {
 
         for (unsigned int i = 0; i < children.size(); i++) {
             children[i]->setExtent(extents[i]);
-            children[i]->update();
+            TRYR(updateRes, children[i]->update());
         }
+
+        return Result::eSuccess;
     }
 
     Result Default::List::instance() {
@@ -83,7 +85,7 @@ namespace SplitGui {
         for (unsigned int i = 0; i < children.size(); i++) {
             children[i]->setGraphics(pGraphics);
             children[i]->setExtent(extents[i]);
-            children[i]->instance();
+            TRYR(instanceRes, children[i]->instance());
         }
         
         SPLITGUI_LOG("Instanced List");

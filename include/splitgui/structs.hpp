@@ -290,9 +290,7 @@ namespace SplitGui {
     struct VertexBufferObject {
         Vertex   vertex;
         uint16_t flags;
-        uint16_t sceneNumber;
-        uint16_t textureNumber;
-        Vec3     normal;
+        uint16_t index; // stores scene number and texture number
     };
 
     struct SceneVertexBufferObject {
@@ -308,6 +306,10 @@ namespace SplitGui {
         int bottomRight;
         int topLeft;
         int topRight;
+    };
+
+    struct SceneRef {
+        unsigned int sceneNumber;
     };
 
     struct TextRef {
@@ -483,9 +485,7 @@ namespace SplitGui {
             eVertexColor       = 1,
             eVertexTextureCord = 2,
             eFlags             = 3,
-            eSceneNumber       = 4,
-            eTextureNumber     = 5,
-            eNormal            = 6,
+            eIndex             = 4,
         };
     };
 

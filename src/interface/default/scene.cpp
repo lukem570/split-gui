@@ -3,19 +3,23 @@
 #include <splitgui/interface.hpp>
 
 namespace SplitGui {
-    void Default::SceneElement::update() {
-        pGraphics->updateScene(graphicsSceneRef, extent.pos, extent.pos + extent.size);
+    Result Default::SceneElement::update() {
+        return pGraphics->updateScene(graphicsSceneRef, extent.pos, extent.pos + extent.size);
     }
     
     Result Default::SceneElement::instance() {
-        graphicsSceneRef = pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
+        ResultValue<SceneRef> result = pGraphics->instanceScene(extent.pos, extent.pos + extent.size);
+
+        TRYD(result);
+
+        graphicsSceneRef = result.value;
 
         SPLITGUI_LOG("Instanced Scene");
 
         return Result::eSuccess;
     }
 
-    void Default::SceneElement::setSceneNumber(unsigned int sceneNumber) {
-        number = sceneNumber;
+    SceneRef Default::SceneElement::getSceneRef() {
+        return graphicsSceneRef;
     }
 }

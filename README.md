@@ -147,8 +147,6 @@ index.xml
 
 * staging buffer caching
 * make staging buffer allocate extra space for update events
-* fix scenes buffers recreating on updateposition and updaterotation
-    * use a custom copy region for specific indices
 
 ### Refactoring
 

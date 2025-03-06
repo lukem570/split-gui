@@ -41,7 +41,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     graphics.attachEventHandler(eventHandler);
 
     SplitGui::RectObj viewport;
@@ -54,6 +54,9 @@ int main() {
     ui.submitGraphics(graphics);
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
+
+    SplitGui::Default::SceneElement* scene = (SplitGui::Default::SceneElement*)ui.searchByReference("scene").back();
+    SplitGui::SceneRef sceneRef = scene->getSceneRef();
 
     SplitGui::Vertex vert1;
     vert1.color = SplitGui::HexColor(0xFF0000).normalize();
@@ -70,15 +73,15 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2};
 
-    graphics.submitTriangleData(0, vertices, indices, 0);
+    graphics.submitTriangleData(sceneRef, vertices, indices, 0);
 
     ui.instance();
-    graphics.submitBuffers();
+    TRYRC(submitRes, graphics.submitBuffers());
 
     SplitGui::Vec3 rotation = {0, 0, 0};
 
     SplitGui::Mat4 projection = SplitGui::Mat4::orthographicProjection();
-    TRYRC(projectionRes, graphics.updateSceneCameraProjection(0, projection));
+    TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
 
     SplitGui::Camera cam;
 
@@ -92,9 +95,9 @@ int main() {
         rotation.y += degToRad(2);
 
         cam.setRotation(rotation);
-        TRYRC(updateRes, cam.update(0));
+        TRYRC(updateRes, cam.update(sceneRef));
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
     

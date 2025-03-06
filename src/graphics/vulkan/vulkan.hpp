@@ -48,29 +48,29 @@ namespace SplitGui {
     class VulkanInterface : GraphicsLibInterface {
         public:
                                         VulkanInterface(VulkanFlags flags);
-                                       ~VulkanInterface()                                                                                                                             override;
+                                       ~VulkanInterface()                                                                                                                  override;
 
-[[nodiscard]] Result                    instance()                                                                                                                                    override;
-[[nodiscard]] Result                    submitWindow(SplitGui::Window& window)                                                                                                        override;
+[[nodiscard]] Result                    instance()                                                                                                                         override;
+[[nodiscard]] Result                    submitWindow(SplitGui::Window& window)                                                                                             override;
 
-[[nodiscard]] Result                    drawFrame()                                                                                                                                   override;
-              RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                                  override;
-              void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                                    override;
-[[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                                      override;
-              unsigned int              instanceScene(IVec2 x1, IVec2 x2)                                                                                                             override;
-              void                      updateScene(unsigned int ref, IVec2 x1, IVec2 x2)                                                                                             override;
-              void                      submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
-[[nodiscard]] Result                    updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position)                                                                           override;
-[[nodiscard]] Result                    updateSceneCameraView(unsigned int sceneNumber, Mat4& view)                                                                                   override;
-[[nodiscard]] Result                    updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection)                                                                       override;
-[[nodiscard]] ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                            override;
-[[nodiscard]] Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                               override;
-[[nodiscard]] Result                    loadFont(const char* path)                                                                                                                    override;
-[[nodiscard]] ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours)                                                                                            override;
-[[nodiscard]] Result                    submitBuffers()                                                                                                                               override;
-              void                      clearBuffers()                                                                                                                                override;
+[[nodiscard]] Result                    drawFrame()                                                                                                                        override;
+              RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
+              void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
+[[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
+              ResultValue<SceneRef>     instanceScene(IVec2 x1, IVec2 x2)                                                                                                  override;
+              Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2)                                                                                     override;
+              void                      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
+[[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
+[[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
+[[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
+[[nodiscard]] ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 override;
+[[nodiscard]] Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    override;
+[[nodiscard]] Result                    loadFont(const char* path)                                                                                                         override;
+[[nodiscard]] ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours)                                                                                 override;
+[[nodiscard]] Result                    submitBuffers()                                                                                                                    override;
+              void                      clearBuffers()                                                                                                                     override;
 
-[[nodiscard]] Result                    resizeEvent()                                                                                                                                 override;
+[[nodiscard]] Result                    resizeEvent()                                                                                                                      override;
 
         protected:
             SplitGui::Window*                   pWindow;
@@ -151,34 +151,39 @@ namespace SplitGui {
             VertexUniformObject                 vertexUniformObject;
             std::vector<VertexBufferObject>     vertices;
             std::vector<uint16_t>               indices;
-            std::vector<SceneObj>               scenes;
             std::vector<std::vector<Contour>>   vectorImages;
             std::unordered_set<char>            charSet;
             bool                                markVerticesForUpdate = false;
-            bool                                markScenesForUpdate   = false;
 
             // debug
             bool                                vk_validation = false;
 
+            struct SceneObject {
+                vk::DescriptorSet            descriptorSet;
+                vk::Buffer                   indexBuffer;
+                vk::DeviceMemory             indexBufferMemory;
+                vk::Buffer                   vertexBuffer;
+                vk::DeviceMemory             vertexBufferMemory;
+                vk::Image                    depthImage;
+                vk::DeviceMemory             depthImageMemory;
+                vk::ImageView                depthImageView;
+                vk::Image                    outputImage;
+                vk::DeviceMemory             outputImageMemory;
+                vk::ImageView                outputImageView;
+                std::vector<vk::Framebuffer> framebuffers;
+                vk::Pipeline                 pipeline;
+
+                std::vector<SceneVertexBufferObject> vertices;
+                std::vector<uint16_t>                indices;
+            };
+
             // scene variables
-            vk::DescriptorSetLayout                   vk_sceneDescriptorSetLayout;
-            vk::DescriptorPool                        vk_sceneDescriptorPool;
-            vk::PipelineLayout                        vk_scenePipelineLayout;
-            vk::ShaderModule                          vk_sceneVertexModule;
-            vk::ShaderModule                          vk_sceneFragmentModule;
-            std::vector<vk::DescriptorSet>            vk_sceneDescriptorSets;
-            std::vector<vk::Buffer>                   vk_sceneIndexBuffers;
-            std::vector<vk::DeviceMemory>             vk_sceneIndexBufferMemories;
-            std::vector<vk::Buffer>                   vk_sceneVertexBuffers;
-            std::vector<vk::DeviceMemory>             vk_sceneVertexBufferMemories;
-            std::vector<vk::Image>                    vk_sceneDepthImages;
-            std::vector<vk::DeviceMemory>             vk_sceneDepthImageMemories;
-            std::vector<vk::ImageView>                vk_sceneDepthImageViews;
-            std::vector<vk::Image>                    vk_sceneOutputImages;
-            std::vector<vk::DeviceMemory>             vk_sceneOutputImageMemories;
-            std::vector<vk::ImageView>                vk_sceneOutputImageViews;
-            std::vector<std::vector<vk::Framebuffer>> vk_sceneFrameBuffers;
-            std::vector<vk::Pipeline>                 vk_scenePipelines;
+            vk::DescriptorSetLayout  vk_sceneDescriptorSetLayout;
+            vk::DescriptorPool       vk_sceneDescriptorPool;
+            vk::PipelineLayout       vk_scenePipelineLayout;
+            vk::ShaderModule         vk_sceneVertexModule;
+            vk::ShaderModule         vk_sceneFragmentModule;
+            std::vector<SceneObject> scenes;
 
 [[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
               inline vk::Extent2D            chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
@@ -191,7 +196,6 @@ namespace SplitGui {
               inline void                    copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion);
 [[nodiscard]] inline Result                  endSingleTimeCommands(vk::CommandBuffer commandBuffer);
 [[nodiscard]] inline Result                  vertexBufferSubmit();
-[[nodiscard]] inline Result                  scenesSubmit();
               inline void                    updateScenes();
 [[nodiscard]] inline ResultValue<vk::Format> findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features);
 
@@ -226,12 +230,12 @@ namespace SplitGui {
               inline void   createSceneDescriptorPool();
               inline void   createScenePipelineLayout();
 [[nodiscard]] inline Result createScenePipelineModules();
-[[nodiscard]] inline Result createScenePipeline();
-[[nodiscard]] inline Result createSceneDepthResources();
-[[nodiscard]] inline Result createSceneOutputResources();
-              inline void   createSceneFramebuffers();
-              inline void   createSceneDescriptorSet();
-              inline void   updateSceneDescriptorSet();
+[[nodiscard]] inline Result createScenePipeline(SceneObject& scene);
+[[nodiscard]] inline Result createSceneDepthResources(SceneObject& scene);
+[[nodiscard]] inline Result createSceneOutputResources(SceneObject& scene);
+              inline void   createSceneFramebuffers(SceneObject& scene);
+              inline void   createSceneDescriptorSet(SceneObject& scene);
+              inline void   updateSceneDescriptorSet(SceneObject& scene);
 
               inline void setupRenderpassBeginInfo();
               inline void setupViewport();

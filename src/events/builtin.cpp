@@ -24,7 +24,7 @@ namespace SplitGui {
 
         eventContext.pInterface->setViewport(viewport);
         eventContext.pInterface->update();
-        eventContext.pGraphics->submitBuffers();
+        TRYR(submitRes, eventContext.pGraphics->submitBuffers());
 
         return Result::eSuccess;
     }
