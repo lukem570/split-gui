@@ -14,6 +14,13 @@ namespace SplitGui {
         SPLITGUI_LOG("Created Scene: %ld", scenes.size());
 
         scenes.push_back(scene);
+
+        createScenePipeline();
+        createSceneDepthResources();
+        createSceneOutputResources();
+        createSceneFramebuffers();
+        createSceneDescriptorSet();
+        updateSceneDescriptorSet();
         
         return scenes.size() - 1;
     }

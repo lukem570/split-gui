@@ -32,6 +32,8 @@ namespace ft {
 #define MAX_VECTOR_IMAGES 256
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
 #define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
+#define SCENE_VERTEX_SHADER_PATH   "shaders/scene-vertex.spv"
+#define SCENE_FRAGMENT_SHADER_PATH "shaders/scene-fragment.spv"
 
 /*
 #include "vulkan.hpp"
@@ -158,6 +160,25 @@ namespace SplitGui {
             // debug
             bool                                vk_validation = false;
 
+            // scene variables
+            vk::DescriptorSetLayout                   vk_sceneDescriptorSetLayout;
+            vk::DescriptorPool                        vk_sceneDescriptorPool;
+            vk::PipelineLayout                        vk_scenePipelineLayout;
+            vk::ShaderModule                          vk_sceneVertexModule;
+            vk::ShaderModule                          vk_sceneFragmentModule;
+            std::vector<vk::DescriptorSet>            vk_sceneDescriptorSets;
+            std::vector<vk::Buffer>                   vk_sceneIndexBuffers;
+            std::vector<vk::DeviceMemory>             vk_sceneIndexBufferMemories;
+            std::vector<vk::Buffer>                   vk_sceneVertexBuffers;
+            std::vector<vk::DeviceMemory>             vk_sceneVertexBufferMemories;
+            std::vector<vk::Image>                    vk_sceneDepthImages;
+            std::vector<vk::DeviceMemory>             vk_sceneDepthImageMemories;
+            std::vector<vk::ImageView>                vk_sceneDepthImageViews;
+            std::vector<vk::Image>                    vk_sceneOutputImages;
+            std::vector<vk::DeviceMemory>             vk_sceneOutputImageMemories;
+            std::vector<vk::ImageView>                vk_sceneOutputImageViews;
+            std::vector<std::vector<vk::Framebuffer>> vk_sceneFrameBuffers;
+            std::vector<vk::Pipeline>                 vk_scenePipelines;
 
 [[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
               inline vk::Extent2D            chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
@@ -201,6 +222,17 @@ namespace SplitGui {
 [[nodiscard]] inline Result createVertexUniformBuffer();
               inline void   updateDescriptorSets();
 
+              inline void   createSceneDescriptorSetLayout();
+              inline void   createSceneDescriptorPool();
+              inline void   createScenePipelineLayout();
+[[nodiscard]] inline Result createScenePipelineModules();
+[[nodiscard]] inline Result createScenePipeline();
+[[nodiscard]] inline Result createSceneDepthResources();
+[[nodiscard]] inline Result createSceneOutputResources();
+              inline void   createSceneFramebuffers();
+              inline void   createSceneDescriptorSet();
+              inline void   updateSceneDescriptorSet();
+
               inline void setupRenderpassBeginInfo();
               inline void setupViewport();
               inline void setupScissor();
@@ -213,6 +245,7 @@ namespace SplitGui {
               inline void cleanupImageViews();
               inline void cleanupVertexAndIndexBuffers();
               inline void cleanupSceneBuffer();
+              inline void cleanupScenes();
 
 [[nodiscard]] Result recreateSwapchain();
     };

@@ -21,6 +21,7 @@ namespace SplitGui {
         vk_device.freeMemory(vk_vertexUniformBufferMemory);
         vk_device.destroyBuffer(vk_vertexUniformBuffer);
 
+        cleanupScenes();
         cleanupVertexAndIndexBuffers();
         cleanupSceneBuffer();
 
@@ -54,20 +55,20 @@ namespace SplitGui {
         SPLITGUI_LOG("Cleaned Up Vulkan");
     }
 
-    void VulkanInterface::cleanupFrameBuffers() {
+    inline void VulkanInterface::cleanupFrameBuffers() {
         for (unsigned int i = 0; i < vk_swapchainFramebuffers.size(); i++) {
             vk_device.destroyFramebuffer(vk_swapchainFramebuffers[i]);
         }
         vk_swapchainFramebuffers.clear();
     }
 
-    void VulkanInterface::cleanupDepthResources() {
+    inline void VulkanInterface::cleanupDepthResources() {
         vk_device.destroyImageView(vk_depthImageView);
         vk_device.freeMemory(vk_depthImageMemory);
         vk_device.destroyImage(vk_depthImage);
     }
 
-    void VulkanInterface::cleanupSyncObj() {
+    inline void VulkanInterface::cleanupSyncObj() {
         for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vk_device.destroySemaphore(vk_imageAvailableSemaphores[i]);
             vk_device.destroySemaphore(vk_renderFinishedSemaphores[i]);
@@ -79,14 +80,14 @@ namespace SplitGui {
         vk_inFlightFences.clear();
     }
 
-    void VulkanInterface::cleanupImageViews() {
+    inline void VulkanInterface::cleanupImageViews() {
         for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
             vk_device.destroyImageView(vk_swapchainImageViews[i]);
         }
         vk_swapchainImageViews.clear();
     }
 
-    void VulkanInterface::cleanupVertexAndIndexBuffers() {
+    inline void VulkanInterface::cleanupVertexAndIndexBuffers() {
         if (vk_vertexBufferMemory) {
             vk_device.freeMemory(vk_vertexBufferMemory);
             vk_device.destroyBuffer(vk_vertexBuffer);
@@ -98,10 +99,44 @@ namespace SplitGui {
         }
     }
 
-    void VulkanInterface::cleanupSceneBuffer() {
+    inline void VulkanInterface::cleanupSceneBuffer() {
         if (vk_sceneBufferMemory) {
             vk_device.freeMemory(vk_sceneBufferMemory);
             vk_device.destroyBuffer(vk_sceneBuffer);
         }
+    }
+
+    inline void VulkanInterface::cleanupScenes() {
+
+        vk_device.freeDescriptorSets(vk_sceneDescriptorPool, vk_sceneDepthImageViews.size(), vk_sceneDescriptorSets.data());
+
+        for (unsigned int i = 0; i < vk_sceneDepthImages.size(); i++) {
+            vk_device.destroyImageView(vk_sceneDepthImageViews[i]);
+            vk_device.freeMemory(vk_sceneDepthImageMemories[i]);
+            vk_device.destroyImage(vk_sceneDepthImages[i]);
+        }
+
+        for (unsigned int i = 0; i < vk_sceneOutputImages.size(); i++) {
+            vk_device.destroyImageView(vk_sceneOutputImageViews[i]);
+            vk_device.freeMemory(vk_sceneOutputImageMemories[i]);
+            vk_device.destroyImage(vk_sceneOutputImages[i]);
+        }
+
+        for (unsigned int i = 0; i < vk_sceneFrameBuffers.size(); i++) {
+            for (unsigned int j = 0; j < vk_sceneFrameBuffers[i].size(); j++) {
+                vk_device.destroyFramebuffer(vk_sceneFrameBuffers[i][j]);
+            }
+        }
+
+        for (unsigned int i = 0; i < vk_scenePipelines.size(); i++) {
+            vk_device.destroyPipeline(vk_scenePipelines[i]);
+        }
+
+        vk_device.destroyShaderModule(vk_sceneVertexModule);
+        vk_device.destroyShaderModule(vk_sceneFragmentModule);
+
+        vk_device.destroyDescriptorPool(vk_sceneDescriptorPool);
+        vk_device.destroyDescriptorSetLayout(vk_sceneDescriptorSetLayout);
+        vk_device.destroyPipelineLayout(vk_scenePipelineLayout);
     }
 }

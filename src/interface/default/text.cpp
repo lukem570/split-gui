@@ -33,8 +33,8 @@ namespace SplitGui {
 
     void Default::Text::update() {
         Result HANDLE_THIS_RESULT_TODO = pGraphics->updateText(textRef, {extent.x, extent.y}, color, fontSize, depth);
-        
-        SPLITGUI_LOG("Updated Text");
+
+        SPLITGUI_LOG("Updated Text %d", (int)HANDLE_THIS_RESULT_TODO);
     }
 
     Result Default::Text::instance() {

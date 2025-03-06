@@ -295,6 +295,14 @@ namespace SplitGui {
         Vec3     normal;
     };
 
+    struct SceneVertexBufferObject {
+        Vertex   vertex;
+        uint16_t flags;
+        uint16_t textureNumber;
+        uint16_t modelNumber;
+        Vec3     normal;
+    };
+
     struct RectRef {
         int bottomLeft;
         int bottomRight;
@@ -452,25 +460,45 @@ namespace SplitGui {
 
 #ifdef SPLIT_GUI_USE_VULKAN
 
-    enum DescriporBindings {
-        eSceneData     = 0,
-        eGlyphs        = 1,
-        eVertexUniform = 2,
-        eTexture       = 3,
+    struct DescriporBindings {
+        enum {
+            eSceneData     = 0,
+            eGlyphs        = 1,
+            eVertexUniform = 2,
+            eTexture       = 3,
+        };
     };
 
-    enum VertexLayout {
-        eVertexPos         = 0,
-        eVertexColor       = 1,
-        eVertexTextureCord = 2,
-        eFlags             = 3,
-        eSceneNumber       = 4,
-        eTextureNumber     = 5,
-        eNormal            = 6,
+    struct SceneDescriporBindings {
+        enum {
+            eSceneData = 0,
+            eModels    = 1,
+            eTexture   = 2,
+        };
     };
 
-    struct MSDFImage {
+    struct VertexLayout {
+        enum {
+            eVertexPos         = 0,
+            eVertexColor       = 1,
+            eVertexTextureCord = 2,
+            eFlags             = 3,
+            eSceneNumber       = 4,
+            eTextureNumber     = 5,
+            eNormal            = 6,
+        };
+    };
 
+    struct SceneVertexLayout {
+        enum {
+            eVertexPos         = 0,
+            eVertexColor       = 1,
+            eVertexTextureCord = 2,
+            eFlags             = 3,
+            eTextureNumber     = 4,
+            eModelNumber       = 5,
+            eNormal            = 6,
+        };
     };
 
 #endif

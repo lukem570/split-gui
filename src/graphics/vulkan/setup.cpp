@@ -51,6 +51,11 @@ namespace SplitGui {
         TRYR(textureRes, createTextureArray());
         TRYR(vertexRes, createVertexUniformBuffer());
         updateDescriptorSets();
+        
+        createSceneDescriptorSetLayout();
+        createSceneDescriptorPool();
+        createScenePipelineLayout();
+        TRYR(moduleRes, createScenePipelineModules());
 
         setupRenderpassBeginInfo();
         setupViewport();
