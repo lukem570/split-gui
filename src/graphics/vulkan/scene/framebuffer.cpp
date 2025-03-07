@@ -17,8 +17,8 @@ namespace SplitGui {
             framebufferInfo.renderPass      = vk_renderpass;
             framebufferInfo.attachmentCount = attachments.size();
             framebufferInfo.pAttachments    = attachments.data();
-            framebufferInfo.width           = vk_swapchainExtent.width;
-            framebufferInfo.height          = vk_swapchainExtent.height;
+            framebufferInfo.width           = scene.sceneSize.x;
+            framebufferInfo.height          = scene.sceneSize.y;
             framebufferInfo.layers          = 1;
 
             framebuffers[i] = vk_device.createFramebuffer(framebufferInfo);

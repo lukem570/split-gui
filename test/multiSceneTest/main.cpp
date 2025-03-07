@@ -102,7 +102,7 @@ int main() {
         }  
         
         rotation1.y += degToRad(3);
-        rotation2.y += degToRad(3);
+        rotation2.x += degToRad(3);
 
         cam1.setRotation(rotation1);
         cam2.setRotation(rotation2);

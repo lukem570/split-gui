@@ -58,8 +58,21 @@ namespace SplitGui {
             vk_commandBuffers[currentFrame].bindIndexBuffer(scenes[i].indexBuffer, 0, vk::IndexType::eUint16);
             vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, vk_scenePipelineLayout, 0, 1, &scenes[i].descriptorSet, 0, nullptr);
 
-            vk_commandBuffers[currentFrame].setViewport(0, 1, &vk_viewport);
-            vk_commandBuffers[currentFrame].setScissor(0, 1, &vk_scissor);
+            vk::Viewport viewport;
+            viewport.x        = 0.0f;
+            viewport.y        = 0.0f;
+            viewport.width    = scenes[i].sceneSize.x;
+            viewport.height   = scenes[i].sceneSize.y;
+            viewport.minDepth = 0.0f;
+            viewport.maxDepth = 1.0f;
+
+            vk::Rect2D scissor;
+            scissor.offset.x = 0;
+            scissor.offset.y = 0;
+            scissor.extent   = renderpassBeginInfo.renderArea.extent;
+
+            vk_commandBuffers[currentFrame].setViewport(0, 1, &viewport);
+            vk_commandBuffers[currentFrame].setScissor(0, 1, &scissor);
             
             vk_commandBuffers[currentFrame].drawIndexed(scenes[i].knownIndicesSize, 1, 0, 0, 0);
 

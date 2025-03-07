@@ -23,7 +23,7 @@ namespace SplitGui {
 
         reference.rect = drawRect(x1, x2, HexColor(0xFF00FF).normalize(), depth, VertexFlagsBits::eScene, reference.sceneNumber);
         
-        SPLITGUI_LOG("Created Scene: %ld", scenes.size());
+        SPLITGUI_LOG("Created Scene: %ld, (%d, %d)", scenes.size(), scenes.back().sceneSize.x, scenes.back().sceneSize.y);
 
         return reference;
     }
