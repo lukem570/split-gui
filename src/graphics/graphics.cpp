@@ -76,7 +76,7 @@ namespace SplitGui {
         return pInterface->submitBuffers();
     }
 
-    ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2) {
+    ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2, int depth) {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -87,7 +87,7 @@ namespace SplitGui {
         newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
         newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
 
-        return pInterface->instanceScene(newX1, newX2);
+        return pInterface->instanceScene(newX1, newX2, (float)depth / DEPTH_PLANE);
     }
 
     Result Graphics::resizeEvent() {
@@ -123,8 +123,8 @@ namespace SplitGui {
         pInterface->clearBuffers();
     }
 
-    void Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
-        pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
+    Result Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
+        return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
     }
 
     Result Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {

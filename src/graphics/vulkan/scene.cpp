@@ -1,21 +1,28 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    ResultValue<SceneRef> VulkanInterface::instanceScene(Vec2 x1, Vec2 x2) {
+    ResultValue<SceneRef> VulkanInterface::instanceScene(Vec2 x1, Vec2 x2, float depth) {
 
         SceneRef reference;
         reference.sceneNumber = scenes.size();
 
+        IVec2 windowSize = pWindow->getSize();
+        Vec2 delta = x1 - x2;
+
         scenes.push_back({});
+
+        scenes.back().sceneSize = { (int)(windowSize.x * std::abs(delta.x) / 2.0f), (int)(windowSize.y * std::abs(delta.y) / 2.0f) };
         
         TRYR(pipelineRes, createScenePipeline(scenes.back()));
         TRYR(depthRes, createSceneDepthResources(scenes.back()));
         TRYR(outputRes, createSceneOutputResources(scenes.back()));
         createSceneFramebuffers(scenes.back());
         createSceneDescriptorSet(scenes.back());
+        TRYR(dataRes, createSceneDataUniform(scenes.back()));
+        //TRYR(modelRes, createSceneModelUniform(scenes.back()));
         updateSceneDescriptorSet(scenes.back());
 
-        reference.rect = drawRect(x1, x2, HexColor(0xFF00FF).normalize());
+        reference.rect = drawRect(x1, x2, HexColor(0xFF00FF).normalize(), depth, VertexFlagsBits::eScene, reference.sceneNumber);
         
         SPLITGUI_LOG("Created Scene: %ld", scenes.size());
 
@@ -93,7 +100,7 @@ namespace SplitGui {
 
         vk::ImageMemoryBarrier barrier;
         barrier.oldLayout                       = vk::ImageLayout::eUndefined;
-        barrier.newLayout                       = vk::ImageLayout::eShaderReadOnlyOptimal;
+        barrier.newLayout                       = vk::ImageLayout::eTransferDstOptimal;
         barrier.srcQueueFamilyIndex             = vk::QueueFamilyIgnored;
         barrier.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
         barrier.image                           = vk_scenesImageArrayImages;
@@ -103,11 +110,11 @@ namespace SplitGui {
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount     = imageInfo.arrayLayers;
         barrier.srcAccessMask                   = vk::AccessFlagBits(0);
-        barrier.dstAccessMask                   = vk::AccessFlagBits::eShaderRead;
+        barrier.dstAccessMask                   = vk::AccessFlagBits::eMemoryWrite;
 
         commandBuffer.pipelineBarrier(
             vk::PipelineStageFlagBits::eTopOfPipe, 
-            vk::PipelineStageFlagBits::eFragmentShader, 
+            vk::PipelineStageFlagBits::eTransfer, 
             vk::DependencyFlagBits(0), 
             0, nullptr, 0, nullptr, 1, 
             &barrier
@@ -120,10 +127,86 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    void VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
+    Result VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
         
+        for (unsigned int i = 0; i < newVertices.size(); i++) {
+            SceneVertexBufferObject vbo;
+            vbo.flags         = flags;
+            vbo.textureNumber = textureNumber;
+            vbo.vertex        = newVertices[i];
+            vbo.modelNumber   = 0;
+            vbo.normal        = {0, 0, 0};
 
+            scenes[ref.sceneNumber].vertices.push_back(vbo);
+        }
+        
+        for (unsigned int i = 0; i < newIndices.size(); i++) {
+            scenes[ref.sceneNumber].indices.push_back(newIndices[i]);
+        }
+
+        vk::DeviceSize   indexBufferSize;
+        vk::Buffer       stagingIndexBuffer;
+        vk::DeviceMemory stagingIndexBufferMemory;
+
+        vk::DeviceSize   vertexBufferSize;
+        vk::Buffer       stagingVertexBuffer;
+        vk::DeviceMemory stagingVertexBufferMemory;
+
+        TRYR(stagingRes1, InstanceStagingBuffer(scenes[ref.sceneNumber].indices,  stagingIndexBuffer,  stagingIndexBufferMemory,  indexBufferSize ));
+        TRYR(stagingRes2, InstanceStagingBuffer(scenes[ref.sceneNumber].vertices, stagingVertexBuffer, stagingVertexBufferMemory, vertexBufferSize));
+
+        vk::Buffer       tempIndexBuffer;
+        vk::DeviceMemory tempIndexBufferMemory;
+
+        vk::Buffer       tempVertexBuffer;
+        vk::DeviceMemory tempVertexBufferMemory;
+
+        TRYR(bufferRes1, createBuffer(
+            indexBufferSize, 
+            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, 
+            vk::MemoryPropertyFlagBits::eDeviceLocal,
+            tempIndexBuffer,
+            tempIndexBufferMemory
+        ));
+
+        TRYR(bufferRes2, createBuffer(
+            vertexBufferSize, 
+            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer, 
+            vk::MemoryPropertyFlagBits::eDeviceLocal,
+            tempVertexBuffer,
+            tempVertexBufferMemory
+        ));
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        vk::BufferCopy copyRegionIndex;
+        vk::BufferCopy copyRegionVertex;
+
+        copyBuffer(stagingIndexBuffer,  tempIndexBuffer, indexBufferSize,  commandBuffer, copyRegionIndex);
+        copyBuffer(stagingVertexBuffer, tempVertexBuffer, vertexBufferSize, commandBuffer, copyRegionVertex);
+
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.waitIdle();
+        
+        cleanupSceneVertexAndIndexBuffers(ref);
+
+        scenes[ref.sceneNumber].vertexBuffer       = tempVertexBuffer;
+        scenes[ref.sceneNumber].vertexBufferMemory = tempVertexBufferMemory;
+
+        scenes[ref.sceneNumber].indexBuffer        = tempIndexBuffer;
+        scenes[ref.sceneNumber].indexBufferMemory  = tempIndexBufferMemory;
+
+        vk_device.destroyBuffer(stagingVertexBuffer);
+        vk_device.freeMemory(stagingVertexBufferMemory);
+
+        vk_device.destroyBuffer(stagingIndexBuffer);
+        vk_device.freeMemory(stagingIndexBufferMemory);
+        
+        scenes[ref.sceneNumber].knownIndicesSize = scenes[ref.sceneNumber].indices.size();
+        
         SPLITGUI_LOG("Submitted Triangles");
+
+        return Result::eSuccess;
     }
 
     Result VulkanInterface::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2) {

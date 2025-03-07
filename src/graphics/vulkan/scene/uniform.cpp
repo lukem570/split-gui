@@ -1,0 +1,92 @@
+#include "../vulkan.hpp"
+
+namespace SplitGui {
+    inline Result VulkanInterface::createSceneDataUniform(SceneObject& scene) {
+
+        vk::DeviceSize   bufferSize = sizeof(SceneObj);
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        TRYR(stagingRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferSrc, 
+            vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible,
+            stagingBuffer,
+            stagingBufferMemory
+        ));
+
+        void* memory = vk_device.mapMemory(stagingBufferMemory, 0, bufferSize);
+
+        std::memcpy(memory, &scene.sceneData, bufferSize);
+
+        vk_device.unmapMemory(stagingBufferMemory);
+
+        TRYR(bufferRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eUniformBuffer, 
+            vk::MemoryPropertyFlagBits::eDeviceLocal,
+            scene.dataUniformBuffer,
+            scene.dataUniformBufferMemory
+        ));
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+
+        copyBuffer(stagingBuffer,  scene.dataUniformBuffer, bufferSize,  commandBuffer, copyRegion);
+
+        TRYR(endRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.freeMemory(stagingBufferMemory);
+        vk_device.destroyBuffer(stagingBuffer);
+
+        SPLITGUI_LOG("Created Scene Data Uniform");
+
+        return Result::eSuccess;
+    }
+
+    inline Result VulkanInterface::createSceneModelUniform(SceneObject& scene) {
+
+        vk::DeviceSize   bufferSize = sizeof(Mat4) * scene.models.size();
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        TRYR(stagingRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferSrc, 
+            vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible,
+            stagingBuffer,
+            stagingBufferMemory
+        ));
+
+        void* memory = vk_device.mapMemory(stagingBufferMemory, 0, bufferSize);
+
+        std::memcpy(memory, scene.models.data(), bufferSize);
+
+        vk_device.unmapMemory(stagingBufferMemory);
+
+        TRYR(bufferRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eUniformBuffer, 
+            vk::MemoryPropertyFlagBits::eDeviceLocal,
+            scene.modelUniformBuffer,
+            scene.modelUniformBufferMemory
+        ));
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+
+        copyBuffer(stagingBuffer, scene.modelUniformBuffer, bufferSize,  commandBuffer, copyRegion);
+
+        TRYR(endRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.freeMemory(stagingBufferMemory);
+        vk_device.destroyBuffer(stagingBuffer);
+
+        SPLITGUI_LOG("Created Scene Data Uniform");
+
+        return Result::eSuccess;
+    }
+
+}

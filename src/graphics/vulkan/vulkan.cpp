@@ -5,6 +5,7 @@
 #include "scene/framebuffer.cpp"
 #include "scene/output.cpp"
 #include "scene/pipeline.cpp"
+#include "scene/uniform.cpp"
 
 #include "buffer.cpp"
 #include "cleanup.cpp"

@@ -137,10 +137,8 @@ index.xml
 
 * add scene tree to xml
 * add calls to unit expression parser
-* add svgs / media tag
 * fix transparency ordering
 * add text updates
-* add scene references
 * add transform absolute handing
 
 ### Optimizations
@@ -148,14 +146,7 @@ index.xml
 * staging buffer caching
 * make staging buffer allocate extra space for update events
 
-### Refactoring
-
-* general refactor
-    * convension check
-* refactor lib to accomidate builds without vulkan or glfw
-
 ### Bugs
 
 * slowness
     * performance testing and checking for bottlenecks
-* text transparency

@@ -275,7 +275,6 @@ namespace SplitGui {
     };
 
     struct alignas(16) SceneObj {
-        RectObj viewport;
         Mat4    cameraView;
         Mat4    cameraProjection;
         Vec3    cameraPosition;

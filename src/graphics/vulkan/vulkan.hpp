@@ -58,9 +58,9 @@ namespace SplitGui {
               RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
               void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
 [[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
-              ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2)                                                                                                  override;
+[[nodiscard]] ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
 [[nodiscard]] Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2)                                                                                     override;
-              void                      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
+[[nodiscard]] Result                    submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
 [[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
@@ -162,6 +162,10 @@ namespace SplitGui {
                 vk::DeviceMemory             indexBufferMemory;
                 vk::Buffer                   vertexBuffer;
                 vk::DeviceMemory             vertexBufferMemory;
+                vk::Buffer                   dataUniformBuffer;
+                vk::DeviceMemory             dataUniformBufferMemory;
+                vk::Buffer                   modelUniformBuffer;
+                vk::DeviceMemory             modelUniformBufferMemory;
                 vk::Image                    depthImage;
                 vk::DeviceMemory             depthImageMemory;
                 vk::ImageView                depthImageView;
@@ -171,8 +175,12 @@ namespace SplitGui {
                 std::vector<vk::Framebuffer> framebuffers;
                 vk::Pipeline                 pipeline;
 
+                IVec2 sceneSize;
+
                 std::vector<SceneVertexBufferObject> vertices;
                 std::vector<uint16_t>                indices;
+                SceneObj sceneData;
+                std::vector<Mat4> models;
 
                 unsigned int knownIndicesSize = 0;
             };
@@ -236,6 +244,8 @@ namespace SplitGui {
 [[nodiscard]] inline Result createSceneOutputResources(SceneObject& scene);
               inline void   createSceneFramebuffers(SceneObject& scene);
               inline void   createSceneDescriptorSet(SceneObject& scene);
+[[nodiscard]] inline Result createSceneDataUniform(SceneObject& scene);
+[[nodiscard]] inline Result createSceneModelUniform(SceneObject& scene);
               inline void   updateSceneDescriptorSet(SceneObject& scene);
 
               inline void setupRenderpassBeginInfo();
@@ -251,6 +261,8 @@ namespace SplitGui {
               inline void cleanupVertexAndIndexBuffers();
               inline void cleanupScenesImageArray();
               inline void cleanupScenes();
+
+              inline void cleanupSceneVertexAndIndexBuffers(SceneRef& ref);
 
 [[nodiscard]] Result recreateSwapchain();
     };

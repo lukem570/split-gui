@@ -38,7 +38,6 @@ void main() {
     bool useTexture = (flags & USE_TEXTURE_BIT) != 0;
     bool worldView  = (flags & WORLD_VIEW_BIT) != 0;
 
-
     if (useTexture && useMsdf) {
 
         vec4 msdf = texture(textures, vec3(in_textureCord, in_textureNumber));

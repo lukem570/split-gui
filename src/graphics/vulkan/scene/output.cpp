@@ -6,14 +6,15 @@ namespace SplitGui {
         vk::ImageCreateInfo outputImageInfo;
         outputImageInfo.imageType     = vk::ImageType::e2D;
         outputImageInfo.format        = vk_surfaceFormat.format;
-        outputImageInfo.extent.width  = vk_swapchainExtent.width;
-        outputImageInfo.extent.height = vk_swapchainExtent.height;
+        outputImageInfo.extent.width  = scene.sceneSize.x;
+        outputImageInfo.extent.height = scene.sceneSize.y;
         outputImageInfo.extent.depth  = 1;
         outputImageInfo.mipLevels     = 1;
         outputImageInfo.arrayLayers   = 1;
         outputImageInfo.samples       = vk::SampleCountFlagBits::e1;
         outputImageInfo.tiling        = vk::ImageTiling::eOptimal;
         outputImageInfo.usage         = vk::ImageUsageFlagBits::eColorAttachment;
+        outputImageInfo.usage        |= vk::ImageUsageFlagBits::eTransferSrc;
         outputImageInfo.sharingMode   = vk::SharingMode::eExclusive;
         outputImageInfo.initialLayout = vk::ImageLayout::eUndefined;
 

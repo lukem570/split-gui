@@ -29,9 +29,9 @@ namespace SplitGui {
               virtual RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       { throw; }
               virtual void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         { throw; }
 [[nodiscard]] virtual Result                    submitRect(RectRef& ref)                                                                                                           { throw; }
-[[nodiscard]] virtual ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2)                                                                                                  { throw; }
+[[nodiscard]] virtual ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                { throw; }
 [[nodiscard]] virtual Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2)                                                                                     { throw; }
-              virtual void                      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) { throw; }
+[[nodiscard]] virtual Result                    submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
@@ -61,9 +61,9 @@ namespace SplitGui {
               RectRef                   drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth = 0, VertexFlags flags = 0, int textureIndex = 0);
               void                      updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth = 0);
 [[nodiscard]] Result                    submitRect(RectRef& ref);
-[[nodiscard]] ResultValue<SceneRef>     instanceScene(IVec2 x1, IVec2 x2);
+[[nodiscard]] ResultValue<SceneRef>     instanceScene(IVec2 x1, IVec2 x2, int depth = 0);
 [[nodiscard]] Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2);
-              void                      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags = 0, int textureNumber = 0);
+[[nodiscard]] Result                    submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags = 0, int textureNumber = 0);
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position);
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view);
 [[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
