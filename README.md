@@ -1,4 +1,4 @@
-# Split gui
+# Split gui 0.1.0
 
 Split gui is a GUI library that is entirely gpu focused making it highly portable. Split gui is built on Vulkan and Glfw, but is designed to be expanded to other libraries and systems.
 
@@ -135,11 +135,10 @@ index.xml
 
 ### Features
 
-* add scene tree to xml
 * add calls to unit expression parser
 * fix transparency ordering
-* add text updates
 * add transform absolute handing
+* add model to graphics
 
 ### Optimizations
 
