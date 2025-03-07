@@ -78,8 +78,8 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2, 1, 0, 2};
 
-    graphics.submitTriangleData(sceneRef1, vertices, indices, 0);
-    graphics.submitTriangleData(sceneRef2, vertices, indices, 0);
+    TRYRC(triangleRes1, graphics.submitTriangleData(sceneRef1, vertices, indices, 0));
+    TRYRC(triangleRes2, graphics.submitTriangleData(sceneRef2, vertices, indices, 0));
 
     SplitGui::Vec3 rotation1 = {degToRad(5), 0, 0};
     SplitGui::Vec3 rotation2 = {degToRad(5), 0, 0};

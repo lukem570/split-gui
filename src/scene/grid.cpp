@@ -46,7 +46,7 @@ namespace SplitGui {
         indices[idx++] = 0, indices[idx++] = 3, indices[idx++] = 2;
     }
 
-    void Grid::submit(SceneRef& ref, int flags) {
-        pGraphics->submitTriangleData(ref, vertices, indices, flags);
+    Result Grid::submit(SceneRef& ref, int flags) {
+        return pGraphics->submitTriangleData(ref, vertices, indices, flags);
     }
 }

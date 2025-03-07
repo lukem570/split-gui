@@ -20,7 +20,7 @@ namespace SplitGui {
             void      addChild(Node& child);
             void      submitGraphics(Graphics& graphics);
 
-            virtual void submit(SceneRef& ref, int flags = VertexFlagsBits::eNone) {};
+[[nodiscard]] virtual Result submit(SceneRef& ref, int flags = VertexFlagsBits::eNone) { return Result::eSuccess; };
 
         protected:
             Graphics*              pGraphics;
@@ -32,7 +32,7 @@ namespace SplitGui {
     class SPLITGUI_EXPORT Mesh : public Node {
         public:
 
-            void submit(SceneRef& ref, int flags = VertexFlagsBits::eNone) override;
+[[nodiscard]] Result submit(SceneRef& ref, int flags = VertexFlagsBits::eNone) override;
 
         protected:
 
@@ -58,7 +58,8 @@ namespace SplitGui {
             public:
             Grid();
             
-            void submit(SceneRef& ref, int flags = VertexFlagsBits::eWorldSpace) override;
+[[nodiscard]] Result submit(SceneRef& ref, int flags = VertexFlagsBits::eWorldSpace) override;
+
             void setColor(HexColor color);
             void generate();
             

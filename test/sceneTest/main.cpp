@@ -75,7 +75,7 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2};
 
-    graphics.submitTriangleData(sceneRef, vertices, indices, 0);
+    TRYRC(triangleRes, graphics.submitTriangleData(sceneRef, vertices, indices, 0));
     
     TRYRC(submitRes, graphics.submitBuffers());
     

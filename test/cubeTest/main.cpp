@@ -76,8 +76,8 @@ int main() {
     SplitGui::SceneRef sceneRef = scene->getSceneRef();
 
     TRYRC(uiInstRes, ui.instance());
-    cube.submit(sceneRef);
-    grid.submit(sceneRef);
+    TRYRC(cubeRes, cube.submit(sceneRef));
+    TRYRC(gridRes, grid.submit(sceneRef));
     TRYRC(submitRes, graphics.submitBuffers());
 
     int prevXPos = 0;
@@ -95,9 +95,6 @@ int main() {
 
     bool spaceDown = false;
     bool shiftDown = false;
-
-    SplitGui::Mat4 model = SplitGui::Mat4::staticModel();
-    SplitGui::ModelRef modelRef = graphics.createModel(sceneRef, model);
 
     SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90), scene->getExtent());
     TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
