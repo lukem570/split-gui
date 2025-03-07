@@ -129,20 +129,42 @@ namespace SplitGui {
     Result VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
 
         unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
-        
-        for (unsigned int i = 0; i < newVertices.size(); i++) {
-            SceneVertexBufferObject vbo;
-            vbo.flags         = flags;
-            vbo.textureNumber = textureNumber;
-            vbo.vertex        = newVertices[i];
-            vbo.modelNumber   = 0;
-            vbo.normal        = {0, 0, 0};
+        unsigned int oldIndicesSize  = scenes[ref.sceneNumber].indices.size();
 
-            scenes[ref.sceneNumber].vertices.push_back(vbo);
-        }
-        
-        for (unsigned int i = 0; i < newIndices.size(); i++) {
-            scenes[ref.sceneNumber].indices.push_back(oldVerticesSize + newIndices[i]);
+        scenes[ref.sceneNumber].vertices.resize(oldVerticesSize + newIndices.size());
+        scenes[ref.sceneNumber].indices.resize(oldIndicesSize + newIndices.size());
+
+        for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
+            // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
+            // to solve: create a uniform containing surface normals and use like a geometry shader to assign normals
+
+            Vec3 points[3];
+
+            for (unsigned int j = 0; j < 3; j++) {
+
+                SceneVertexBufferObject vbo;
+                vbo.vertex        = newVertices[newIndices[i + j]];
+                vbo.flags         = VertexFlagsBits::eScene ^ flags;
+                vbo.modelNumber   = 0;
+                vbo.textureNumber = textureNumber;
+
+                scenes[ref.sceneNumber].vertices[oldVerticesSize + i + j] = vbo;
+
+                scenes[ref.sceneNumber].indices[oldIndicesSize + i + j] = oldVerticesSize + i + j;
+
+                points[j] = vbo.vertex.pos;
+            }
+
+            Vec3 edge1 = points[1] - points[0];
+            Vec3 edge2 = points[2] - points[0];
+
+            Vec3 normal = edge1.cross(edge2);
+
+            normal.normalize();
+            
+            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 0].normal = normal;
+            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 1].normal = normal;
+            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 2].normal = normal;
         }
 
         vk::DeviceSize   indexBufferSize;
@@ -210,7 +232,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ModelRef VulkanInterface::createModel(SceneRef& ref, Mat4& model) {
+    ModelRef VulkanInterface::createModel(SceneRef& ref, Mat4& model) { // TODO:
         ModelRef outRef;
         outRef.modelNumber = scenes[ref.sceneNumber].models.size();
 
