@@ -3,13 +3,14 @@
 #include <splitgui/interface.hpp>
 
 namespace SplitGui {
-    void Default::Overlay::update() {
+    Result Default::Overlay::update() {
 
         for (unsigned int i = 0; i < children.size(); i++) {
             children[i]->setExtent(extent);
-            children[i]->update();
+            TRYR(updateRes, children[i]->update());
         }
 
+        return Result::eSuccess;
     }
 
     Result Default::Overlay::instance() {

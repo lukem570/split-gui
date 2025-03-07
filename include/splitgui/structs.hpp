@@ -162,6 +162,39 @@ namespace SplitGui {
 
         float dot(const IVec2& operand);
     };
+    
+    struct RectObj {
+
+        RectObj() {
+            width = 0;
+            height = 0;
+            x = 0;
+            y = 0;
+        }
+
+        union {
+            IVec2 size;
+            struct {
+                int width;
+                int height;
+            };
+        };
+
+        union {
+            IVec2 pos;
+            struct {
+                int x;
+                int y;
+            };
+        };
+        
+        bool inside(IVec2);
+        bool atEdge(IVec2, int);
+        bool atLeftEdge(IVec2, int);
+        bool atRightEdge(IVec2, int);
+        bool atTopEdge(IVec2, int);
+        bool atBottomEdge(IVec2, int);
+    };
 
     struct SPLITGUI_EXPORT Mat2 {
         alignas(8) Vec2 a;
@@ -183,12 +216,15 @@ namespace SplitGui {
         Mat4 operator*(const Mat4& operand);
         Mat4 operator+(const Mat4& operand);
 
+        void updatePerspective(float fieldOfView, RectObj extent);
+
         static Mat4 xRotationMatrix(float theta);
         static Mat4 yRotationMatrix(float theta);
         static Mat4 zRotationMatrix(float theta);
 
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
-        static Mat4 perspectiveProjection(float fieldOfView, float far = 100.0f, float near = 0.1f);
+        static Mat4 perspectiveProjection(float fieldOfView, RectObj extent, float far = 100.0f, float near = 0.1f);
+        static Mat4 staticModel();
     };
 
     struct HexColor {
@@ -235,39 +271,6 @@ namespace SplitGui {
         uint8_t r;
     };
 
-    struct RectObj {
-
-        RectObj() {
-            width = 0;
-            height = 0;
-            x = 0;
-            y = 0;
-        }
-
-        union {
-            IVec2 size;
-            struct {
-                int width;
-                int height;
-            };
-        };
-
-        union {
-            IVec2 pos;
-            struct {
-                int x;
-                int y;
-            };
-        };
-        
-        bool inside(IVec2);
-        bool atEdge(IVec2, int);
-        bool atLeftEdge(IVec2, int);
-        bool atRightEdge(IVec2, int);
-        bool atTopEdge(IVec2, int);
-        bool atBottomEdge(IVec2, int);
-    };
-
     struct Transform {
         Vec3 position = {0, 0, 0};
         Vec3 rotation = {0, 0, 0};
@@ -275,7 +278,6 @@ namespace SplitGui {
     };
 
     struct alignas(16) SceneObj {
-        RectObj viewport;
         Mat4    cameraView;
         Mat4    cameraProjection;
         Vec3    cameraPosition;
@@ -290,8 +292,14 @@ namespace SplitGui {
     struct VertexBufferObject {
         Vertex   vertex;
         uint16_t flags;
-        uint16_t sceneNumber;
+        uint16_t index; // stores scene number and texture number
+    };
+
+    struct SceneVertexBufferObject {
+        Vertex   vertex;
+        uint16_t flags;
         uint16_t textureNumber;
+        uint16_t modelNumber;
         Vec3     normal;
     };
 
@@ -302,13 +310,18 @@ namespace SplitGui {
         int topRight;
     };
 
+    struct SceneRef {
+        unsigned int sceneNumber;
+        RectRef      rect;
+    };
+
+    struct ModelRef {
+        unsigned int modelNumber;
+    };
+
     struct TextRef {
         std::vector<RectRef> rects;
         std::string          text;
-    };
-
-    struct VertexUniformObject {
-        IVec2 screenSize;
     };
 
     enum class UnitExpressionTokenType {
@@ -452,25 +465,42 @@ namespace SplitGui {
 
 #ifdef SPLIT_GUI_USE_VULKAN
 
-    enum DescriporBindings {
-        eSceneData     = 0,
-        eGlyphs        = 1,
-        eVertexUniform = 2,
-        eTexture       = 3,
+    struct DescriporBindings {
+        enum {
+            eGlyphs  = 0,
+            eScenes  = 1,
+            eTexture = 2,
+        };
     };
 
-    enum VertexLayout {
-        eVertexPos         = 0,
-        eVertexColor       = 1,
-        eVertexTextureCord = 2,
-        eFlags             = 3,
-        eSceneNumber       = 4,
-        eTextureNumber     = 5,
-        eNormal            = 6,
+    struct SceneDescriporBindings {
+        enum {
+            eSceneData = 0,
+            eModels    = 1,
+            eTexture   = 2,
+        };
     };
 
-    struct MSDFImage {
+    struct VertexLayout {
+        enum {
+            eVertexPos         = 0,
+            eVertexColor       = 1,
+            eVertexTextureCord = 2,
+            eFlags             = 3,
+            eIndex             = 4,
+        };
+    };
 
+    struct SceneVertexLayout {
+        enum {
+            eVertexPos         = 0,
+            eVertexColor       = 1,
+            eVertexTextureCord = 2,
+            eFlags             = 3,
+            eTextureNumber     = 4,
+            eModelNumber       = 5,
+            eNormal            = 6,
+        };
     };
 
 #endif

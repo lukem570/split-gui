@@ -1,5 +1,12 @@
 #include "vulkan.hpp"
 
+#include "scene/depth.cpp"
+#include "scene/descriptor.cpp"
+#include "scene/framebuffer.cpp"
+#include "scene/output.cpp"
+#include "scene/pipeline.cpp"
+#include "scene/uniform.cpp"
+
 #include "buffer.cpp"
 #include "cleanup.cpp"
 #include "commands.cpp"
@@ -21,4 +28,3 @@
 #include "system.cpp"
 #include "text.cpp"
 #include "texture.cpp"
-#include "uniform.cpp"

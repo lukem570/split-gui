@@ -36,12 +36,17 @@ namespace SplitGui {
         isRelative = isRelativeIn;
     }
 
-    void Default::Transform::update() {
+    Result Default::Transform::update() {
         ResultValue<UnitExpressionValue> positionXEvaluateRes = position.evaluate(extent.width);
         ResultValue<UnitExpressionValue> positionYEvaluateRes = position.evaluate(extent.height);
         
         ResultValue<UnitExpressionValue> scaleXEvaluateRes = scale.evaluate(extent.width);
         ResultValue<UnitExpressionValue> scaleYEvaluateRes = scale.evaluate(extent.height);
+
+        TRYD(positionXEvaluateRes);
+        TRYD(positionYEvaluateRes);
+        TRYD(scaleXEvaluateRes);
+        TRYD(scaleYEvaluateRes);
         
         RectObj childExtent;
 
@@ -51,7 +56,7 @@ namespace SplitGui {
         childExtent.width  = scaleXEvaluateRes.value.vector.ivec2.x;
 
         children.back()->setExtent(childExtent);
-        children.back()->update();
+        return children.back()->update();
     }
 
     Result Default::Transform::instance() {

@@ -32,18 +32,17 @@ namespace SplitGui {
         pGraphics = &graphics;
     }
 
-    void Interface::update() {
-        interfaceElement->update();
+    Result Interface::update() {
+        return interfaceElement->update();
     }
 
-    void Interface::instance() {
+    Result Interface::instance() {
         if (!pGraphics) {
-            printf("WARN: interface requires graphics to call 'update'\n");
-            return;
+            return Result::eMissingGraphics;
         }
 
         interfaceElement->setGraphics(pGraphics);
-        interfaceElement->instance();
+        return interfaceElement->instance();
     }
 
     void Interface::setViewport(RectObj viewport) {

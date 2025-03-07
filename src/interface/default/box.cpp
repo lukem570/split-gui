@@ -3,9 +3,9 @@
 #include <splitgui/interface.hpp>
 
 namespace SplitGui {
-    void Default::Box::update() {
+    Result Default::Box::update() {
         children[0]->setExtent(Default::Box::extent);
-        children[0]->update();
+        return children[0]->update();
     }
 
     Result Default::Box::instance() {

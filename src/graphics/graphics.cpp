@@ -30,13 +30,13 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    void Graphics::submitWindow(Window& window) {
+    Result Graphics::submitWindow(Window& window) {
         pWindow = &window;
-        pInterface->submitWindow(window);
+        return pInterface->submitWindow(window);
     }
 
-    void Graphics::drawFrame() {
-        pInterface->drawFrame();
+    Result Graphics::drawFrame() {
+        return pInterface->drawFrame();
     }
 
     RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth, VertexFlags flags,  int textureIndex) {
@@ -72,12 +72,22 @@ namespace SplitGui {
         return pInterface->submitRect(ref);
     }
 
-    void Graphics::submitBuffers() {
-        pInterface->submitBuffers();
+    Result Graphics::submitBuffers() {
+        return pInterface->submitBuffers();
     }
 
-    unsigned int Graphics::instanceScene(IVec2 x1, IVec2 x2) {
-        return pInterface->instanceScene(x1, x2);
+    ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2, int depth) {
+        IVec2 windowSize = pWindow->getSize();
+
+        Vec2 newX1;
+        newX1.x = (float)x1.x / (float)windowSize.x * 2.0f - 1.0f;
+        newX1.y = (float)x1.y / (float)windowSize.y * 2.0f - 1.0f;
+
+        Vec2 newX2;
+        newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
+        newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
+
+        return pInterface->instanceScene(newX1, newX2, (float)depth / DEPTH_PLANE);
     }
 
     Result Graphics::resizeEvent() {
@@ -113,20 +123,24 @@ namespace SplitGui {
         pInterface->clearBuffers();
     }
 
-    void Graphics::submitTriangleData(unsigned int sceneNumber, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
-        pInterface->submitTriangleData(sceneNumber, vertices, indices, flags, textureNumber);
+    Result Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
+        return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
     }
 
-    Result Graphics::updateSceneCameraPosition(unsigned int sceneNumber, Vec3& position) {
-        return pInterface->updateSceneCameraPosition(sceneNumber, position);
+    Result Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
+        return pInterface->updateSceneCameraPosition(ref, position);
     }
 
-    Result Graphics::updateSceneCameraView(unsigned int sceneNumber, Mat4& view) {
-        return pInterface->updateSceneCameraView(sceneNumber, view);
+    Result Graphics::updateSceneCameraView(SceneRef& ref, Mat4& view) {
+        return pInterface->updateSceneCameraView(ref, view);
     }
 
-    Result Graphics::updateSceneCameraProjection(unsigned int sceneNumber, Mat4& projection) {
-        return pInterface->updateSceneCameraProjection(sceneNumber, projection);
+    Result Graphics::updateSceneCameraProjection(SceneRef& ref, Mat4& projection) {
+        return pInterface->updateSceneCameraProjection(ref, projection);
+    }
+
+    ModelRef Graphics::createModel(SceneRef& ref, Mat4& model) {
+        return pInterface->createModel(ref, model);
     }
 
     void Graphics::attachEventHandler(EventHandler& handler) {
@@ -134,8 +148,18 @@ namespace SplitGui {
         pEventHandler = &handler;
     }
 
-    void Graphics::updateScene(unsigned int sceneNumber, IVec2 x1, IVec2 x2) {
-        pInterface->updateScene(sceneNumber, x1, x2);
+    Result Graphics::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2) {
+        IVec2 windowSize = pWindow->getSize();
+
+        Vec2 newX1;
+        newX1.x = (float)x1.x / (float)windowSize.x * 2.0f - 1.0f;
+        newX1.y = (float)x1.y / (float)windowSize.y * 2.0f - 1.0f;
+
+        Vec2 newX2;
+        newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
+        newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
+
+        return pInterface->updateScene(ref, newX1, newX2);
     }
 
     [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {

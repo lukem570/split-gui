@@ -36,7 +36,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     graphics.attachEventHandler(eventHandler);
 
     SplitGui::RectObj viewport;
@@ -50,8 +50,8 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
-    ui.instance();
-    graphics.submitBuffers();
+    TRYRC(uiInstRes, ui.instance());
+    TRYRC(submitRes, graphics.submitBuffers());
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
@@ -73,7 +73,7 @@ int main() {
             }
         }  
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
     

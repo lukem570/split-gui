@@ -4,7 +4,7 @@
 
 namespace SplitGui {
     
-    void Default::Split::update() {
+    Result Default::Split::update() {
         RectObj childExtentOne;
         RectObj childExtentTwo;
 
@@ -38,10 +38,12 @@ namespace SplitGui {
         }
         
         children[0]->setExtent(childExtentOne);
-        children[0]->update();
+        TRYR(updateRes1, children[0]->update());
 
         children[1]->setExtent(childExtentTwo);
-        children[1]->update();
+        TRYR(updateRes2, children[1]->update());
+
+        return Result::eSuccess;
     }
 
     Result Default::Split::instance() {
@@ -94,11 +96,11 @@ namespace SplitGui {
 
         children[0]->setGraphics(pGraphics);
         children[0]->setExtent(childExtentOne);
-        children[0]->instance();
+        TRYR(instanceRes1, children[0]->instance());
 
         children[1]->setGraphics(pGraphics);
         children[1]->setExtent(childExtentTwo);
-        children[1]->instance();
+        TRYR(instanceRes2, children[1]->instance());
 
         return Result::eSuccess;
     }

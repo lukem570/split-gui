@@ -44,7 +44,7 @@ int main() {
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
-    graphics.submitWindow(window);
+    TRYRC(winSubRes, graphics.submitWindow(window));
     graphics.attachEventHandler(eventHandler);
 
     SplitGui::RectObj viewport;
@@ -72,10 +72,13 @@ int main() {
     SplitGui::Vec3 rotation = {0, 0, 0};
     SplitGui::Vec3 position = {0, 0, 0};
 
-    ui.instance();
-    cube.submit(0);
-    grid.submit(0);
-    graphics.submitBuffers();
+    SplitGui::Default::SceneElement* scene = (SplitGui::Default::SceneElement*)ui.searchByReference("scene").back();
+    SplitGui::SceneRef sceneRef = scene->getSceneRef();
+
+    TRYRC(uiInstRes, ui.instance());
+    TRYRC(cubeRes, cube.submit(sceneRef));
+    TRYRC(gridRes, grid.submit(sceneRef));
+    TRYRC(submitRes, graphics.submitBuffers());
 
     int prevXPos = 0;
     int prevYPos = 0;
@@ -93,8 +96,8 @@ int main() {
     bool spaceDown = false;
     bool shiftDown = false;
 
-    SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90));
-    TRYRC(projectionRes, graphics.updateSceneCameraProjection(0, projection));
+    SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90), scene->getExtent());
+    TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
 
     SplitGui::Camera cam;
     cam.submitGraphics(graphics);
@@ -107,6 +110,14 @@ int main() {
 
                     switch (eventHandler.getEvent().window) {
 
+                        case SplitGui::Event::WindowType::eResize: {
+
+                            
+                            projection.updatePerspective(degToRad(90), scene->getExtent());
+                            TRYRC(projectionRes2, graphics.updateSceneCameraProjection(sceneRef, projection));
+                            
+                            break;
+                        }
                         case SplitGui::Event::WindowType::eMouseMove:
                             xPos = eventHandler.getEvent().data.window.mouseMove.xPos;
                             yPos = eventHandler.getEvent().data.window.mouseMove.yPos;
@@ -186,9 +197,7 @@ int main() {
                                 default:break;
                             }
 
-
                             break;
-                        
                         
                         default:break;
                     }
@@ -240,9 +249,9 @@ int main() {
         cam.setRotation(rotation);
         cam.setPosition(position);
 
-        TRYRC(updateRes, cam.update(0));
+        TRYRC(updateRes, cam.update(sceneRef));
 
-        graphics.drawFrame();
+        TRYRC(frameRes, graphics.drawFrame());
         window.update();
     }
     

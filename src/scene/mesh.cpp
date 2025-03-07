@@ -1,7 +1,7 @@
 #include <splitgui/scene.hpp>
 
 namespace SplitGui {
-    void Mesh::submit(int sceneNumber, int flags) {
-        pGraphics->submitTriangleData(sceneNumber, vertices, indices, flags);
+    Result Mesh::submit(SceneRef& ref, int flags) {
+        return pGraphics->submitTriangleData(ref, vertices, indices, flags);
     }
 }

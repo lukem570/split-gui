@@ -3,8 +3,8 @@
 #include <splitgui/interface.hpp>
 
 namespace SplitGui {
-    void Default::Binding::update() {
-        
+    Result Default::Binding::update() {
+        return Result::eSuccess;
     }
 
     Result Default::Binding::instance() {

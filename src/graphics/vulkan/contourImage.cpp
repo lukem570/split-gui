@@ -59,7 +59,7 @@ namespace SplitGui {
         
         shape.normalize();
         
-        msdfgen::edgeColoringSimple(shape, 3.0);
+        msdfgen::edgeColoringSimple(shape, M_PI);
         
         msdfgen::Range pxRange = msdfgen::Range(0.04);
         

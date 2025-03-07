@@ -242,12 +242,12 @@ namespace SplitGui {
         return projection;
     }
 
-    Mat4 Mat4::perspectiveProjection(float fieldOfView, float far, float near) {
+    Mat4 Mat4::perspectiveProjection(float fieldOfView, RectObj extent, float far, float near) {
         Mat4 projection;
 
         float fov = std::tan(fieldOfView / 2);
 
-        projection.a.x = 1.0f / fov;
+        projection.a.x = 1.0f / fov * ((float)extent.height / (float)extent.width);
         projection.a.y = 0;
         projection.a.z = 0;
         projection.a.w = 0;
@@ -268,6 +268,39 @@ namespace SplitGui {
         projection.d.w = 0;
 
         return projection;
+    }
+
+    void Mat4::updatePerspective(float fieldOfView, RectObj extent) {
+
+        float fov = std::tan(fieldOfView / 2);
+
+        a.x = (1.0f / fov) * ((float)extent.height / (float)extent.width);
+    }
+
+    Mat4 Mat4::staticModel() {
+        Mat4 model;
+
+        model.a.x = 1;
+        model.a.y = 0;
+        model.a.z = 0;
+        model.a.w = 0;
+
+        model.b.x = 0;
+        model.b.y = 1;
+        model.b.z = 0;
+        model.b.w = 0;
+
+        model.c.x = 0;
+        model.c.y = 0;
+        model.c.z = 1;
+        model.c.w = 0;
+
+        model.d.x = 0;
+        model.d.y = 0;
+        model.d.z = 0;
+        model.d.w = 1;
+
+        return model;
     }
 
     bool RectObj::inside(IVec2 point) {

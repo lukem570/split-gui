@@ -61,15 +61,21 @@ namespace SplitGui {
         vk_device.waitIdle();
 
         cleanupImageViews();
+        cleanupScenesImageArray();
         cleanupDepthResources();
         cleanupFrameBuffers();
+
+        vk_device.waitIdle();
         
         vk_device.destroySwapchainKHR(vk_swapchain);
 
         createSwapchain();
         createImageViews();
         TRYR(depthRes, createDepthResources());
+        TRYR(sceneRes, createScenesImageArray());
         createFramebuffers();
+
+        updateDescriptorSets();
 
         setupRenderpassBeginInfo();
         setupViewport();

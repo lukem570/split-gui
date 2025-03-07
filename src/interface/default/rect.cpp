@@ -5,7 +5,7 @@
 #include "../unitExpression.cpp"
 
 namespace SplitGui {
-    void Default::Rect::update() {
+    Result Default::Rect::update() {
         IVec2 x1;
         x1.x = extent.x;
         x1.y = extent.y;
@@ -17,6 +17,8 @@ namespace SplitGui {
         SPLITGUI_LOG("Updated Rect: (%d, %d), (%d, %d), p:%u", x1.x, x1.y, x2.x, x2.y, graphicsRectRef.bottomLeft);
 
         pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
+
+        return Result::eSuccess;
     }
 
     Result Default::Rect::instance() {

@@ -118,7 +118,7 @@ namespace SplitGui {
 
         vk_surface = surfaceRet.value;
 
-        SPLITGUI_LOG("Created Scene");
+        SPLITGUI_LOG("Created Surface");
 
         return Result::eSuccess;
     }
