@@ -89,7 +89,7 @@ namespace SplitGui {
               void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
 [[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
 [[nodiscard]] ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
-[[nodiscard]] Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2)                                                                                     override;
+[[nodiscard]] Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2)                                                                                     override;
 [[nodiscard]] Result                    submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
@@ -265,6 +265,9 @@ namespace SplitGui {
               inline void cleanupScenes();
 
               inline void cleanupSceneVertexAndIndexBuffers(SceneRef& ref);
+              inline void cleanupSceneFrameBuffers(SceneRef& ref);
+              inline void cleanupSceneOutputImages(SceneRef& ref);
+              inline void cleanupSceneDepthImages(SceneRef& ref);
 
 [[nodiscard]] Result recreateSwapchain();
     };

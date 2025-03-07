@@ -219,8 +219,24 @@ namespace SplitGui {
         return outRef;
     }
 
-    Result VulkanInterface::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2) {
-        
+    Result VulkanInterface::updateScene(SceneRef& ref, Vec2 x1, Vec2 x2) {
+
+        IVec2 windowSize = pWindow->getSize();
+        Vec2 delta = x1 - x2;
+
+        vk_device.waitIdle();
+
+        scenes[ref.sceneNumber].sceneSize = { (int)(windowSize.x * std::abs(delta.x) / 2.0f), (int)(windowSize.y * std::abs(delta.y) / 2.0f) };
+
+        cleanupSceneFrameBuffers(ref);
+        cleanupSceneOutputImages(ref);
+        cleanupSceneDepthImages(ref);
+
+        TRYR(depthRes, createSceneDepthResources(scenes[ref.sceneNumber]));
+        TRYR(outputRes, createSceneOutputResources(scenes[ref.sceneNumber]));
+        createSceneFramebuffers(scenes[ref.sceneNumber]);
+
+        updateRect(ref.rect, x1, x2, HexColor(0xFF00FF).normalize(), 0);
 
         SPLITGUI_LOG("Updated Scene: %d", ref.sceneNumber);
 

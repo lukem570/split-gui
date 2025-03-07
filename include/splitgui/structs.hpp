@@ -162,6 +162,39 @@ namespace SplitGui {
 
         float dot(const IVec2& operand);
     };
+    
+    struct RectObj {
+
+        RectObj() {
+            width = 0;
+            height = 0;
+            x = 0;
+            y = 0;
+        }
+
+        union {
+            IVec2 size;
+            struct {
+                int width;
+                int height;
+            };
+        };
+
+        union {
+            IVec2 pos;
+            struct {
+                int x;
+                int y;
+            };
+        };
+        
+        bool inside(IVec2);
+        bool atEdge(IVec2, int);
+        bool atLeftEdge(IVec2, int);
+        bool atRightEdge(IVec2, int);
+        bool atTopEdge(IVec2, int);
+        bool atBottomEdge(IVec2, int);
+    };
 
     struct SPLITGUI_EXPORT Mat2 {
         alignas(8) Vec2 a;
@@ -183,12 +216,14 @@ namespace SplitGui {
         Mat4 operator*(const Mat4& operand);
         Mat4 operator+(const Mat4& operand);
 
+        void updatePerspective(float fieldOfView, RectObj extent);
+
         static Mat4 xRotationMatrix(float theta);
         static Mat4 yRotationMatrix(float theta);
         static Mat4 zRotationMatrix(float theta);
 
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
-        static Mat4 perspectiveProjection(float fieldOfView, float far = 100.0f, float near = 0.1f);
+        static Mat4 perspectiveProjection(float fieldOfView, RectObj extent, float far = 100.0f, float near = 0.1f);
         static Mat4 staticModel();
     };
 
@@ -234,39 +269,6 @@ namespace SplitGui {
         uint8_t b;
         uint8_t g; 
         uint8_t r;
-    };
-
-    struct RectObj {
-
-        RectObj() {
-            width = 0;
-            height = 0;
-            x = 0;
-            y = 0;
-        }
-
-        union {
-            IVec2 size;
-            struct {
-                int width;
-                int height;
-            };
-        };
-
-        union {
-            IVec2 pos;
-            struct {
-                int x;
-                int y;
-            };
-        };
-        
-        bool inside(IVec2);
-        bool atEdge(IVec2, int);
-        bool atLeftEdge(IVec2, int);
-        bool atRightEdge(IVec2, int);
-        bool atTopEdge(IVec2, int);
-        bool atBottomEdge(IVec2, int);
     };
 
     struct Transform {

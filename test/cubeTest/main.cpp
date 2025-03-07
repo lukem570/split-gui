@@ -99,7 +99,7 @@ int main() {
     SplitGui::Mat4 model = SplitGui::Mat4::staticModel();
     SplitGui::ModelRef modelRef = graphics.createModel(sceneRef, model);
 
-    SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90));
+    SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90), scene->getExtent());
     TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
 
     SplitGui::Camera cam;
@@ -113,6 +113,14 @@ int main() {
 
                     switch (eventHandler.getEvent().window) {
 
+                        case SplitGui::Event::WindowType::eResize: {
+
+                            
+                            projection.updatePerspective(degToRad(90), scene->getExtent());
+                            TRYRC(projectionRes2, graphics.updateSceneCameraProjection(sceneRef, projection));
+                            
+                            break;
+                        }
                         case SplitGui::Event::WindowType::eMouseMove:
                             xPos = eventHandler.getEvent().data.window.mouseMove.xPos;
                             yPos = eventHandler.getEvent().data.window.mouseMove.yPos;
