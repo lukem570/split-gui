@@ -19,7 +19,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    SceneRef Default::SceneElement::getSceneRef() {
+    SceneRef& Default::SceneElement::getSceneRef() {
         return graphicsSceneRef;
     }
 }

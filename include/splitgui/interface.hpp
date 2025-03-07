@@ -234,7 +234,7 @@ namespace SplitGui {
   [[nodiscard]] Result instance() override;
   [[nodiscard]] Result update()   override;
 
-                SceneRef getSceneRef();
+                SceneRef& getSceneRef();
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eScene;
