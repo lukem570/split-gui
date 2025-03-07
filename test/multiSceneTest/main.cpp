@@ -55,6 +55,9 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
+    TRYRC(uiInstRes, ui.instance());
+    TRYRC(submitRes, graphics.submitBuffers());
+
     SplitGui::Default::SceneElement* scene1 = (SplitGui::Default::SceneElement*)ui.searchByReference("scene-1").back();
     SplitGui::Default::SceneElement* scene2 = (SplitGui::Default::SceneElement*)ui.searchByReference("scene-2").back();
     SplitGui::SceneRef sceneRef1 = scene1->getSceneRef();
@@ -77,9 +80,6 @@ int main() {
 
     graphics.submitTriangleData(sceneRef1, vertices, indices, 0);
     graphics.submitTriangleData(sceneRef2, vertices, indices, 0);
-
-    ui.instance();
-    TRYRC(submitRes, graphics.submitBuffers());
 
     SplitGui::Vec3 rotation1 = {degToRad(5), 0, 0};
     SplitGui::Vec3 rotation2 = {degToRad(5), 0, 0};

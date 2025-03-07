@@ -21,21 +21,34 @@ namespace SplitGui {
 
         vk_device.unmapMemory(stagingBufferMemory);
 
+        vk::Buffer       tempBuffer;
+        vk::DeviceMemory tempBufferMemory;
+        
         TRYR(bufferRes, createBuffer(
             bufferSize,
             vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eUniformBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
-            scene.dataUniformBuffer,
-            scene.dataUniformBufferMemory
+            tempBuffer,
+            tempBufferMemory
         ));
-
+        
         vk::CommandBuffer commandBuffer = startCopyBuffer();
-
+        
         vk::BufferCopy copyRegion;
-
-        copyBuffer(stagingBuffer,  scene.dataUniformBuffer, bufferSize,  commandBuffer, copyRegion);
-
+        
+        copyBuffer(stagingBuffer,  tempBuffer, bufferSize,  commandBuffer, copyRegion);
+        
         TRYR(endRes, endSingleTimeCommands(commandBuffer));
+
+        if (scene.dataUniformBufferMemory) {
+            vk_device.freeMemory(scene.dataUniformBufferMemory);
+            vk_device.destroyBuffer(scene.dataUniformBuffer);
+        }
+
+        vk_device.waitIdle();
+        
+        scene.dataUniformBufferMemory = tempBufferMemory;
+        scene.dataUniformBuffer       = tempBuffer;
 
         vk_device.freeMemory(stagingBufferMemory);
         vk_device.destroyBuffer(stagingBuffer);

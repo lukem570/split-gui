@@ -35,6 +35,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
+              virtual ModelRef                  createModel(SceneRef& ref, Mat4& model)                                                                                            { throw; }
 [[nodiscard]] virtual ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 { throw; }
 [[nodiscard]] virtual Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    { throw; }
 [[nodiscard]] virtual Result                    loadFont(const char* path)                                                                                                         { throw; }
@@ -67,6 +68,7 @@ namespace SplitGui {
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position);
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view);
 [[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
+              ModelRef                  createModel(SceneRef& ref, Mat4& model);
 [[nodiscard]] ResultValue<TextRef>      drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth = 0);
 [[nodiscard]] Result                    updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth = 0);
 [[nodiscard]] Result                    loadFont(const char* path);

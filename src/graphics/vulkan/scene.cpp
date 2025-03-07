@@ -19,7 +19,6 @@ namespace SplitGui {
         createSceneFramebuffers(scenes.back());
         createSceneDescriptorSet(scenes.back());
         TRYR(dataRes, createSceneDataUniform(scenes.back()));
-        //TRYR(modelRes, createSceneModelUniform(scenes.back()));
         updateSceneDescriptorSet(scenes.back());
 
         reference.rect = drawRect(x1, x2, HexColor(0xFF00FF).normalize(), depth, VertexFlagsBits::eScene, reference.sceneNumber);
@@ -128,6 +127,8 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
+
+        unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
         
         for (unsigned int i = 0; i < newVertices.size(); i++) {
             SceneVertexBufferObject vbo;
@@ -141,7 +142,7 @@ namespace SplitGui {
         }
         
         for (unsigned int i = 0; i < newIndices.size(); i++) {
-            scenes[ref.sceneNumber].indices.push_back(newIndices[i]);
+            scenes[ref.sceneNumber].indices.push_back(oldVerticesSize + newIndices[i]);
         }
 
         vk::DeviceSize   indexBufferSize;
@@ -204,9 +205,18 @@ namespace SplitGui {
         
         scenes[ref.sceneNumber].knownIndicesSize = scenes[ref.sceneNumber].indices.size();
         
-        SPLITGUI_LOG("Submitted Triangles");
+        SPLITGUI_LOG("Submitted Triangles: %d", scenes[ref.sceneNumber].knownIndicesSize);
 
         return Result::eSuccess;
+    }
+
+    ModelRef VulkanInterface::createModel(SceneRef& ref, Mat4& model) {
+        ModelRef outRef;
+        outRef.modelNumber = scenes[ref.sceneNumber].models.size();
+
+        scenes[ref.sceneNumber].models.push_back(model);
+
+        return outRef;
     }
 
     Result VulkanInterface::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2) {
@@ -219,15 +229,108 @@ namespace SplitGui {
 
     Result VulkanInterface::updateSceneCameraView(SceneRef& ref, Mat4& view) {
 
+        scenes[ref.sceneNumber].sceneData.cameraView = view;
+
+        vk::DeviceSize   bufferSize = sizeof(SceneObj);
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        TRYR(stagingRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferSrc, 
+            vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible,
+            stagingBuffer,
+            stagingBufferMemory
+        ));
+
+        void* memory = vk_device.mapMemory(stagingBufferMemory, 0, bufferSize);
+
+        std::memcpy(memory, &scenes[ref.sceneNumber].sceneData, bufferSize);
+
+        vk_device.unmapMemory(stagingBufferMemory);
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        
+        vk::BufferCopy copyRegion;
+        
+        copyBuffer(stagingBuffer,  scenes[ref.sceneNumber].dataUniformBuffer, bufferSize,  commandBuffer, copyRegion);
+        
+        TRYR(endRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.freeMemory(stagingBufferMemory);
+        vk_device.destroyBuffer(stagingBuffer);
+        
         return Result::eSuccess;
     }
 
     Result VulkanInterface::updateSceneCameraProjection(SceneRef& ref, Mat4& projection) {
 
+        scenes[ref.sceneNumber].sceneData.cameraProjection = projection;
+
+        vk::DeviceSize   bufferSize = sizeof(SceneObj);
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        TRYR(stagingRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferSrc, 
+            vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible,
+            stagingBuffer,
+            stagingBufferMemory
+        ));
+
+        void* memory = vk_device.mapMemory(stagingBufferMemory, 0, bufferSize);
+
+        std::memcpy(memory, &scenes[ref.sceneNumber].sceneData, bufferSize);
+
+        vk_device.unmapMemory(stagingBufferMemory);
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        
+        vk::BufferCopy copyRegion;
+        
+        copyBuffer(stagingBuffer,  scenes[ref.sceneNumber].dataUniformBuffer, bufferSize,  commandBuffer, copyRegion);
+        
+        TRYR(endRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.freeMemory(stagingBufferMemory);
+        vk_device.destroyBuffer(stagingBuffer);
+
         return Result::eSuccess;
     }
 
     Result VulkanInterface::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
+
+        scenes[ref.sceneNumber].sceneData.cameraPosition = position;
+
+        vk::DeviceSize   bufferSize = sizeof(SceneObj);
+        vk::Buffer       stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+
+        TRYR(stagingRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferSrc, 
+            vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible,
+            stagingBuffer,
+            stagingBufferMemory
+        ));
+
+        void* memory = vk_device.mapMemory(stagingBufferMemory, 0, bufferSize);
+
+        std::memcpy(memory, &scenes[ref.sceneNumber].sceneData, bufferSize);
+
+        vk_device.unmapMemory(stagingBufferMemory);
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        
+        vk::BufferCopy copyRegion;
+        
+        copyBuffer(stagingBuffer,  scenes[ref.sceneNumber].dataUniformBuffer, bufferSize,  commandBuffer, copyRegion);
+        
+        TRYR(endRes, endSingleTimeCommands(commandBuffer));
+
+        vk_device.freeMemory(stagingBufferMemory);
+        vk_device.destroyBuffer(stagingBuffer);
 
         return Result::eSuccess;
     }

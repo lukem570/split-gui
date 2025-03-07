@@ -50,7 +50,7 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
-    ui.instance();
+    TRYRC(uiInstRes, ui.instance());
     TRYRC(submitRes, graphics.submitBuffers());
 
     while (!window.shouldClose()) {

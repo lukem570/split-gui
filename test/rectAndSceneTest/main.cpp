@@ -58,6 +58,9 @@ int main() {
     SplitGui::Default::SceneElement* scene = (SplitGui::Default::SceneElement*)ui.searchByReference("scene").back();
     SplitGui::SceneRef sceneRef = scene->getSceneRef();
 
+    TRYRC(uiInstRes, ui.instance());
+    TRYRC(submitRes, graphics.submitBuffers());
+    
     SplitGui::Vertex vert1;
     vert1.color = SplitGui::HexColor(0xFF0000).normalize();
     vert1.pos = {0.0, -0.5};
@@ -75,8 +78,6 @@ int main() {
 
     graphics.submitTriangleData(sceneRef, vertices, indices, 0);
 
-    ui.instance();
-    TRYRC(submitRes, graphics.submitBuffers());
 
     SplitGui::Vec3 rotation = {0, 0, 0};
 

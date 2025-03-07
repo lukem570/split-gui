@@ -270,6 +270,32 @@ namespace SplitGui {
         return projection;
     }
 
+    Mat4 Mat4::staticModel() {
+        Mat4 model;
+
+        model.a.x = 1;
+        model.a.y = 0;
+        model.a.z = 0;
+        model.a.w = 0;
+
+        model.b.x = 0;
+        model.b.y = 1;
+        model.b.z = 0;
+        model.b.w = 0;
+
+        model.c.x = 0;
+        model.c.y = 0;
+        model.c.z = 1;
+        model.c.w = 0;
+
+        model.d.x = 0;
+        model.d.y = 0;
+        model.d.z = 0;
+        model.d.w = 1;
+
+        return model;
+    }
+
     bool RectObj::inside(IVec2 point) {
         return x <= point.x && y <= point.y && x + width >= point.x && y + height >= point.y;
     }

@@ -105,7 +105,7 @@ namespace SplitGui {
             vk_commandBuffers[currentFrame].blitImage(
                 scenes[i].outputImage, vk::ImageLayout::eTransferSrcOptimal,
                 vk_scenesImageArrayImages, vk::ImageLayout::eTransferDstOptimal,
-                1,&blitRegion, vk::Filter::eLinear
+                1, &blitRegion, vk::Filter::eLinear
             );
         }
 

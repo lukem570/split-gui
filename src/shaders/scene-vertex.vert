@@ -55,7 +55,7 @@ void main() {
 
     pos -= vec4(sb.cameraPosition, 0.0);
 
-    pos *= models[modelNumber];
+    //pos *= models[modelNumber];
     pos *= sb.view;
     pos *= sb.projection;
 

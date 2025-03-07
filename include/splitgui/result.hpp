@@ -53,6 +53,7 @@ namespace SplitGui {
         eInvalidPrematureClosure,
         eInvalidXml,
         eInvalidTag,
+        eMissingGraphics,
     };
 
     // Similar to vulkan's result values

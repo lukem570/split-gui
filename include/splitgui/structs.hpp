@@ -189,6 +189,7 @@ namespace SplitGui {
 
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
         static Mat4 perspectiveProjection(float fieldOfView, float far = 100.0f, float near = 0.1f);
+        static Mat4 staticModel();
     };
 
     struct HexColor {
@@ -310,6 +311,10 @@ namespace SplitGui {
     struct SceneRef {
         unsigned int sceneNumber;
         RectRef      rect;
+    };
+
+    struct ModelRef {
+        unsigned int modelNumber;
     };
 
     struct TextRef {

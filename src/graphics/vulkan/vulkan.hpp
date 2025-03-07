@@ -46,6 +46,36 @@ namespace SplitGui {
 
 namespace SplitGui {
 
+    struct SceneObject {
+
+        vk::DescriptorSet            descriptorSet;
+        vk::Buffer                   indexBuffer;
+        vk::DeviceMemory             indexBufferMemory;
+        vk::Buffer                   vertexBuffer;
+        vk::DeviceMemory             vertexBufferMemory;
+        vk::Buffer                   dataUniformBuffer;
+        vk::DeviceMemory             dataUniformBufferMemory;
+        vk::Buffer                   modelUniformBuffer;
+        vk::DeviceMemory             modelUniformBufferMemory;
+        vk::Image                    depthImage;
+        vk::DeviceMemory             depthImageMemory;
+        vk::ImageView                depthImageView;
+        vk::Image                    outputImage;
+        vk::DeviceMemory             outputImageMemory;
+        vk::ImageView                outputImageView;
+        std::vector<vk::Framebuffer> framebuffers;
+        vk::Pipeline                 pipeline;
+
+        IVec2 sceneSize;
+
+        std::vector<SceneVertexBufferObject> vertices;
+        std::vector<uint16_t>                indices;
+        SceneObj                             sceneData;
+        std::vector<Mat4>                    models;
+
+        unsigned int knownIndicesSize = 0;
+    };
+
     class VulkanInterface : GraphicsLibInterface {
         public:
                                         VulkanInterface(VulkanFlags flags);
@@ -64,6 +94,7 @@ namespace SplitGui {
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
 [[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
+              ModelRef                  createModel(SceneRef& ref, Mat4& model)                                                                                            override;
 [[nodiscard]] ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 override;
 [[nodiscard]] Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    override;
 [[nodiscard]] Result                    loadFont(const char* path)                                                                                                         override;
@@ -155,35 +186,6 @@ namespace SplitGui {
 
             // debug
             bool                                vk_validation = false;
-
-            struct SceneObject {
-                vk::DescriptorSet            descriptorSet;
-                vk::Buffer                   indexBuffer;
-                vk::DeviceMemory             indexBufferMemory;
-                vk::Buffer                   vertexBuffer;
-                vk::DeviceMemory             vertexBufferMemory;
-                vk::Buffer                   dataUniformBuffer;
-                vk::DeviceMemory             dataUniformBufferMemory;
-                vk::Buffer                   modelUniformBuffer;
-                vk::DeviceMemory             modelUniformBufferMemory;
-                vk::Image                    depthImage;
-                vk::DeviceMemory             depthImageMemory;
-                vk::ImageView                depthImageView;
-                vk::Image                    outputImage;
-                vk::DeviceMemory             outputImageMemory;
-                vk::ImageView                outputImageView;
-                std::vector<vk::Framebuffer> framebuffers;
-                vk::Pipeline                 pipeline;
-
-                IVec2 sceneSize;
-
-                std::vector<SceneVertexBufferObject> vertices;
-                std::vector<uint16_t>                indices;
-                SceneObj sceneData;
-                std::vector<Mat4> models;
-
-                unsigned int knownIndicesSize = 0;
-            };
 
             // scene variables
             vk::DescriptorSetLayout  vk_sceneDescriptorSetLayout;

@@ -139,6 +139,10 @@ namespace SplitGui {
         return pInterface->updateSceneCameraProjection(ref, projection);
     }
 
+    ModelRef Graphics::createModel(SceneRef& ref, Mat4& model) {
+        return pInterface->createModel(ref, model);
+    }
+
     void Graphics::attachEventHandler(EventHandler& handler) {
         handler.attachGraphics(this);
         pEventHandler = &handler;

@@ -349,8 +349,8 @@ namespace SplitGui {
               void                           setInterfaceElement(InterfaceElement* data);
               InterfaceElement*              getInterfaceElement();
               void                           submitGraphics(Graphics& graphics);
-              void                           update();
-              void                           instance();
+[[nodiscard]] Result                         update();
+[[nodiscard]] Result                         instance();
               void                           setViewport(RectObj viewport);
               void                           attachEventHandler(EventHandler& handler);
               std::vector<InterfaceElement*> searchByReference(std::string reference);

@@ -57,6 +57,8 @@ int main() {
 
     SplitGui::Default::SceneElement* scene = (SplitGui::Default::SceneElement*)ui.searchByReference("scene").back();
     SplitGui::SceneRef sceneRef = scene->getSceneRef();
+    
+    TRYRC(uiInstRes, ui.instance());
 
     SplitGui::Vertex vert1;
     vert1.color = SplitGui::HexColor(0xFF0000).normalize();
@@ -74,10 +76,9 @@ int main() {
     std::vector<uint16_t> indices          = {0, 1, 2};
 
     graphics.submitTriangleData(sceneRef, vertices, indices, 0);
-
-    ui.instance();
+    
     TRYRC(submitRes, graphics.submitBuffers());
-
+    
     SplitGui::Vec3 rotation = {0, 0, 0};
 
     SplitGui::Mat4 projection = SplitGui::Mat4::orthographicProjection();
