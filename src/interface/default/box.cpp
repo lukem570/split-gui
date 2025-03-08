@@ -4,6 +4,10 @@
 
 namespace SplitGui {
     Result Default::Box::update() {
+        if (children.size() == 0) {
+            return Result::eSuccess;
+        }
+
         children[0]->setExtent(extent);
         return children[0]->update();
     }
