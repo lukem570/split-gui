@@ -155,6 +155,7 @@ namespace SplitGui {
             vk::ImageView                       vk_textureArrayImageView;
             vk::Sampler                         vk_textureArraySampler;
             std::array<vk::ClearValue, 2>       vk_clearValues;
+            std::array<vk::ClearValue, 2>       vk_sceneClearValues;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;

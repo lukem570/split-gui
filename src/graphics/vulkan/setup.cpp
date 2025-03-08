@@ -10,6 +10,10 @@ namespace SplitGui {
         vk_clearValues[1].depthStencil.depth   = 1.0f;
         vk_clearValues[1].depthStencil.stencil = 0;
 
+        vk_sceneClearValues[0].color = vk::ClearColorValue{0.0f, 0.0f, 0.0f, 0.0f};
+        vk_sceneClearValues[1].depthStencil.depth   = 1.0f;
+        vk_sceneClearValues[1].depthStencil.stencil = 0;
+
         vk_msdfExtent.width  = flags.mdsfTextureSize;
         vk_msdfExtent.height = flags.mdsfTextureSize;
     }

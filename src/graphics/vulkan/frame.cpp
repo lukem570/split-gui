@@ -48,8 +48,8 @@ namespace SplitGui {
             renderpassBeginInfo.renderArea.offset.x = 0;
             renderpassBeginInfo.renderArea.offset.y = 0;
             renderpassBeginInfo.renderArea.extent   = vk::Extent2D{ (unsigned int)scenes[i].sceneSize.x, (unsigned int)scenes[i].sceneSize.y };
-            renderpassBeginInfo.clearValueCount     = vk_clearValues.size();
-            renderpassBeginInfo.pClearValues        = vk_clearValues.data();
+            renderpassBeginInfo.clearValueCount     = vk_sceneClearValues.size();
+            renderpassBeginInfo.pClearValues        = vk_sceneClearValues.data();
 
             vk_commandBuffers[currentFrame].beginRenderPass(renderpassBeginInfo, vk::SubpassContents::eInline);
 
