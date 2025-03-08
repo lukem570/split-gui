@@ -60,7 +60,7 @@ void main() {
         outColor = vec4(diffuse * in_fragColor, 1.0);
     } else {
 
-        vec2 pos = in_fragPos.xz ;
+        vec2 pos = in_fragPos.xz;
 
         vec2 dvx = vec2(dFdx(pos.x), dFdy(pos.x));
         vec2 dvy = vec2(dFdx(pos.y), dFdy(pos.y));

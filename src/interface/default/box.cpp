@@ -4,13 +4,15 @@
 
 namespace SplitGui {
     Result Default::Box::update() {
-        children[0]->setExtent(Default::Box::extent);
+        children[0]->setExtent(extent);
         return children[0]->update();
     }
 
     Result Default::Box::instance() {
-        if (Default::Box::maxChildren < Default::Box::children.size()) {
+        if (maxChildren < children.size()) {
             return Result::eInvalidNumberOfChildren;
+        } else if (children.size() == 0) {
+            return Result::eSuccess;
         }
 
         children[0]->setGraphics(pGraphics);
