@@ -7,5 +7,8 @@ scene:
 multi:
 	python tools/testTools/test.py build/tests/multiSceneTest
 
+text:
+	python tools/testTools/test.py build/tests/textTest
+
 test-all:
 	python tools/testTools/test.py

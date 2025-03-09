@@ -252,18 +252,21 @@ namespace SplitGui {
                 return Result::eFailedToLoadGlyph;
             }
 
-            ft::FT_GlyphSlot slot    = ft_face->glyph;
-            unsigned int     width   = slot->bitmap.width;
-            unsigned int     height  = slot->bitmap.rows;
+            ft::FT_GlyphSlot slot     = ft_face->glyph;
+            unsigned int     width    = slot->bitmap.width;
+            unsigned int     height   = slot->bitmap.rows;
             unsigned int     maxHeight = ft_face->ascender >> 6;
-            unsigned int     offsetX = slot->bitmap_left;
-            unsigned int     offsetY = slot->bitmap_top;
+            unsigned int     offsetX  = slot->bitmap_left;
+            unsigned int     offsetY  = slot->bitmap_top;
+            int              bearingY = slot->metrics.horiBearingY;
+
+            float yOff = (float)height - (float)bearingY * (1.0f/64.0f);
 
             float outX1 = (pos.x + offsetX) / windowSize.x / 2.0f;
             
-            float outY1 = (pos.y + maxHeight - offsetY - height) / windowSize.y / 2.0f;
+            float outY1 = (pos.y + maxHeight - offsetY - height + yOff) / windowSize.y / 2.0f;
             float outX2 = (pos.x + offsetX + width) / windowSize.x / 2.0f;
-            float outY2 = (pos.y + maxHeight) / windowSize.y / 2.0f;
+            float outY2 = (pos.y + maxHeight + yOff) / windowSize.y / 2.0f;
 
             ret.rects.push_back(drawRect(
                 x1 + Vec2{outX1, outY1}, 
