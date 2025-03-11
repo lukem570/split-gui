@@ -130,6 +130,14 @@ namespace SplitGui {
             double width  = (bounds.r - bounds.l);
             double height = (bounds.t - bounds.b);
 
+            bounds.l -= 0.05 * width / height;
+            bounds.r += 0.05 * width / height;
+            bounds.t += 0.05;
+            bounds.b -= 0.05;
+
+            width  = (bounds.r - bounds.l);
+            height = (bounds.t - bounds.b);
+
             charSet.insert(text[i]);
             
             scale.set((double)vk_msdfExtent.width / width, (double)vk_msdfExtent.height / height);
@@ -259,14 +267,13 @@ namespace SplitGui {
             unsigned int     width    = slot->bitmap.width;
             unsigned int     height   = slot->bitmap.rows;
             unsigned int     maxHeight = ft_face->ascender >> 6;
-            unsigned int     offsetX  = slot->bitmap_left;
+            int              offsetX  = slot->bitmap_left;
             unsigned int     offsetY  = slot->bitmap_top;
             int              bearingY = slot->metrics.horiBearingY;
 
             float yOff = (float)height - (float)bearingY * (1.0f/64.0f);
 
             float outX1 = (pos.x + offsetX) / windowSize.x / 2.0f;
-            
             float outY1 = (pos.y + maxHeight - offsetY - height + yOff) / windowSize.y / 2.0f;
             float outX2 = (pos.x + offsetX + width) / windowSize.x / 2.0f;
             float outY2 = (pos.y + maxHeight + yOff) / windowSize.y / 2.0f;

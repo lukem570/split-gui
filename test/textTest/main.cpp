@@ -33,7 +33,7 @@ int main() {
 
     TRYC(SplitGui::TextRef, textRes, graphics.drawText(
         SplitGui::IVec2{0, 0},
-        "Hello, world\nThis is a newline\nHi\nbearing test cpcpcp",
+        "Hello, world\nThis is a newline\nHi\nbearing test cpcpcp\njijj",
         0x000000,
         20
     ));
