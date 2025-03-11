@@ -52,12 +52,11 @@ namespace SplitGui {
             unsigned int     width   = slot->bitmap.width;
             unsigned int     height  = slot->bitmap.rows;
             unsigned int     maxHeight = ft_face->ascender >> 6;
-            unsigned int     offsetX = slot->bitmap_left;
+            int              offsetX = slot->bitmap_left;
             unsigned int     offsetY = slot->bitmap_top;
             int              bearingY = slot->metrics.horiBearingY;
 
             float yOff = (float)height - (float)bearingY * (1.0f/64.0f);
-
             float outX1 = (pos.x + offsetX) / windowSize.x / 2.0f;
             
             float outY1 = (pos.y + maxHeight - offsetY - height + yOff) / windowSize.y / 2.0f;
@@ -123,7 +122,7 @@ namespace SplitGui {
             msdfgen::edgeColoringSimple(shape, 3.0);
             
             msdfgen::Vector2 scale;
-            msdfgen::Range pxRange = msdfgen::Range(0.04);
+            msdfgen::Range pxRange = msdfgen::Range(0.08);
             
             msdfgen::Shape::Bounds bounds = shape.getBounds();
 
