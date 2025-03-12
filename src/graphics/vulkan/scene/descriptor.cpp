@@ -41,7 +41,7 @@ namespace SplitGui {
         SPLITGUI_LOG("Created Scene Descriptor Set Layout");
     }
 
-    inline void VulkanInterface::createSceneDescriptorPool() {
+    inline void VulkanInterface::createSceneDescriptorPool(SceneObject& scene) {
         vk::DescriptorPoolSize scenePoolSize;
         scenePoolSize.type            = vk::DescriptorType::eUniformBuffer;
         scenePoolSize.descriptorCount = 1;
@@ -64,18 +64,18 @@ namespace SplitGui {
         createInfo.flags         = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
         createInfo.poolSizeCount = poolSizes.size();
         createInfo.pPoolSizes    = poolSizes.data();
-        createInfo.maxSets       = MAX_SCENES;
+        createInfo.maxSets       = 1;
         
         vk::DescriptorPool descriptorPool = vk_device.createDescriptorPool(createInfo);
 
-        vk_sceneDescriptorPool = descriptorPool;
+        scene.descriptorPool = descriptorPool;
 
         SPLITGUI_LOG("Created Scene Descriptor Pool");
     }
 
     inline void VulkanInterface::createSceneDescriptorSet(SceneObject& scene) {
         vk::DescriptorSetAllocateInfo allocInfo;
-        allocInfo.descriptorPool     = vk_sceneDescriptorPool;
+        allocInfo.descriptorPool     = scene.descriptorPool;
         allocInfo.descriptorSetCount = 1;
         allocInfo.pSetLayouts        = &vk_sceneDescriptorSetLayout;
 

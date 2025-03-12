@@ -13,6 +13,7 @@ namespace SplitGui {
 
         scenes.back().sceneSize = { (int)(windowSize.x * std::abs(delta.x) / 2.0f), (int)(windowSize.y * std::abs(delta.y) / 2.0f) };
         
+        createSceneDescriptorPool(scenes.back());
         TRYR(pipelineRes, createScenePipeline(scenes.back()));
         TRYR(depthRes, createSceneDepthResources(scenes.back()));
         TRYR(outputRes, createSceneOutputResources(scenes.back()));

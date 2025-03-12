@@ -57,7 +57,6 @@ namespace SplitGui {
         updateDescriptorSets();
         
         createSceneDescriptorSetLayout();
-        createSceneDescriptorPool();
         createScenePipelineLayout();
         TRYR(moduleRes, createScenePipelineModules());
 

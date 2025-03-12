@@ -48,6 +48,7 @@ namespace SplitGui {
 
     struct SceneObject {
 
+        vk::DescriptorPool           descriptorPool;
         vk::DescriptorSet            descriptorSet;
         vk::Buffer                   indexBuffer;
         vk::DeviceMemory             indexBufferMemory;
@@ -190,7 +191,6 @@ namespace SplitGui {
 
             // scene variables
             vk::DescriptorSetLayout  vk_sceneDescriptorSetLayout;
-            vk::DescriptorPool       vk_sceneDescriptorPool;
             vk::PipelineLayout       vk_scenePipelineLayout;
             vk::ShaderModule         vk_sceneVertexModule;
             vk::ShaderModule         vk_sceneFragmentModule;
@@ -238,10 +238,10 @@ namespace SplitGui {
               inline void   updateDescriptorSets();
 
               inline void   createSceneDescriptorSetLayout();
-              inline void   createSceneDescriptorPool();
               inline void   createScenePipelineLayout();
 [[nodiscard]] inline Result createScenePipelineModules();
               
+              inline void   createSceneDescriptorPool(SceneObject& scene);
 [[nodiscard]] inline Result createScenePipeline(SceneObject& scene);
 [[nodiscard]] inline Result createSceneDepthResources(SceneObject& scene);
 [[nodiscard]] inline Result createSceneOutputResources(SceneObject& scene);

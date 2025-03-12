@@ -125,7 +125,7 @@ namespace SplitGui {
 
         for (unsigned int i = 0; i < scenes.size(); i++) {
 
-            vk_device.freeDescriptorSets(vk_sceneDescriptorPool, 1, &scenes[i].descriptorSet);
+            vk_device.freeDescriptorSets(scenes[i].descriptorPool, 1, &scenes[i].descriptorSet);
 
             vk_device.freeMemory(scenes[i].dataUniformBufferMemory);
             vk_device.destroyBuffer(scenes[i].dataUniformBuffer);
@@ -137,6 +137,8 @@ namespace SplitGui {
             cleanupSceneDepthImages(ref);
             cleanupSceneOutputImages(ref);
             cleanupSceneFrameBuffers(ref);
+
+            vk_device.destroyDescriptorPool(scenes[i].descriptorPool);
             
             vk_device.destroyPipeline(scenes[i].pipeline);
         }
@@ -144,7 +146,6 @@ namespace SplitGui {
         vk_device.destroyShaderModule(vk_sceneVertexModule);
         vk_device.destroyShaderModule(vk_sceneFragmentModule);
 
-        vk_device.destroyDescriptorPool(vk_sceneDescriptorPool);
         vk_device.destroyDescriptorSetLayout(vk_sceneDescriptorSetLayout);
         vk_device.destroyPipelineLayout(vk_scenePipelineLayout);
     }
