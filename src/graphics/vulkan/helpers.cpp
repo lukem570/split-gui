@@ -11,6 +11,7 @@ namespace SplitGui {
                 }
             }
             if (!found) {
+                SPLITGUI_LOG("failed to get layer %s", name)
                 return Result::eFailedToGetLayer;
             }
         }

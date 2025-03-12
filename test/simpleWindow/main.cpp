@@ -13,6 +13,10 @@ int main() {
     TRYRC(windowRes, window.createWindow(flags));
     window.attachEventHandler(eventHandler);
 
-    window.update();
+    while (!window.shouldClose()) {
+
+        window.update();
+    }
+    
     return 0;
 }

@@ -143,7 +143,10 @@
 
         #include <wayland-client.h>
         #include <wayland-cursor.h>
-        #include <vulkan/vulkan_wayland.h>
+
+        #ifdef BUILD_SPLITGUI
+            #include <vulkan/vulkan_wayland.h>
+        #endif
 
     #elif defined(VK_USE_PLATFORM_XCB_KHR)
 
@@ -167,8 +170,10 @@
 
         #include <xcb/xcb.h>
         #include <xcb/xproto.h>
-        #include <vulkan/vulkan_xcb.h>
-        
+
+        #ifdef BUILD_SPLITGUI
+            #include <vulkan/vulkan_xcb.h>
+        #endif
 
     #elif defined(VK_USE_PLATFORM_XLIB_KHR)
 

@@ -1,3 +1,7 @@
+add:
+	cmake -G Ninja -B build -DSPLITGUI_DEV=SPLITGUI_DEV
+	ninja -C build
+
 cube:
 	python tools/testTools/test.py build/tests/cubeTest
 

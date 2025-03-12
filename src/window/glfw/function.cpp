@@ -1,7 +1,5 @@
 #include "glfw.hpp"
 
-#include <X11/cursorfont.h>
-
 namespace SplitGui {
 
     void GlfwInterface::update() {
@@ -33,6 +31,33 @@ namespace SplitGui {
         window.handle->setSize(size.x, size.y);
     }
 
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+
+extern "C" {
+    wl_shm* shm;
+
+    static void registry_global(void* data, wl_registry *registry,
+                                uint32_t id, const char *interface,
+                                uint32_t version) {
+        if (strcmp(interface, "wl_shm") == 0) {
+            shm = (wl_shm*)wl_registry_bind(registry, id, &wl_shm_interface, 1);
+        }
+    }
+
+    static void registry_global_remove(void* data, wl_registry *registry, uint32_t id) {
+        if (shm) {
+            shm = NULL;
+        }
+    }
+
+    static const struct wl_registry_listener registry_listener = {
+        .global = registry_global,
+        .global_remove = registry_global_remove
+    };
+}
+
+#endif
+
     void GlfwInterface::setCursorShape(CursorType type) {
 
     #if defined(__linux__)
@@ -41,22 +66,30 @@ namespace SplitGui {
             wl_display* display = glfwGetWaylandDisplay();
             wl_surface* surface = glfwGetWaylandWindow(*window.handle);
 
-            wl_cursor_theme* cursor_theme = wl_cursor_theme_load(NULL, 32, display);
+            wl_registry* registry = wl_display_get_registry(display);
+
+            wl_registry_add_listener(registry, &registry_listener, NULL);
+
+            wl_display_dispatch(display);
+
+            wl_cursor_theme* cursor_theme = wl_cursor_theme_load(NULL, 32, shm);
 
             wl_cursor* cursor;
     
             switch (type) {
                 case CursorType::eArrow:           cursor = wl_cursor_theme_get_cursor(cursor_theme, "arrow");           break;
                 case CursorType::eCrosshair:       cursor = wl_cursor_theme_get_cursor(cursor_theme, "crosshair");       break;
-                case CursorType::eHand:            cursor = wl_cursor_theme_get_cursor(cursor_theme, "hand");            break;
+                case CursorType::eHand:            cursor = wl_cursor_theme_get_cursor(cursor_theme, "grab");            break;
                 case CursorType::eIBeam:           cursor = wl_cursor_theme_get_cursor(cursor_theme, "ibeam");           break;
                 case CursorType::eHorizontalArrow: cursor = wl_cursor_theme_get_cursor(cursor_theme, "right_arrow");     break;
                 case CursorType::eVerticalArrow:   cursor = wl_cursor_theme_get_cursor(cursor_theme, "bottom_arrow");    break;
+                case CursorType::eDiagonal:        cursor = wl_cursor_theme_get_cursor(cursor_theme, "ne-resize");             break; 
+                case CursorType::eDiagonalInverse: cursor = wl_cursor_theme_get_cursor(cursor_theme, "nw-resize");
                 default: break;
             }
 
-            wl_cursor_image* image = cursor->image[0];
-            wl_surface_attach(surface, image->buffer, 0, 0);
+            wl_cursor_image* image = cursor->images[0];
+            wl_surface_attach(surface, wl_cursor_image_get_buffer(image), 0, 0);
 
         #elif defined(VK_USE_PLATFORM_XCB_KHR)
     
