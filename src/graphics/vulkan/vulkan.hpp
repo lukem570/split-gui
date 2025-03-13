@@ -5,8 +5,11 @@
 #include <splitgui/graphics.hpp>
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
+#include <splitgui/logger.hpp>
+
 #include <vulkan/vulkan.hpp>
 #include <msdfgen/msdfgen.h>
+
 #include <vector>
 #include <tuple>
 #include <cmath>

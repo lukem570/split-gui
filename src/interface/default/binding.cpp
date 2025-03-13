@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     Result Default::Binding::update() {
@@ -9,7 +10,7 @@ namespace SplitGui {
 
     Result Default::Binding::instance() {
 
-        SPLITGUI_LOG("Instanced Binding");
+        Logger::info("Instanced Binding");
 
         return Result::eSuccess;
     }

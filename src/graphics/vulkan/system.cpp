@@ -21,8 +21,12 @@ namespace SplitGui {
 
         vk_physicalDevice = physicalDevices[selection];
 
-        SPLITGUI_LOG("Created Physical Device");
-        SPLITGUI_LOG("Using: %s", vk_physicalDevice.getProperties().deviceName.data());
+        Logger::info("Created Physical Device");
+
+        std::string deviceName = vk_physicalDevice.getProperties().deviceName.data();
+        std::stringstream info;
+        info << "Using: " << deviceName;
+        Logger::info(info.str());
 
         return Result::eSuccess;
     }
@@ -55,7 +59,7 @@ namespace SplitGui {
             return Result::eFailedToFindQueueFamily;
         }
 
-        SPLITGUI_LOG("Queue Families: graphics= %d, present= %d", graphicsQueueFamilyIndex, presentQueueFamilyIndex);
+        Logger::info("Got Queue Families");
 
         return Result::eSuccess;
     }
@@ -99,7 +103,7 @@ namespace SplitGui {
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_device);
 
-        SPLITGUI_LOG("Created Logical Device");
+        Logger::info("Created Logical Device");
 
         return Result::eSuccess;
     }
@@ -108,7 +112,7 @@ namespace SplitGui {
         vk_graphicsQueue = vk_device.getQueue(graphicsQueueFamilyIndex, 0);
         vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
 
-        SPLITGUI_LOG("Instanced Queue Objects");
+        Logger::info("Instanced Queue Objects");
     }
 
     inline Result VulkanInterface::createSurface(SplitGui::Window& window) {
@@ -118,7 +122,7 @@ namespace SplitGui {
 
         vk_surface = surfaceRet.value;
 
-        SPLITGUI_LOG("Created Surface");
+        Logger::info("Created Surface");
 
         return Result::eSuccess;
     }

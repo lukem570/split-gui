@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     Result Default::Meta::update() {
@@ -9,7 +10,7 @@ namespace SplitGui {
 
     Result Default::Meta::instance() {
 
-        SPLITGUI_LOG("Instanced Meta");
+        Logger::info("Instanced Meta");
 
         return Result::eSuccess;
     }

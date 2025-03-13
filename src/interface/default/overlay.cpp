@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     Result Default::Overlay::update() {
@@ -21,7 +22,7 @@ namespace SplitGui {
             children[i]->instance();
         }
 
-        SPLITGUI_LOG("Instanced Overlay");
+        Logger::info("Instanced Overlay");
 
         return Result::eSuccess;
     }

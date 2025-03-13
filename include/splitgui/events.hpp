@@ -298,6 +298,8 @@ namespace SplitGui {
     class SPLITGUI_EXPORT EventHandler {
         public:
 
+                    ~EventHandler();
+
               int    popEvent();
 [[nodiscard]] Result pushEvent(Event event);
               Event  getEvent();

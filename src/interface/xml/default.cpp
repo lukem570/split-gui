@@ -36,8 +36,6 @@ namespace SplitGui {
 
             element->setDepth(atoi(token.value.c_str()));
 
-            SPLITGUI_LOG("Depth: %d", atoi(token.value.c_str()));
-
             ResultValue<XmlToken> endTokenRes = nextToken();
             TRYD(endTokenRes);
             token = endTokenRes.value;

@@ -17,6 +17,6 @@ namespace SplitGui {
             vk_inFlightFences[i]           = vk_device.createFence(fenceInfo);
         }
 
-        SPLITGUI_LOG("Created Sync Objects");
+        Logger::info("Created Sync Objects");
     }
 }

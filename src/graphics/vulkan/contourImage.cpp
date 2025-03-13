@@ -163,7 +163,7 @@ namespace SplitGui {
         vk_device.freeMemory(stagingBufferMemory);
         vk_device.destroyBuffer(stagingBuffer);
 
-        SPLITGUI_LOG("Created Contour Image");
+        Logger::info("Created Contour Image");
 
         return vectorImages.size() - 1;
     }

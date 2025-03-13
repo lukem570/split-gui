@@ -24,7 +24,7 @@ namespace SplitGui {
 
         reference.rect = drawRect(x1, x2, HexColor(0xFF00FF).normalize(), depth, VertexFlagsBits::eScene, reference.sceneNumber);
         
-        SPLITGUI_LOG("Created Scene: %ld, (%d, %d)", scenes.size(), scenes.back().sceneSize.x, scenes.back().sceneSize.y);
+        Logger::info("Created Scene: " + std::to_string(scenes.size()));
 
         return reference;
     }
@@ -122,7 +122,7 @@ namespace SplitGui {
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
-        SPLITGUI_LOG("Created Scenes Image Array");
+        Logger::info("Created Scenes Image Array");
 
         return Result::eSuccess;
     }
@@ -228,7 +228,7 @@ namespace SplitGui {
         
         scenes[ref.sceneNumber].knownIndicesSize = scenes[ref.sceneNumber].indices.size();
         
-        SPLITGUI_LOG("Submitted Triangles: %d", scenes[ref.sceneNumber].knownIndicesSize);
+        Logger::info("Submitted Triangles: " + std::to_string(scenes[ref.sceneNumber].knownIndicesSize));
 
         return Result::eSuccess;
     }
@@ -261,7 +261,7 @@ namespace SplitGui {
 
         updateRect(ref.rect, x1, x2, HexColor(0xFF00FF).normalize(), 0);
 
-        SPLITGUI_LOG("Updated Scene: %d", ref.sceneNumber);
+        Logger::info("Updated Scene: " + std::to_string(ref.sceneNumber));
 
         return Result::eSuccess;
     }

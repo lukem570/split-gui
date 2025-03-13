@@ -57,7 +57,7 @@ namespace SplitGui {
         scene.depthImageMemory = depthImageMemory;
         scene.depthImageView   = depthImageView;
 
-        SPLITGUI_LOG("Created Scene Depth Resources");
+        Logger::info("Created Scene Depth Resources");
 
         return Result::eSuccess;
     }

@@ -8,7 +8,7 @@ namespace SplitGui {
 
         vk_commandPool = vk_device.createCommandPool(commandPoolInfo);
 
-        SPLITGUI_LOG("Created Command Pool");
+        Logger::info("Created Command Pool");
     }
 
     inline void VulkanInterface::createCommandBuffers() {
@@ -21,6 +21,6 @@ namespace SplitGui {
         
         vk_commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
 
-        SPLITGUI_LOG("Created Command Buffer");
+        Logger::info("Created Command Buffer");
     }
 }

@@ -1,4 +1,5 @@
 #include <splitgui/events.hpp>
+#include <splitgui/logger.hpp>
 
 #include "builtin.cpp"
 
@@ -18,6 +19,10 @@ namespace SplitGui {
 
     void EventHandler::attachScene(Scene* pScene) {
         eventContext.pScene = pScene;
+    }
+
+    EventHandler::~EventHandler() {
+
     }
 
     int EventHandler::popEvent() {

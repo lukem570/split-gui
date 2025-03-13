@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     void Default::Text::setText(std::string valueIn) {
@@ -25,7 +26,7 @@ namespace SplitGui {
         UnitExpressionValue colorEval = colorStatement.evaluate(extent.height);
         color = colorEval.vector.ivec3;
 
-        SPLITGUI_LOG("Set Text Color: (%d, %d, %d)", color.r, color.g, color.b);
+        Logger::info("Set Text Color");
 
         return Result::eSuccess;
     }
@@ -42,7 +43,7 @@ namespace SplitGui {
 
         textRef = textRes.value;
 
-        SPLITGUI_LOG("Instanced Text");
+        Logger::info("Instanced Text");
 
         return Result::eSuccess;
     }

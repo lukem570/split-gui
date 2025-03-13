@@ -62,7 +62,7 @@ int main() {
                     switch (eventHandler.getEvent().window) {
 
                         case SplitGui::Event::WindowType::eKeypress:
-                            SPLITGUI_LOG("Pressed key: %c", (char)eventHandler.getEvent().data.window.keypress.keyCode);
+                            printf("Pressed key: %c\n", (char)eventHandler.getEvent().data.window.keypress.keyCode);
                             break;
                         
                         default:break;

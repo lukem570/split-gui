@@ -45,7 +45,6 @@ namespace SplitGui {
             ASSERT_ATTRIBUTE(token);
             
             text->setText(token.value);
-            SPLITGUI_LOG("Value: %s", token.value.c_str());
             
             ResultValue<XmlToken> finalTokenRes = nextToken();
             TRYD(finalTokenRes);

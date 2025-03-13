@@ -69,7 +69,7 @@ namespace SplitGui {
 
         vk_depthImageView = vk_device.createImageView(depthImageViewInfo);
 
-        SPLITGUI_LOG("Created Depth Resources");
+        Logger::info("Created Depth Resources");
 
         return Result::eSuccess;
     }

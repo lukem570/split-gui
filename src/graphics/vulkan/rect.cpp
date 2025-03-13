@@ -47,7 +47,7 @@ namespace SplitGui {
         refRet.topLeft     = oldSize + 2;
         refRet.topRight    = oldSize + 3;
 
-        SPLITGUI_LOG("Created Rect: %d", refRet.bottomLeft);
+        Logger::info("Created Rect: " + std::to_string(refRet.bottomLeft));
 
         return refRet;
     }
@@ -66,7 +66,7 @@ namespace SplitGui {
 
         markVerticesForUpdate = true;
 
-        SPLITGUI_LOG("Updated Rect: %d", ref.bottomLeft);
+        Logger::info("Updated Rect: " + std::to_string(ref.bottomLeft));
     }
 
     Result VulkanInterface::submitRect(RectRef& ref) {
@@ -104,7 +104,7 @@ namespace SplitGui {
         vk_device.destroyBuffer(stagingBuffer);
         vk_device.freeMemory(stagingBufferMemory);
 
-        SPLITGUI_LOG("Submitted Rect");
+        Logger::info("Submitted Rect");
 
         return Result::eSuccess;
     }

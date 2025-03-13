@@ -68,7 +68,7 @@ namespace SplitGui {
 
         vk_renderpass = vk_device.createRenderPass(createInfo);
 
-        SPLITGUI_LOG("Created Renderpass");
+        Logger::info("Created Renderpass");
 
         return Result::eSuccess;
     }

@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     
@@ -92,7 +93,7 @@ namespace SplitGui {
             childExtentTwo.height = extent.height;
         }
         
-        SPLITGUI_LOG("Instanced Split");
+        Logger::info("Instanced Split");
 
         children[0]->setGraphics(pGraphics);
         children[0]->setExtent(childExtentOne);

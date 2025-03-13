@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     Result Default::List::update() {
@@ -88,7 +89,7 @@ namespace SplitGui {
             TRYR(instanceRes, children[i]->instance());
         }
         
-        SPLITGUI_LOG("Instanced List");
+        Logger::info("Instanced List");
 
         return Result::eSuccess;
     }

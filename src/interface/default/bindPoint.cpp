@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     Default::BindPoint::~BindPoint() {
@@ -22,7 +23,7 @@ namespace SplitGui {
         root->setExtent(extent);
         root->instance();
         
-        SPLITGUI_LOG("Instanced Bind Point");
+        Logger::info("Instanced Bind Point");
 
         return Result::eSuccess;
     }

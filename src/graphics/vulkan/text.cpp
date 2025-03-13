@@ -12,7 +12,7 @@ namespace SplitGui {
         }
         ft_fontInUse = true;
 
-        SPLITGUI_LOG("Loaded Font");
+        Logger::info("Loaded Font");
 
         return Result::eSuccess;
     }
@@ -289,7 +289,7 @@ namespace SplitGui {
             pos.x += slot->advance.x >> 6;
         }
 
-        SPLITGUI_LOG("Drew Text");
+        Logger::info("Drew Text");
 
         return ret;
     }

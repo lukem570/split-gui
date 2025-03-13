@@ -277,10 +277,4 @@
 
 #endif
 
-#ifdef SPLITGUI_DEV
-#define SPLITGUI_LOG(msg, ...) printf(msg "\n", ##__VA_ARGS__); fflush(stdout);
-#else
-#define SPLITGUI_LOG(msg, ...)
-#endif
-
 #endif // !SPLITGUI_EXPORT

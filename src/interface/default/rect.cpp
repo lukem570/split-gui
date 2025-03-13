@@ -1,6 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 #include "../unitExpression.cpp"
 
@@ -14,7 +15,7 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
-        SPLITGUI_LOG("Updated Rect: (%d, %d), (%d, %d), p:%u", x1.x, x1.y, x2.x, x2.y, graphicsRectRef.bottomLeft);
+        Logger::info("Updated Rect: " + std::to_string(graphicsRectRef.bottomLeft));
 
         pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
 
@@ -34,7 +35,7 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
-        SPLITGUI_LOG("Instanced Rect: (%d, %d), (%d, %d), color: (%d, %d, %d)", x1.x, x1.y, x2.x, x2.y, color.r, color.g, color.b);
+        Logger::info("Instanced Rect");
 
         graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
 
@@ -64,7 +65,7 @@ namespace SplitGui {
         UnitExpressionValue colorEval = colorStatement.evaluate(extent.height);
         color = colorEval.vector.ivec3;
 
-        SPLITGUI_LOG("Updated Rect Color: (%d, %d, %d)", color.r, color.g, color.b);
+        Logger::info("Updated Rect Color");
 
         return Result::eSuccess;
     }

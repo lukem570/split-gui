@@ -63,7 +63,7 @@ namespace SplitGui {
         
         knownIndicesSize = indices.size();
 
-        SPLITGUI_LOG("Submitted Vertex Buffer");
+        Logger::info("Submitted Vertex Buffer");
 
         return Result::eSuccess;
     }
@@ -75,7 +75,7 @@ namespace SplitGui {
             TRYR(vertexRes, vertexBufferSubmit());
         }
 
-        SPLITGUI_LOG("Submited Buffers");
+        Logger::info("Submited Buffers");
 
         return Result::eSuccess;
     }

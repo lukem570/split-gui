@@ -9,7 +9,7 @@ namespace SplitGui {
 
         vk_graphicsPipelineLayout = vk_device.createPipelineLayout(createInfo);
 
-        SPLITGUI_LOG("Created Pipeline Layout");
+        Logger::info("Created Pipeline Layout");
     }
 
     inline Result VulkanInterface::createGraphicsPipeline() {
@@ -155,7 +155,7 @@ namespace SplitGui {
 
         vk_graphicsPipeline = result.value;
 
-        SPLITGUI_LOG("Created Graphics Pipeline");
+        Logger::info("Created Graphics Pipeline");
 
         return Result::eSuccess;
     }

@@ -11,7 +11,11 @@ namespace SplitGui {
                 }
             }
             if (!found) {
-                SPLITGUI_LOG("failed to get layer %s", name)
+                std::stringstream info;
+                info << "Failed to get layer: ";
+                info << name;
+
+                Logger::fatal(info.str());
                 return Result::eFailedToGetLayer;
             }
         }

@@ -11,7 +11,7 @@ namespace SplitGui {
 
         vk_scenePipelineLayout = pipelineLayout;
 
-        SPLITGUI_LOG("Created Scene Pipeline Layout");
+        Logger::info("Created Scene Pipeline Layout");
     }
 
     inline Result VulkanInterface::createScenePipelineModules() {
@@ -169,7 +169,7 @@ namespace SplitGui {
 
         scene.pipeline = result.value;
 
-        SPLITGUI_LOG("Created Scene Graphics Pipeline");
+        Logger::info("Created Scene Graphics Pipeline");
 
         return Result::eSuccess;
     }

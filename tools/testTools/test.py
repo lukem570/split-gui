@@ -132,7 +132,7 @@ with open('build/tests.log', 'w'):
 logging.basicConfig(
     filename='build/tests.log',
     level=logging.DEBUG,
-    format='%(asctime)s\t- %(levelname)s\t- %(message)s'
+    format='%(message)s'
 )
     
 logging.info('--- BEGIN LOG ---')

@@ -53,7 +53,7 @@ namespace SplitGui {
         vk_device.freeMemory(stagingBufferMemory);
         vk_device.destroyBuffer(stagingBuffer);
 
-        SPLITGUI_LOG("Created Scene Data Uniform");
+        Logger::info("Created Scene Data Uniform");
 
         return Result::eSuccess;
     }
@@ -97,7 +97,7 @@ namespace SplitGui {
         vk_device.freeMemory(stagingBufferMemory);
         vk_device.destroyBuffer(stagingBuffer);
 
-        SPLITGUI_LOG("Created Scene Data Uniform");
+        Logger::info("Created Scene Data Uniform");
 
         return Result::eSuccess;
     }
