@@ -5,14 +5,20 @@ namespace SplitGui {
         std::vector<vk::PhysicalDevice> physicalDevices = vk_instance.enumeratePhysicalDevices();
 
         int selection = -1;
-        
+
+        for (unsigned int i = 0; i < physicalDevices.size(); i++) {
+            std::string deviceName = physicalDevices[i].getProperties().deviceName.data();
+            std::stringstream info;
+            info << "Possible Device: " << deviceName;
+            Logger::info(info.str());
+        }
+
         for (unsigned int i = 0; i < physicalDevices.size(); i++) {
             if (physicalDevices[i].getProperties().apiVersion < vk::ApiVersion12) {
                 continue;
             }
 
             selection = i;
-            break;
         }
 
         if (selection == -1) {
