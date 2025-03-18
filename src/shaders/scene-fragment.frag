@@ -51,11 +51,13 @@ void main() {
     } else if (!worldView) {
         vec3 normal = normalize(in_fragNorm);
 
-        vec3 lightPos = vec3(2.0, -5.0, 3.0);
+        vec3 lightPos = vec3(0.0, 0.0, 0.0);
+
+        lightPos = (vec4(lightPos, 1.0) * sb.cameraView).xyz + sb.cameraPosition;
 
         vec3 lightDir = normalize(lightPos - in_fragPos);
 
-        float diffuse = max(dot(normal, lightDir), 0.1);
+        float diffuse = max(dot(normal, lightDir), 0.3);
 
         outColor = vec4(diffuse * in_fragColor, 1.0);
     } else {
