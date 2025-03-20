@@ -93,8 +93,9 @@ namespace SplitGui {
               void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
 [[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
 [[nodiscard]] ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
-[[nodiscard]] Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2)                                                                                     override;
+[[nodiscard]] Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2)                                                                                       override;
 [[nodiscard]] ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
+[[nodiscard]] Result                    deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
 [[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
@@ -212,6 +213,7 @@ namespace SplitGui {
 [[nodiscard]] inline Result                  endSingleTimeCommands(vk::CommandBuffer commandBuffer);
 [[nodiscard]] inline Result                  vertexBufferSubmit();
 [[nodiscard]] inline ResultValue<vk::Format> findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features);
+              inline Result                  submitTriangles(SceneRef& ref);
 
               template <typename T>
 [[nodiscard]] inline Result InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);

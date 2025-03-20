@@ -143,6 +143,10 @@ namespace SplitGui {
         return pInterface->createModel(ref, model);
     }
 
+    void Graphics::deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef) {
+        pInterface->deleteTriangles(sceneRef, triangleRef);
+    }
+
     void Graphics::attachEventHandler(EventHandler& handler) {
         handler.attachGraphics(this);
         pEventHandler = &handler;

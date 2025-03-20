@@ -112,7 +112,6 @@ namespace SplitGui {
     
             while (tVBlock) {
                 VerticesBlock* temp = tVBlock->next;
-                delete tVBlock->vertices;
                 delete tVBlock;
                 tVBlock = temp;
             }
@@ -121,7 +120,6 @@ namespace SplitGui {
     
             while (tIBlock) {
                 IndicesBlock* temp = tIBlock->next;
-                delete tIBlock->indices;
                 delete tIBlock;
                 tIBlock = temp;
             }

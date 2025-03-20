@@ -326,13 +326,13 @@ namespace SplitGui {
 
     struct VerticesBlock {
         unsigned int numVertices;
-        unsigned int* vertices;
+        unsigned int verticesStart;
         VerticesBlock* next = nullptr;
     };
 
     struct IndicesBlock {
         unsigned int numIndices;
-        unsigned int* indices;
+        unsigned int indicesStart;
         IndicesBlock* next = nullptr;
     };
 

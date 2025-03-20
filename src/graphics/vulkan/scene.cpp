@@ -127,68 +127,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<TriangleRef> VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
-
-        unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
-        unsigned int oldIndicesSize  = scenes[ref.sceneNumber].indices.size();
-
-        scenes[ref.sceneNumber].vertices.resize(oldVerticesSize + newIndices.size());
-        scenes[ref.sceneNumber].indices.resize(oldIndicesSize + newIndices.size());
-
-        TriangleRef outRef;
-
-        VerticesBlock* vBlock = new VerticesBlock();
-        IndicesBlock* iBlock = new IndicesBlock();
-
-        outRef.iBlockEnd = iBlock;
-        outRef.vBlockEnd = vBlock;
-
-        outRef.vBlock = vBlock;
-        outRef.iBlock = iBlock;
-
-        vBlock->numVertices = newIndices.size();
-        iBlock->numIndices = newIndices.size();
-
-        vBlock->vertices = new unsigned int[newIndices.size()];
-        iBlock->indices  = new unsigned int[newIndices.size()];
-
-        for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
-            // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
-            // to solve: create a uniform containing surface normals and use like a geometry shader to assign normals
-
-            Vec3 points[3];
-
-            for (unsigned int j = 0; j < 3; j++) {
-
-                SceneVertexBufferObject vbo;
-                vbo.vertex        = newVertices[newIndices[i + j]];
-                vbo.flags         = VertexFlagsBits::eScene ^ flags;
-                vbo.modelNumber   = 0;
-                vbo.textureNumber = textureNumber;
-
-                scenes[ref.sceneNumber].vertices[oldVerticesSize + i + j] = vbo;
-
-                vBlock->vertices[i + j] = oldVerticesSize + i + j;
-
-                scenes[ref.sceneNumber].indices[oldIndicesSize + i + j] = oldVerticesSize + i + j;
-
-                iBlock->indices[i + j] = oldIndicesSize + i + j;
-
-                points[j] = vbo.vertex.pos;
-            }
-
-            Vec3 edge1 = points[1] - points[0];
-            Vec3 edge2 = points[2] - points[0];
-
-            Vec3 normal = edge1.cross(edge2);
-
-            normal.normalize();
-            
-            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 0].normal = normal;
-            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 1].normal = normal;
-            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 2].normal = normal;
-        }
-
+    Result VulkanInterface::submitTriangles(SceneRef& ref) {
         vk::DeviceSize   indexBufferSize;
         vk::Buffer       stagingIndexBuffer;
         vk::DeviceMemory stagingIndexBufferMemory;
@@ -248,10 +187,110 @@ namespace SplitGui {
         vk_device.freeMemory(stagingIndexBufferMemory);
         
         scenes[ref.sceneNumber].knownIndicesSize = scenes[ref.sceneNumber].indices.size();
+
+        return Result::eSuccess;
+    }
+
+    ResultValue<TriangleRef> VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
+
+        unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
+        unsigned int oldIndicesSize  = scenes[ref.sceneNumber].indices.size();
+
+        scenes[ref.sceneNumber].vertices.resize(oldVerticesSize + newIndices.size());
+        scenes[ref.sceneNumber].indices.resize(oldIndicesSize + newIndices.size());
+
+        TriangleRef outRef;
+
+        VerticesBlock* vBlock = new VerticesBlock();
+        IndicesBlock* iBlock = new IndicesBlock();
+
+        outRef.iBlockEnd = iBlock;
+        outRef.vBlockEnd = vBlock;
+
+        outRef.vBlock = vBlock;
+        outRef.iBlock = iBlock;
+
+        triangleReferences.push_back(outRef);
+
+        vBlock->numVertices = newIndices.size();
+        iBlock->numIndices = newIndices.size();
+
+        vBlock->verticesStart = oldVerticesSize;
+        iBlock->indicesStart  = oldIndicesSize;
+
+        for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
+            // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
+            // to solve: create a uniform containing surface normals and use like a geometry shader to assign normals
+
+            Vec3 points[3];
+
+            for (unsigned int j = 0; j < 3; j++) {
+
+                SceneVertexBufferObject vbo;
+                vbo.vertex        = newVertices[newIndices[i + j]];
+                vbo.flags         = VertexFlagsBits::eScene ^ flags;
+                vbo.modelNumber   = 0;
+                vbo.textureNumber = textureNumber;
+
+                scenes[ref.sceneNumber].vertices[oldVerticesSize + i + j] = vbo;
+
+                scenes[ref.sceneNumber].indices[oldIndicesSize + i + j] = oldVerticesSize + i + j;
+
+                points[j] = vbo.vertex.pos;
+            }
+
+            Vec3 edge1 = points[1] - points[0];
+            Vec3 edge2 = points[2] - points[0];
+
+            Vec3 normal = edge1.cross(edge2);
+
+            normal.normalize();
+            
+            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 0].normal = normal;
+            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 1].normal = normal;
+            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 2].normal = normal;
+        }
+
+        TRYR(submitRes, submitTriangles(ref));
         
         Logger::info("Submitted Triangles: " + std::to_string(scenes[ref.sceneNumber].knownIndicesSize));
 
         return outRef;
+    }
+
+    Result VulkanInterface::deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef) {
+
+        VerticesBlock* tVBlock = triangleRef.vBlock;
+    
+        while (tVBlock) {
+            
+            scenes[sceneRef.sceneNumber].vertices.erase(
+                scenes[sceneRef.sceneNumber].vertices.begin() + tVBlock->verticesStart, 
+                scenes[sceneRef.sceneNumber].vertices.begin() + tVBlock->verticesStart + tVBlock->numVertices
+            );
+
+            VerticesBlock* temp = tVBlock->next;
+            delete tVBlock;
+            tVBlock = temp;
+        }
+
+        IndicesBlock* tIBlock = triangleRef.iBlock;
+
+        while (tIBlock) {
+
+            scenes[sceneRef.sceneNumber].indices.erase(
+                scenes[sceneRef.sceneNumber].indices.begin() + tIBlock->indicesStart, 
+                scenes[sceneRef.sceneNumber].indices.begin() + tIBlock->indicesStart + tIBlock->numIndices
+            );
+
+            IndicesBlock* temp = tIBlock->next;
+            delete tIBlock;
+            tIBlock = temp;
+        }
+
+        TRYR(submitRes, submitTriangles(sceneRef));
+
+        return Result::eSuccess;
     }
 
     ModelRef VulkanInterface::createModel(SceneRef& ref, Mat4& model) { // TODO:

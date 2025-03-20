@@ -32,6 +32,7 @@ namespace SplitGui {
 [[nodiscard]] virtual ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                { throw; }
 [[nodiscard]] virtual Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2)                                                                                       { throw; }
 [[nodiscard]] virtual ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) { throw; }
+[[nodiscard]] virtual Result                    deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
 [[nodiscard]] virtual Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
@@ -65,6 +66,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<SceneRef>     instanceScene(IVec2 x1, IVec2 x2, int depth = 0);
 [[nodiscard]] Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2);
 [[nodiscard]] ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags = 0, int textureNumber = 0);
+[[nodiscard]] Result                      deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef);
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position);
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view);
 [[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
