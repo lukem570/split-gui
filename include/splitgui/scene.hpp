@@ -38,6 +38,8 @@ namespace SplitGui {
 
             std::vector<Vertex>   vertices;
             std::vector<uint16_t> indices;
+
+            TriangleRef triangleRef;
     };
 
     class SPLITGUI_EXPORT Cube : public Mesh {

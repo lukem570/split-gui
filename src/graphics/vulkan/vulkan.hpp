@@ -94,7 +94,7 @@ namespace SplitGui {
 [[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
 [[nodiscard]] ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
 [[nodiscard]] Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2)                                                                                     override;
-[[nodiscard]] Result                    submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
+[[nodiscard]] ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
 [[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
 [[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
 [[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
@@ -186,6 +186,7 @@ namespace SplitGui {
             std::vector<VertexBufferObject>     vertices;
             std::vector<uint16_t>               indices;
             std::vector<std::vector<Contour>>   vectorImages;
+            std::vector<TriangleRef>            triangleReferences;
             std::unordered_set<char>            charSet;
             bool                                markVerticesForUpdate = false;
 
@@ -210,7 +211,6 @@ namespace SplitGui {
               inline void                    copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion);
 [[nodiscard]] inline Result                  endSingleTimeCommands(vk::CommandBuffer commandBuffer);
 [[nodiscard]] inline Result                  vertexBufferSubmit();
-              inline void                    updateScenes();
 [[nodiscard]] inline ResultValue<vk::Format> findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features);
 
               template <typename T>
@@ -267,6 +267,7 @@ namespace SplitGui {
               inline void cleanupVertexAndIndexBuffers();
               inline void cleanupScenesImageArray();
               inline void cleanupScenes();
+              inline void cleanupTriangleReferences();
 
               inline void cleanupSceneVertexAndIndexBuffers(SceneRef& ref);
               inline void cleanupSceneFrameBuffers(SceneRef& ref);

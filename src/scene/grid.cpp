@@ -47,6 +47,13 @@ namespace SplitGui {
     }
 
     Result Grid::submit(SceneRef& ref, int flags) {
-        return pGraphics->submitTriangleData(ref, vertices, indices, flags);
+
+        ResultValue<TriangleRef> triangleRes = pGraphics->submitTriangleData(ref, vertices, indices, flags);
+
+        TRYD(triangleRes);
+
+        triangleRef = triangleRes.value;
+
+        return Result::eSuccess;
     }
 }

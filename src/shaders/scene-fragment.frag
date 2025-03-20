@@ -57,7 +57,7 @@ void main() {
 
         vec3 lightDir = normalize(lightPos - in_fragPos);
 
-        float diffuse = max(dot(normal, lightDir), 0.3);
+        float diffuse = max(dot(normal, lightDir), 0.4);
 
         outColor = vec4(diffuse * in_fragColor, 1.0);
     } else {

@@ -123,7 +123,7 @@ namespace SplitGui {
         pInterface->clearBuffers();
     }
 
-    Result Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
+    ResultValue<TriangleRef> Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
         return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
     }
 

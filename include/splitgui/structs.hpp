@@ -324,6 +324,26 @@ namespace SplitGui {
         std::string          text;
     };
 
+    struct VerticesBlock {
+        unsigned int numVertices;
+        unsigned int* vertices;
+        VerticesBlock* next = nullptr;
+    };
+
+    struct IndicesBlock {
+        unsigned int numIndices;
+        unsigned int* indices;
+        IndicesBlock* next = nullptr;
+    };
+
+    struct TriangleRef { // graphics owns these pointers
+        VerticesBlock* vBlock = nullptr;
+        IndicesBlock* iBlock = nullptr;
+
+        VerticesBlock* vBlockEnd = nullptr;
+        IndicesBlock* iBlockEnd = nullptr;
+    };
+
     enum class UnitExpressionTokenType {
         eEndOfFile,
         eLiteral,

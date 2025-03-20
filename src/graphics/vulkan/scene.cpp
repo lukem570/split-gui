@@ -127,13 +127,30 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    Result VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
+    ResultValue<TriangleRef> VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
 
         unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
         unsigned int oldIndicesSize  = scenes[ref.sceneNumber].indices.size();
 
         scenes[ref.sceneNumber].vertices.resize(oldVerticesSize + newIndices.size());
         scenes[ref.sceneNumber].indices.resize(oldIndicesSize + newIndices.size());
+
+        TriangleRef outRef;
+
+        VerticesBlock* vBlock = new VerticesBlock();
+        IndicesBlock* iBlock = new IndicesBlock();
+
+        outRef.iBlockEnd = iBlock;
+        outRef.vBlockEnd = vBlock;
+
+        outRef.vBlock = vBlock;
+        outRef.iBlock = iBlock;
+
+        vBlock->numVertices = newIndices.size();
+        iBlock->numIndices = newIndices.size();
+
+        vBlock->vertices = new unsigned int[newIndices.size()];
+        iBlock->indices  = new unsigned int[newIndices.size()];
 
         for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
             // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
@@ -151,7 +168,11 @@ namespace SplitGui {
 
                 scenes[ref.sceneNumber].vertices[oldVerticesSize + i + j] = vbo;
 
+                vBlock->vertices[i + j] = oldVerticesSize + i + j;
+
                 scenes[ref.sceneNumber].indices[oldIndicesSize + i + j] = oldVerticesSize + i + j;
+
+                iBlock->indices[i + j] = oldIndicesSize + i + j;
 
                 points[j] = vbo.vertex.pos;
             }
@@ -230,7 +251,7 @@ namespace SplitGui {
         
         Logger::info("Submitted Triangles: " + std::to_string(scenes[ref.sceneNumber].knownIndicesSize));
 
-        return Result::eSuccess;
+        return outRef;
     }
 
     ModelRef VulkanInterface::createModel(SceneRef& ref, Mat4& model) { // TODO:
