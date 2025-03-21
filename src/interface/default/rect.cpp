@@ -15,8 +15,6 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
-        Logger::info("Updated Rect: " + std::to_string(graphicsRectRef.bottomLeft));
-
         pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
 
         return Result::eSuccess;
@@ -64,8 +62,6 @@ namespace SplitGui {
 
         UnitExpressionValue colorEval = colorStatement.evaluate(extent.height);
         color = colorEval.vector.ivec3;
-
-        Logger::info("Updated Rect Color");
 
         return Result::eSuccess;
     }
