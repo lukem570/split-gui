@@ -122,6 +122,12 @@ namespace SplitGui {
         return Result::eInvalidToken;
     }
 
+    void UnitExpressionEvaluator::checkCleanup() {
+        if (expressionTree) {
+            cleanup(expressionTree);
+        }
+    }
+
     ResultValue<UnitExpression*> UnitExpressionEvaluator::parse(std::string expression) {
 
         ResultValue<UnitExpressionToken> token;
@@ -339,7 +345,7 @@ namespace SplitGui {
     }
 
     UnitExpressionEvaluator::~UnitExpressionEvaluator() {
-        cleanup(expressionTree);
+        checkCleanup();
     }
 
     void UnitExpressionEvaluator::cleanup(UnitExpression* expression) {

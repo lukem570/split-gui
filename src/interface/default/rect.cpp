@@ -49,6 +49,9 @@ namespace SplitGui {
     }
 
     Result Default::Rect::setColor(std::string colorIn) {
+
+        colorStatement.checkCleanup();
+
         SplitGui::ResultValue<SplitGui::UnitExpression*> parseRes = colorStatement.parse(colorIn);
         TRYD(parseRes);
 

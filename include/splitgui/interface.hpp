@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-#define DEPTH_PLANE 255
+#define DEPTH_PLANE 255.0
 
 namespace SplitGui {
 
@@ -55,6 +55,8 @@ namespace SplitGui {
     class SPLITGUI_EXPORT UnitExpressionEvaluator {
         public: 
             ~UnitExpressionEvaluator();
+
+            void checkCleanup();
 
               UnitExpressionValue          evaluate(int maxSize);
               UnitExpressionValue          evaluateExpr(int maxSize, UnitExpression* expression);

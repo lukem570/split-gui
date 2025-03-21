@@ -111,6 +111,9 @@ namespace SplitGui {
     }
 
     Result Default::Split::setPosition(std::string pos) {
+
+        position.checkCleanup();
+
         TRY(SplitGui::UnitExpression*, parseRes, position.parse(pos));
 
         return Result::eSuccess;

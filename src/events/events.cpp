@@ -22,7 +22,7 @@ namespace SplitGui {
     }
 
     EventHandler::~EventHandler() {
-
+        Logger::cleanup();
     }
 
     int EventHandler::popEvent() {

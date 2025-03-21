@@ -6,6 +6,9 @@
 namespace SplitGui {
 
     Result Default::Transform::setScale(std::string scaleIn) {
+
+        scale.checkCleanup();
+
         SplitGui::ResultValue<SplitGui::UnitExpression*> parseRes = scale.parse(scaleIn);
         TRYD(parseRes);
 
@@ -20,6 +23,9 @@ namespace SplitGui {
     }
 
     Result Default::Transform::setPosition(std::string positionIn) {
+
+        position.checkCleanup();
+
         SplitGui::ResultValue<SplitGui::UnitExpression*> parseRes = position.parse(positionIn);
         TRYD(parseRes);
 

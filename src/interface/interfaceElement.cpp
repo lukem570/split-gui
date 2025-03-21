@@ -1,4 +1,5 @@
 #include <splitgui/interface.hpp>
+#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     Result InterfaceElement::instance() {
@@ -73,6 +74,7 @@ namespace SplitGui {
     }
 
     void InterfaceElement::setDepth(int depthIn) {
+        Logger::info("Depth: " + std::to_string(depthIn));
         depth = depthIn;
     }
 

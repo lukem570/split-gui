@@ -13,6 +13,9 @@ namespace SplitGui {
     }
 
     Result Default::Text::setColor(std::string colorIn) {
+
+        colorStatement.checkCleanup();
+
         SplitGui::ResultValue<SplitGui::UnitExpression*> parseRes = colorStatement.parse(colorIn);
         TRYD(parseRes);
 

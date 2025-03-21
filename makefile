@@ -14,5 +14,11 @@ multi:
 text:
 	python tools/testTools/test.py build/tests/textTest
 
+depth:
+	python tools/testTools/test.py build/tests/depthTest
+
+graphics:
+	python tools/testTools/test.py build/tests/graphicsTest
+
 test-all:
 	python tools/testTools/test.py
