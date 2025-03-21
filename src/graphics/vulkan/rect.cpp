@@ -65,8 +65,6 @@ namespace SplitGui {
         vertices[ref.topRight].vertex.color    = color;
 
         markVerticesForUpdate = true;
-
-        Logger::info("Updated Rect: " + std::to_string(ref.bottomLeft));
     }
 
     Result VulkanInterface::submitRect(RectRef& ref) {
@@ -103,8 +101,6 @@ namespace SplitGui {
 
         vk_device.destroyBuffer(stagingBuffer);
         vk_device.freeMemory(stagingBufferMemory);
-
-        Logger::info("Submitted Rect");
 
         return Result::eSuccess;
     }
