@@ -89,6 +89,8 @@ namespace SplitGui {
         bool operator!=(IVec4 operand);
 
         float dot(const IVec4& operand);
+
+        std::string stringify();
     };
 
     struct SPLITGUI_EXPORT Vec3 {
@@ -130,6 +132,8 @@ namespace SplitGui {
         bool operator!=(IVec3 operand);
 
         float dot(const IVec3& operand);
+
+        std::string stringify();
     };
 
     struct SPLITGUI_EXPORT Vec2 {
@@ -161,6 +165,8 @@ namespace SplitGui {
         bool operator!=(IVec2 operand);
 
         float dot(const IVec2& operand);
+
+        std::string stringify();
     };
     
     struct RectObj {

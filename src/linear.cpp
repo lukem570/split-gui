@@ -77,6 +77,42 @@ namespace SplitGui {
         y /= len;
     }
 
+    std::string IVec4::stringify() {
+
+        std::stringstream str;
+
+        str << "ivec4(";
+        str << x << "u, ";
+        str << y << "u, ";
+        str << z << "u, ";
+        str << w << "u)";
+
+        return str.str();
+    }
+
+    std::string IVec3::stringify() {
+
+        std::stringstream str;
+
+        str << "ivec3(";
+        str << x << "u, ";
+        str << y << "u, ";
+        str << z << "u)";
+
+        return str.str();
+    }
+
+    std::string IVec2::stringify() {
+
+        std::stringstream str;
+
+        str << "ivec2(";
+        str << x << "u, ";
+        str << y << "u)";
+
+        return str.str();
+    }
+
     Mat4 Mat4::operator*(const Mat4& operand) {
         Mat4 mul;
 
