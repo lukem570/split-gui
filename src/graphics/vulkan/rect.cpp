@@ -78,12 +78,15 @@ namespace SplitGui {
         for (unsigned int i = 0; i < rectReferences.size(); i++) {
             if (ref.bottomLeft < rectReferences[i].bottomLeft) {
                 rectOffsets[i] -= 4;
-
-                for (unsigned int j = 0; j < 6; j++){
-                    indices[rectReferences[i].indicesStart + j] -= 4;
-                }
             }
         }
+
+        for (unsigned int i = 0; i < indices.size(); i++) {
+            if (ref.topRight < indices[i]) {
+                indices[i] -= 4;
+            }
+        }
+        
 
         vertices.erase(
             vertices.begin() + ref.bottomLeft, 
