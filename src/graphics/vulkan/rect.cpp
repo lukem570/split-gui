@@ -92,7 +92,7 @@ namespace SplitGui {
 
         indices.erase(
             indices.begin() + ref.indicesStart, 
-            indices.begin() + ref.indicesStart
+            indices.begin() + ref.indicesStart + 6
         );
     }
 
