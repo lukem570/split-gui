@@ -67,6 +67,13 @@ namespace SplitGui {
         markVerticesForUpdate = true;
     }
 
+    void VulkanInterface::deleteRect(RectRef& ref) {
+        vertices.erase(
+            vertices.begin() + ref.bottomLeft, 
+            vertices.begin() + ref.topRight
+        );
+    }
+
     Result VulkanInterface::submitRect(RectRef& ref) {
 
         vk::DeviceSize rectSize = sizeof(VertexBufferObject) * 4;

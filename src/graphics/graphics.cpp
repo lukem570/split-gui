@@ -68,6 +68,10 @@ namespace SplitGui {
         pInterface->updateRect(ref, newX1, newX2, color.normalize(),(float)depth / DEPTH_PLANE);
     }
 
+    void Graphics::deleteRect(RectRef& ref) {
+        pInterface->deleteRect(ref);
+    }
+
     Result Graphics::submitRect(RectRef& ref) {
         return pInterface->submitRect(ref);
     }
