@@ -189,6 +189,8 @@ namespace SplitGui {
             std::vector<uint16_t>               indices;
             std::vector<std::vector<Contour>>   vectorImages;
             std::vector<TriangleRef>            triangleReferences;
+            std::vector<RectRef>                rectReferences;
+            std::vector<int>                    rectOffsets;
             std::unordered_set<char>            charSet;
             bool                                markVerticesForUpdate = false;
 

@@ -310,10 +310,13 @@ namespace SplitGui {
     };
 
     struct RectRef {
+        int id;
+
         int bottomLeft;
         int bottomRight;
         int topLeft;
         int topRight;
+        int indicesStart;
     };
 
     struct SceneRef {

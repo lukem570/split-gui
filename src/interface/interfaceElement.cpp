@@ -83,6 +83,7 @@ namespace SplitGui {
             children[i]->cleanup();
             delete children[i];
         }
+        children.clear();
     }
 
     std::vector<InterfaceElement*> InterfaceElement::searchByReference(std::string reference) {

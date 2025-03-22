@@ -142,6 +142,7 @@ index.xml
 
 ### Optimizations
 
+* handle rect references better
 * staging buffer caching
 * make staging buffer allocate extra space for update events
 
