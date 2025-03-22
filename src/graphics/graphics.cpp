@@ -152,7 +152,7 @@ namespace SplitGui {
         pEventHandler = &handler;
     }
 
-    Result Graphics::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2) {
+    Result Graphics::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2, int depth) {
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -163,7 +163,7 @@ namespace SplitGui {
         newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
         newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
 
-        return pInterface->updateScene(ref, newX1, newX2);
+        return pInterface->updateScene(ref, newX1, newX2, (float)depth / DEPTH_PLANE);
     }
 
     [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {
