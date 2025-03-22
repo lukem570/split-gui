@@ -87,7 +87,7 @@ namespace SplitGui {
 
         vertices.erase(
             vertices.begin() + ref.bottomLeft, 
-            vertices.begin() + ref.topRight
+            vertices.begin() + ref.topRight + 1
         );
 
         indices.erase(
