@@ -80,6 +80,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result instance();
 [[nodiscard]] virtual Result update();
 [[nodiscard]] virtual Result submit();
+              virtual void   cleanup();
 
             void addChild(InterfaceElement* pChild);
             void setSize(IVec2 size);
@@ -88,7 +89,6 @@ namespace SplitGui {
             void setGraphics(Graphics* pgGraphics);
             void setRef(std::string string);
             void setDepth(int depth);
-            void cleanup();
 
             virtual std::vector<InterfaceElement*> searchByReference(std::string reference);
 
@@ -208,6 +208,7 @@ namespace SplitGui {
   [[nodiscard]] Result instance() override;
   [[nodiscard]] Result update()   override;
   [[nodiscard]] Result submit()   override;
+                void   cleanup()  override;
 
                 void   setColor(HexColor);
   [[nodiscard]] Result setColor(std::string);

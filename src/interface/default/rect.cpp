@@ -48,6 +48,10 @@ namespace SplitGui {
         color = colorIn;
     }
 
+    void Default::Rect::cleanup() {
+        pGraphics->deleteRect(graphicsRectRef);
+    }
+
     Result Default::Rect::setColor(std::string colorIn) {
 
         colorStatement.checkCleanup();
