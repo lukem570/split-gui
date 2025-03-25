@@ -56,6 +56,8 @@ namespace SplitGui {
     float Vec2::dot(const Vec2& operand) { return x * operand.x + y * operand.y; }
     float IVec2::dot(const IVec2& operand) { return x * operand.x + y * operand.y; }
 
+    Vec4 Vec3::extend(float value) { return {x, y, z, value}; }
+
     void Vec4::normalize() {
         float len = std::sqrt(x*x + y*y + z*z + w*w);
         x /= len;
@@ -111,6 +113,17 @@ namespace SplitGui {
         str << y << "u)";
 
         return str.str();
+    }
+
+    Vec4 Mat4::operator*(const Vec4& operand) {
+        Vec4 vec;
+
+        vec.x = operand.x * a.x + operand.y * a.y + operand.z * a.z + operand.w * a.w;
+        vec.y = operand.x * b.x + operand.y * b.y + operand.z * b.z + operand.w * b.w;
+        vec.z = operand.x * c.x + operand.y * c.y + operand.z * c.z + operand.w * c.w;
+        vec.w = operand.x * d.x + operand.y * d.y + operand.z * d.z + operand.w * d.w;
+
+        return vec;
     }
 
     Mat4 Mat4::operator*(const Mat4& operand) {
@@ -313,7 +326,33 @@ namespace SplitGui {
         a.x = (1.0f / fov) * ((float)extent.height / (float)extent.width);
     }
 
-    Mat4 Mat4::staticModel() {
+    Mat4 Mat4::quaternionMatrix(Vec4 quaternion) {
+        Mat4 matrix;
+
+        matrix.a.x = 1 - 2 * quaternion.y * quaternion.y - 2 * quaternion.z * quaternion.z;
+        matrix.a.y = 2 * quaternion.x * quaternion.y - 2 * quaternion.z * quaternion.w;
+        matrix.a.z = 2 * quaternion.x * quaternion.z + 2 * quaternion.y * quaternion.w;
+        matrix.a.w = 0;
+
+        matrix.b.x = 2 * quaternion.x * quaternion.y + 2 * quaternion.z * quaternion.w;
+        matrix.b.y = 1 - 2 * quaternion.x * quaternion.x - 2 * quaternion.z * quaternion.z;
+        matrix.b.z = 2 * quaternion.y * quaternion.z - 2 * quaternion.x * quaternion.w;
+        matrix.b.w = 0;
+
+        matrix.c.x = 2 * quaternion.x * quaternion.z - 2 * quaternion.y * quaternion.w;
+        matrix.c.y = 2 * quaternion.y * quaternion.z + 2 * quaternion.x * quaternion.w;
+        matrix.c.z = 1 - 2 * quaternion.x * quaternion.x - 2 * quaternion.y * quaternion.y;
+        matrix.c.w = 0;
+
+        matrix.d.x = 0;
+        matrix.d.y = 0;
+        matrix.d.z = 0;
+        matrix.d.w = 1;
+
+        return matrix;
+    }
+
+    Mat4 Mat4::ident() {
         Mat4 model;
 
         model.a.x = 1;

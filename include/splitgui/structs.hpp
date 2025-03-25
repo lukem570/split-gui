@@ -116,6 +116,8 @@ namespace SplitGui {
 
         float dot(const Vec3& operand);
         void normalize();
+
+        Vec4 extend(float value);
     };
 
     struct SPLITGUI_EXPORT IVec3 {
@@ -222,15 +224,19 @@ namespace SplitGui {
         Mat4 operator*(const Mat4& operand);
         Mat4 operator+(const Mat4& operand);
 
+        Vec4 operator*(const Vec4& operand);
+
         void updatePerspective(float fieldOfView, RectObj extent);
 
         static Mat4 xRotationMatrix(float theta);
         static Mat4 yRotationMatrix(float theta);
         static Mat4 zRotationMatrix(float theta);
 
+        static Mat4 quaternionMatrix(Vec4 quaternion);
+
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
         static Mat4 perspectiveProjection(float fieldOfView, RectObj extent, float far = 100.0f, float near = 0.1f);
-        static Mat4 staticModel();
+        static Mat4 ident();
     };
 
     struct HexColor {
