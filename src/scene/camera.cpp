@@ -7,9 +7,8 @@ namespace SplitGui {
 
         Mat4 rotationX = Mat4::xRotationMatrix(transform.rotation.x);
         Mat4 rotationY = Mat4::yRotationMatrix(transform.rotation.y);
-        Mat4 rotationZ = Mat4::zRotationMatrix(transform.rotation.z);
 
-        Mat4 rotation = rotationX * (rotationY * rotationZ);
+        Mat4 rotation = rotationX * rotationY;
 
         view = rotation;
 
