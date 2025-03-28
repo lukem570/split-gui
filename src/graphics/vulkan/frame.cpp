@@ -31,6 +31,8 @@ namespace SplitGui {
 
         imageIndex = result.value;
 
+        commandPoolMutex.lock();
+
         vk_commandBuffers[currentFrame].reset();
         vk_commandBuffers[currentFrame].begin(vk_beginInfo);
 
@@ -184,9 +186,13 @@ namespace SplitGui {
 
         vk_commandBuffers[currentFrame].end();
 
+        commandPoolMutex.unlock();
+
         vk_submitInfo.pWaitSemaphores   = &vk_imageAvailableSemaphores[currentFrame];
         vk_submitInfo.pCommandBuffers   = &vk_commandBuffers[currentFrame];
         vk_submitInfo.pSignalSemaphores = &vk_renderFinishedSemaphores[currentFrame];
+
+        queueMutex.lock();
 
         vk_runtimeResult = vk_graphicsQueue.submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
 
@@ -206,6 +212,8 @@ namespace SplitGui {
         
             return Result::eFailedToGetNextSwapchainImage;
         }
+
+        queueMutex.unlock();
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 

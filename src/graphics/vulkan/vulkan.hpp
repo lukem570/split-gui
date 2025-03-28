@@ -19,6 +19,7 @@
 #include <stack>
 #include <setjmp.h>
 #include <unordered_set>
+#include <mutex>
 
 namespace ft {
     #include <ft2build.h>
@@ -203,6 +204,9 @@ namespace SplitGui {
             vk::ShaderModule         vk_sceneVertexModule;
             vk::ShaderModule         vk_sceneFragmentModule;
             std::vector<SceneObject> scenes;
+
+            std::mutex queueMutex;
+            std::mutex commandPoolMutex;
 
 [[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
               inline vk::Extent2D            chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);

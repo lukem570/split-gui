@@ -64,6 +64,9 @@ namespace SplitGui {
     }
 
     inline vk::CommandBuffer VulkanInterface::startCopyBuffer() {
+
+        commandPoolMutex.lock();
+
         vk::CommandBufferAllocateInfo allocInfo;
         allocInfo.level              = vk::CommandBufferLevel::ePrimary;
         allocInfo.commandPool        = vk_commandPool;
@@ -94,6 +97,8 @@ namespace SplitGui {
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers    = &commandBuffer;
 
+        queueMutex.lock();
+
         vk::Result result_submit = vk_graphicsQueue.submit(1, &submitInfo, nullptr);
 
         if (result_submit != vk::Result::eSuccess) {
@@ -102,7 +107,11 @@ namespace SplitGui {
 
         vk_graphicsQueue.waitIdle();
 
+        queueMutex.unlock();
+
         vk_device.freeCommandBuffers(vk_commandPool, 1, &commandBuffer);
+
+        commandPoolMutex.unlock();
 
         return Result::eSuccess;
     }

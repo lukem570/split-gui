@@ -20,5 +20,8 @@ depth:
 graphics:
 	python tools/testTools/test.py build/tests/graphicsTest
 
+thread:
+	python tools/testTools/test.py build/tests/threadTest
+
 test-all:
 	python tools/testTools/test.py
