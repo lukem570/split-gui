@@ -207,6 +207,7 @@ namespace SplitGui {
 
             std::mutex queueMutex;
             std::mutex commandPoolMutex;
+            std::mutex frameMutex;
 
 [[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
               inline vk::Extent2D            chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);

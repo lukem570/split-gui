@@ -58,14 +58,14 @@ namespace SplitGui {
 
     Result VulkanInterface::recreateSwapchain() {
 
+        frameMutex.lock();
+
         vk_device.waitIdle();
 
         cleanupImageViews();
         cleanupScenesImageArray();
         cleanupDepthResources();
         cleanupFrameBuffers();
-
-        vk_device.waitIdle();
         
         vk_device.destroySwapchainKHR(vk_swapchain);
 
@@ -80,6 +80,8 @@ namespace SplitGui {
         setupRenderpassBeginInfo();
         setupViewport();
         setupScissor();
+
+        frameMutex.unlock();
 
         Logger::info("Recreated Swapchain");
 

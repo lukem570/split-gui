@@ -45,8 +45,10 @@ namespace SplitGui {
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
+        frameMutex.lock();
+
         vk_device.waitIdle();
-        
+
         cleanupVertexAndIndexBuffers();
 
         vk_vertexBuffer       = tempVertexBuffer;
@@ -55,14 +57,17 @@ namespace SplitGui {
         vk_indexBuffer        = tempIndexBuffer;
         vk_indexBufferMemory  = tempIndexBufferMemory;
 
+        
         vk_device.destroyBuffer(stagingVertexBuffer);
         vk_device.freeMemory(stagingVertexBufferMemory);
-
+        
         vk_device.destroyBuffer(stagingIndexBuffer);
         vk_device.freeMemory(stagingIndexBufferMemory);
         
         knownIndicesSize = indices.size();
-
+        
+        frameMutex.unlock();
+        
         Logger::info("Submitted Vertex Buffer");
 
         return Result::eSuccess;

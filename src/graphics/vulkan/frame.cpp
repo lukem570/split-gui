@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     Result VulkanInterface::drawFrame() {
+
+        frameMutex.lock();
         
         if (!vk_vertexBuffer) {
             return Result::eSuccess;
@@ -216,6 +218,8 @@ namespace SplitGui {
         queueMutex.unlock();
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+        frameMutex.unlock();
 
         return Result::eSuccess;
     }
