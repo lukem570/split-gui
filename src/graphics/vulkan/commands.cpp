@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline void VulkanInterface::createCommandPool() {
+        SPLITGUI_PROFILE;
+        
         vk::CommandPoolCreateInfo commandPoolInfo;
         commandPoolInfo.flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer;
         commandPoolInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
@@ -12,6 +14,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::createCommandBuffers() {
+        SPLITGUI_PROFILE;
+        
         vk::CommandBufferAllocateInfo allocInfo;
         allocInfo.commandPool        = vk_commandPool;
         allocInfo.level              = vk::CommandBufferLevel::ePrimary;

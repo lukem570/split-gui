@@ -10,6 +10,8 @@
 
 int main() {
 
+    SPLITGUI_PROFILE;
+
     std::ifstream indexFile("test/listTest/index.xml");
 
     if (!indexFile.is_open()) {

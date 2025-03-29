@@ -15,6 +15,8 @@ constexpr double degToRad(double degrees) {
 
 int main() {
 
+    SPLITGUI_PROFILE;
+
     std::ifstream indexFile("test/multiSceneTest/index.xml");
 
     if (!indexFile.is_open()) {

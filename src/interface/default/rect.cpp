@@ -7,6 +7,8 @@
 
 namespace SplitGui {
     Result Default::Rect::update() {
+        SPLITGUI_PROFILE;
+
         IVec2 x1;
         x1.x = extent.x;
         x1.y = extent.y;
@@ -21,6 +23,8 @@ namespace SplitGui {
     }
 
     Result Default::Rect::instance() {
+        SPLITGUI_PROFILE;
+
         if (maxChildren != children.size()) {
             return Result::eInvalidNumberOfChildren;
         }
@@ -41,10 +45,14 @@ namespace SplitGui {
     }
 
     Result Default::Rect::submit() {
+        SPLITGUI_PROFILE;
+
         return pGraphics->submitRect(graphicsRectRef);
     }
 
     void Default::Rect::setColor(HexColor colorIn) {
+        SPLITGUI_PROFILE;
+
         color = colorIn;
     }
 
@@ -53,6 +61,8 @@ namespace SplitGui {
     }
 
     Result Default::Rect::setColor(std::string colorIn) {
+        SPLITGUI_PROFILE;
+
 
         colorStatement.checkCleanup();
 
@@ -74,10 +84,14 @@ namespace SplitGui {
     }
 
     void Default::Rect::setFlags(VertexFlags flagsIn) {
+        SPLITGUI_PROFILE;
+
         flags = flagsIn;
     }
 
     void Default::Rect::setTextureIndex(int idxIn) {
+        SPLITGUI_PROFILE;
+
         textureIndex = idxIn;
     }
 

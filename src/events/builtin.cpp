@@ -6,6 +6,8 @@
 
 namespace SplitGui {
     Result resizeEvent(Context eventContext) {
+        SPLITGUI_PROFILE;
+
         if (!eventContext.pGraphics) {
             return Result::eSuccess;
         }
@@ -30,6 +32,8 @@ namespace SplitGui {
     }
 
     Result EventHandler::callBuiltinEvent(Event event) {
+        
+        SPLITGUI_PROFILE;
 
         switch (event.category) {
             case Event::Category::eWindow: {

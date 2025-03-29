@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     Result VulkanInterface::loadFont(const char* path) {
+        SPLITGUI_PROFILE;
+
         if (ft_fontInUse) {
             ft::FT_Done_Face(ft_face);
         }
@@ -18,6 +20,8 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth) {
+        SPLITGUI_PROFILE;
+
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 pos = {0.0f, 0.0f};
@@ -80,6 +84,8 @@ namespace SplitGui {
     }
 
     ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth) {
+        SPLITGUI_PROFILE;
+
         if (!ft_fontInUse) {
             return Result::eFailedToUseFont;
         }

@@ -4,6 +4,7 @@
 
 namespace SplitGui {
     Result Camera::update(SceneRef& ref) {
+        SPLITGUI_PROFILE;
 
         Mat4 rotationX = Mat4::xRotationMatrix(transform.rotation.x);
         Mat4 rotationY = Mat4::yRotationMatrix(transform.rotation.y);
@@ -19,6 +20,8 @@ namespace SplitGui {
     }
 
     Mat4 Camera::getView() {
+        SPLITGUI_PROFILE;
+
         return view;
     }
 }

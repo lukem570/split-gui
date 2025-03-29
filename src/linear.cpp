@@ -59,6 +59,8 @@ namespace SplitGui {
     Vec4 Vec3::extend(float value) { return {x, y, z, value}; }
 
     void Vec4::normalize() {
+        SPLITGUI_PROFILE;
+
         float len = std::sqrt(x*x + y*y + z*z + w*w);
         x /= len;
         y /= len;
@@ -67,6 +69,8 @@ namespace SplitGui {
     }
 
     void Vec3::normalize() {
+        SPLITGUI_PROFILE;
+
         float len = std::sqrt(x*x + y*y + z*z);
         x /= len;
         y /= len;
@@ -74,12 +78,15 @@ namespace SplitGui {
     }
 
     void Vec2::normalize() {
+        SPLITGUI_PROFILE;
+
         float len = std::sqrt(x*x + y*y);
         x /= len;
         y /= len;
     }
 
     std::string IVec4::stringify() {
+        SPLITGUI_PROFILE;
 
         std::stringstream str;
 
@@ -93,6 +100,7 @@ namespace SplitGui {
     }
 
     std::string IVec3::stringify() {
+        SPLITGUI_PROFILE;
 
         std::stringstream str;
 
@@ -105,6 +113,7 @@ namespace SplitGui {
     }
 
     std::string IVec2::stringify() {
+        SPLITGUI_PROFILE;
 
         std::stringstream str;
 
@@ -116,6 +125,8 @@ namespace SplitGui {
     }
 
     Vec4 Mat4::operator*(const Vec4& operand) {
+        SPLITGUI_PROFILE;
+
         Vec4 vec;
 
         vec.x = operand.x * a.x + operand.y * a.y + operand.z * a.z + operand.w * a.w;
@@ -127,6 +138,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::operator*(const Mat4& operand) {
+        SPLITGUI_PROFILE;
+
         Mat4 mul;
 
         mul.a.x = a.x * operand.a.x + a.y * operand.b.x + a.z * operand.c.x + a.w * operand.d.x;
@@ -153,6 +166,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::operator+(const Mat4& operand) {
+        SPLITGUI_PROFILE;
+
         Mat4 mul;
 
         mul.a.x = a.x + operand.a.x;
@@ -179,6 +194,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::xRotationMatrix(float theta) {
+        SPLITGUI_PROFILE;
+
         Mat4 rotation;
 
         float s = std::sin(theta);
@@ -208,6 +225,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::yRotationMatrix(float theta) {
+        SPLITGUI_PROFILE;
+
         Mat4 rotation;
 
         float s = std::sin(theta);
@@ -237,6 +256,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::zRotationMatrix(float theta) {
+        SPLITGUI_PROFILE;
+
         Mat4 rotation;
 
         float s = std::sin(theta);
@@ -266,6 +287,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::orthographicProjection(float far, float near) {
+        SPLITGUI_PROFILE;
+
         Mat4 projection;
 
         projection.a.x = 1;
@@ -292,6 +315,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::perspectiveProjection(float fieldOfView, RectObj extent, float far, float near) {
+        SPLITGUI_PROFILE;
+
         Mat4 projection;
 
         float fov = std::tan(fieldOfView / 2);
@@ -320,6 +345,8 @@ namespace SplitGui {
     }
 
     void Mat4::updatePerspective(float fieldOfView, RectObj extent) {
+        SPLITGUI_PROFILE;
+
 
         float fov = std::tan(fieldOfView / 2);
 
@@ -327,6 +354,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::quaternionMatrix(Vec4 quaternion) {
+        SPLITGUI_PROFILE;
+
         Mat4 matrix;
 
         matrix.a.x = 1 - 2 * quaternion.y * quaternion.y - 2 * quaternion.z * quaternion.z;
@@ -353,6 +382,8 @@ namespace SplitGui {
     }
 
     Mat4 Mat4::ident() {
+        SPLITGUI_PROFILE;
+
         Mat4 model;
 
         model.a.x = 1;
@@ -379,26 +410,38 @@ namespace SplitGui {
     }
 
     bool RectObj::inside(IVec2 point) {
+        SPLITGUI_PROFILE;
+
         return x <= point.x && y <= point.y && x + width >= point.x && y + height >= point.y;
     }
 
     bool RectObj::atLeftEdge(IVec2 point, int edgeWidth) {
+        SPLITGUI_PROFILE;
+
         return x <= point.x && x + edgeWidth >= point.x;
     }
 
     bool RectObj::atRightEdge(IVec2 point, int edgeWidth) {
+        SPLITGUI_PROFILE;
+
         return x + width - edgeWidth <= point.x && x + width >= point.x;
     }
 
     bool RectObj::atTopEdge(IVec2 point, int edgeWidth) {
+        SPLITGUI_PROFILE;
+
         return y <= point.y && y + edgeWidth >= point.y;
     }
 
     bool RectObj::atBottomEdge(IVec2 point, int edgeWidth) {
+        SPLITGUI_PROFILE;
+
         return y + height - edgeWidth <= point.y && y + height >= point.y;
     }
 
     bool RectObj::atEdge(IVec2 point, int edgeWidth) {
+        SPLITGUI_PROFILE;
+
         return atLeftEdge(point, edgeWidth) || atRightEdge(point, edgeWidth) || atTopEdge(point, edgeWidth) || atBottomEdge(point, edgeWidth);
     }
 }

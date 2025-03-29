@@ -3,6 +3,8 @@
 namespace SplitGui {
 
     inline Result VulkanInterface::createTextGlyphImage() {
+        SPLITGUI_PROFILE;
+
         vk::ImageCreateInfo imageInfo;
         imageInfo.imageType     = vk::ImageType::e2D;
         imageInfo.format        = vk::Format::eR8G8B8A8Unorm;
@@ -100,6 +102,8 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::createTextureArray() {
+        SPLITGUI_PROFILE;
+
         vk::ImageCreateInfo imageInfo;
         imageInfo.imageType     = vk::ImageType::e2D;
         imageInfo.format        = vk::Format::eR8G8B8A8Unorm;

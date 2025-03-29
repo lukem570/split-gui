@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline void VulkanInterface::createSyncObj() {
+        SPLITGUI_PROFILE;
+
         vk::SemaphoreCreateInfo semaphoreInfo;
         vk::FenceCreateInfo fenceInfo;
         fenceInfo.flags = vk::FenceCreateFlagBits::eSignaled;

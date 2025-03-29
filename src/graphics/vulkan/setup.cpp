@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     VulkanInterface::VulkanInterface(VulkanFlags flags) {
+        SPLITGUI_PROFILE;
+
         vk_validation = flags.enableValidationLayers;
 
         Vec3 color = flags.clearColor.normalize();
@@ -19,6 +21,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::instance() {
+        SPLITGUI_PROFILE;
         
         ft::FT_Error error = ft::FT_Init_FreeType(&ft_lib);
 
@@ -33,6 +36,8 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::submitWindow(SplitGui::Window& window) {
+        SPLITGUI_PROFILE;
+
         pWindow = &window;
         TRYR(surfaceRes, createSurface(window));
         TRYR(queueRes, getQueueFamilies());
@@ -70,6 +75,8 @@ namespace SplitGui {
     }
 
     void VulkanInterface::setupRenderpassBeginInfo() {
+        SPLITGUI_PROFILE;
+
         vk_renderpassBeginInfo.renderPass          = vk_renderpass;
         vk_renderpassBeginInfo.renderArea.offset.x = 0;
         vk_renderpassBeginInfo.renderArea.offset.y = 0;
@@ -79,6 +86,8 @@ namespace SplitGui {
     }
 
     void VulkanInterface::setupViewport() {
+        SPLITGUI_PROFILE;
+
         vk_viewport.x        = 0.0f;
         vk_viewport.y        = 0.0f;
         vk_viewport.width    = vk_swapchainExtent.width;
@@ -88,12 +97,16 @@ namespace SplitGui {
     }
 
     void VulkanInterface::setupScissor() {
+        SPLITGUI_PROFILE;
+
         vk_scissor.offset.x = 0;
         vk_scissor.offset.y = 0;
         vk_scissor.extent   = vk_swapchainExtent;
     }
 
     void VulkanInterface::setupSubmitInfo() {
+        SPLITGUI_PROFILE;
+
         vk_waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
 
         vk_submitInfo.waitSemaphoreCount   = 1;
@@ -103,6 +116,8 @@ namespace SplitGui {
     }
 
     void VulkanInterface::setupPresentInfo() {
+        SPLITGUI_PROFILE;
+
         vk_presentInfo.waitSemaphoreCount = 1;
         vk_presentInfo.swapchainCount     = 1;
         vk_presentInfo.pSwapchains        = &vk_swapchain;

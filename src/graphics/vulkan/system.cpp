@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline Result VulkanInterface::createPhysicalDevice() { 
+        SPLITGUI_PROFILE;
+
         std::vector<vk::PhysicalDevice> physicalDevices = vk_instance.enumeratePhysicalDevices();
 
         int selection = -1;
@@ -38,6 +40,8 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::getQueueFamilies() {
+        SPLITGUI_PROFILE;
+
         std::vector<vk::QueueFamilyProperties> queueFamilies = vk_physicalDevice.getQueueFamilyProperties();
 
         for (unsigned int i = 0; i < queueFamilies.size(); i++) {
@@ -72,6 +76,8 @@ namespace SplitGui {
 
     // or logical device
     inline Result VulkanInterface::createDevice() {
+        SPLITGUI_PROFILE;
+
         vk::DeviceQueueCreateInfo queueCreateInfo;
         queueCreateInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
         queueCreateInfo.queueCount       = 1;
@@ -115,6 +121,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::getQueues() {
+        SPLITGUI_PROFILE;
+
         vk_graphicsQueue = vk_device.getQueue(graphicsQueueFamilyIndex, 0);
         vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
 
@@ -122,6 +130,8 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::createSurface(SplitGui::Window& window) {
+        SPLITGUI_PROFILE;
+
         ResultValue<vk::SurfaceKHR> surfaceRet = window.createSurface(vk_instance);
         
         TRYD(surfaceRet);

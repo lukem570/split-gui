@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     inline Result VulkanInterface::vertexBufferSubmit() {
+        SPLITGUI_PROFILE;
 
         vk::DeviceSize   indexBufferSize;
         vk::Buffer       stagingIndexBuffer;
@@ -74,6 +75,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::submitBuffers() {
+        SPLITGUI_PROFILE;
 
         if (indices.size() != knownIndicesSize || markVerticesForUpdate) {
             markVerticesForUpdate = false;

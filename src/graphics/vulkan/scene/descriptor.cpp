@@ -3,6 +3,8 @@
 namespace SplitGui {
 
     inline void VulkanInterface::createSceneDescriptorSetLayout() {
+        SPLITGUI_PROFILE;
+
         vk::DescriptorSetLayoutBinding sceneLayoutBinding;
         sceneLayoutBinding.binding            = SceneDescriporBindings::eSceneData;
         sceneLayoutBinding.descriptorCount    = 1;
@@ -42,6 +44,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::createSceneDescriptorPool(SceneObject& scene) {
+        SPLITGUI_PROFILE;
+
         vk::DescriptorPoolSize scenePoolSize;
         scenePoolSize.type            = vk::DescriptorType::eUniformBuffer;
         scenePoolSize.descriptorCount = 1;
@@ -74,6 +78,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::createSceneDescriptorSet(SceneObject& scene) {
+        SPLITGUI_PROFILE;
+
         vk::DescriptorSetAllocateInfo allocInfo;
         allocInfo.descriptorPool     = scene.descriptorPool;
         allocInfo.descriptorSetCount = 1;
@@ -87,6 +93,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::updateSceneDescriptorSet(SceneObject& scene) {
+        SPLITGUI_PROFILE;
+
         vk::DescriptorBufferInfo sceneDataBufferInfo;
         sceneDataBufferInfo.buffer = scene.dataUniformBuffer;
         sceneDataBufferInfo.offset = 0;

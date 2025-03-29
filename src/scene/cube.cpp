@@ -2,19 +2,26 @@
 
 namespace SplitGui {
     Cube::Cube() {
+        SPLITGUI_PROFILE;
+
         vertices.resize(8);
         indices.resize(6 * 2 * 3);
     }
 
     void Cube::setSize(float sizeIn) {
+        SPLITGUI_PROFILE;
+
         size = sizeIn;
     }
 
     void Cube::setColor(HexColor colorIn) {
+        SPLITGUI_PROFILE;
+
         color = colorIn;
     }
 
     void Cube::generate() {
+        SPLITGUI_PROFILE;
 
         int idx = 0;
 

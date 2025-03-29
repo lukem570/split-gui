@@ -6,6 +6,8 @@
 namespace SplitGui {
 
     Result Default::Transform::setScale(std::string scaleIn) {
+        SPLITGUI_PROFILE;
+
 
         scale.checkCleanup();
 
@@ -23,6 +25,7 @@ namespace SplitGui {
     }
 
     Result Default::Transform::setPosition(std::string positionIn) {
+        SPLITGUI_PROFILE;
 
         position.checkCleanup();
 
@@ -40,10 +43,14 @@ namespace SplitGui {
     }
 
     void Default::Transform::setOrigin(bool isRelativeIn) {
+        SPLITGUI_PROFILE;
+
         isRelative = isRelativeIn;
     }
 
     Result Default::Transform::update() {
+        SPLITGUI_PROFILE;
+
         ResultValue<UnitExpressionValue> positionXEvaluateRes = position.evaluate(extent.width);
         ResultValue<UnitExpressionValue> positionYEvaluateRes = position.evaluate(extent.height);
         
@@ -67,6 +74,8 @@ namespace SplitGui {
     }
 
     Result Default::Transform::instance() {
+        SPLITGUI_PROFILE;
+
         if (maxChildren != children.size()) {
             return Result::eInvalidNumberOfChildren;
         }

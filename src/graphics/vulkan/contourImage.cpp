@@ -7,6 +7,7 @@ namespace SplitGui {
     }
 
     ResultValue<unsigned int> VulkanInterface::createContourImage(std::vector<Contour>& contours) {
+        SPLITGUI_PROFILE;
 
         msdfgen::Shape shape;
 

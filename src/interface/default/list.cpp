@@ -5,6 +5,8 @@
 
 namespace SplitGui {
     Result Default::List::update() {
+        SPLITGUI_PROFILE;
+
         int maxSize = isVertical ? extent.height : extent.width;
         int pos     = isVertical ? extent.y : extent.x;
         int size    = maxSize / children.size();
@@ -48,6 +50,7 @@ namespace SplitGui {
     }
 
     Result Default::List::instance() {
+        SPLITGUI_PROFILE;
 
         int maxSize = isVertical ? extent.height : extent.width;
         int pos     = isVertical ? extent.y : extent.x;
@@ -95,6 +98,8 @@ namespace SplitGui {
     }
 
     void Default::List::setVertical(bool verticalIn) {
+        SPLITGUI_PROFILE;
+
         isVertical = verticalIn;
     }
 }

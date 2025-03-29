@@ -2,32 +2,46 @@
 
 namespace SplitGui {
 
-    void GlfwInterface::update() {
+    void GlfwInterface::update() { 
+        SPLITGUI_PROFILE;
+        
         window.handle->swapBuffers();
         glfw::pollEvents();
     }
 
-    void GlfwInterface::close() {
+    void GlfwInterface::close() { 
+        SPLITGUI_PROFILE;
+        
         window.handle->setShouldClose(true);
     }
 
-    void GlfwInterface::minimize() {
+    void GlfwInterface::minimize() { 
+        SPLITGUI_PROFILE;
+        
         window.handle->iconify();
     }
 
-    void GlfwInterface::maximize() {
+    void GlfwInterface::maximize() { 
+        SPLITGUI_PROFILE;
+        
         window.handle->maximize();
     }
 
-    void GlfwInterface::restore() {
+    void GlfwInterface::restore() { 
+        SPLITGUI_PROFILE;
+        
         window.handle->restore();
     }
 
-    void GlfwInterface::setWindowPosition(IVec2 position) {
+    void GlfwInterface::setWindowPosition(IVec2 position) { 
+        SPLITGUI_PROFILE;
+        
         window.handle->setPos(position.x, position.y);
     }
 
-    void GlfwInterface::setSize(IVec2 size) {
+    void GlfwInterface::setSize(IVec2 size) { 
+        SPLITGUI_PROFILE;
+        
         window.handle->setSize(size.x, size.y);
     }
 
@@ -58,7 +72,9 @@ extern "C" {
 
 #endif
 
-    void GlfwInterface::setCursorShape(CursorType type) {
+    void GlfwInterface::setCursorShape(CursorType type) { 
+        SPLITGUI_PROFILE;
+        
 
     #if defined(__linux__)
         #if defined(VK_USE_PLATFORM_WAYLAND_KHR)

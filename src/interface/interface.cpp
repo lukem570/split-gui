@@ -8,10 +8,14 @@
 namespace SplitGui {
 
     Interface::Interface() {
+        SPLITGUI_PROFILE;
+
 
     };
     
     Interface::~Interface() {
+        SPLITGUI_PROFILE;
+
         if (interfaceElement) {
             interfaceElement->cleanup();
             delete interfaceElement;
@@ -19,6 +23,8 @@ namespace SplitGui {
     }
 
     Result Interface::parseXml(std::string& data) {
+        SPLITGUI_PROFILE;
+
         XmlParser parser;
         ResultValue<InterfaceElement*> parseRet = parser.parse(data);
         TRYD(parseRet);
@@ -29,14 +35,20 @@ namespace SplitGui {
     }
 
     void Interface::submitGraphics(Graphics& graphics) {
+        SPLITGUI_PROFILE;
+
         pGraphics = &graphics;
     }
 
     Result Interface::update() {
+        SPLITGUI_PROFILE;
+
         return interfaceElement->update();
     }
 
     Result Interface::instance() {
+        SPLITGUI_PROFILE;
+
         if (!pGraphics) {
             return Result::eMissingGraphics;
         }
@@ -46,27 +58,37 @@ namespace SplitGui {
     }
 
     void Interface::setViewport(RectObj viewport) {
+        SPLITGUI_PROFILE;
+
         interfaceElement->extent = viewport;
     }
 
     void Interface::setInterfaceElement(InterfaceElement* data) {
+        SPLITGUI_PROFILE;
+
         if (interfaceElement) {
-            printf("WARN: interface data is being overwritten this can cause memory leaks if unhandled!\n");
+            Logger::warn("Interface data is being overwritten this can cause memory leaks if unhandled");
         }
 
         interfaceElement = data;
     }
 
     void Interface::attachEventHandler(EventHandler& handler) {
+        SPLITGUI_PROFILE;
+
         handler.attachInterface(this);
         pEventHandler = &handler;
     }
 
     InterfaceElement* Interface::getInterfaceElement() {
+        SPLITGUI_PROFILE;
+
         return interfaceElement;
     }
 
     std::vector<InterfaceElement*> Interface::searchByReference(std::string reference) {
+        SPLITGUI_PROFILE;
+
         return interfaceElement->searchByReference(reference);
     }
 }

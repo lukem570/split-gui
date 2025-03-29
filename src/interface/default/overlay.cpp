@@ -5,6 +5,7 @@
 
 namespace SplitGui {
     Result Default::Overlay::update() {
+        SPLITGUI_PROFILE;
 
         for (unsigned int i = 0; i < children.size(); i++) {
             children[i]->setExtent(extent);
@@ -15,6 +16,7 @@ namespace SplitGui {
     }
 
     Result Default::Overlay::instance() {
+        SPLITGUI_PROFILE;
 
         for (unsigned int i = 0; i < children.size(); i++) {
             children[i]->setGraphics(pGraphics);

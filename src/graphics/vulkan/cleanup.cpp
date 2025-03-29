@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     VulkanInterface::~VulkanInterface() {
+        SPLITGUI_PROFILE;
+
         vk_device.waitIdle();
 
         cleanupSyncObj();
@@ -55,6 +57,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupFrameBuffers() {
+        SPLITGUI_PROFILE;
+
         for (unsigned int i = 0; i < vk_swapchainFramebuffers.size(); i++) {
             vk_device.destroyFramebuffer(vk_swapchainFramebuffers[i]);
         }
@@ -62,12 +66,16 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupDepthResources() {
+        SPLITGUI_PROFILE;
+
         vk_device.destroyImageView(vk_depthImageView);
         vk_device.freeMemory(vk_depthImageMemory);
         vk_device.destroyImage(vk_depthImage);
     }
 
     inline void VulkanInterface::cleanupSyncObj() {
+        SPLITGUI_PROFILE;
+
         for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vk_device.destroySemaphore(vk_imageAvailableSemaphores[i]);
             vk_device.destroySemaphore(vk_renderFinishedSemaphores[i]);
@@ -80,6 +88,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupImageViews() {
+        SPLITGUI_PROFILE;
+
         for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
             vk_device.destroyImageView(vk_swapchainImageViews[i]);
         }
@@ -87,6 +97,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupVertexAndIndexBuffers() {
+        SPLITGUI_PROFILE;
+
         if (vk_vertexBufferMemory) {
             vk_device.freeMemory(vk_vertexBufferMemory);
             vk_device.destroyBuffer(vk_vertexBuffer);
@@ -99,6 +111,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupScenesImageArray() {
+        SPLITGUI_PROFILE;
+
         vk_device.destroyImageView(vk_scenesImageArrayImageView);
         vk_device.destroySampler(vk_scenesImageArraySampler);
         vk_device.freeMemory(vk_scenesImageArrayImageMemory);
@@ -106,6 +120,7 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupTriangleReferences() {
+        SPLITGUI_PROFILE;
 
         for (unsigned int i = 0; i < triangleReferences.size(); i++) {
             VerticesBlock* tVBlock = triangleReferences[i].vBlock;
@@ -127,24 +142,31 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupSceneFrameBuffers(SceneRef& ref) {
+        SPLITGUI_PROFILE;
+
         for (unsigned int j = 0; j < scenes[ref.sceneNumber].framebuffers.size(); j++) {
             vk_device.destroyFramebuffer(scenes[ref.sceneNumber].framebuffers[j]);
         }
     }
 
     inline void VulkanInterface::cleanupSceneOutputImages(SceneRef& ref) {
+        SPLITGUI_PROFILE;
+
         vk_device.destroyImageView(scenes[ref.sceneNumber].outputImageView);
         vk_device.freeMemory(scenes[ref.sceneNumber].outputImageMemory);
         vk_device.destroyImage(scenes[ref.sceneNumber].outputImage);
     }
 
     inline void VulkanInterface::cleanupSceneDepthImages(SceneRef& ref) {
+        SPLITGUI_PROFILE;
+
         vk_device.destroyImageView(scenes[ref.sceneNumber].depthImageView);
         vk_device.freeMemory(scenes[ref.sceneNumber].depthImageMemory);
         vk_device.destroyImage(scenes[ref.sceneNumber].depthImage);
     }
 
     inline void VulkanInterface::cleanupScenes() {
+        SPLITGUI_PROFILE;
 
         for (unsigned int i = 0; i < scenes.size(); i++) {
 
@@ -174,6 +196,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::cleanupSceneVertexAndIndexBuffers(SceneRef& ref) {
+        SPLITGUI_PROFILE;
+
         if (scenes[ref.sceneNumber].vertexBufferMemory) {
             vk_device.freeMemory(scenes[ref.sceneNumber].vertexBufferMemory);
             vk_device.destroyBuffer(scenes[ref.sceneNumber].vertexBuffer);

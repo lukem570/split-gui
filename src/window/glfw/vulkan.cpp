@@ -3,6 +3,7 @@
 namespace SplitGui {
 
     ResultValue<vk::SurfaceKHR> GlfwInterface::createSurface(vk::Instance instance) {
+        SPLITGUI_PROFILE;
 
 #if defined(__linux__)
     #if defined(VK_USE_PLATFORM_WAYLAND_KHR)

@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     KeyCode GlfwInterface::convertGlfwKeyCode(glfw::KeyCode code) {
+        SPLITGUI_PROFILE;
+
         switch (code) {
             case glfw::KeyCode::Unknown:        return KeyCode::eUnknown;           break;
             case glfw::KeyCode::Space:          return KeyCode::eSpace;             break;
@@ -127,6 +129,8 @@ namespace SplitGui {
     }
 
     inline KeyState GlfwInterface::convertGlfwKeyState(glfw::KeyState state) {
+        SPLITGUI_PROFILE;
+
         switch (state) {
             case glfw::KeyState::Press:   return KeyState::ePress;   break;
             case glfw::KeyState::Release: return KeyState::eRelease; break;
@@ -137,6 +141,8 @@ namespace SplitGui {
     }
 
     inline MouseCode GlfwInterface::convertGlfwMouseButton(glfw::MouseButton code) {
+        SPLITGUI_PROFILE;
+
         switch (code) {
             case glfw::MouseButton::One:   return MouseCode::eOne;   break;
             case glfw::MouseButton::Two:   return MouseCode::eTwo;   break;
@@ -152,6 +158,8 @@ namespace SplitGui {
     }
 
     inline glfw::MouseButton GlfwInterface::convertSplitGuiMouseCode(MouseCode code) {
+        SPLITGUI_PROFILE;
+
         switch (code) {
             case MouseCode::eOne:   return glfw::MouseButton::One;   break;
             case MouseCode::eTwo:   return glfw::MouseButton::Two;   break;
@@ -168,6 +176,8 @@ namespace SplitGui {
     }
 
     inline MouseState GlfwInterface::convertGlfwMouseState(glfw::MouseButtonState state) {
+        SPLITGUI_PROFILE;
+
         switch (state) {
             case glfw::MouseButtonState::Press:   return MouseState::ePress;   break;
             case glfw::MouseButtonState::Release: return MouseState::eRelease; break;

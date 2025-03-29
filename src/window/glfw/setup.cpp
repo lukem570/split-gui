@@ -2,11 +2,15 @@
 
 namespace SplitGui {
     GlfwInterface::GlfwInterface() {
+        SPLITGUI_PROFILE;
+
         glfwInit();
         window.type = FormatType::eGlfw;
     }
 
     inline Result GlfwInterface::createWindow(WindowFlags flags) {
+        SPLITGUI_PROFILE;
+
         glfw::WindowHints hints;
         hints.clientApi = (glfw::ClientApi) 0L;
         hints.resizable = flags.resizeable;
@@ -35,6 +39,8 @@ namespace SplitGui {
     }
 
     void GlfwInterface::submitEventHandler(EventHandler* pEventHandler) {
+        SPLITGUI_PROFILE;
+
         window.handle->setUserPointer(pEventHandler);
     }
 }

@@ -3,6 +3,8 @@
 namespace SplitGui {
 
     inline ResultValue<vk::Format> VulkanInterface::findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) {
+        SPLITGUI_PROFILE;
+        
         for (unsigned int i = 0; i < candidates.size(); i++) {
 
             vk::FormatProperties props = vk_physicalDevice.getFormatProperties(candidates[i]);
@@ -18,6 +20,7 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::createDepthResources() {
+        SPLITGUI_PROFILE;
 
         ResultValue<vk::Format> depthFormat = findSupportedFormat(
             {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},

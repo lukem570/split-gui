@@ -24,6 +24,8 @@ double degToRad(double degrees) {
 }
 
 int frame(Data* data, bool* running) {
+    SPLITGUI_PROFILE;
+    SPLITGUI_NAME_THREAD("Frame thread");
 
     while (*running) {
 
@@ -39,6 +41,8 @@ int frame(Data* data, bool* running) {
 }
 
 int window(Data* data, bool* running) {
+    SPLITGUI_PROFILE;
+    SPLITGUI_NAME_THREAD("Update thread");
 
     while (*running) {
 

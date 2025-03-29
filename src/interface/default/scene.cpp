@@ -5,10 +5,14 @@
 
 namespace SplitGui {
     Result Default::SceneElement::update() {
+        SPLITGUI_PROFILE;
+        
         return pGraphics->updateScene(graphicsSceneRef, extent.pos, extent.pos + extent.size, depth);
     }
     
     Result Default::SceneElement::instance() {
+        SPLITGUI_PROFILE;
+        
         ResultValue<SceneRef> result = pGraphics->instanceScene(extent.pos, extent.pos + extent.size, depth);
 
         TRYD(result);
@@ -21,6 +25,8 @@ namespace SplitGui {
     }
 
     SceneRef& Default::SceneElement::getSceneRef() {
+        SPLITGUI_PROFILE;
+        
         return graphicsSceneRef;
     }
 }

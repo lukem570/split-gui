@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     ResultValue<SceneRef> VulkanInterface::instanceScene(Vec2 x1, Vec2 x2, float depth) {
+        SPLITGUI_PROFILE;
 
         SceneRef reference;
         reference.sceneNumber = scenes.size();
@@ -30,6 +31,7 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::createScenesImageArray() {
+        SPLITGUI_PROFILE;
 
         vk::ImageCreateInfo imageInfo;
         imageInfo.imageType     = vk::ImageType::e2D;
@@ -128,6 +130,8 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::submitTriangles(SceneRef& ref) {
+        SPLITGUI_PROFILE;
+
         vk::DeviceSize   indexBufferSize;
         vk::Buffer       stagingIndexBuffer;
         vk::DeviceMemory stagingIndexBufferMemory;
@@ -192,6 +196,7 @@ namespace SplitGui {
     }
 
     ResultValue<TriangleRef> VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
+        SPLITGUI_PROFILE;
 
         unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
         unsigned int oldIndicesSize  = scenes[ref.sceneNumber].indices.size();
@@ -259,6 +264,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef) {
+        SPLITGUI_PROFILE;
 
         VerticesBlock* tVBlock = triangleRef.vBlock;
     
@@ -294,6 +300,8 @@ namespace SplitGui {
     }
 
     ModelRef VulkanInterface::createModel(SceneRef& ref, Mat4& model) { // TODO:
+        SPLITGUI_PROFILE;
+
         ModelRef outRef;
         outRef.modelNumber = scenes[ref.sceneNumber].models.size();
 
@@ -303,15 +311,20 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth) {
+        SPLITGUI_PROFILE;
 
         frameMutex.lock();
 
         IVec2 windowSize = pWindow->getSize();
         Vec2 delta = x1 - x2;
 
-        vk_device.waitIdle();
-
         scenes[ref.sceneNumber].sceneSize = { (int)(windowSize.x * std::abs(delta.x) / 2.0f), (int)(windowSize.y * std::abs(delta.y) / 2.0f) };
+
+        vk::Result fenceRes = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), vk::True, UINT64_MAX);
+
+        if (fenceRes != vk::Result::eSuccess) {
+            return Result::eFailedToWaitForFences;
+        }
 
         cleanupSceneFrameBuffers(ref);
         cleanupSceneOutputImages(ref);
@@ -331,6 +344,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::updateSceneCameraView(SceneRef& ref, Mat4& view) {
+        SPLITGUI_PROFILE;
 
         scenes[ref.sceneNumber].sceneData.cameraView = view;
 
@@ -367,6 +381,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::updateSceneCameraProjection(SceneRef& ref, Mat4& projection) {
+        SPLITGUI_PROFILE;
 
         scenes[ref.sceneNumber].sceneData.cameraProjection = projection;
 
@@ -403,6 +418,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
+        SPLITGUI_PROFILE;
 
         scenes[ref.sceneNumber].sceneData.cameraPosition = position;
 

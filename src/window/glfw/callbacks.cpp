@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     void GlfwInterface::resize_callback(glfw::Window& window, int width, int height) {
+        SPLITGUI_PROFILE;
 
         EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
 
@@ -11,6 +12,7 @@ namespace SplitGui {
     }
 
     void GlfwInterface::key_callback(glfw::Window& window, glfw::KeyCode key, int scancode, glfw::KeyState state, glfw::ModifierKeyBit mods) {
+        SPLITGUI_PROFILE;
 
         EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
 
@@ -25,6 +27,7 @@ namespace SplitGui {
     }
 
     void GlfwInterface::mouseButton_callback(glfw::Window& window, glfw::MouseButton button, glfw::MouseButtonState state, glfw::ModifierKeyBit mods) {
+        SPLITGUI_PROFILE;
 
         EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
 
@@ -39,6 +42,7 @@ namespace SplitGui {
     }
 
     void GlfwInterface::mouseMove_callback(glfw::Window& window, double posX, double posY) {
+        SPLITGUI_PROFILE;
 
         EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
 
@@ -53,6 +57,8 @@ namespace SplitGui {
     }
 
     void GlfwInterface::scroll_callback(glfw::Window& window, double offX, double offY) {
+        SPLITGUI_PROFILE;
+
         EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
 
         Event event = Event(Event::Category::eWindow, Event::WindowType::eScroll);

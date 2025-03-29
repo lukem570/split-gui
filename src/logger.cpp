@@ -23,6 +23,9 @@ namespace SplitGui {
     }
 
     std::string Logger::getTime() {
+
+        SPLITGUI_PROFILE;
+
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);
 
@@ -34,6 +37,9 @@ namespace SplitGui {
     }
 
     Logger* Logger::getInstance() {
+
+        SPLITGUI_PROFILE;
+
         if (instance == nullptr) {
             instance = new Logger();
         }
@@ -41,6 +47,9 @@ namespace SplitGui {
     }
 
     void Logger::info(std::string message) {
+
+        SPLITGUI_PROFILE;
+
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - INFO  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
@@ -49,6 +58,9 @@ namespace SplitGui {
     }
 
     void Logger::debug(std::string message) {
+
+        SPLITGUI_PROFILE;
+
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - DEBUG - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
@@ -57,6 +69,9 @@ namespace SplitGui {
     }
 
     void Logger::warn(std::string message) {
+
+        SPLITGUI_PROFILE;
+
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - WARN  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
@@ -65,6 +80,9 @@ namespace SplitGui {
     }
 
     void Logger::error(std::string message) {
+
+        SPLITGUI_PROFILE;
+
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - ERROR - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
@@ -73,6 +91,9 @@ namespace SplitGui {
     }
 
     void Logger::fatal(std::string message) {
+
+        SPLITGUI_PROFILE;
+
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - FATAL - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
