@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline void VulkanInterface::createScenePipelineLayout() {
+        SPLITGUI_PROFILE;
+        
         vk::PipelineLayoutCreateInfo createInfo;
         createInfo.setLayoutCount         = 1;
         createInfo.pSetLayouts            = &vk_sceneDescriptorSetLayout;
@@ -15,6 +17,7 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::createScenePipelineModules() {
+        SPLITGUI_PROFILE;
 
         ResultValue<std::vector<char>> vertexShaderFile   = readFile(SCENE_VERTEX_SHADER_PATH);
         ResultValue<std::vector<char>> fragmentShaderFile = readFile(SCENE_FRAGMENT_SHADER_PATH);
@@ -29,6 +32,7 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::createScenePipeline(SceneObject& scene) {
+        SPLITGUI_PROFILE;
 
         vk::PipelineShaderStageCreateInfo vertexCreateInfo;
         vertexCreateInfo.stage  = vk::ShaderStageFlagBits::eVertex;

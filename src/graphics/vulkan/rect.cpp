@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     RectRef VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth, VertexFlags flags, uint16_t textureIndex) {
+        SPLITGUI_PROFILE;
 
         int verticesOffset = vertices.size();
         int indicesOffset = indices.size();
@@ -57,6 +58,7 @@ namespace SplitGui {
     }
 
     void VulkanInterface::updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth) {
+        SPLITGUI_PROFILE;
 
         unsigned int offset = rectOffsets[ref.id];
 
@@ -74,6 +76,7 @@ namespace SplitGui {
     }
 
     void VulkanInterface::deleteRect(RectRef& ref) {
+        SPLITGUI_PROFILE;
 
         for (unsigned int i = 0; i < rectReferences.size(); i++) {
             if (ref.bottomLeft < rectReferences[i].bottomLeft) {
@@ -100,6 +103,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::submitRect(RectRef& ref) {
+        SPLITGUI_PROFILE;
 
         unsigned int offset = rectOffsets[ref.id];
 

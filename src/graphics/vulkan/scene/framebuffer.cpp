@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline void VulkanInterface::createSceneFramebuffers(SceneObject& scene) {
+        SPLITGUI_PROFILE;
+
         std::vector<vk::Framebuffer> framebuffers;
 
         framebuffers.resize(vk_swapchainImageViews.size());

@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline ResultValue<vk::Bool32> VulkanInterface::checkLayers(const std::vector<const char *> &checkNames, const std::vector<vk::LayerProperties> &layers) {
+        SPLITGUI_PROFILE;
+
         for (const auto &name : checkNames) {
             vk::Bool32 found = VK_FALSE;
             for (const auto &layer : layers) {
@@ -23,6 +25,8 @@ namespace SplitGui {
     }
 
     inline vk::Extent2D VulkanInterface::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) {
+        SPLITGUI_PROFILE;
+
         if (capabilities.currentExtent.width != UINT32_MAX) {
             return capabilities.currentExtent;
         } else {
@@ -34,6 +38,8 @@ namespace SplitGui {
     }
 
     inline vk::SurfaceFormatKHR VulkanInterface::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) {
+        SPLITGUI_PROFILE;
+
         for (const auto& availableFormat : availableFormats) {
             if (availableFormat.format == vk::Format::eR8G8B8Snorm && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
                 return availableFormat;
@@ -44,6 +50,8 @@ namespace SplitGui {
     }
 
     inline vk::PresentModeKHR VulkanInterface::chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) {
+        SPLITGUI_PROFILE;
+
         for (const auto& availablePresentMode : availablePresentModes) {
             if (availablePresentMode == vk::PresentModeKHR::eMailbox) {
                 return availablePresentMode;
@@ -54,6 +62,8 @@ namespace SplitGui {
     }
 
     inline vk::ShaderModule VulkanInterface::createShaderModule(const std::vector<char>& code) {
+        SPLITGUI_PROFILE;
+
         vk::ShaderModuleCreateInfo createInfo;
         createInfo.codeSize = code.size();
         createInfo.pCode    = reinterpret_cast<const uint32_t*>(code.data());
@@ -62,6 +72,7 @@ namespace SplitGui {
     }
 
     inline ResultValue<uint32_t> VulkanInterface::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
+        SPLITGUI_PROFILE;
 
         vk::PhysicalDeviceMemoryProperties memProperties = vk_physicalDevice.getMemoryProperties();
 

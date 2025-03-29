@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline void VulkanInterface::createSwapchain() {
+        SPLITGUI_PROFILE;
+
         std::vector<vk::SurfaceFormatKHR> formats      = vk_physicalDevice.getSurfaceFormatsKHR(vk_surface);
         vk::SurfaceCapabilitiesKHR        capabilities = vk_physicalDevice.getSurfaceCapabilitiesKHR(vk_surface);
         std::vector<vk::PresentModeKHR>   presentModes = vk_physicalDevice.getSurfacePresentModesKHR(vk_surface);
@@ -57,6 +59,7 @@ namespace SplitGui {
     }
 
     Result VulkanInterface::recreateSwapchain() {
+        SPLITGUI_PROFILE;
 
         frameMutex.lock();
 

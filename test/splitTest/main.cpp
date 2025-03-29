@@ -5,6 +5,8 @@
 
 int main() {
 
+    SPLITGUI_PROFILE;
+
     SplitGui::EventHandler eventHandler;
 
     SplitGui::WindowFlags flags;

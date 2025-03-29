@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     Result VulkanInterface::drawFrame() {
+        SPLITGUI_PROFILE;
 
         frameMutex.lock();
         

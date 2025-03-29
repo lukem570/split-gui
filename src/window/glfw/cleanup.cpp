@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     GlfwInterface::~GlfwInterface() {
+        SPLITGUI_PROFILE;
         
     #if defined(__linux__)
         #if defined(VK_USE_PLATFORM_XLIB_KHR)

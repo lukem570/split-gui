@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     inline Result VulkanInterface::createSceneDataUniform(SceneObject& scene) {
+        SPLITGUI_PROFILE;
 
         vk::DeviceSize   bufferSize = sizeof(SceneObj);
         vk::Buffer       stagingBuffer;
@@ -59,6 +60,7 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::createSceneModelUniform(SceneObject& scene) {
+        SPLITGUI_PROFILE;
 
         vk::DeviceSize   bufferSize = sizeof(Mat4) * scene.models.size();
         vk::Buffer       stagingBuffer;

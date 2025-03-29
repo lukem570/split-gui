@@ -11,6 +11,8 @@
 namespace SplitGui {
 
     ResultValue<UnitExpressionToken> UnitExpressionEvaluator::nextToken(std::string& expression) {
+        SPLITGUI_PROFILE;
+
         while (std::isspace(expression[index])) {
             if (expression.size() == ++index) {
                 UnitExpressionToken token;
@@ -123,12 +125,15 @@ namespace SplitGui {
     }
 
     void UnitExpressionEvaluator::checkCleanup() {
+        SPLITGUI_PROFILE;
+
         if (expressionTree) {
             cleanup(expressionTree);
         }
     }
 
     ResultValue<UnitExpression*> UnitExpressionEvaluator::parse(std::string expression) {
+        SPLITGUI_PROFILE;
 
         ResultValue<UnitExpressionToken> token;
 
@@ -281,6 +286,7 @@ namespace SplitGui {
     }
 
     UnitExpressionValue UnitExpressionEvaluator::evaluateExpr(int maxSize, UnitExpression* expression) {
+        SPLITGUI_PROFILE;
 
         switch (expression->type) {
             case UnitExpression::Type::eBinaryOp: {
@@ -341,14 +347,20 @@ namespace SplitGui {
     }
 
     UnitExpressionValue UnitExpressionEvaluator::evaluate(int maxSize) {
+        SPLITGUI_PROFILE;
+
         return evaluateExpr(maxSize, expressionTree);
     }
 
     UnitExpressionEvaluator::~UnitExpressionEvaluator() {
+        SPLITGUI_PROFILE;
+
         checkCleanup();
     }
 
     void UnitExpressionEvaluator::cleanup(UnitExpression* expression) {
+        SPLITGUI_PROFILE;
+
         if (!expression) {
             return;
         }
@@ -385,6 +397,7 @@ namespace SplitGui {
     }
 
 #define UNIT_EXPRESSION_OPERATOR(sign)                                  \
+    SPLITGUI_PROFILE;                                                   \
                                                                         \
     switch (type) {                                                     \
         case Type::eNumber: return number sign operand.number; break;   \

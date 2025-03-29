@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline void VulkanInterface::createFramebuffers() {
+        SPLITGUI_PROFILE;
+
         vk_swapchainFramebuffers.resize(vk_swapchainImageViews.size());
 
         for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
@@ -25,6 +27,8 @@ namespace SplitGui {
     }
 
     void VulkanInterface::clearBuffers() {
+        SPLITGUI_PROFILE;
+
         indices.clear();
         vertices.clear();
         scenes.clear();
@@ -39,6 +43,8 @@ namespace SplitGui {
         vk::Buffer&                out_buffer,
         vk::DeviceMemory&          out_bufferMemory
     ) {
+        SPLITGUI_PROFILE;
+
         vk::BufferCreateInfo createInfo;
         createInfo.size        = size;
         createInfo.usage       = usage;
@@ -64,6 +70,7 @@ namespace SplitGui {
     }
 
     inline vk::CommandBuffer VulkanInterface::startCopyBuffer() {
+        SPLITGUI_PROFILE;
 
         commandPoolMutex.lock();
 
@@ -83,6 +90,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion) {
+        SPLITGUI_PROFILE;
+
         copyRegion.size = size;
         copyRegion.srcOffset = 0; 
         copyRegion.dstOffset = 0; 
@@ -91,6 +100,8 @@ namespace SplitGui {
     }
 
     inline Result VulkanInterface::endSingleTimeCommands(vk::CommandBuffer commandBuffer) {
+        SPLITGUI_PROFILE;
+
         commandBuffer.end();
 
         vk::SubmitInfo submitInfo;
@@ -123,6 +134,7 @@ namespace SplitGui {
         vk::DeviceMemory& out_memory,
         vk::DeviceSize&   out_size
     ) {
+        SPLITGUI_PROFILE;
         
         out_size = sizeof(dataToUpload[0]) * dataToUpload.size();
 

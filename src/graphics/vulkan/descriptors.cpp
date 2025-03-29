@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     void VulkanInterface::createDescriptorSetLayout() {
+        SPLITGUI_PROFILE;
 
         vk::DescriptorSetLayoutBinding glyphLayoutBinding;
         glyphLayoutBinding.binding            = DescriporBindings::eGlyphs;
@@ -40,6 +41,7 @@ namespace SplitGui {
     }
 
     void VulkanInterface::createDescriptorPool() {
+        SPLITGUI_PROFILE;
         
         vk::DescriptorPoolSize glyphPoolSize;
         glyphPoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
@@ -71,6 +73,8 @@ namespace SplitGui {
     }
 
     void VulkanInterface::createDescriptorSet() {
+        SPLITGUI_PROFILE;
+
         vk::DescriptorSetAllocateInfo allocInfo;
         allocInfo.descriptorPool     = vk_descriptorPool;
         allocInfo.descriptorSetCount = 1;
@@ -82,6 +86,8 @@ namespace SplitGui {
     }
 
     inline void VulkanInterface::updateDescriptorSets() {
+        SPLITGUI_PROFILE;
+
         vk::DescriptorImageInfo glyphImageInfo;
         glyphImageInfo.sampler     = vk_textGlyphSampler;
         glyphImageInfo.imageView   = vk_textGlyphImageView;

@@ -3,15 +3,21 @@
 namespace SplitGui {
 
     Grid::Grid() {
+        SPLITGUI_PROFILE;
+
         vertices.resize(4);
         indices.resize(12); // 2 for both sides
     }
 
     void Grid::setColor(HexColor colorIn) {
+        SPLITGUI_PROFILE;
+
         color = colorIn;
     }
 
     void Grid::generate() {
+        SPLITGUI_PROFILE;
+
         const float extent = 100.0f;
 
         vertices[0].pos.x = -extent;
@@ -47,6 +53,7 @@ namespace SplitGui {
     }
 
     Result Grid::submit(SceneRef& ref, int flags) {
+        SPLITGUI_PROFILE;
 
         ResultValue<TriangleRef> triangleRes = pGraphics->submitTriangleData(ref, vertices, indices, flags);
 

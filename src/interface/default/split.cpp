@@ -6,6 +6,8 @@
 namespace SplitGui {
     
     Result Default::Split::update() {
+        SPLITGUI_PROFILE;
+        
         RectObj childExtentOne;
         RectObj childExtentTwo;
 
@@ -48,10 +50,11 @@ namespace SplitGui {
     }
 
     Result Default::Split::instance() {
+        SPLITGUI_PROFILE;
+
         if (maxChildren != children.size()) {
             return Result::eInvalidNumberOfChildren;
         }
-
 
         RectObj childExtentOne;
         RectObj childExtentTwo;
@@ -107,10 +110,13 @@ namespace SplitGui {
     }
 
     void Default::Split::setVertical(bool state) {
+        SPLITGUI_PROFILE;
+
         isVertical = state;
     }
 
     Result Default::Split::setPosition(std::string pos) {
+        SPLITGUI_PROFILE;
 
         position.checkCleanup();
 

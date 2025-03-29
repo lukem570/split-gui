@@ -10,12 +10,16 @@ namespace SplitGui {
     }
 
     Graphics::~Graphics() {
+        SPLITGUI_PROFILE;
+
         if (pInterface) {
             delete pInterface;
         }
     }
     
     Result Graphics::instanceVulkan(VulkanFlags flags) {
+        SPLITGUI_PROFILE;
+
         if (!glfw::vulkanSupported()) {
             return Result::eVulkanNotSupported;
         }
@@ -31,15 +35,21 @@ namespace SplitGui {
     }
 
     Result Graphics::submitWindow(Window& window) {
+        SPLITGUI_PROFILE;
+
         pWindow = &window;
         return pInterface->submitWindow(window);
     }
 
     Result Graphics::drawFrame() {
+        SPLITGUI_PROFILE;
+
         return pInterface->drawFrame();
     }
 
     RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth, VertexFlags flags,  int textureIndex) {
+        SPLITGUI_PROFILE;
+
 
         IVec2 windowSize = pWindow->getSize();
 
@@ -55,6 +65,8 @@ namespace SplitGui {
     }
 
     void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth) {
+        SPLITGUI_PROFILE;
+
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -69,18 +81,26 @@ namespace SplitGui {
     }
 
     void Graphics::deleteRect(RectRef& ref) {
+        SPLITGUI_PROFILE;
+
         pInterface->deleteRect(ref);
     }
 
     Result Graphics::submitRect(RectRef& ref) {
+        SPLITGUI_PROFILE;
+
         return pInterface->submitRect(ref);
     }
 
     Result Graphics::submitBuffers() {
+        SPLITGUI_PROFILE;
+
         return pInterface->submitBuffers();
     }
 
     ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2, int depth) {
+        SPLITGUI_PROFILE;
+
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -95,11 +115,15 @@ namespace SplitGui {
     }
 
     Result Graphics::resizeEvent() {
+        SPLITGUI_PROFILE;
+
         TRYR(resizeRes, pInterface->resizeEvent());
         return Result::eSuccess;
     }
 
     ResultValue<TextRef> Graphics::drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth) {
+        SPLITGUI_PROFILE;
+
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -110,6 +134,8 @@ namespace SplitGui {
     }
 
     Result Graphics::updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth) {
+        SPLITGUI_PROFILE;
+
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -120,43 +146,63 @@ namespace SplitGui {
     }
 
     Result Graphics::loadFont(const char* path) {
+        SPLITGUI_PROFILE;
+
         return pInterface->loadFont(path);
     }
 
     void Graphics::clearBuffers() {
+        SPLITGUI_PROFILE;
+
         pInterface->clearBuffers();
     }
 
     ResultValue<TriangleRef> Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
+        SPLITGUI_PROFILE;
+
         return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
     }
 
     Result Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
+        SPLITGUI_PROFILE;
+
         return pInterface->updateSceneCameraPosition(ref, position);
     }
 
     Result Graphics::updateSceneCameraView(SceneRef& ref, Mat4& view) {
+        SPLITGUI_PROFILE;
+
         return pInterface->updateSceneCameraView(ref, view);
     }
 
     Result Graphics::updateSceneCameraProjection(SceneRef& ref, Mat4& projection) {
+        SPLITGUI_PROFILE;
+
         return pInterface->updateSceneCameraProjection(ref, projection);
     }
 
     ModelRef Graphics::createModel(SceneRef& ref, Mat4& model) {
+        SPLITGUI_PROFILE;
+
         return pInterface->createModel(ref, model);
     }
 
     Result Graphics::deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef) {
+        SPLITGUI_PROFILE;
+
         return pInterface->deleteTriangles(sceneRef, triangleRef);
     }
 
     void Graphics::attachEventHandler(EventHandler& handler) {
+        SPLITGUI_PROFILE;
+
         handler.attachGraphics(this);
         pEventHandler = &handler;
     }
 
     Result Graphics::updateScene(SceneRef& ref, IVec2 x1, IVec2 x2, int depth) {
+        SPLITGUI_PROFILE;
+
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -171,6 +217,8 @@ namespace SplitGui {
     }
 
     [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {
+        SPLITGUI_PROFILE;
+
         return pInterface->createContourImage(contours);
     }
 }

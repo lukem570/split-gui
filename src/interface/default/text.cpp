@@ -5,14 +5,19 @@
 
 namespace SplitGui {
     void Default::Text::setText(std::string valueIn) {
+        SPLITGUI_PROFILE;
+        
         value = valueIn;
     }
 
     void Default::Text::setColor(HexColor colorIn) {
+        SPLITGUI_PROFILE;
+
         color = colorIn;
     }
 
     Result Default::Text::setColor(std::string colorIn) {
+        SPLITGUI_PROFILE;
 
         colorStatement.checkCleanup();
 
@@ -35,10 +40,13 @@ namespace SplitGui {
     }
 
     Result Default::Text::update() {
+        SPLITGUI_PROFILE;
+
         return pGraphics->updateText(textRef, {extent.x, extent.y}, color, fontSize, depth);
     }
 
     Result Default::Text::instance() {
+        SPLITGUI_PROFILE;
 
         SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
 

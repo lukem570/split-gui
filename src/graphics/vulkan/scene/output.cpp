@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     inline Result VulkanInterface::createSceneOutputResources(SceneObject& scene) {
+        SPLITGUI_PROFILE;
 
         vk::ImageCreateInfo outputImageInfo;
         outputImageInfo.imageType     = vk::ImageType::e2D;

@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     Result Mesh::submit(SceneRef& ref, int flags) {
+        SPLITGUI_PROFILE;
 
         ResultValue<TriangleRef> triangleRes = pGraphics->submitTriangleData(ref, vertices, indices, flags);
 

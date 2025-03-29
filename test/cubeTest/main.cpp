@@ -17,6 +17,8 @@ double degToRad(double degrees) {
 
 int main() {
 
+    SPLITGUI_PROFILE;
+
     std::ifstream indexFile("test/cubeTest/index.xml");
 
     if (!indexFile.is_open()) {

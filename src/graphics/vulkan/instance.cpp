@@ -2,6 +2,8 @@
 
 namespace SplitGui {
     inline Result VulkanInterface::instanceVulkan() {
+        SPLITGUI_PROFILE;
+
         VkResult err = volkInitialize();
         if (err != VK_SUCCESS) {
             return Result::eVulkanNotFound;

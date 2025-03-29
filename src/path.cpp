@@ -59,6 +59,9 @@ namespace SplitGui {
 #endif
 
     std::string remove_extension(const std::string& filePath) {
+
+        SPLITGUI_PROFILE;
+
         size_t lastSlashPos = filePath.find_last_of("/\\");
         
         std::string parentFolder = filePath.substr(0, lastSlashPos);
@@ -71,6 +74,9 @@ namespace SplitGui {
     }
 
     ResultValue<std::vector<char>> readFile(const std::string& filename) {
+
+        SPLITGUI_PROFILE;
+
         std::string path = remove_extension(getExecutablePath()) + '/' + filename;
 
         std::ifstream file;

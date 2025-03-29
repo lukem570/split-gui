@@ -78,7 +78,6 @@ foreach(git_repo_link ${DEPENDENCIES})
         COMMAND git clone ${git_repo_link} ${repo_path} --recursive
         RESULT_VARIABLE CLONE_RESULT
         ERROR_VARIABLE CLONE_ERROR
-        OUTPUT_QUIET
     )
     
     if(NOT CLONE_RESULT EQUAL 0)
@@ -106,7 +105,6 @@ foreach(git_repo_link ${DEPENDENCIES})
         WORKING_DIRECTORY ${repo_path}
         RESULT_VARIABLE CONFIGURE_RESULT
         ERROR_VARIABLE CONFIGURE_ERROR
-        OUTPUT_QUIET
     )
 
     if(NOT CONFIGURE_RESULT EQUAL 0)
@@ -122,7 +120,6 @@ foreach(git_repo_link ${DEPENDENCIES})
         WORKING_DIRECTORY ${repo_path}/build
         RESULT_VARIABLE BUILD_RESULT
         ERROR_VARIABLE BUILD_ERROR
-        OUTPUT_QUIET
     )
 
     if(NOT BUILD_RESULT EQUAL 0)
@@ -197,6 +194,60 @@ endif()
 
 message(STATUS "window manager: ${VK_WINDOW_MANAGER}")
 
+# ---- tracy ----
+
+message(STATUS "Profiler: ${PROFILER}")
+
+IF("${PROFILER}" STREQUAL "TRACY")
+
+    if(NOT EXISTS ${CMAKE_BINARY_DIR}/tracy)
+
+        execute_process(
+            COMMAND git clone https://github.com/wolfpld/tracy.git ${CMAKE_BINARY_DIR}/tracy --recursive
+            RESULT_VARIABLE CLONE_RESULT
+            ERROR_VARIABLE CLONE_ERROR
+        )
+        
+        if(NOT CLONE_RESULT EQUAL 0)
+            message(FATAL_ERROR "Failed to clone repository: tracy. Error: ${CLONE_ERROR}")
+        else()
+            message(STATUS "Successfully cloned: tracy")
+        endif()
+
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} -B build
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/tracy
+            RESULT_VARIABLE CONFIGURE_RESULT
+            ERROR_VARIABLE CONFIGURE_ERROR
+        )
+
+        if(NOT CONFIGURE_RESULT EQUAL 0)
+            message(FATAL_ERROR "Failed to configure repository: tracy. Error: ${CONFIGURE_ERROR}")
+        else()
+            message(STATUS "Successfully configured: tracy")
+        endif()
+        
+        string(REGEX REPLACE ".*/" "" make_program ${CMAKE_MAKE_PROGRAM})
+
+        execute_process(
+            COMMAND ${make_program}
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/tracy/build
+            RESULT_VARIABLE BUILD_RESULT
+            ERROR_VARIABLE BUILD_ERROR
+        )
+
+        if(NOT BUILD_RESULT EQUAL 0)
+            message(FATAL_ERROR "Failed to build repository: tracy. Error: ${BUILD_ERROR}")
+        else()
+            message(STATUS "Successfully built: tracy")
+        endif()
+
+    endif()
+
+    set(INCLUDE_PATHS ${INCLUDE_PATHS} ${CMAKE_BINARY_DIR}/tracy/public)
+
+endif()
+
 # ---- compile splitgui ----
 
 include_directories(${INCLUDE_PATHS})
@@ -210,7 +261,8 @@ link_directories(
 
 add_library(splitgui SHARED ${CMAKE_SOURCE_DIR}/src/splitgui.cpp)
 
-target_link_libraries(splitgui
+target_link_libraries(
+    splitgui
     glfw3
     volk
     msdfgen-core
@@ -218,7 +270,7 @@ target_link_libraries(splitgui
     ${WINDOW_LIB}
 )
 
-target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${SPLITGUI_DEV} ${VK_WINDOW_MANAGER})
+target_compile_definitions(splitgui PRIVATE BUILD_SPLITGUI ${SPLITGUI_DEV} PROFILER_${PROFILER} ${VK_WINDOW_MANAGER})
 
 # ---- compile tests ----
 

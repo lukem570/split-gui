@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     inline Result VulkanInterface::createSceneDepthResources(SceneObject& scene) {
+        SPLITGUI_PROFILE;
 
         ResultValue<vk::Format> depthFormat = findSupportedFormat(
             {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},

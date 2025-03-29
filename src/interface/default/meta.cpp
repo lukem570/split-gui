@@ -5,10 +5,13 @@
 
 namespace SplitGui {
     Result Default::Meta::update() {
+        SPLITGUI_PROFILE;
+
         return Result::eSuccess;
     }
 
     Result Default::Meta::instance() {
+        SPLITGUI_PROFILE;
 
         Logger::info("Instanced Meta");
 

@@ -5,6 +5,8 @@
 
 namespace SplitGui {
     Result Default::Box::update() {
+        SPLITGUI_PROFILE;
+
         if (children.size() == 0) {
             return Result::eSuccess;
         }
@@ -14,6 +16,8 @@ namespace SplitGui {
     }
 
     Result Default::Box::instance() {
+        SPLITGUI_PROFILE;
+
         if (maxChildren < children.size()) {
             return Result::eInvalidNumberOfChildren;
         } else if (children.size() == 0) {
