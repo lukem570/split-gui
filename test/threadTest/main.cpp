@@ -66,6 +66,8 @@ int window(Data* data, bool* running) {
 
 int main() {
 
+    SPLITGUI_PROFILE;
+
     std::ifstream indexFile("test/threadTest/index.xml");
 
     if (!indexFile.is_open()) {

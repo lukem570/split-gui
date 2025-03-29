@@ -2,6 +2,7 @@
 #define SPLITGUI_LOGGER_CPP
 
 #include <splitgui/logger.hpp>
+#include <splitgui/lib.hpp>
 
 #include <iomanip>
 #include <ctime>
@@ -43,30 +44,40 @@ namespace SplitGui {
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - INFO  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
+
+        SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::debug(std::string message) {
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - DEBUG - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
+
+        SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::warn(std::string message) {
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - WARN  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
+
+        SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::error(std::string message) {
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - ERROR - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
+
+        SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::fatal(std::string message) {
         std::string time = getTime();
         fprintf(getInstance()->outputBuffer, "%s - FATAL - [SPLITGUI] %s\n", time.c_str(), message.c_str());
         fflush(getInstance()->outputBuffer);
+
+        SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
 }

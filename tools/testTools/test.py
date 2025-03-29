@@ -19,7 +19,8 @@ def configure():
             'cmake',
             '-B', 'build',
             '-G', 'Ninja',
-            '-D', 'SPLITGUI_DEV=SPLITGUI_DEV'
+            '-D', 'SPLITGUI_DEV=SPLITGUI_DEV',
+            '-D', 'PROFILER=TRACY'
         ],
         check=True,
         text=True
