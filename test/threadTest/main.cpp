@@ -51,7 +51,9 @@ int window(Data* data, bool* running) {
         } 
         
         SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90), data->scene->getExtent());
-        SplitGui::Result projectionRes = data->graphics.updateSceneCameraProjection(data->scene->getSceneRef(), projection);
+        data->graphics.updateSceneCameraProjection(data->scene->getSceneRef(), projection);
+
+        SplitGui::Result projectionRes = data->graphics.submitSceneData(data->scene->getSceneRef());
 
         if (projectionRes != SplitGui::Result::eSuccess) {
             *running = false;
@@ -126,7 +128,9 @@ int main() {
 
 
     SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90), data.scene->getExtent());
-    TRYRC(projectionRes, data.graphics.updateSceneCameraProjection(data.scene->getSceneRef(), projection));
+    data.graphics.updateSceneCameraProjection(data.scene->getSceneRef(), projection);
+
+    TRYRC(projectionRes, data.graphics.submitSceneData(data.scene->getSceneRef()));
 
     std::future<int> frameLoop = std::async(std::launch::async, frame, &data, &running);
     std::future<int> windowLoop = std::async(std::launch::async, window, &data, &running);

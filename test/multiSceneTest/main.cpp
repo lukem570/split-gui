@@ -94,8 +94,11 @@ int main() {
     SplitGui::Mat4 projection1 = SplitGui::Mat4::orthographicProjection();
     SplitGui::Mat4 projection2 = SplitGui::Mat4::orthographicProjection();
 
-    TRYRC(projectionRes1, graphics.updateSceneCameraProjection(sceneRef1, projection1));
-    TRYRC(projectionRes2, graphics.updateSceneCameraProjection(sceneRef2, projection2));
+    graphics.updateSceneCameraProjection(sceneRef1, projection1);
+    graphics.updateSceneCameraProjection(sceneRef2, projection2);
+
+    TRYRC(projectionRes1, graphics.submitSceneData(sceneRef1));
+    TRYRC(projectionRes2, graphics.submitSceneData(sceneRef2));
 
     SplitGui::Camera cam1;
     SplitGui::Camera cam2;

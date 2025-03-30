@@ -163,22 +163,22 @@ namespace SplitGui {
         return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
     }
 
-    Result Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
+    void Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
         SPLITGUI_PROFILE;
 
-        return pInterface->updateSceneCameraPosition(ref, position);
+        pInterface->updateSceneCameraPosition(ref, position);
     }
 
-    Result Graphics::updateSceneCameraView(SceneRef& ref, Mat4& view) {
+    void Graphics::updateSceneCameraView(SceneRef& ref, Mat4& view) {
         SPLITGUI_PROFILE;
 
-        return pInterface->updateSceneCameraView(ref, view);
+        pInterface->updateSceneCameraView(ref, view);
     }
 
-    Result Graphics::updateSceneCameraProjection(SceneRef& ref, Mat4& projection) {
+    void Graphics::updateSceneCameraProjection(SceneRef& ref, Mat4& projection) {
         SPLITGUI_PROFILE;
 
-        return pInterface->updateSceneCameraProjection(ref, projection);
+        pInterface->updateSceneCameraProjection(ref, projection);
     }
 
     ModelRef Graphics::createModel(SceneRef& ref, Mat4& model) {
@@ -216,7 +216,13 @@ namespace SplitGui {
         return pInterface->updateScene(ref, newX1, newX2, (float)depth / DEPTH_PLANE);
     }
 
-    [[nodiscard]] ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {
+    Result Graphics::submitSceneData(SceneRef& sceneRef) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->submitSceneData(sceneRef);
+    }
+
+    ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {
         SPLITGUI_PROFILE;
 
         return pInterface->createContourImage(contours);

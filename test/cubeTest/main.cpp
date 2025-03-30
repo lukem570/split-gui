@@ -99,7 +99,9 @@ int main() {
     bool shiftDown = false;
 
     SplitGui::Mat4 projection = SplitGui::Mat4::perspectiveProjection(degToRad(90), scene->getExtent());
-    TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
+    graphics.updateSceneCameraProjection(sceneRef, projection);
+
+    TRYRC(projectionRes, graphics.submitSceneData(sceneRef));
 
     SplitGui::Camera cam;
     cam.submitGraphics(graphics);
@@ -113,10 +115,11 @@ int main() {
                     switch (eventHandler.getEvent().window) {
 
                         case SplitGui::Event::WindowType::eResize: {
-
                             
                             projection.updatePerspective(degToRad(90), scene->getExtent());
-                            TRYRC(projectionRes2, graphics.updateSceneCameraProjection(sceneRef, projection));
+                            graphics.updateSceneCameraProjection(sceneRef, projection);
+
+                            TRYRC(projectionRes, graphics.submitSceneData(sceneRef));
                             
                             break;
                         }

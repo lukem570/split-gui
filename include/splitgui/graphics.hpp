@@ -34,9 +34,10 @@ namespace SplitGui {
 [[nodiscard]] virtual Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   { throw; }
 [[nodiscard]] virtual ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) { throw; }
 [[nodiscard]] virtual Result                    deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      { throw; }
-[[nodiscard]] virtual Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }
-[[nodiscard]] virtual Result                    updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
-[[nodiscard]] virtual Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
+[[nodiscard]] virtual Result                    submitSceneData(SceneRef& sceneRef)                                                                                                { throw; }
+              virtual void                      updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }
+              virtual void                      updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
+              virtual void                      updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
               virtual ModelRef                  createModel(SceneRef& ref, Mat4& model)                                                                                            { throw; }
 [[nodiscard]] virtual ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 { throw; }
 [[nodiscard]] virtual Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    { throw; }
@@ -69,9 +70,10 @@ namespace SplitGui {
 [[nodiscard]] Result                    updateScene(SceneRef& ref, IVec2 x1, IVec2 x2, int depth = 0);
 [[nodiscard]] ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags = 0, int textureNumber = 0);
 [[nodiscard]] Result                    deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef);
-[[nodiscard]] Result                    updateSceneCameraPosition(SceneRef& ref, Vec3& position);
-[[nodiscard]] Result                    updateSceneCameraView(SceneRef& ref, Mat4& view);
-[[nodiscard]] Result                    updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
+[[nodiscard]] Result                    submitSceneData(SceneRef& sceneRef);
+              void                      updateSceneCameraPosition(SceneRef& ref, Vec3& position);
+              void                      updateSceneCameraView(SceneRef& ref, Mat4& view);
+              void                      updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
               ModelRef                  createModel(SceneRef& ref, Mat4& model);
 [[nodiscard]] ResultValue<TextRef>      drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth = 0);
 [[nodiscard]] Result                    updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth = 0);

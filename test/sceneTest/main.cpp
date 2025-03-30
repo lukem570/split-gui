@@ -86,7 +86,9 @@ int main() {
     SplitGui::Vec3 rotation = {0, 0, 0};
 
     SplitGui::Mat4 projection = SplitGui::Mat4::orthographicProjection();
-    TRYRC(projectionRes, graphics.updateSceneCameraProjection(sceneRef, projection));
+    graphics.updateSceneCameraProjection(sceneRef, projection);
+
+    TRYRC(projectionRes, graphics.submitSceneData(sceneRef));
 
     SplitGui::Camera cam;
     cam.submitGraphics(graphics);
