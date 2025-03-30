@@ -100,6 +100,9 @@ namespace SplitGui {
 
         double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        std::vector<StagingBuffer> stagingBuffers;
+
         for (unsigned int i = 0; i < text.size(); i++) {
             if (charSet.find(text[i]) != charSet.end() || std::isspace(text[i])) {
                 continue;
@@ -128,7 +131,7 @@ namespace SplitGui {
             msdfgen::edgeColoringSimple(shape, 3.0);
             
             msdfgen::Vector2 scale;
-            msdfgen::Range pxRange = msdfgen::Range(0.08);
+            msdfgen::Range pxRange = msdfgen::Range(0.07);
             
             msdfgen::Shape::Bounds bounds = shape.getBounds();
 
@@ -163,11 +166,11 @@ namespace SplitGui {
             // ------ vulkan code ------
 
             vk::DeviceSize stagingBufferSize = subPixels * sizeof(unsigned char);
-            StagingBuffer  stagingBuffer;
+            stagingBuffers.push_back({});
 
-            TRYR(bufferRes, InstanceStagingBuffer(stagingBuffer, stagingBufferSize));
+            TRYR(bufferRes, InstanceStagingBuffer(stagingBuffers.back(), stagingBufferSize));
 
-            unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBuffer.memory, 0, stagingBufferSize);
+            unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBuffers.back().memory, 0, stagingBufferSize);
 
             int index = 0;
             for (int x = (int)vk_msdfExtent.width - 1; x >= 0; x--) {
@@ -179,9 +182,7 @@ namespace SplitGui {
                 }
             }
             
-            vk_device.unmapMemory(stagingBuffer.memory);
-
-            vk::CommandBuffer commandBuffer = startCopyBuffer();
+            vk_device.unmapMemory(stagingBuffers.back().memory);
 
             vk::ImageMemoryBarrier barrier1;
             barrier1.srcAccessMask                   = (vk::AccessFlagBits) 0;
@@ -213,7 +214,7 @@ namespace SplitGui {
             copyRegion.imageExtent.height              = vk_msdfExtent.height;
             copyRegion.imageExtent.depth               = 1;
 
-            commandBuffer.copyBufferToImage(stagingBuffer.buffer, vk_textGlyphImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
+            commandBuffer.copyBufferToImage(stagingBuffers.back().buffer, vk_textGlyphImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
 
             vk::ImageMemoryBarrier barrier2;
             barrier2.srcAccessMask                   = vk::AccessFlagBits::eTransferWrite;
@@ -229,12 +230,13 @@ namespace SplitGui {
             barrier2.subresourceRange.levelCount     = 1;
 
             commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader, vk::DependencyFlagBits::eByRegion, nullptr, nullptr, barrier2);
+        }
 
-            vk_device.waitIdle();
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
+        
+        for (unsigned int i = 0; i < stagingBuffers.size(); i++) {
 
-            TRYR(commandRes, endSingleTimeCommands(commandBuffer));
-
-            cleanupStagingBuffer(stagingBuffer);
+            cleanupStagingBuffer(stagingBuffers[i]);
         }
 
         pos.y += ft_face->ascender >> 3;
@@ -270,10 +272,13 @@ namespace SplitGui {
 
             float yOff = (float)height - (float)bearingY * (1.0f/64.0f);
 
-            float outX1 = (pos.x + offsetX) / windowSize.x / 2.0f;
-            float outY1 = (pos.y + maxHeight - offsetY - height + yOff) / windowSize.y / 2.0f;
-            float outX2 = (pos.x + offsetX + width) / windowSize.x / 2.0f;
-            float outY2 = (pos.y + maxHeight + yOff) / windowSize.y / 2.0f;
+            int xBorder = ((float)width  * 0.1f * (float)width / (float)height) / 2;
+            int yBorder = ((float)height * 0.1f) / 2;
+
+            float outX1 = (pos.x + offsetX - xBorder) / windowSize.x / 2.0f;
+            float outY1 = (pos.y + maxHeight - offsetY - height + yOff - yBorder) / windowSize.y / 2.0f;
+            float outX2 = (pos.x + offsetX + width + xBorder) / windowSize.x / 2.0f;
+            float outY2 = (pos.y + maxHeight + yOff + yBorder) / windowSize.y / 2.0f;
 
             ret.rects.push_back(drawRect(
                 x1 + Vec2{outX1, outY1}, 
