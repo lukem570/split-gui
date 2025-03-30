@@ -281,7 +281,7 @@ foreach(main_file ${TESTS})
 
     add_executable(${main_name} ${main_file})
     
-    target_compile_definitions(${main_name} PRIVATE ${VK_WINDOW_MANAGER})
+    target_compile_definitions(${main_name} PRIVATE PROFILER_${PROFILER} ${VK_WINDOW_MANAGER})
 
     target_link_libraries(${main_name} splitgui)
 

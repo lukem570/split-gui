@@ -282,11 +282,14 @@
     #define TRACY_ENABLE
 
     #include <tracy/Tracy.hpp>
-    #include <TracyClient.cpp>
+
+    #ifdef BUILD_SPLITGUI
+        #include <TracyClient.cpp>
+    #endif
 
     #define SPLITGUI_PROFILE ZoneScoped
     #define SPLITGUI_NAME_THREAD(x) tracy::SetThreadName(x)
-    #define SPLITGUI_PROFILE_FRAME(x) FrameMark
+    #define SPLITGUI_PROFILE_FRAME FrameMark
     #define SPLITGUI_PROFILE_SECTION(x) ZoneScopedN(x)
     #define SPLITGUI_PROFILE_TAG(y, x) ZoneText(x, strlen(x))
     #define SPLITGUI_PROFILE_LOG(text, size) TracyMessage(text, size)
@@ -296,7 +299,7 @@
 
     #define SPLITGUI_PROFILE
     #define SPLITGUI_NAME_THREAD(x)
-    #define SPLITGUI_PROFILE_FRAME(x)
+    #define SPLITGUI_PROFILE_FRAME
     #define SPLITGUI_PROFILE_SECTION(x)
     #define SPLITGUI_PROFILE_TAG(y, x)
     #define SPLITGUI_PROFILE_LOG(text, size)

@@ -43,6 +43,7 @@ namespace SplitGui {
 
     Result Graphics::drawFrame() {
         SPLITGUI_PROFILE;
+        SPLITGUI_PROFILE_FRAME;
 
         return pInterface->drawFrame();
     }
