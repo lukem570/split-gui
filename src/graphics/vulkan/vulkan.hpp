@@ -32,7 +32,7 @@ namespace ft {
 #include "../../path.cpp"
 
 // TODO: make this accessible to the user
-#define MAX_FRAMES_IN_FLIGHT 5
+#define MAX_FRAMES_IN_FLIGHT 2
 #define MAX_VECTOR_IMAGES 256
 #define MAX_SCENES 16
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
