@@ -313,10 +313,10 @@ namespace SplitGui {
     Result VulkanInterface::updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth) {
         SPLITGUI_PROFILE;
 
-        frameMutex.lock();
-
         IVec2 windowSize = pWindow->getSize();
         Vec2 delta = x1 - x2;
+
+        frameMutex.lock();
 
         scenes[ref.sceneNumber].sceneSize = { (int)(windowSize.x * std::abs(delta.x) / 2.0f), (int)(windowSize.y * std::abs(delta.y) / 2.0f) };
 

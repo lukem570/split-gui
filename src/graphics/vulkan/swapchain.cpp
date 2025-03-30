@@ -63,7 +63,11 @@ namespace SplitGui {
 
         frameMutex.lock();
 
-        vk_device.waitIdle();
+        vk::Result fenceRes = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), vk::True, UINT64_MAX);
+
+        if (fenceRes != vk::Result::eSuccess) {
+            return Result::eFailedToWaitForFences;
+        }
 
         cleanupImageViews();
         cleanupScenesImageArray();

@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 #include <variant>
+#include <mutex>
+#include <condition_variable>
 
 namespace SplitGui {
 
@@ -430,6 +432,35 @@ namespace SplitGui {
 
         UnitExpression(Type type) : type(type) {}
         ~UnitExpression() = default;
+    };
+
+    class FairMutex {
+        public:
+            void lock() {
+                unsigned int my_ticket;
+                {
+                    std::lock_guard<std::mutex> lock(mtx);
+                    my_ticket = next_ticket++;
+                }
+                std::unique_lock<std::mutex> lock(mtx);
+                cv.wait(lock, [this, my_ticket] { return my_ticket == now_serving; });
+            }
+        
+            void unlock() {
+                {
+                    std::lock_guard<std::mutex> lock(mtx);
+                    now_serving++;
+                }
+        
+                cv.notify_all();
+            }
+
+        private:
+            unsigned int next_ticket = 0;
+            unsigned int now_serving = 0;
+            std::mutex mtx;
+            std::condition_variable cv;
+        
     };
 
     struct UnitExpressionValue {

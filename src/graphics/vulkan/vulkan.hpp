@@ -32,7 +32,7 @@ namespace ft {
 #include "../../path.cpp"
 
 // TODO: make this accessible to the user
-#define MAX_FRAMES_IN_FLIGHT 2
+#define MAX_FRAMES_IN_FLIGHT 5
 #define MAX_VECTOR_IMAGES 256
 #define MAX_SCENES 16
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
@@ -205,9 +205,9 @@ namespace SplitGui {
             vk::ShaderModule         vk_sceneFragmentModule;
             std::vector<SceneObject> scenes;
 
-            std::mutex queueMutex;
-            std::mutex commandPoolMutex;
-            std::mutex frameMutex;
+            FairMutex queueMutex;
+            FairMutex commandPoolMutex;
+            FairMutex frameMutex;
 
 [[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
               inline vk::Extent2D            chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
