@@ -25,7 +25,7 @@ namespace SplitGui {
             tempBufferMemory
         ));
         
-        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        vk::CommandBuffer commandBuffer = startCopyBuffer(scene.sceneDataStagingBuffer);
         
         vk::BufferCopy copyRegion;
         
@@ -69,7 +69,7 @@ namespace SplitGui {
             scene.modelUniformBufferMemory
         ));
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        vk::CommandBuffer commandBuffer = startCopyBuffer(scene.sceneModelStagingBuffer);
 
         vk::BufferCopy copyRegion;
 

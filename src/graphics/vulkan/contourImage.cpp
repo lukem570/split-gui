@@ -96,7 +96,7 @@ namespace SplitGui {
         
         vk_device.unmapMemory(vk_textureArrayStagingBuffer.memory);
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        vk::CommandBuffer commandBuffer = startCopyBuffer(vk_textureArrayStagingBuffer);
 
         vk::ImageMemoryBarrier barrier1;
         barrier1.srcAccessMask                   = (vk::AccessFlagBits) 0;

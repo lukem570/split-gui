@@ -100,7 +100,9 @@ namespace SplitGui {
 
         double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer();
+        StagingBuffer tempStagingBuffer;
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer(tempStagingBuffer);
         std::vector<StagingBuffer> stagingBuffers;
 
         for (unsigned int i = 0; i < text.size(); i++) {
@@ -238,6 +240,8 @@ namespace SplitGui {
 
             cleanupStagingBuffer(stagingBuffers[i]);
         }
+
+        cleanupStagingBuffer(tempStagingBuffer);
 
         pos.y += ft_face->ascender >> 3;
 
