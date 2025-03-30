@@ -4,16 +4,23 @@ namespace SplitGui {
     inline Result VulkanInterface::vertexBufferSubmit() {
         SPLITGUI_PROFILE;
 
-        vk::DeviceSize   indexBufferSize;
-        vk::Buffer       stagingIndexBuffer;
-        vk::DeviceMemory stagingIndexBufferMemory;
+        vk::DeviceSize indexBufferSize  = indices.size() * sizeof(uint16_t);
+        vk::DeviceSize vertexBufferSize = vertices.size() * sizeof(VertexBufferObject);
 
-        vk::DeviceSize   vertexBufferSize;
-        vk::Buffer       stagingVertexBuffer;
-        vk::DeviceMemory stagingVertexBufferMemory;
+        TRYR(stagingRes1, InstanceStagingBuffer(vk_indexStagingBuffer,  indexBufferSize ));
+        TRYR(stagingRes2, InstanceStagingBuffer(vk_vertexStagingBuffer, vertexBufferSize));
 
-        TRYR(stagingRes1, InstanceStagingBuffer(indices,  stagingIndexBuffer,  stagingIndexBufferMemory,  indexBufferSize ));
-        TRYR(stagingRes2, InstanceStagingBuffer(vertices, stagingVertexBuffer, stagingVertexBufferMemory, vertexBufferSize));
+        void* vertexMemory = vk_device.mapMemory(vk_vertexStagingBuffer.memory, 0, vertexBufferSize);
+
+        std::memcpy(vertexMemory, vertices.data(), vertexBufferSize);
+
+        vk_device.unmapMemory(vk_vertexStagingBuffer.memory);
+
+        void* indexMemory = vk_device.mapMemory(vk_indexStagingBuffer.memory, 0, indexBufferSize);
+
+        std::memcpy(indexMemory, indices.data(), indexBufferSize);
+        
+        vk_device.unmapMemory(vk_indexStagingBuffer.memory);
 
         vk::Buffer       tempIndexBuffer;
         vk::DeviceMemory tempIndexBufferMemory;
@@ -41,8 +48,8 @@ namespace SplitGui {
         vk::BufferCopy copyRegionIndex;
         vk::BufferCopy copyRegionVertex;
 
-        copyBuffer(stagingIndexBuffer,  tempIndexBuffer, indexBufferSize,  commandBuffer, copyRegionIndex);
-        copyBuffer(stagingVertexBuffer, tempVertexBuffer, vertexBufferSize, commandBuffer, copyRegionVertex);
+        copyBuffer(vk_indexStagingBuffer.buffer,  tempIndexBuffer, indexBufferSize,  commandBuffer, copyRegionIndex);
+        copyBuffer(vk_vertexStagingBuffer.buffer, tempVertexBuffer, vertexBufferSize, commandBuffer, copyRegionVertex);
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
@@ -61,12 +68,6 @@ namespace SplitGui {
 
         vk_indexBuffer        = tempIndexBuffer;
         vk_indexBufferMemory  = tempIndexBufferMemory;
-
-        vk_device.destroyBuffer(stagingVertexBuffer);
-        vk_device.freeMemory(stagingVertexBufferMemory);
-        
-        vk_device.destroyBuffer(stagingIndexBuffer);
-        vk_device.freeMemory(stagingIndexBufferMemory);
         
         knownIndicesSize = indices.size();
         

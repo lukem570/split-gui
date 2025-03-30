@@ -107,38 +107,24 @@ namespace SplitGui {
 
         unsigned int offset = rectOffsets[ref.id];
 
-        vk::DeviceSize rectSize = sizeof(VertexBufferObject) * 4;
+        TRYR(stagingRes, InstanceStagingBuffer(vk_rectStagingBuffer, sizeof(VertexBufferObject) * 4));
+        
+        void* memory = vk_device.mapMemory(vk_rectStagingBuffer.memory, 0, vk_rectStagingBuffer.size);
 
-        vk::Buffer       stagingBuffer;
-        vk::DeviceMemory stagingBufferMemory;
+        std::memcpy(memory, (char*)vertices.data() + sizeof(VertexBufferObject) * (offset + ref.bottomLeft), vk_rectStagingBuffer.size);
 
-        TRYR(stagingBufferRes, createBuffer(
-            rectSize, 
-            vk::BufferUsageFlagBits::eTransferSrc, 
-            vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-            stagingBuffer,
-            stagingBufferMemory
-        ));
-
-        void* memory = vk_device.mapMemory(stagingBufferMemory, 0, rectSize);
-
-        std::memcpy(memory, (char*)vertices.data() + sizeof(VertexBufferObject) * (offset + ref.bottomLeft), rectSize);
-
-        vk_device.unmapMemory(stagingBufferMemory);
+        vk_device.unmapMemory(vk_rectStagingBuffer.memory);
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
         vk::BufferCopy copyRegion;
-        copyRegion.size      = rectSize;
+        copyRegion.size      = vk_rectStagingBuffer.size;
         copyRegion.srcOffset = 0;
         copyRegion.dstOffset = sizeof(VertexBufferObject) * (offset + ref.bottomLeft);
 
-        commandBuffer.copyBuffer(stagingBuffer, vk_vertexBuffer, 1, &copyRegion);
+        commandBuffer.copyBuffer(vk_rectStagingBuffer.buffer, vk_vertexBuffer, 1, &copyRegion);
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
-
-        vk_device.destroyBuffer(stagingBuffer);
-        vk_device.freeMemory(stagingBufferMemory);
 
         return Result::eSuccess;
     }

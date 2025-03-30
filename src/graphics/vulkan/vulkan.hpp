@@ -50,6 +50,12 @@ namespace SplitGui {
 
 namespace SplitGui {
 
+    struct StagingBuffer {
+        vk::DeviceSize   size = 0;
+        vk::Buffer       buffer;
+        vk::DeviceMemory memory;
+    };
+
     struct SceneObject {
 
         vk::DescriptorPool           descriptorPool;
@@ -77,6 +83,11 @@ namespace SplitGui {
         std::vector<uint16_t>                indices;
         SceneObj                             sceneData;
         std::vector<Mat4>                    models;
+
+        StagingBuffer sceneDataStagingBuffer;
+        StagingBuffer sceneModelStagingBuffer;
+        StagingBuffer vertexStagingBuffer;
+        StagingBuffer indexStagingBuffer;
 
         unsigned int knownIndicesSize = 0;
     };
@@ -177,6 +188,11 @@ namespace SplitGui {
             std::vector<const char *>           enabledInstanceExtensions;
             std::vector<const char *>           enabledDeviceExtensions;
 
+            StagingBuffer                       vk_textureArrayStagingBuffer;
+            StagingBuffer                       vk_rectStagingBuffer;
+            StagingBuffer                       vk_vertexStagingBuffer;
+            StagingBuffer                       vk_indexStagingBuffer;
+
             // runtime variables
             vk::CommandBufferBeginInfo          vk_beginInfo;
             vk::SubmitInfo                      vk_submitInfo;
@@ -224,8 +240,7 @@ namespace SplitGui {
 [[nodiscard]] inline ResultValue<vk::Format> findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features);
               inline Result                  submitTriangles(SceneRef& ref);
 
-              template <typename T>
-[[nodiscard]] inline Result InstanceStagingBuffer(std::vector<T> dataToUpload, vk::Buffer& out_buffer, vk::DeviceMemory& out_memory, vk::DeviceSize& out_size);
+[[nodiscard]] inline Result InstanceStagingBuffer(StagingBuffer& stagingBuffer, vk::DeviceSize size);
 
 [[nodiscard]] inline Result instanceVulkan();
 [[nodiscard]] inline Result createPhysicalDevice();
@@ -279,6 +294,8 @@ namespace SplitGui {
               inline void cleanupScenesImageArray();
               inline void cleanupScenes();
               inline void cleanupTriangleReferences();
+
+              inline void cleanupStagingBuffer(StagingBuffer& stagingBuffer);
 
               inline void cleanupSceneVertexAndIndexBuffers(SceneRef& ref);
               inline void cleanupSceneFrameBuffers(SceneRef& ref);

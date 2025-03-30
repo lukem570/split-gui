@@ -127,30 +127,24 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    template <typename T>
-    inline Result VulkanInterface::InstanceStagingBuffer(
-        std::vector<T>    dataToUpload,
-        vk::Buffer&       out_buffer,
-        vk::DeviceMemory& out_memory,
-        vk::DeviceSize&   out_size
-    ) {
+    inline Result VulkanInterface::InstanceStagingBuffer(StagingBuffer& stagingBuffer, vk::DeviceSize size) {
         SPLITGUI_PROFILE;
-        
-        out_size = sizeof(dataToUpload[0]) * dataToUpload.size();
+
+        if (size == stagingBuffer.size) {
+            return Result::eSuccess;
+        }
+
+        cleanupStagingBuffer(stagingBuffer);
 
         TRYR(bufferRes, createBuffer(
-            out_size, 
+            size, 
             vk::BufferUsageFlagBits::eTransferSrc, 
             vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-            out_buffer,
-            out_memory
+            stagingBuffer.buffer,
+            stagingBuffer.memory
         ));
 
-        void* memory = vk_device.mapMemory(out_memory, 0, out_size);
-
-        std::memcpy(memory, dataToUpload.data(), out_size);
-
-        vk_device.unmapMemory(out_memory);
+        stagingBuffer.size = size;
 
         return Result::eSuccess;
     }

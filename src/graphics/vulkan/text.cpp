@@ -162,19 +162,12 @@ namespace SplitGui {
 
             // ------ vulkan code ------
 
-            vk::DeviceSize   stagingBufferSize = subPixels * sizeof(unsigned char);
-            vk::Buffer       stagingBuffer;
-            vk::DeviceMemory stagingBufferMemory;
+            vk::DeviceSize stagingBufferSize = subPixels * sizeof(unsigned char);
+            StagingBuffer  stagingBuffer;
 
-            TRYR(bufferRes, createBuffer(
-                stagingBufferSize, 
-                vk::BufferUsageFlagBits::eTransferSrc, 
-                vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-                stagingBuffer,
-                stagingBufferMemory
-            ));
+            TRYR(bufferRes, InstanceStagingBuffer(stagingBuffer, stagingBufferSize));
 
-            unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
+            unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBuffer.memory, 0, stagingBufferSize);
 
             int index = 0;
             for (int x = (int)vk_msdfExtent.width - 1; x >= 0; x--) {
@@ -186,7 +179,7 @@ namespace SplitGui {
                 }
             }
             
-            vk_device.unmapMemory(stagingBufferMemory);
+            vk_device.unmapMemory(stagingBuffer.memory);
 
             vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -220,7 +213,7 @@ namespace SplitGui {
             copyRegion.imageExtent.height              = vk_msdfExtent.height;
             copyRegion.imageExtent.depth               = 1;
 
-            commandBuffer.copyBufferToImage(stagingBuffer, vk_textGlyphImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
+            commandBuffer.copyBufferToImage(stagingBuffer.buffer, vk_textGlyphImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
 
             vk::ImageMemoryBarrier barrier2;
             barrier2.srcAccessMask                   = vk::AccessFlagBits::eTransferWrite;
@@ -241,8 +234,7 @@ namespace SplitGui {
 
             TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
-            vk_device.freeMemory(stagingBufferMemory);
-            vk_device.destroyBuffer(stagingBuffer);
+            cleanupStagingBuffer(stagingBuffer);
         }
 
         pos.y += ft_face->ascender >> 3;

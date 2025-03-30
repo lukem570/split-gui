@@ -8,6 +8,11 @@ namespace SplitGui {
 
         cleanupSyncObj();
 
+        cleanupStagingBuffer(vk_textureArrayStagingBuffer);
+        cleanupStagingBuffer(vk_rectStagingBuffer);
+        cleanupStagingBuffer(vk_indexStagingBuffer);
+        cleanupStagingBuffer(vk_vertexStagingBuffer);
+
         vk_device.freeCommandBuffers(vk_commandPool, vk_commandBuffers.size(), vk_commandBuffers.data());
 
         vk_device.destroyImageView(vk_textGlyphImageView);
@@ -170,6 +175,11 @@ namespace SplitGui {
 
         for (unsigned int i = 0; i < scenes.size(); i++) {
 
+            cleanupStagingBuffer(scenes[i].sceneDataStagingBuffer);
+            cleanupStagingBuffer(scenes[i].sceneModelStagingBuffer);
+            cleanupStagingBuffer(scenes[i].vertexStagingBuffer);
+            cleanupStagingBuffer(scenes[i].indexStagingBuffer);
+
             vk_device.freeDescriptorSets(scenes[i].descriptorPool, 1, &scenes[i].descriptorSet);
 
             vk_device.freeMemory(scenes[i].dataUniformBufferMemory);
@@ -206,6 +216,13 @@ namespace SplitGui {
         if (scenes[ref.sceneNumber].indexBufferMemory) {
             vk_device.freeMemory(scenes[ref.sceneNumber].indexBufferMemory);
             vk_device.destroyBuffer(scenes[ref.sceneNumber].indexBuffer);
+        }
+    }
+
+    inline void VulkanInterface::cleanupStagingBuffer(StagingBuffer& stagingBuffer) {
+        if (stagingBuffer.memory) {
+            vk_device.freeMemory(stagingBuffer.memory);
+            vk_device.destroyBuffer(stagingBuffer.buffer);
         }
     }
 }

@@ -139,10 +139,3 @@ index.xml
 * fix transparency ordering
 * add transform absolute handing
 * add model to graphics
-* add profiler
-
-### Optimizations
-
-* handle rect references better
-* staging buffer caching
-* make staging buffer allocate extra space for update events

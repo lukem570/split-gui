@@ -132,16 +132,23 @@ namespace SplitGui {
     Result VulkanInterface::submitTriangles(SceneRef& ref) {
         SPLITGUI_PROFILE;
 
-        vk::DeviceSize   indexBufferSize;
-        vk::Buffer       stagingIndexBuffer;
-        vk::DeviceMemory stagingIndexBufferMemory;
+        vk::DeviceSize indexBufferSize  = scenes[ref.sceneNumber].indices.size() * sizeof(uint16_t);
+        vk::DeviceSize vertexBufferSize = scenes[ref.sceneNumber].vertices.size() * sizeof(SceneVertexBufferObject);
 
-        vk::DeviceSize   vertexBufferSize;
-        vk::Buffer       stagingVertexBuffer;
-        vk::DeviceMemory stagingVertexBufferMemory;
+        TRYR(stagingRes1, InstanceStagingBuffer(scenes[ref.sceneNumber].vertexStagingBuffer, vertexBufferSize));
+        TRYR(stagingRes2, InstanceStagingBuffer(scenes[ref.sceneNumber].indexStagingBuffer,  indexBufferSize));
 
-        TRYR(stagingRes1, InstanceStagingBuffer(scenes[ref.sceneNumber].indices,  stagingIndexBuffer,  stagingIndexBufferMemory,  indexBufferSize ));
-        TRYR(stagingRes2, InstanceStagingBuffer(scenes[ref.sceneNumber].vertices, stagingVertexBuffer, stagingVertexBufferMemory, vertexBufferSize));
+        void* vertexMemory = vk_device.mapMemory(scenes[ref.sceneNumber].vertexStagingBuffer.memory, 0, vertexBufferSize);
+
+        std::memcpy(vertexMemory, scenes[ref.sceneNumber].vertices.data(), vertexBufferSize);
+
+        vk_device.unmapMemory(scenes[ref.sceneNumber].vertexStagingBuffer.memory);
+
+        void* indexMemory = vk_device.mapMemory(scenes[ref.sceneNumber].indexStagingBuffer.memory, 0, indexBufferSize);
+
+        std::memcpy(indexMemory, scenes[ref.sceneNumber].indices.data(), indexBufferSize);
+        
+        vk_device.unmapMemory(scenes[ref.sceneNumber].indexStagingBuffer.memory);
 
         vk::Buffer       tempIndexBuffer;
         vk::DeviceMemory tempIndexBufferMemory;
@@ -169,8 +176,8 @@ namespace SplitGui {
         vk::BufferCopy copyRegionIndex;
         vk::BufferCopy copyRegionVertex;
 
-        copyBuffer(stagingIndexBuffer,  tempIndexBuffer, indexBufferSize,  commandBuffer, copyRegionIndex);
-        copyBuffer(stagingVertexBuffer, tempVertexBuffer, vertexBufferSize, commandBuffer, copyRegionVertex);
+        copyBuffer(scenes[ref.sceneNumber].indexStagingBuffer.buffer,  tempIndexBuffer, indexBufferSize,  commandBuffer, copyRegionIndex);
+        copyBuffer(scenes[ref.sceneNumber].vertexStagingBuffer.buffer,  tempVertexBuffer, vertexBufferSize, commandBuffer, copyRegionVertex);
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
@@ -183,12 +190,6 @@ namespace SplitGui {
 
         scenes[ref.sceneNumber].indexBuffer        = tempIndexBuffer;
         scenes[ref.sceneNumber].indexBufferMemory  = tempIndexBufferMemory;
-
-        vk_device.destroyBuffer(stagingVertexBuffer);
-        vk_device.freeMemory(stagingVertexBufferMemory);
-
-        vk_device.destroyBuffer(stagingIndexBuffer);
-        vk_device.freeMemory(stagingIndexBufferMemory);
         
         scenes[ref.sceneNumber].knownIndicesSize = scenes[ref.sceneNumber].indices.size();
 
@@ -364,34 +365,23 @@ namespace SplitGui {
     Result VulkanInterface::submitSceneData(SceneRef& ref) {
         SPLITGUI_PROFILE;
 
-        vk::DeviceSize   bufferSize = sizeof(SceneObj);
-        vk::Buffer       stagingBuffer;
-        vk::DeviceMemory stagingBufferMemory;
+        vk::DeviceSize bufferSize = sizeof(SceneObj);
+        
+        TRYR(stagingRes, InstanceStagingBuffer(scenes[ref.sceneNumber].sceneDataStagingBuffer, bufferSize));
 
-        TRYR(stagingRes, createBuffer(
-            bufferSize,
-            vk::BufferUsageFlagBits::eTransferSrc, 
-            vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible,
-            stagingBuffer,
-            stagingBufferMemory
-        ));
-
-        void* memory = vk_device.mapMemory(stagingBufferMemory, 0, bufferSize);
+        void* memory = vk_device.mapMemory(scenes[ref.sceneNumber].sceneDataStagingBuffer.memory, 0, bufferSize);
 
         std::memcpy(memory, &scenes[ref.sceneNumber].sceneData, bufferSize);
 
-        vk_device.unmapMemory(stagingBufferMemory);
+        vk_device.unmapMemory(scenes[ref.sceneNumber].sceneDataStagingBuffer.memory);
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
         
         vk::BufferCopy copyRegion;
         
-        copyBuffer(stagingBuffer,  scenes[ref.sceneNumber].dataUniformBuffer, bufferSize,  commandBuffer, copyRegion);
+        copyBuffer(scenes[ref.sceneNumber].sceneDataStagingBuffer.buffer,  scenes[ref.sceneNumber].dataUniformBuffer, bufferSize, commandBuffer, copyRegion);
         
         TRYR(endRes, endSingleTimeCommands(commandBuffer));
-
-        vk_device.freeMemory(stagingBufferMemory);
-        vk_device.destroyBuffer(stagingBuffer);
 
         return Result::eSuccess;
     }

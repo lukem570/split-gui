@@ -81,19 +81,9 @@ namespace SplitGui {
 
         int numPixels = 4 * vk_msdfExtent.width * vk_msdfExtent.height;
 
-        vk::DeviceSize   stagingBufferSize = numPixels * sizeof(unsigned char);
-        vk::Buffer       stagingBuffer;
-        vk::DeviceMemory stagingBufferMemory;
+        TRYR(bufferRes, InstanceStagingBuffer(vk_textureArrayStagingBuffer, numPixels * sizeof(unsigned char)));
 
-        TRYR(bufferRes, createBuffer(
-            stagingBufferSize, 
-            vk::BufferUsageFlagBits::eTransferSrc, 
-            vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-            stagingBuffer,
-            stagingBufferMemory
-        ));
-
-        unsigned char* memory = (unsigned char*)vk_device.mapMemory(stagingBufferMemory, 0, stagingBufferSize);
+        unsigned char* memory = (unsigned char*)vk_device.mapMemory(vk_textureArrayStagingBuffer.memory, 0, vk_textureArrayStagingBuffer.size);
         int index = 0;
         for (int x = (int)vk_msdfExtent.width - 1; x >= 0; x--) {
             for (int y = 0; y < (int)vk_msdfExtent.height; y++) {
@@ -104,7 +94,7 @@ namespace SplitGui {
             }
         }
         
-        vk_device.unmapMemory(stagingBufferMemory);
+        vk_device.unmapMemory(vk_textureArrayStagingBuffer.memory);
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
@@ -138,7 +128,7 @@ namespace SplitGui {
         copyRegion.imageExtent.height              = vk_msdfExtent.height;
         copyRegion.imageExtent.depth               = 1;
 
-        commandBuffer.copyBufferToImage(stagingBuffer, vk_textureArrayImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
+        commandBuffer.copyBufferToImage(vk_textureArrayStagingBuffer.buffer, vk_textureArrayImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
 
         vk::ImageMemoryBarrier barrier2;
         barrier2.srcAccessMask                   = vk::AccessFlagBits::eTransferWrite;
@@ -160,9 +150,6 @@ namespace SplitGui {
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
         vectorImages.push_back(contours);
-
-        vk_device.freeMemory(stagingBufferMemory);
-        vk_device.destroyBuffer(stagingBuffer);
 
         Logger::info("Created Contour Image");
 
