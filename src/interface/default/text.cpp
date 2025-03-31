@@ -59,6 +59,10 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
+    void Default::Text::cleanup() {
+        pGraphics->deleteText(textRef);
+    }
+
     void Default::Text::setSize(unsigned int size) {
         fontSize = size;
     }

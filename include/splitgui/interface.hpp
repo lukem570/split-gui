@@ -256,6 +256,7 @@ namespace SplitGui {
 
   [[nodiscard]] Result instance() override;
   [[nodiscard]] Result update()   override;
+                void   cleanup()  override;
 
                 void   setText(std::string value);
                 void   setColor(HexColor);

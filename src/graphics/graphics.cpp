@@ -87,6 +87,12 @@ namespace SplitGui {
         pInterface->deleteRect(ref);
     }
 
+    void Graphics::deleteText(TextRef& ref) {
+        SPLITGUI_PROFILE;
+
+        pInterface->deleteText(ref);
+    }
+
     Result Graphics::submitRect(RectRef& ref) {
         SPLITGUI_PROFILE;
 

@@ -104,6 +104,7 @@ namespace SplitGui {
               RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
               void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
               void                      deleteRect(RectRef& ref)                                                                                                           override;
+              void                      deleteText(TextRef& ref)                                                                                                           override;
 [[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
 [[nodiscard]] ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
 [[nodiscard]] Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;

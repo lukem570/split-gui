@@ -19,6 +19,12 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
+    void VulkanInterface::deleteText(TextRef& ref) {
+        for (unsigned int i = 0; i < ref.rects.size(); i++) {
+            deleteRect(ref.rects[i]);
+        }
+    }
+
     Result VulkanInterface::updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth) {
         SPLITGUI_PROFILE;
 
