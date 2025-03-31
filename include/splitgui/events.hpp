@@ -210,6 +210,10 @@ namespace SplitGui {
             int xOff;
             int yOff;
         } mouseScroll;
+
+        struct {
+            unsigned int letter;
+        } letter;
     };
 
     union InterfaceEventData {
@@ -247,6 +251,7 @@ namespace SplitGui {
                 eMouseButton,
                 eMouseMove,
                 eScroll,
+                eLetter,
             };
 
             enum class GraphicsType {

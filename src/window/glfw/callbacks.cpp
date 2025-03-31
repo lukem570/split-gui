@@ -70,4 +70,18 @@ namespace SplitGui {
 
         pEventHandler->pushResult(pEventHandler->pushEvent(event));
     }
+
+    void GlfwInterface::char_callback(glfw::Window& window, unsigned int key) {
+        SPLITGUI_PROFILE;
+
+        EventHandler* pEventHandler = ((EventHandler*)window.getUserPointer());
+
+        Event event = Event(Event::Category::eWindow, Event::WindowType::eLetter);
+
+        event.data.type = EventData::Type::eWindow;
+
+        event.data.window.letter.letter = key;
+
+        pEventHandler->pushResult(pEventHandler->pushEvent(event));
+    }
 }

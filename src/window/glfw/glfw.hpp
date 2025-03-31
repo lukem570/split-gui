@@ -4,6 +4,7 @@
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/events.hpp>
+#include <splitgui/logger.hpp>
 #include <tuple>
 
 /*
@@ -64,6 +65,7 @@ namespace SplitGui {
             static void mouseButton_callback(glfw::Window& window, glfw::MouseButton mouseButton, glfw::MouseButtonState mouseState, glfw::ModifierKeyBit mods);
             static void mouseMove_callback(glfw::Window& window, double posX, double posY);
             static void scroll_callback(glfw::Window& window, double offX, double offY);
+            static void char_callback(glfw::Window& window, unsigned int key);
 
             static inline KeyCode    convertGlfwKeyCode(glfw::KeyCode code);
             static inline KeyState   convertGlfwKeyState(glfw::KeyState state);
