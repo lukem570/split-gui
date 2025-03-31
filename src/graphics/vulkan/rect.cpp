@@ -115,7 +115,7 @@ namespace SplitGui {
 
         vk_device.unmapMemory(vk_rectStagingBuffer.memory);
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer(vk_rectStagingBuffer);
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
 
         vk::BufferCopy copyRegion;
         copyRegion.size      = vk_rectStagingBuffer.size;

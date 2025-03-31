@@ -44,7 +44,7 @@ namespace SplitGui {
             tempVertexBufferMemory
         ));
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer(vk_indexStagingBuffer);
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
         vk::BufferCopy copyRegionIndex;
         vk::BufferCopy copyRegionVertex;
 

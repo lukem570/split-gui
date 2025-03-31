@@ -70,9 +70,7 @@ namespace SplitGui {
 
         vk_textGlyphImageView = vk_device.createImageView(imageViewInfo);
 
-        StagingBuffer tempStagingBuffer;
-
-        vk::CommandBuffer commandBuffer = startCopyBuffer(tempStagingBuffer);
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
 
         vk::ImageMemoryBarrier barrier;
         barrier.oldLayout                       = vk::ImageLayout::eUndefined;
@@ -97,8 +95,6 @@ namespace SplitGui {
         );
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
-
-        cleanupStagingBuffer(tempStagingBuffer);
 
         Logger::info("Created Glyph Texture Image");
 
@@ -173,9 +169,7 @@ namespace SplitGui {
 
         vk_textureArrayImageView = vk_device.createImageView(imageViewInfo);
 
-        StagingBuffer tempStagingBuffer;
-
-        vk::CommandBuffer commandBuffer = startCopyBuffer(tempStagingBuffer);
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
 
         vk::ImageMemoryBarrier barrier;
         barrier.oldLayout                       = vk::ImageLayout::eUndefined;
@@ -200,8 +194,6 @@ namespace SplitGui {
         );
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
-
-        cleanupStagingBuffer(tempStagingBuffer);
 
         Logger::info("Created Texture Image Array");
 

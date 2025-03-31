@@ -51,10 +51,9 @@ namespace SplitGui {
 namespace SplitGui {
 
     struct StagingBuffer {
-        vk::DeviceSize    size = 0;
-        vk::Buffer        buffer;
-        vk::DeviceMemory  memory;
-        vk::CommandBuffer commandBuffer = VK_NULL_HANDLE;
+        vk::DeviceSize   size = 0;
+        vk::Buffer       buffer;
+        vk::DeviceMemory memory;
     };
 
     struct SceneObject {
@@ -234,7 +233,7 @@ namespace SplitGui {
               inline vk::ShaderModule        createShaderModule(const std::vector<char>& code);
 [[nodiscard]] inline ResultValue<uint32_t>   findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
 [[nodiscard]] inline Result                  createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& out_buffer, vk::DeviceMemory& out_bufferMemory);
-              inline vk::CommandBuffer       startCopyBuffer(StagingBuffer& stagingBuffer);
+              inline vk::CommandBuffer       startCopyBuffer();
               inline void                    copyBuffer(vk::Buffer src, vk::Buffer dst, vk::DeviceSize size, vk::CommandBuffer commandBuffer, vk::BufferCopy& copyRegion);
 [[nodiscard]] inline Result                  endSingleTimeCommands(vk::CommandBuffer commandBuffer);
 [[nodiscard]] inline Result                  vertexBufferSubmit();

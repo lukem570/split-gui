@@ -224,10 +224,5 @@ namespace SplitGui {
             vk_device.freeMemory(stagingBuffer.memory);
             vk_device.destroyBuffer(stagingBuffer.buffer);
         }
-
-        if (stagingBuffer.commandBuffer) {
-            vk_device.freeCommandBuffers(vk_commandPool, 1, &stagingBuffer.commandBuffer);
-            stagingBuffer.commandBuffer = VK_NULL_HANDLE;
-        }
     }
 }

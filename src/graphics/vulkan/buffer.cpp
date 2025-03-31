@@ -69,19 +69,10 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    inline vk::CommandBuffer VulkanInterface::startCopyBuffer(StagingBuffer& stagingBuffer) {
+    inline vk::CommandBuffer VulkanInterface::startCopyBuffer() {
         SPLITGUI_PROFILE;
-        
+
         commandPoolMutex.lock();
-
-        vk::CommandBufferBeginInfo beginInfo;
-        beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
-
-        if (stagingBuffer.commandBuffer != VK_NULL_HANDLE) {
-            stagingBuffer.commandBuffer.reset();
-            stagingBuffer.commandBuffer.begin(beginInfo);
-            return stagingBuffer.commandBuffer;
-        }
 
         vk::CommandBufferAllocateInfo allocInfo;
         allocInfo.level              = vk::CommandBufferLevel::ePrimary;
@@ -90,9 +81,10 @@ namespace SplitGui {
 
         std::vector<vk::CommandBuffer> commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
 
-        stagingBuffer.commandBuffer = commandBuffers.front();
+        vk::CommandBufferBeginInfo beginInfo;
+        beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
 
-        stagingBuffer.commandBuffer.begin(beginInfo);
+        commandBuffers.front().begin(beginInfo);
 
         return commandBuffers.front();
     }
@@ -127,6 +119,8 @@ namespace SplitGui {
         vk_graphicsQueue.waitIdle();
 
         queueMutex.unlock();
+
+        vk_device.freeCommandBuffers(vk_commandPool, 1, &commandBuffer);
 
         commandPoolMutex.unlock();
 

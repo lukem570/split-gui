@@ -98,9 +98,7 @@ namespace SplitGui {
 
         vk_scenesImageArrayImageView = vk_device.createImageView(imageViewInfo);
 
-        StagingBuffer tempStagingBuffer;
-
-        vk::CommandBuffer commandBuffer = startCopyBuffer(tempStagingBuffer);
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
 
         vk::ImageMemoryBarrier barrier;
         barrier.oldLayout                       = vk::ImageLayout::eUndefined;
@@ -125,8 +123,6 @@ namespace SplitGui {
         );
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
-
-        cleanupStagingBuffer(tempStagingBuffer);
 
         Logger::info("Created Scenes Image Array");
 
@@ -176,7 +172,7 @@ namespace SplitGui {
             tempVertexBufferMemory
         ));
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer(scenes[ref.sceneNumber].indexStagingBuffer);
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
         vk::BufferCopy copyRegionIndex;
         vk::BufferCopy copyRegionVertex;
 
@@ -379,7 +375,7 @@ namespace SplitGui {
 
         vk_device.unmapMemory(scenes[ref.sceneNumber].sceneDataStagingBuffer.memory);
 
-        vk::CommandBuffer commandBuffer = startCopyBuffer(scenes[ref.sceneNumber].sceneDataStagingBuffer);
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
         
         vk::BufferCopy copyRegion;
         
