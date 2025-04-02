@@ -124,6 +124,86 @@ namespace SplitGui {
         return str.str();
     }
 
+    float determinant(Mat4& mat, int n) {
+        float det = 0;
+        if (n == 1) {
+            return mat.matrix[0][0];
+        }
+    
+        Mat4 temp;
+        int sign = 1;
+    
+        for (int f = 0; f < n; f++) {
+            int i = 0;
+            for (int row = 1; row < n; row++) {
+                int j = 0;
+                for (int col = 0; col < n; col++) {
+                    if (col != f) {
+                        temp.matrix[i][j++] = mat.matrix[row][col];
+                    }
+                }
+                i++;
+            }
+            det += sign * mat.matrix[0][f] * determinant(temp, n - 1);
+            sign = -sign;
+        }
+    
+        return det;
+    }
+
+    void getCofactor(Mat4& mat, Mat4& temp, int p, int q, int n) {
+        int i = 0, j = 0;
+    
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < n; col++) {
+                if (row != p && col != q) {
+                    temp.matrix[i][j++] = mat.matrix[row][col];
+                    if (j == n - 1) {
+                        j = 0;
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    void adjoint(Mat4& mat, Mat4& adj) {
+        if (4 == 1) {
+            adj.matrix[0][0] = 1;
+            return;
+        }
+    
+        int sign = 1;
+        Mat4 temp;
+    
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                getCofactor(mat, temp, i, j, 4);
+                sign = ((i + j) % 2 == 0) ? 1 : -1;
+                adj.matrix[j][i] = sign * determinant(temp, 3);
+            }
+        }
+    }
+
+    Mat4 Mat4::inverse() {
+        float det = determinant(*this, 4);
+        if (det == 0) {
+            return {};
+        }
+
+        Mat4 adj;
+        Mat4 ret;
+        adjoint(*this, adj);
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                ret.matrix[i][j] = adj.matrix[i][j] / det;
+            }
+        }
+
+        return ret;
+    }
+
     Vec4 Mat4::operator*(const Vec4& operand) {
         SPLITGUI_PROFILE;
 

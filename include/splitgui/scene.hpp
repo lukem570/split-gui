@@ -73,7 +73,7 @@ namespace SplitGui {
     class SPLITGUI_EXPORT Camera : public Node {
         public:
 [[nodiscard]] Result update(SceneRef& ref);
-              Mat4   getView();
+              Mat4&  getView();
 
         protected:
 

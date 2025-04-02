@@ -21,7 +21,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    Mat4 Camera::getView() {
+    Mat4& Camera::getView() {
         SPLITGUI_PROFILE;
 
         return view;

@@ -218,13 +218,20 @@ namespace SplitGui {
     };
 
     struct SPLITGUI_EXPORT Mat4 {
-        alignas(16) Vec4 a;
-        alignas(16) Vec4 b;
-        alignas(16) Vec4 c;
-        alignas(16) Vec4 d;
+        union {
+            struct {
+                alignas(16) Vec4 a;
+                alignas(16) Vec4 b;
+                alignas(16) Vec4 c;
+                alignas(16) Vec4 d;
+            };
+            float matrix[4][4];
+        };
 
         Mat4 operator*(const Mat4& operand);
         Mat4 operator+(const Mat4& operand);
+
+        Mat4 inverse();
 
         Vec4 operator*(const Vec4& operand);
 
