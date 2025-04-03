@@ -28,6 +28,8 @@ namespace SplitGui {
             
             FILE* outputBuffer = stdout;
 
+            bool ansiAware;
+
             Logger();
 
             static std::string getTime();

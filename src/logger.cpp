@@ -12,18 +12,65 @@
 #include <cmath>
 
 namespace SplitGui {
-    Logger::Logger() {
-
+    
+#ifdef _WIN32
+    
+    bool supportsAnsi() {
+        SPLITGUI_PROFILE;
+        
+        HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        DWORD dwMode = 0;
+        
+        if (hStdOut == INVALID_HANDLE_VALUE) {
+            return false;
+        }
+        
+        if (!GetConsoleMode(hStdOut, &dwMode)) {
+            return false;
+        }
+        
+        dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        if (!SetConsoleMode(hStdOut, dwMode)) {
+            return false;
+        }
+        
+        return true;
     }
-
+    
+#elif defined(__linux__) || defined(__unix__)
+    
+    bool supportsAnsi() {
+        SPLITGUI_PROFILE;
+        
+        const char *term = getenv("TERM");
+        
+        if (term != NULL) {
+            if (strstr(term, "xterm") != NULL || 
+            strstr(term, "screen") != NULL ||
+            strstr(term, "linux") != NULL ||
+            strstr(term, "vt100") != NULL) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+#endif
+    
     Logger* Logger::instance = nullptr;
-
+    
+    Logger::Logger() {
+        ansiAware = supportsAnsi();
+    }
+    
     void Logger::cleanup() {
+        SPLITGUI_PROFILE;
+        
         delete instance;
     }
 
     std::string Logger::getTime() {
-
         SPLITGUI_PROFILE;
 
         auto t = std::time(nullptr);
@@ -37,7 +84,6 @@ namespace SplitGui {
     }
 
     Logger* Logger::getInstance() {
-
         SPLITGUI_PROFILE;
 
         if (instance == nullptr) {
@@ -47,55 +93,80 @@ namespace SplitGui {
     }
 
     void Logger::info(std::string message) {
-
         SPLITGUI_PROFILE;
 
         std::string time = getTime();
-        fprintf(getInstance()->outputBuffer, "%s - INFO  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+
+        if (getInstance()->ansiAware) {
+            fprintf(getInstance()->outputBuffer, "\033[0;32m%s\033[0m - \033[0;36mINFO \033[0m - \033[0;34m[SPLITGUI]\033[0m %s\n", time.c_str(), message.c_str());
+        } else {
+            fprintf(getInstance()->outputBuffer, "%s - INFO  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+        }
+
         fflush(getInstance()->outputBuffer);
 
         SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::debug(std::string message) {
-
         SPLITGUI_PROFILE;
 
         std::string time = getTime();
-        fprintf(getInstance()->outputBuffer, "%s - DEBUG - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+
+        if (getInstance()->ansiAware) {
+            fprintf(getInstance()->outputBuffer, "\033[0;32m%s\033[0m - \033[0;35mDEBUG\033[0m - \033[0;34m[SPLITGUI]\033[0m %s\n", time.c_str(), message.c_str());
+        } else {
+            fprintf(getInstance()->outputBuffer, "%s - DEBUG - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+        }
+        
         fflush(getInstance()->outputBuffer);
 
         SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::warn(std::string message) {
-
         SPLITGUI_PROFILE;
 
         std::string time = getTime();
-        fprintf(getInstance()->outputBuffer, "%s - WARN  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+
+        if (getInstance()->ansiAware) {
+            fprintf(getInstance()->outputBuffer, "\033[0;32m%s\033[0m - \033[0;33mWARN \033[0m - \033[0;34m[SPLITGUI]\033[0m %s\n", time.c_str(), message.c_str());
+        } else {
+            fprintf(getInstance()->outputBuffer, "%s - WARN  - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+        }
+        
         fflush(getInstance()->outputBuffer);
 
         SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::error(std::string message) {
-
         SPLITGUI_PROFILE;
 
         std::string time = getTime();
-        fprintf(getInstance()->outputBuffer, "%s - ERROR - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+
+        if (getInstance()->ansiAware) {
+            fprintf(getInstance()->outputBuffer, "\033[0;32m%s\033[0m - \033[0;31mERROR\033[0m - \033[0;34m[SPLITGUI]\033[0m %s\n", time.c_str(), message.c_str());
+        } else {
+            fprintf(getInstance()->outputBuffer, "%s - ERROR - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+        }
+        
         fflush(getInstance()->outputBuffer);
 
         SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
     }
 
     void Logger::fatal(std::string message) {
-
         SPLITGUI_PROFILE;
 
         std::string time = getTime();
-        fprintf(getInstance()->outputBuffer, "%s - FATAL - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+
+        if (getInstance()->ansiAware) {
+            fprintf(getInstance()->outputBuffer, "\033[0;32m%s\033[0m - \033[1;31mFATAL\033[0m - \033[0;34m[SPLITGUI]\033[0m %s\n", time.c_str(), message.c_str());
+        } else {
+            fprintf(getInstance()->outputBuffer, "%s - FATAL - [SPLITGUI] %s\n", time.c_str(), message.c_str());
+        }
+        
         fflush(getInstance()->outputBuffer);
 
         SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
