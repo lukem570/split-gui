@@ -19,7 +19,7 @@ namespace SplitGui {
 
         hints.apply();
         
-        window.handle = new(std::nothrow) glfw::Window(640, 480, flags.title);
+        window.handle = new(std::nothrow) glfw::Window(flags.width, flags.height, flags.title);
 
         if (!window.handle) {
             return Result::eHeapAllocFailed;

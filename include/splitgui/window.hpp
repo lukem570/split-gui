@@ -43,9 +43,11 @@ namespace SplitGui {
 
     struct WindowFlags {
         const char* title;
-        bool  resizeable = true;
-        bool  visible    = true;
-        bool  decorated  = true;
+        bool  resizeable    = true;
+        bool  visible       = true;
+        bool  decorated     = true;
+        unsigned int width  = 640;
+        unsigned int height = 480;
     };
 
     class SPLITGUI_EXPORT WindowLibInterface {
