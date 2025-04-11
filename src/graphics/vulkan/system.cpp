@@ -15,12 +15,47 @@ namespace SplitGui {
             Logger::info(info.str());
         }
 
+        std::vector<int> scores;
+        scores.resize(physicalDevices.size());
+
         for (unsigned int i = 0; i < physicalDevices.size(); i++) {
+
             if (physicalDevices[i].getProperties().apiVersion < vk::ApiVersion12) {
+                scores[i] = -1;
                 continue;
             }
 
-            selection = i;
+            std::string name = physicalDevices[i].getProperties().deviceName.data();
+            std::transform(name.begin(), name.end(), name.begin(), [](unsigned char c) { return std::tolower(c); });
+
+            scores[i] = 0;
+
+            if (name.find("nvidia") != std::string::npos || name.find("geforce") != std::string::npos) {
+                scores[i]++;
+            }
+
+            if (name.find("amd") != std::string::npos || name.find("radeon") != std::string::npos) {
+                scores[i]++;
+            }
+
+            if (name.find("graphics") != std::string::npos) {
+                scores[i]++;
+            }
+        }
+
+        for (unsigned int i = 0; i < scores.size(); i++) {
+            if (scores[i] == -1) {
+                continue;
+            }
+
+            if (selection == -1) {
+                selection = i;
+                continue;
+            }
+
+            if (scores[selection] < scores[i]) {
+                selection = i;
+            }
         }
 
         if (selection == -1) {
