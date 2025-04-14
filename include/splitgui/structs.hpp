@@ -10,6 +10,7 @@
 #include <variant>
 #include <mutex>
 #include <condition_variable>
+#include <list>
 
 namespace SplitGui {
 
@@ -348,24 +349,15 @@ namespace SplitGui {
         std::string          text;
     };
 
-    struct VerticesBlock {
-        unsigned int numVertices;
-        unsigned int verticesStart;
-        VerticesBlock* next = nullptr;
-    };
-
-    struct IndicesBlock {
+    struct TriangleBlock {
         unsigned int numIndices;
         unsigned int indicesStart;
-        IndicesBlock* next = nullptr;
+        unsigned int numVertices;
+        unsigned int verticesStart;
     };
 
-    struct TriangleRef { // graphics owns these pointers
-        VerticesBlock* vBlock = nullptr;
-        IndicesBlock* iBlock = nullptr;
-
-        VerticesBlock* vBlockEnd = nullptr;
-        IndicesBlock* iBlockEnd = nullptr;
+    struct TriangleRef {
+        std::list<TriangleBlock> triangleBlocks;
     };
 
     enum class UnitExpressionTokenType {

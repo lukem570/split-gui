@@ -205,24 +205,13 @@ namespace SplitGui {
         scenes[ref.sceneNumber].vertices.resize(oldVerticesSize + newIndices.size());
         scenes[ref.sceneNumber].indices.resize(oldIndicesSize + newIndices.size());
 
-        TriangleRef outRef;
+        TriangleBlock tBlock;
 
-        VerticesBlock* vBlock = new VerticesBlock();
-        IndicesBlock* iBlock = new IndicesBlock();
+        tBlock.numVertices = newIndices.size();
+        tBlock.numIndices = newIndices.size();
 
-        outRef.iBlockEnd = iBlock;
-        outRef.vBlockEnd = vBlock;
-
-        outRef.vBlock = vBlock;
-        outRef.iBlock = iBlock;
-
-        triangleReferences.push_back(outRef);
-
-        vBlock->numVertices = newIndices.size();
-        iBlock->numIndices = newIndices.size();
-
-        vBlock->verticesStart = oldVerticesSize;
-        iBlock->indicesStart  = oldIndicesSize;
+        tBlock.verticesStart = oldVerticesSize;
+        tBlock.indicesStart  = oldIndicesSize;
 
         for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
             // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
@@ -258,7 +247,10 @@ namespace SplitGui {
         }
 
         TRYR(submitRes, submitTriangles(ref));
-        
+
+        TriangleRef outRef;
+        outRef.triangleBlocks.push_back(tBlock);
+
         Logger::info("Submitted Triangles: " + std::to_string(scenes[ref.sceneNumber].knownIndicesSize));
 
         return outRef;
@@ -266,33 +258,18 @@ namespace SplitGui {
 
     Result VulkanInterface::deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef) {
         SPLITGUI_PROFILE;
-
-        VerticesBlock* tVBlock = triangleRef.vBlock;
     
-        while (tVBlock) {
+        for (TriangleBlock& tBlock : triangleRef.triangleBlocks) {
             
             scenes[sceneRef.sceneNumber].vertices.erase(
-                scenes[sceneRef.sceneNumber].vertices.begin() + tVBlock->verticesStart, 
-                scenes[sceneRef.sceneNumber].vertices.begin() + tVBlock->verticesStart + tVBlock->numVertices
+                scenes[sceneRef.sceneNumber].vertices.begin() + tBlock.verticesStart, 
+                scenes[sceneRef.sceneNumber].vertices.begin() + tBlock.verticesStart + tBlock.numVertices
             );
-
-            VerticesBlock* temp = tVBlock->next;
-            delete tVBlock;
-            tVBlock = temp;
-        }
-
-        IndicesBlock* tIBlock = triangleRef.iBlock;
-
-        while (tIBlock) {
 
             scenes[sceneRef.sceneNumber].indices.erase(
-                scenes[sceneRef.sceneNumber].indices.begin() + tIBlock->indicesStart, 
-                scenes[sceneRef.sceneNumber].indices.begin() + tIBlock->indicesStart + tIBlock->numIndices
+                scenes[sceneRef.sceneNumber].indices.begin() + tBlock.indicesStart, 
+                scenes[sceneRef.sceneNumber].indices.begin() + tBlock.indicesStart + tBlock.numIndices
             );
-
-            IndicesBlock* temp = tIBlock->next;
-            delete tIBlock;
-            tIBlock = temp;
         }
 
         TRYR(submitRes, submitTriangles(sceneRef));

@@ -207,7 +207,6 @@ namespace SplitGui {
             std::vector<VertexBufferObject>     vertices;
             std::vector<uint16_t>               indices;
             std::vector<std::vector<Contour>>   vectorImages;
-            std::vector<TriangleRef>            triangleReferences;
             std::vector<RectRef>                rectReferences;
             std::vector<int>                    rectOffsets;
             std::unordered_set<char>            charSet;
@@ -294,7 +293,6 @@ namespace SplitGui {
               inline void cleanupVertexAndIndexBuffers();
               inline void cleanupScenesImageArray();
               inline void cleanupScenes();
-              inline void cleanupTriangleReferences();
 
               inline void cleanupStagingBuffer(StagingBuffer& stagingBuffer);
 

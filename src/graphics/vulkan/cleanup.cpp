@@ -50,8 +50,6 @@ namespace SplitGui {
         vk_instance.destroySurfaceKHR(vk_surface);
         vk_instance.destroy();
 
-        cleanupTriangleReferences();
-
         if (ft_fontInUse) {
             ft::FT_Done_Face(ft_face);
         }
@@ -122,28 +120,6 @@ namespace SplitGui {
         vk_device.destroySampler(vk_scenesImageArraySampler);
         vk_device.freeMemory(vk_scenesImageArrayImageMemory);
         vk_device.destroyImage(vk_scenesImageArrayImages);
-    }
-
-    inline void VulkanInterface::cleanupTriangleReferences() {
-        SPLITGUI_PROFILE;
-
-        for (unsigned int i = 0; i < triangleReferences.size(); i++) {
-            VerticesBlock* tVBlock = triangleReferences[i].vBlock;
-    
-            while (tVBlock) {
-                VerticesBlock* temp = tVBlock->next;
-                delete tVBlock;
-                tVBlock = temp;
-            }
-    
-            IndicesBlock* tIBlock = triangleReferences[i].iBlock;
-    
-            while (tIBlock) {
-                IndicesBlock* temp = tIBlock->next;
-                delete tIBlock;
-                tIBlock = temp;
-            }
-        }
     }
 
     inline void VulkanInterface::cleanupSceneFrameBuffers(SceneRef& ref) {
