@@ -358,6 +358,10 @@ namespace SplitGui {
 
     struct TriangleRef {
         std::list<TriangleBlock> triangleBlocks;
+
+        void operator+=(TriangleRef& ref) {
+            triangleBlocks.splice(triangleBlocks.end(), ref.triangleBlocks);
+        }
     };
 
     enum class UnitExpressionTokenType {
