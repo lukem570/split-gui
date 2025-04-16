@@ -312,6 +312,7 @@ namespace SplitGui {
             std::optional<unsigned int> offset(LinkElement<T>* element);
             LinkElement<T>* push(T data);
             T* array();
+            T* sliceArray(LinkElement<T>* start, LinkElement<T>* end);
         
         private:
             unsigned int listSize = 0;

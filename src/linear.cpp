@@ -540,14 +540,22 @@ namespace SplitGui {
     void LinkList<T>::erase(LinkElement<T>* start, LinkElement<T>* end) {
         SPLITGUI_PROFILE;
         
-        start->previous = end->next;
-        end->next = nullptr;
+        if (start->previous) {
+            start->previous->next = end->next;
+        } else {
+            first = end->next;
+        }
 
+        if (end->next) {
+            end->next->previous = start->previous;
+        } else {
+            last = start->previous;
+        }
+        
         LinkElement<T>* element = start;
-
         unsigned int sliceSize = 0;
 
-        while (element) {
+        while (element != end->next) {
             LinkElement<T>* next = element->next;
             delete element;
             element = next;
@@ -563,6 +571,7 @@ namespace SplitGui {
 
         LinkElement<T>* element = new LinkElement<T>;
         element->data = data;
+        element->previous = last;
 
         if (last) {
             last->next = element;
@@ -599,6 +608,37 @@ namespace SplitGui {
         LinkElement<T>* element = first;
 
         for (unsigned int i = 0; i < listSize && element; i++, element = element->next) {
+            
+            arrayPtr[i] = element->data;
+        }
+
+        return arrayPtr;
+    }
+
+    template <typename T>
+    T* LinkList<T>::sliceArray(LinkElement<T>* start, LinkElement<T>* end) {
+        SPLITGUI_PROFILE;
+
+        if (arrayPtr) {
+            delete arrayPtr;
+            arrayPtr = nullptr;
+        }
+
+        unsigned int sliceSize = 0;
+
+        LinkElement<T>* element = start;
+
+        while (element != end->next && element) {
+
+            sliceSize++;
+            element = element->next;
+        }
+
+        arrayPtr = new T[sliceSize];
+
+        element = start;
+
+        for (unsigned int i = 0; i < sliceSize && element; i++, element = element->next) {
             
             arrayPtr[i] = element->data;
         }

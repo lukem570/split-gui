@@ -90,7 +90,7 @@ namespace SplitGui {
             return Result::eInvalidRectRefUsed;
         }
 
-        std::memcpy(memory, (char*)vertices.array() + sizeof(VertexBufferObject) * rectOff.value(), vk_rectStagingBuffer.size);
+        std::memcpy(memory, vertices.sliceArray(ref.verticesStart, ref.verticesEnd), vk_rectStagingBuffer.size);
 
         vk_device.unmapMemory(vk_rectStagingBuffer.memory);
 
