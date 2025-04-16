@@ -555,7 +555,7 @@ namespace SplitGui {
         LinkElement<T>* element = start;
         unsigned int sliceSize = 0;
 
-        while (element != end->next) {
+        while (element != end->next && element) {
             LinkElement<T>* next = element->next;
             delete element;
             element = next;
