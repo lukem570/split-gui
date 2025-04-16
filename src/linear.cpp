@@ -532,14 +532,14 @@ namespace SplitGui {
         clear();
 
         if (arrayPtr) {
-            delete arrayPtr;
+            delete[] arrayPtr;
         }
     }
 
     template <typename T>
     void LinkList<T>::erase(LinkElement<T>* start, LinkElement<T>* end) {
         SPLITGUI_PROFILE;
-        
+
         if (start->previous) {
             start->previous->next = end->next;
         } else {
@@ -551,18 +551,15 @@ namespace SplitGui {
         } else {
             last = start->previous;
         }
-        
-        LinkElement<T>* element = start;
-        unsigned int sliceSize = 0;
 
-        while (element != end->next && element) {
-            LinkElement<T>* next = element->next;
-            delete element;
-            element = next;
-            sliceSize++;
+        LinkElement<T>* current = start;
+        LinkElement<T>* stop = end->next;
+        while (current != stop) {
+            LinkElement<T>* next = current->next;
+            delete current;
+            current = next;
+            listSize--;
         }
-
-        listSize -= sliceSize;
     }
 
     template <typename T>
@@ -571,18 +568,17 @@ namespace SplitGui {
 
         LinkElement<T>* element = new LinkElement<T>;
         element->data = data;
+        element->next = nullptr;
         element->previous = last;
 
         if (last) {
             last->next = element;
+        } else {
+            first = element;
         }
 
         last = element;
         listSize++;
-
-        if (!first) {
-            first = element;
-        }
 
         return element;
     }
@@ -599,7 +595,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         if (arrayPtr) {
-            delete arrayPtr;
+            delete[] arrayPtr;
             arrayPtr = nullptr;
         }
 
@@ -620,7 +616,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         if (arrayPtr) {
-            delete arrayPtr;
+            delete[] arrayPtr;
             arrayPtr = nullptr;
         }
 
