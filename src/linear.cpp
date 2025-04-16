@@ -524,4 +524,113 @@ namespace SplitGui {
 
         return atLeftEdge(point, edgeWidth) || atRightEdge(point, edgeWidth) || atTopEdge(point, edgeWidth) || atBottomEdge(point, edgeWidth);
     }
+
+    template <typename T>
+    LinkList<T>::~LinkList() {
+        SPLITGUI_PROFILE;
+
+        clear();
+
+        if (arrayPtr) {
+            delete arrayPtr;
+        }
+    }
+
+    template <typename T>
+    void LinkList<T>::erase(LinkElement<T>* start, LinkElement<T>* end) {
+        SPLITGUI_PROFILE;
+        
+        start->previous = end->next;
+        end->next = nullptr;
+
+        LinkElement<T>* element = start;
+
+        unsigned int sliceSize = 0;
+
+        while (element) {
+            LinkElement<T>* next = element->next;
+            delete element;
+            element = next;
+            sliceSize++;
+        }
+
+        listSize -= sliceSize;
+    }
+
+    template <typename T>
+    LinkElement<T>* LinkList<T>::push(T data) {
+        SPLITGUI_PROFILE;
+
+        LinkElement<T>* element = new LinkElement<T>;
+        element->data = data;
+
+        if (last) {
+            last->next = element;
+        }
+
+        last = element;
+        listSize++;
+
+        if (!first) {
+            first = element;
+        }
+
+        return element;
+    }
+
+    template <typename T>
+    unsigned int LinkList<T>::size() {
+        SPLITGUI_PROFILE;
+
+        return listSize;
+    }
+
+    template <typename T>
+    T* LinkList<T>::array() {
+        SPLITGUI_PROFILE;
+
+        if (arrayPtr) {
+            delete arrayPtr;
+            arrayPtr = nullptr;
+        }
+
+        arrayPtr = new T[listSize];
+
+        LinkElement<T>* element = first;
+
+        for (unsigned int i = 0; i < listSize && element; i++, element = element->next) {
+            
+            arrayPtr[i] = element->data;
+        }
+
+        return arrayPtr;
+    }
+
+    template <typename T>
+    void LinkList<T>::clear() {
+        LinkElement<T>* element = first;
+
+        while (element) {
+            LinkElement<T>* next = element->next;
+            delete element;
+            element = next;
+        }
+
+        first = nullptr;
+        last = nullptr;
+    }
+
+    template <typename T>
+    std::optional<unsigned int> LinkList<T>::offset(LinkElement<T>* elementTest) {
+
+        LinkElement<T>* element = first;
+
+        for (unsigned int i = 0; i < listSize && element; i++, element = element->next) {
+            if (element == elementTest) {
+                return i;
+            }
+        }
+
+        return std::nullopt;
+    }
 }

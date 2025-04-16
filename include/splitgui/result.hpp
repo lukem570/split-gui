@@ -41,6 +41,7 @@ namespace SplitGui {
         eFailedToGetNextSwapchainImage,
         eFailedToGetLayer,
         eFailedToCreateSurface,
+        eInvalidRectRefUsed,
 
         // interface
         eInvalidNumberOfChildren,

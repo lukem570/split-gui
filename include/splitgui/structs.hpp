@@ -11,6 +11,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <list>
+#include <optional>
 
 namespace SplitGui {
 
@@ -293,6 +294,32 @@ namespace SplitGui {
         uint8_t r;
     };
 
+    template <typename T>
+    struct LinkElement {
+        T data;
+        LinkElement<T>* next = nullptr;
+        LinkElement<T>* previous = nullptr;
+    };
+
+    template <typename T>
+    class LinkList {
+        public:
+            ~LinkList();
+
+            unsigned int size();
+            void erase(LinkElement<T>* start, LinkElement<T>* end);
+            void clear();
+            std::optional<unsigned int> offset(LinkElement<T>* element);
+            LinkElement<T>* push(T data);
+            T* array();
+        
+        private:
+            unsigned int listSize = 0;
+            LinkElement<T>* first = nullptr;
+            LinkElement<T>* last = nullptr;
+            T* arrayPtr = nullptr;
+    };
+
     struct Transform {
         Vec3 position = {0, 0, 0};
         Vec3 rotation = {0, 0, 0};
@@ -326,13 +353,22 @@ namespace SplitGui {
     };
 
     struct RectRef {
-        int id;
 
-        int bottomLeft;
-        int bottomRight;
-        int topLeft;
-        int topRight;
-        int indicesStart;
+        union {
+            LinkElement<VertexBufferObject>* bottomLeft;
+            LinkElement<VertexBufferObject>* verticesStart;
+        };
+
+        union {
+            LinkElement<VertexBufferObject>* topRight;
+            LinkElement<VertexBufferObject>* verticesEnd;
+        };
+
+        LinkElement<VertexBufferObject>* bottomRight = nullptr;
+        LinkElement<VertexBufferObject>* topLeft     = nullptr;
+
+        LinkElement<uint16_t>* indicesStart = nullptr;
+        LinkElement<uint16_t>* indicesEnd   = nullptr;
     };
 
     struct SceneRef {
@@ -350,10 +386,10 @@ namespace SplitGui {
     };
 
     struct TriangleBlock {
-        unsigned int numIndices;
-        unsigned int indicesStart;
-        unsigned int numVertices;
-        unsigned int verticesStart;
+        LinkElement<uint16_t>* indicesStart = nullptr;
+        LinkElement<uint16_t>* indicesEnd   = nullptr;
+        LinkElement<SceneVertexBufferObject>* verticesStart = nullptr;
+        LinkElement<SceneVertexBufferObject>* verticesEnd   = nullptr;
     };
 
     struct TriangleRef {

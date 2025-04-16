@@ -12,13 +12,13 @@ namespace SplitGui {
 
         void* vertexMemory = vk_device.mapMemory(vk_vertexStagingBuffer.memory, 0, vertexBufferSize);
 
-        std::memcpy(vertexMemory, vertices.data(), vertexBufferSize);
+        std::memcpy(vertexMemory, vertices.array(), vertexBufferSize);
 
         vk_device.unmapMemory(vk_vertexStagingBuffer.memory);
 
         void* indexMemory = vk_device.mapMemory(vk_indexStagingBuffer.memory, 0, indexBufferSize);
 
-        std::memcpy(indexMemory, indices.data(), indexBufferSize);
+        std::memcpy(indexMemory, indices.array(), indexBufferSize);
         
         vk_device.unmapMemory(vk_indexStagingBuffer.memory);
 

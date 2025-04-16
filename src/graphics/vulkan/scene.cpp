@@ -140,13 +140,13 @@ namespace SplitGui {
 
         void* vertexMemory = vk_device.mapMemory(scenes[ref.sceneNumber].vertexStagingBuffer.memory, 0, vertexBufferSize);
 
-        std::memcpy(vertexMemory, scenes[ref.sceneNumber].vertices.data(), vertexBufferSize);
+        std::memcpy(vertexMemory, scenes[ref.sceneNumber].vertices.array(), vertexBufferSize);
 
         vk_device.unmapMemory(scenes[ref.sceneNumber].vertexStagingBuffer.memory);
 
         void* indexMemory = vk_device.mapMemory(scenes[ref.sceneNumber].indexStagingBuffer.memory, 0, indexBufferSize);
 
-        std::memcpy(indexMemory, scenes[ref.sceneNumber].indices.data(), indexBufferSize);
+        std::memcpy(indexMemory, scenes[ref.sceneNumber].indices.array(), indexBufferSize);
         
         vk_device.unmapMemory(scenes[ref.sceneNumber].indexStagingBuffer.memory);
 
@@ -200,24 +200,16 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
-        unsigned int oldIndicesSize  = scenes[ref.sceneNumber].indices.size();
-
-        scenes[ref.sceneNumber].vertices.resize(oldVerticesSize + newIndices.size());
-        scenes[ref.sceneNumber].indices.resize(oldIndicesSize + newIndices.size());
 
         TriangleBlock tBlock;
-
-        tBlock.numVertices = newIndices.size();
-        tBlock.numIndices = newIndices.size();
-
-        tBlock.verticesStart = oldVerticesSize;
-        tBlock.indicesStart  = oldIndicesSize;
 
         for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
             // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
             // to solve: create a uniform containing surface normals and use like a geometry shader to assign normals
 
             Vec3 points[3];
+
+            LinkElement<SceneVertexBufferObject>* pVertices[3];
 
             for (unsigned int j = 0; j < 3; j++) {
 
@@ -227,9 +219,21 @@ namespace SplitGui {
                 vbo.modelNumber   = 0;
                 vbo.textureNumber = textureNumber;
 
-                scenes[ref.sceneNumber].vertices[oldVerticesSize + i + j] = vbo;
+                pVertices[j] = scenes[ref.sceneNumber].vertices.push(vbo);
 
-                scenes[ref.sceneNumber].indices[oldIndicesSize + i + j] = oldVerticesSize + i + j;
+                if (!tBlock.verticesStart) {
+                    tBlock.verticesStart = pVertices[j];
+                } else {
+                    tBlock.verticesEnd = pVertices[j];
+                }
+
+                LinkElement<uint16_t>* pIndex = scenes[ref.sceneNumber].indices.push(oldVerticesSize + i + j);
+
+                if (!tBlock.indicesStart) {
+                    tBlock.indicesStart = pIndex;
+                } else {
+                    tBlock.indicesEnd = pIndex;
+                }
 
                 points[j] = vbo.vertex.pos;
             }
@@ -241,9 +245,9 @@ namespace SplitGui {
 
             normal.normalize();
             
-            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 0].normal = normal;
-            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 1].normal = normal;
-            scenes[ref.sceneNumber].vertices[oldVerticesSize + i + 2].normal = normal;
+            pVertices[0]->data.normal = normal;
+            pVertices[1]->data.normal = normal;
+            pVertices[2]->data.normal = normal;
         }
 
         TRYR(submitRes, submitTriangles(ref));
@@ -261,15 +265,8 @@ namespace SplitGui {
     
         for (TriangleBlock& tBlock : triangleRef.triangleBlocks) {
             
-            scenes[sceneRef.sceneNumber].vertices.erase(
-                scenes[sceneRef.sceneNumber].vertices.begin() + tBlock.verticesStart, 
-                scenes[sceneRef.sceneNumber].vertices.begin() + tBlock.verticesStart + tBlock.numVertices
-            );
-
-            scenes[sceneRef.sceneNumber].indices.erase(
-                scenes[sceneRef.sceneNumber].indices.begin() + tBlock.indicesStart, 
-                scenes[sceneRef.sceneNumber].indices.begin() + tBlock.indicesStart + tBlock.numIndices
-            );
+            scenes[sceneRef.sceneNumber].vertices.erase(tBlock.verticesStart, tBlock.verticesEnd);
+            scenes[sceneRef.sceneNumber].indices.erase(tBlock.indicesStart, tBlock.indicesEnd);
         }
 
         TRYR(submitRes, submitTriangles(sceneRef));

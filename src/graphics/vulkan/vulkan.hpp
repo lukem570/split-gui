@@ -79,10 +79,10 @@ namespace SplitGui {
 
         IVec2 sceneSize;
 
-        std::vector<SceneVertexBufferObject> vertices;
-        std::vector<uint16_t>                indices;
-        SceneObj                             sceneData;
-        std::vector<Mat4>                    models;
+        LinkList<SceneVertexBufferObject> vertices;
+        LinkList<uint16_t>                indices;
+        SceneObj                          sceneData;
+        std::vector<Mat4>                 models;
 
         StagingBuffer sceneDataStagingBuffer;
         StagingBuffer sceneModelStagingBuffer;
@@ -204,11 +204,9 @@ namespace SplitGui {
             unsigned int                        currentFrame     =  0;
             unsigned int                        knownIndicesSize =  0;
             uint32_t                            imageIndex       = -1;
-            std::vector<VertexBufferObject>     vertices;
-            std::vector<uint16_t>               indices;
+            LinkList<VertexBufferObject>        vertices;
+            LinkList<uint16_t>                  indices;
             std::vector<std::vector<Contour>>   vectorImages;
-            std::vector<RectRef>                rectReferences;
-            std::vector<int>                    rectOffsets;
             std::unordered_set<char>            charSet;
             bool                                markVerticesForUpdate = false;
 
