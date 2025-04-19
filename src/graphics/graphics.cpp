@@ -51,7 +51,6 @@ namespace SplitGui {
     RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth, VertexFlags flags,  int textureIndex) {
         SPLITGUI_PROFILE;
 
-
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;

@@ -39,6 +39,8 @@ namespace ft {
 #define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
 #define SCENE_VERTEX_SHADER_PATH   "shaders/scene-vertex.spv"
 #define SCENE_FRAGMENT_SHADER_PATH "shaders/scene-fragment.spv"
+#define VECTOR_ENGINE_TRANSFORM_SHADER_PATH "shaders/vector-transform.spv"
+#define VECTOR_ENGINE_RENDER_SHADER_PATH "shaders/vector-render.spv"
 
 /*
 #include "vulkan.hpp"
@@ -97,6 +99,9 @@ namespace SplitGui {
         vk::DescriptorSet            descriptorSet;
         vk::Buffer                   edgeBuffer;
         vk::DeviceMemory             edgeBufferMemory;
+        vk::Buffer                   transformedEdgeBuffer;
+        vk::DeviceMemory             transformedEdgeBufferMemory;
+        vk::Pipeline                 pipeline;
 
         LinkList<VectorEdgeBufferObject> edges;
         SceneRef scene;
@@ -296,6 +301,10 @@ namespace SplitGui {
 [[nodiscard]] inline Result createSceneDataUniform(SceneObject& scene);
 [[nodiscard]] inline Result createSceneModelUniform(SceneObject& scene);
               inline void   updateSceneDescriptorSet(SceneObject& scene);
+              
+              inline void   createVectorEngineDescriptorSetLayout();
+              inline void   createVectorEnginePipelineLayout();
+[[nodiscard]] inline Result createVectorEnginePipelineModules();
 
               inline void setupRenderpassBeginInfo();
               inline void setupViewport();

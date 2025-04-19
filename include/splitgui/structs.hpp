@@ -598,6 +598,15 @@ namespace SplitGui {
         };
     };
 
+    struct VectorEngineDescriporBindings {
+        enum {
+            eSceneData   = 0,
+            eEdgesIn     = 1,
+            eEdgesOut    = 2,
+            eOutputImage = 3,
+        };
+    };
+
     struct VertexLayout {
         enum {
             eVertexPos         = 0,
