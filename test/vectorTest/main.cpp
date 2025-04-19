@@ -48,9 +48,9 @@ int main() {
     contours[3] = contour4;
     contours[4] = contour5;
 
-    SplitGui::ResultValue<unsigned int> textureIndex = graphics.createContourImage(contours);
+    SplitGui::ResultValue<SplitGui::TextureRef> texture = graphics.createContourImage(contours);
 
-    TRYDC(textureIndex);  
+    TRYDC(texture);  
 
     graphics.drawRect(
         SplitGui::IVec2{0, 0}, 
@@ -58,7 +58,7 @@ int main() {
         0xFFFFFF,
         0,
         SplitGui::VertexFlagsBits::eTextureMsdf | SplitGui::VertexFlagsBits::eUseTexture,
-        textureIndex.value
+        texture.value.textureNumber
     );
 
     TRYRC(submitRes, graphics.submitBuffers());

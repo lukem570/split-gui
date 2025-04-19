@@ -43,7 +43,7 @@ namespace SplitGui {
 [[nodiscard]] virtual ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 { throw; }
 [[nodiscard]] virtual Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    { throw; }
 [[nodiscard]] virtual Result                    loadFont(const char* path)                                                                                                         { throw; }
-[[nodiscard]] virtual ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours)                                                                                 { throw; }
+[[nodiscard]] virtual ResultValue<TextureRef>   createContourImage(std::vector<Contour>& contours)                                                                                 { throw; }
 [[nodiscard]] virtual Result                    submitBuffers()                                                                                                                    { throw; }
 [[nodiscard]] virtual Result                    resizeEvent()                                                                                                                      { throw; }
               virtual void                      clearBuffers()                                                                                                                     { throw; }
@@ -80,7 +80,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<TextRef>      drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth = 0);
 [[nodiscard]] Result                    updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth = 0);
 [[nodiscard]] Result                    loadFont(const char* path);
-[[nodiscard]] ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours);
+[[nodiscard]] ResultValue<TextureRef>   createContourImage(std::vector<Contour>& contours);
 [[nodiscard]] Result                    submitBuffers();
 [[nodiscard]] Result                    resizeEvent();
               void                      attachEventHandler(EventHandler& handler);

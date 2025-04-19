@@ -229,7 +229,7 @@ namespace SplitGui {
         return pInterface->submitSceneData(sceneRef);
     }
 
-    ResultValue<unsigned int> Graphics::createContourImage(std::vector<Contour>& contours) {
+    ResultValue<TextureRef> Graphics::createContourImage(std::vector<Contour>& contours) {
         SPLITGUI_PROFILE;
 
         return pInterface->createContourImage(contours);

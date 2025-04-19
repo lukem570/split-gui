@@ -372,6 +372,10 @@ namespace SplitGui {
         LinkElement<uint16_t>* indicesEnd   = nullptr;
     };
 
+    struct TextureRef {
+        unsigned int textureNumber;
+    };
+
     struct SceneRef {
         unsigned int sceneNumber;
         RectRef      rect;

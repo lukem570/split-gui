@@ -6,7 +6,7 @@ namespace SplitGui {
         return msdfgen::Point2(vector.x, vector.y);
     }
 
-    ResultValue<unsigned int> VulkanInterface::createContourImage(std::vector<Contour>& contours) {
+    ResultValue<TextureRef> VulkanInterface::createContourImage(std::vector<Contour>& contours) {
         SPLITGUI_PROFILE;
 
         msdfgen::Shape shape;
@@ -153,6 +153,9 @@ namespace SplitGui {
 
         Logger::info("Created Contour Image");
 
-        return vectorImages.size() - 1;
+        TextureRef ref;
+        ref.textureNumber = vectorImages.size() - 1;
+
+        return ref;
     }
 }

@@ -118,7 +118,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 override;
 [[nodiscard]] Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    override;
 [[nodiscard]] Result                    loadFont(const char* path)                                                                                                         override;
-[[nodiscard]] ResultValue<unsigned int> createContourImage(std::vector<Contour>& contours)                                                                                 override;
+[[nodiscard]] ResultValue<TextureRef>   createContourImage(std::vector<Contour>& contours)                                                                                 override;
 [[nodiscard]] Result                    submitBuffers()                                                                                                                    override;
               void                      clearBuffers()                                                                                                                     override;
 
