@@ -92,6 +92,18 @@ namespace SplitGui {
         unsigned int knownIndicesSize = 0;
     };
 
+    struct VectorObject {
+        vk::DescriptorPool           descriptorPool;
+        vk::DescriptorSet            descriptorSet;
+        vk::Buffer                   edgeBuffer;
+        vk::DeviceMemory             edgeBufferMemory;
+
+        LinkList<VectorEdgeBufferObject> edges;
+        SceneRef scene;
+
+        StagingBuffer edgeStagingBuffer;
+    };
+
     class VulkanInterface : GraphicsLibInterface {
         public:
                                         VulkanInterface(VulkanFlags flags);
@@ -214,11 +226,18 @@ namespace SplitGui {
             bool                                vk_validation = false;
 
             // scene variables
-            vk::DescriptorSetLayout  vk_sceneDescriptorSetLayout;
-            vk::PipelineLayout       vk_scenePipelineLayout;
-            vk::ShaderModule         vk_sceneVertexModule;
-            vk::ShaderModule         vk_sceneFragmentModule;
-            std::vector<SceneObject> scenes;
+            vk::DescriptorSetLayout   vk_sceneDescriptorSetLayout;
+            vk::PipelineLayout        vk_scenePipelineLayout;
+            vk::ShaderModule          vk_sceneVertexModule;
+            vk::ShaderModule          vk_sceneFragmentModule;
+            std::vector<SceneObject>  scenes;
+
+            // vector engine variables
+            vk::DescriptorSetLayout   vk_vectorEngineDescriptorSetLayout;
+            vk::PipelineLayout        vk_vectorEnginePipelineLayout;
+            vk::ShaderModule          vk_vectorEngineTransformModule;
+            vk::ShaderModule          vk_vectorEngineRenderModule;
+            std::vector<VectorObject> vectorEngineInstances;
 
             FairMutex queueMutex;
             FairMutex commandPoolMutex;

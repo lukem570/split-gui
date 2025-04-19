@@ -353,6 +353,13 @@ namespace SplitGui {
         Vec3     normal;
     };
 
+    struct alignas(16) VectorEdgeBufferObject {
+        Vec3 start;
+        Vec3 control1;
+        Vec3 control2;
+        Vec3 end;
+    };
+
     struct RectRef {
 
         union {

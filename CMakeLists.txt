@@ -139,6 +139,7 @@ set(SHADERS
     "${CMAKE_SOURCE_DIR}/src/shaders/vertex.vert"
     "${CMAKE_SOURCE_DIR}/src/shaders/scene-fragment.frag"
     "${CMAKE_SOURCE_DIR}/src/shaders/scene-vertex.vert"
+    "${CMAKE_SOURCE_DIR}/src/shaders/vector-transform.comp"
 )
 
 foreach(SHADER_SOURCE ${SHADERS})

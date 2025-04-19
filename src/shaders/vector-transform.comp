@@ -1,0 +1,35 @@
+#version 450 core
+
+layout(std140, binding = 0) uniform Scene {
+    mat4  view;
+    mat4  projection;
+    vec3  cameraPosition;
+} sb;
+
+struct Edge {
+    vec3 start;
+    vec3 control1;
+    vec3 control2;
+    vec3 end;
+};
+
+layout(std140, binding = 1) buffer EdgeBuffer {
+    Edge edges[];
+};
+
+void main() {
+    uint index = gl_GlobalInvocationID.x;
+
+    if (index >= edges.length())
+        return;
+
+    mat4 viewProj = sb.projection * sb.view;
+
+    Edge e = edges[index];
+    e.start    = (viewProj * vec4(e.start    - sb.cameraPosition, 1.0)).xyz;
+    e.control1 = (viewProj * vec4(e.control1 - sb.cameraPosition, 1.0)).xyz;
+    e.control2 = (viewProj * vec4(e.control2 - sb.cameraPosition, 1.0)).xyz;
+    e.end      = (viewProj * vec4(e.end      - sb.cameraPosition, 1.0)).xyz;
+
+    edges[index] = e;
+}
