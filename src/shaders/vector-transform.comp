@@ -21,35 +21,26 @@ layout(std430, binding = 2) writeonly buffer EdgesOut {
     Edge edgesOut[];
 };
 
+vec4 transform(vec3 position, vec3 cameraPos, mat4 view, mat4 proj) {
+    vec4 pos = vec4(position - cameraPos, 1.0);
+    pos = ((pos * view)* proj);
+    return pos;
+}
+
 void main() {
     uint index = gl_GlobalInvocationID.x;
 
     Edge e = edgesIn[index];
 
-    vec4 start = vec4(e.start, 1.0);
-    start -= vec4(sb.cameraPosition, 0.0);
-    start *= sb.view;
-    start *= sb.projection;
+    vec4 start = transform(e.start,    sb.cameraPosition, sb.view, sb.projection);
+    vec4 c1    = transform(e.control1, sb.cameraPosition, sb.view, sb.projection);
+    vec4 c2    = transform(e.control2, sb.cameraPosition, sb.view, sb.projection);
+    vec4 end   = transform(e.end,      sb.cameraPosition, sb.view, sb.projection);
 
-    vec4 c1 = vec4(e.control1, 1.0);
-    c1 -= vec4(sb.cameraPosition, 0.0);
-    c1 *= sb.view;
-    c1 *= sb.projection;
-
-    vec4 c2 = vec4(e.control2, 1.0);
-    c2 -= vec4(sb.cameraPosition, 0.0);
-    c2 *= sb.view;
-    c2 *= sb.projection;
-
-    vec4 end = vec4(e.end, 1.0);
-    end -= vec4(sb.cameraPosition, 0.0);
-    end *= sb.view;
-    end *= sb.projection;
-
-    e.start    = start.xyz / start.z;
-    e.control1 = c1.xyz / c1.z;
-    e.control2 = c2.xyz / c2.z;
-    e.end      = end.xyz / end.z;
+    e.start    = start.xyz / start.w;
+    e.control1 = c1.xyz / c1.w;
+    e.control2 = c2.xyz / c2.w;
+    e.end      = end.xyz / end.w;
 
     edgesOut[index] = e;
 }

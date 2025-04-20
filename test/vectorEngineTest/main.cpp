@@ -61,6 +61,20 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
+    SplitGui::Cube cube1;
+    cube1.submitGraphics(graphics);
+    cube1.setSize(0.05);
+    cube1.setPosition({1, 1, 1});
+    cube1.setColor(SplitGui::HexColor(0xFF0000));
+    cube1.generate();
+
+    SplitGui::Cube cube2;
+    cube2.submitGraphics(graphics);
+    cube2.setSize(0.05);
+    cube2.setPosition({-1, -1, -1});
+    cube2.setColor(SplitGui::HexColor(0xFF0000));
+    cube2.generate();
+
     SplitGui::Grid grid;
     grid.submitGraphics(graphics);
     grid.generate();
@@ -76,11 +90,14 @@ int main() {
     SplitGui::ResultValue<SplitGui::VectorEngineRef> vEngineRef = graphics.instanceVectorEngine(sceneRef);
     TRYDC(vEngineRef);
 
+    TRYRC(cube1Res, cube1.submit(sceneRef));
+    TRYRC(cube2Res, cube2.submit(sceneRef));
     TRYRC(gridRes, grid.submit(sceneRef));
     TRYRC(submitRes, graphics.submitBuffers());
 
-    SplitGui::LinearEdge linEdge;
+    SplitGui::QuadraticEdge linEdge;
     linEdge.from = {-1, -1, -1};
+    linEdge.control = {1, -1, 1};
     linEdge.to = {1, 1, 1};
 
     std::vector<SplitGui::Edge> edges;

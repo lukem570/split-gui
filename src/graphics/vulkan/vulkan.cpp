@@ -10,7 +10,6 @@
 
 #include "vector/descriptor.cpp"
 #include "vector/edges.cpp"
-#include "vector/output.cpp"
 #include "vector/pipeline.cpp"
 
 #include "buffer.cpp"

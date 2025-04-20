@@ -311,6 +311,10 @@ namespace SplitGui {
 
         updateRect(ref.rect, x1, x2, HexColor(0xFF00FF).normalize(), depth);
 
+        if (scenes[ref.sceneNumber].vEngineRef.has_value()) {
+            updateVectorEngineDescriptorSet(vectorEngineInstances[scenes[ref.sceneNumber].vEngineRef.value().instanceNumber]);
+        }
+
         frameMutex.unlock();
 
         Logger::info("Updated Scene: " + std::to_string(ref.sceneNumber));
