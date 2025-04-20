@@ -49,4 +49,116 @@ namespace SplitGui {
 
         Logger::info("Created Vector Engine Descriptor Set Layout");
     }
+
+    inline void VulkanInterface::createVectorEngineDescriptorPool(VectorEngineObject& vEngine) {
+        SPLITGUI_PROFILE;
+
+        vk::DescriptorPoolSize scenePoolSize;
+        scenePoolSize.type            = vk::DescriptorType::eUniformBuffer;
+        scenePoolSize.descriptorCount = 1;
+
+        vk::DescriptorPoolSize edgesInPoolSize;
+        edgesInPoolSize.type            = vk::DescriptorType::eUniformBuffer;
+        edgesInPoolSize.descriptorCount = 1;
+
+        vk::DescriptorPoolSize edgesOutPoolSize;
+        edgesOutPoolSize.type            = vk::DescriptorType::eUniformBuffer;
+        edgesOutPoolSize.descriptorCount = 1;
+
+        vk::DescriptorPoolSize outputImagePoolSize;
+        outputImagePoolSize.type            = vk::DescriptorType::eStorageImage;
+        outputImagePoolSize.descriptorCount = 1;
+
+        std::array<vk::DescriptorPoolSize, 4> poolSizes = { 
+            scenePoolSize, 
+            edgesInPoolSize, 
+            edgesOutPoolSize,
+            outputImagePoolSize
+        };
+
+        vk::DescriptorPoolCreateInfo createInfo;
+        createInfo.flags         = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;
+        createInfo.poolSizeCount = poolSizes.size();
+        createInfo.pPoolSizes    = poolSizes.data();
+        createInfo.maxSets       = 1;
+        
+        vk::DescriptorPool descriptorPool = vk_device.createDescriptorPool(createInfo);
+
+        vEngine.descriptorPool = descriptorPool;
+
+        Logger::info("Created Vector Engine Descriptor Pool");
+    }
+
+    inline void VulkanInterface::createVectorEngineDescriptorSet(VectorEngineObject& vEngine) {
+        SPLITGUI_PROFILE;
+
+        vk::DescriptorSetAllocateInfo allocInfo;
+        allocInfo.descriptorPool     = vEngine.descriptorPool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts        = &vk_vectorEngineDescriptorSetLayout;
+
+        vk::DescriptorSet descriptorSet = vk_device.allocateDescriptorSets(allocInfo).back();
+
+        vEngine.descriptorSet = descriptorSet;
+
+        Logger::info("Created Vector Engine Descriptor Set");
+    }
+
+    inline void VulkanInterface::updateVectorEngineDescriptorSet(VectorEngineObject& vEngine) {
+        SPLITGUI_PROFILE;
+
+        vk::DescriptorBufferInfo sceneDataBufferInfo;
+        sceneDataBufferInfo.buffer = scenes[vEngine.scene.sceneNumber].dataUniformBuffer;
+        sceneDataBufferInfo.offset = 0;
+        sceneDataBufferInfo.range  = sizeof(SceneObj);
+
+        vk::DescriptorBufferInfo edgesInBufferInfo;
+        edgesInBufferInfo.buffer = scenes[vEngine.scene.sceneNumber].dataUniformBuffer;
+        edgesInBufferInfo.offset = 0;
+        edgesInBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
+
+        vk::DescriptorBufferInfo edgesOutBufferInfo;
+        edgesOutBufferInfo.buffer = scenes[vEngine.scene.sceneNumber].dataUniformBuffer;
+        edgesOutBufferInfo.offset = 0;
+        edgesOutBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
+
+        vk::DescriptorImageInfo outputImageInfo;
+        outputImageInfo.sampler     = vk_textureArraySampler;
+        outputImageInfo.imageView   = vk_textureArrayImageView;
+        outputImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+
+        std::array<vk::WriteDescriptorSet, 4> descriptorWrites;
+
+        descriptorWrites[0].dstSet          = vEngine.descriptorSet;
+        descriptorWrites[0].dstBinding      = VectorEngineDescriporBindings::eSceneData;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType  = vk::DescriptorType::eUniformBuffer;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo     = &sceneDataBufferInfo;
+
+        descriptorWrites[1].dstSet          = vEngine.descriptorSet;
+        descriptorWrites[1].dstBinding      = VectorEngineDescriporBindings::eEdgesIn;
+        descriptorWrites[1].dstArrayElement = 0;
+        descriptorWrites[1].descriptorType  = vk::DescriptorType::eUniformBuffer;
+        descriptorWrites[1].descriptorCount = 1;
+        descriptorWrites[1].pBufferInfo     = &edgesInBufferInfo;
+
+        descriptorWrites[2].dstSet          = vEngine.descriptorSet;
+        descriptorWrites[2].dstBinding      = VectorEngineDescriporBindings::eEdgesOut;
+        descriptorWrites[2].dstArrayElement = 0;
+        descriptorWrites[2].descriptorType  = vk::DescriptorType::eUniformBuffer;
+        descriptorWrites[2].descriptorCount = 1;
+        descriptorWrites[2].pBufferInfo     = &edgesOutBufferInfo;
+
+        descriptorWrites[3].dstSet          = vEngine.descriptorSet;
+        descriptorWrites[3].dstBinding      = VectorEngineDescriporBindings::eOutputImage;
+        descriptorWrites[3].dstArrayElement = 0;
+        descriptorWrites[3].descriptorType  = vk::DescriptorType::eStorageBuffer;
+        descriptorWrites[3].descriptorCount = 1;
+        descriptorWrites[3].pImageInfo      = &outputImageInfo;
+
+        vk_device.updateDescriptorSets(descriptorWrites, nullptr);
+
+        Logger::info("Updated Vector Engine Descriptor Sets");
+    }
 }

@@ -25,6 +25,7 @@ namespace SplitGui {
         vk_device.freeMemory(vk_textureArrayImageMemory);
         vk_device.destroyImage(vk_textureArrayImages);
 
+        cleanupVectorEngineInstances();
         cleanupScenes();
         cleanupVertexAndIndexBuffers();
         cleanupScenesImageArray();
@@ -144,6 +145,48 @@ namespace SplitGui {
         vk_device.destroyImageView(scenes[ref.sceneNumber].depthImageView);
         vk_device.freeMemory(scenes[ref.sceneNumber].depthImageMemory);
         vk_device.destroyImage(scenes[ref.sceneNumber].depthImage);
+    }
+
+    inline void VulkanInterface::cleanupVectorEngineOutputResources(VectorEngineObject& vEngine) {
+        vk_device.freeMemory(vEngine.outputImageMemory);
+        vk_device.destroyImageView(vEngine.outputImageView);
+        vk_device.destroyImage(vEngine.outputImage);
+    }
+
+    inline void VulkanInterface::cleanupVectorEngineEdgeResources(VectorEngineObject& vEngine) {
+        if (vEngine.edgeBufferMemory) {
+
+            vk_device.freeMemory(vEngine.edgeBufferMemory);
+            vk_device.destroyBuffer(vEngine.edgeBuffer);
+            
+            vk_device.freeMemory(vEngine.transformedEdgeBufferMemory);
+            vk_device.destroyBuffer(vEngine.transformedEdgeBuffer);
+        }
+    }
+
+    inline void VulkanInterface::cleanupVectorEngineInstances() {
+        SPLITGUI_PROFILE;
+
+        for (unsigned int i = 0; i < vectorEngineInstances.size(); i++) {
+
+            cleanupStagingBuffer(vectorEngineInstances[i].edgeStagingBuffer);
+
+            vk_device.freeDescriptorSets(vectorEngineInstances[i].descriptorPool, 1, &vectorEngineInstances[i].descriptorSet);
+
+            cleanupVectorEngineEdgeResources(vectorEngineInstances[i]);
+            cleanupVectorEngineOutputResources(vectorEngineInstances[i]);
+
+            vk_device.destroyDescriptorPool(vectorEngineInstances[i].descriptorPool);
+            
+            vk_device.destroyPipeline(vectorEngineInstances[i].transformPipeline);
+            vk_device.destroyPipeline(vectorEngineInstances[i].renderPipeline);
+        }
+        
+        vk_device.destroyShaderModule(vk_vectorEngineTransformModule);
+        vk_device.destroyShaderModule(vk_vectorEngineRenderModule);
+
+        vk_device.destroyDescriptorSetLayout(vk_vectorEngineDescriptorSetLayout);
+        vk_device.destroyPipelineLayout(vk_vectorEnginePipelineLayout);
     }
 
     inline void VulkanInterface::cleanupScenes() {

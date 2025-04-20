@@ -94,14 +94,19 @@ namespace SplitGui {
         unsigned int knownIndicesSize = 0;
     };
 
-    struct VectorObject {
+    struct VectorEngineObject {
         vk::DescriptorPool           descriptorPool;
         vk::DescriptorSet            descriptorSet;
-        vk::Buffer                   edgeBuffer;
-        vk::DeviceMemory             edgeBufferMemory;
+        vk::Buffer                   edgeBuffer; 
+        vk::DeviceMemory             edgeBufferMemory; 
         vk::Buffer                   transformedEdgeBuffer;
         vk::DeviceMemory             transformedEdgeBufferMemory;
-        vk::Pipeline                 pipeline;
+        vk::Image                    outputImage;
+        vk::DeviceMemory             outputImageMemory;
+        vk::ImageView                outputImageView;
+        vk::Sampler                  outputImageSampler;
+        vk::Pipeline                 transformPipeline;
+        vk::Pipeline                 renderPipeline;
 
         LinkList<VectorEdgeBufferObject> edges;
         SceneRef scene;
@@ -231,18 +236,18 @@ namespace SplitGui {
             bool                                vk_validation = false;
 
             // scene variables
-            vk::DescriptorSetLayout   vk_sceneDescriptorSetLayout;
-            vk::PipelineLayout        vk_scenePipelineLayout;
-            vk::ShaderModule          vk_sceneVertexModule;
-            vk::ShaderModule          vk_sceneFragmentModule;
-            std::vector<SceneObject>  scenes;
+            vk::DescriptorSetLayout             vk_sceneDescriptorSetLayout;
+            vk::PipelineLayout                  vk_scenePipelineLayout;
+            vk::ShaderModule                    vk_sceneVertexModule;
+            vk::ShaderModule                    vk_sceneFragmentModule;
+            std::vector<SceneObject>            scenes;
 
             // vector engine variables
-            vk::DescriptorSetLayout   vk_vectorEngineDescriptorSetLayout;
-            vk::PipelineLayout        vk_vectorEnginePipelineLayout;
-            vk::ShaderModule          vk_vectorEngineTransformModule;
-            vk::ShaderModule          vk_vectorEngineRenderModule;
-            std::vector<VectorObject> vectorEngineInstances;
+            vk::DescriptorSetLayout             vk_vectorEngineDescriptorSetLayout;
+            vk::PipelineLayout                  vk_vectorEnginePipelineLayout;
+            vk::ShaderModule                    vk_vectorEngineTransformModule;
+            vk::ShaderModule                    vk_vectorEngineRenderModule;
+            std::vector<VectorEngineObject>     vectorEngineInstances;
 
             FairMutex queueMutex;
             FairMutex commandPoolMutex;
@@ -306,6 +311,14 @@ namespace SplitGui {
               inline void   createVectorEnginePipelineLayout();
 [[nodiscard]] inline Result createVectorEnginePipelineModules();
 
+              inline void   createVectorEngineDescriptorPool(VectorEngineObject& vEngine);
+              inline void   createVectorEngineDescriptorSet(VectorEngineObject& vEngine);
+              inline void   updateVectorEngineDescriptorSet(VectorEngineObject& vEngine);
+[[nodiscard]] inline Result createVectorEngineTransformPipeline(VectorEngineObject& vEngine);
+[[nodiscard]] inline Result createVectorEngineRenderPipeline(VectorEngineObject& vEngine);
+[[nodiscard]] inline Result createVectorEngineOutputResources(VectorEngineObject& vEngine);
+[[nodiscard]] inline Result submitVectorEngineEdgeResources(VectorEngineObject& vEngine);
+
               inline void setupRenderpassBeginInfo();
               inline void setupViewport();
               inline void setupScissor();
@@ -319,6 +332,7 @@ namespace SplitGui {
               inline void cleanupVertexAndIndexBuffers();
               inline void cleanupScenesImageArray();
               inline void cleanupScenes();
+              inline void cleanupVectorEngineInstances();
 
               inline void cleanupStagingBuffer(StagingBuffer& stagingBuffer);
 
@@ -326,6 +340,9 @@ namespace SplitGui {
               inline void cleanupSceneFrameBuffers(SceneRef& ref);
               inline void cleanupSceneOutputImages(SceneRef& ref);
               inline void cleanupSceneDepthImages(SceneRef& ref);
+
+              inline void cleanupVectorEngineOutputResources(VectorEngineObject& vEngine);
+              inline void cleanupVectorEngineEdgeResources(VectorEngineObject& vEngine);
 
 [[nodiscard]] Result recreateSwapchain();
     };

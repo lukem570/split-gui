@@ -31,4 +31,55 @@ namespace SplitGui {
 
         return Result::eSuccess;
     }
+
+    inline Result VulkanInterface::createVectorEngineTransformPipeline(VectorEngineObject& vEngine) {
+        SPLITGUI_PROFILE;
+
+        vk::PipelineShaderStageCreateInfo shaderStage;
+        shaderStage.stage  = vk::ShaderStageFlagBits::eCompute;
+        shaderStage.module = vk_vectorEngineTransformModule;
+        shaderStage.pName  = "main";
+
+        vk::ComputePipelineCreateInfo pipelineInfo;
+        pipelineInfo.stage  = shaderStage;
+        pipelineInfo.layout = vk_vectorEnginePipelineLayout;
+
+        vk::ResultValue<vk::Pipeline> result = vk_device.createComputePipeline(nullptr, pipelineInfo);
+
+        if (result.result != vk::Result::eSuccess) {
+            return Result::eFailedToCreateComputePipeline;
+        } 
+
+        vEngine.transformPipeline = result.value;
+
+        Logger::info("Created Vector Engine Transform Pipeline");
+
+        return Result::eSuccess;
+    }
+
+    inline Result VulkanInterface::createVectorEngineRenderPipeline(VectorEngineObject& vEngine) {
+        SPLITGUI_PROFILE;
+
+        vk::PipelineShaderStageCreateInfo shaderStage;
+        shaderStage.stage  = vk::ShaderStageFlagBits::eCompute;
+        shaderStage.module = vk_vectorEngineRenderModule;
+        shaderStage.pName  = "main";
+
+        vk::ComputePipelineCreateInfo pipelineInfo;
+        pipelineInfo.stage  = shaderStage;
+        pipelineInfo.layout = vk_vectorEnginePipelineLayout;
+
+        vk::ResultValue<vk::Pipeline> result = vk_device.createComputePipeline(nullptr, pipelineInfo);
+
+        if (result.result != vk::Result::eSuccess) {
+            return Result::eFailedToCreateComputePipeline;
+        } 
+
+        vEngine.renderPipeline = result.value;
+
+        Logger::info("Created Vector Engine Render Pipeline");
+
+        return Result::eSuccess;
+    }
+
 }

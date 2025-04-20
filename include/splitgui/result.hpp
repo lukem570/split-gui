@@ -32,6 +32,7 @@ namespace SplitGui {
         eFailedToFindSuitableMemoryType,
         eFailedToFindSuitableFormat,
         eFailedToCreateGraphicsPipeline,
+        eFailedToCreateComputePipeline,
         eFailedToSubmitQueue,
         eFailedToUseFont,
         eFailedToLoadFont,
