@@ -3,11 +3,16 @@
 namespace SplitGui {
     ResultValue<VectorEngineRef> VulkanInterface::instanceVectorEngine(SceneRef& ref) {
 
+        if (scenes[ref.sceneNumber].vEngineRef.has_value()) {
+            return Result::eSceneAlreadyHasVectorEngine;
+        }
+
         VectorEngineRef vEngineRef;
         vEngineRef.instanceNumber = vectorEngineInstances.size();
 
-        vectorEngineInstances.push_back({});
+        scenes[ref.sceneNumber].vEngineRef = vEngineRef;
 
+        vectorEngineInstances.push_back({});
         vectorEngineInstances.back().scene = ref;
 
         createVectorEngineDescriptorPool(vectorEngineInstances.back());

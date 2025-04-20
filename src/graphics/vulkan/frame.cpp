@@ -83,6 +83,19 @@ namespace SplitGui {
 
             vk_commandBuffers[currentFrame].endRenderPass();
 
+            if (scenes[i].vEngineRef.has_value()) {
+
+                VectorEngineObject& vEngine = vectorEngineInstances[scenes[i].vEngineRef.value().instanceNumber];
+
+                vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.transformPipeline);
+                vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
+                vk_commandBuffers[currentFrame].dispatch(vEngine.edges.size(), 1, 1);
+                
+                vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.renderPipeline);
+                vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
+                vk_commandBuffers[currentFrame].dispatch(scenes[i].sceneSize.x, scenes[i].sceneSize.y, 1);
+            }
+            
             vk::ImageMemoryBarrier barrier;
             barrier.oldLayout                       = vk::ImageLayout::ePresentSrcKHR;
             barrier.newLayout                       = vk::ImageLayout::eTransferSrcOptimal;

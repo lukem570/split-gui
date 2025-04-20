@@ -86,6 +86,8 @@ namespace SplitGui {
         SceneObj                          sceneData;
         std::vector<Mat4>                 models;
 
+        std::optional<VectorEngineRef> vEngineRef;
+
         StagingBuffer sceneDataStagingBuffer;
         StagingBuffer sceneModelStagingBuffer;
         StagingBuffer vertexStagingBuffer;
