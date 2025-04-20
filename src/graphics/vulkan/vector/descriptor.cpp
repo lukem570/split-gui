@@ -104,6 +104,38 @@ namespace SplitGui {
         Logger::info("Created Vector Engine Descriptor Set");
     }
 
+    inline void VulkanInterface::updateVectorEngineEdges(VectorEngineObject& vEngine) {
+        vk::DescriptorBufferInfo edgesInBufferInfo;
+        edgesInBufferInfo.buffer = vEngine.edgeBuffer;
+        edgesInBufferInfo.offset = 0;
+        edgesInBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
+
+        vk::DescriptorBufferInfo edgesOutBufferInfo;
+        edgesOutBufferInfo.buffer = vEngine.transformedEdgeBuffer;
+        edgesOutBufferInfo.offset = 0;
+        edgesOutBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
+
+        std::array<vk::WriteDescriptorSet, 2> descriptorWrites;
+        
+        descriptorWrites[0].dstSet          = vEngine.descriptorSet;
+        descriptorWrites[0].dstBinding      = VectorEngineDescriporBindings::eEdgesIn;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType  = vk::DescriptorType::eStorageBuffer;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo     = &edgesInBufferInfo;
+
+        descriptorWrites[1].dstSet          = vEngine.descriptorSet;
+        descriptorWrites[1].dstBinding      = VectorEngineDescriporBindings::eEdgesOut;
+        descriptorWrites[1].dstArrayElement = 0;
+        descriptorWrites[1].descriptorType  = vk::DescriptorType::eStorageBuffer;
+        descriptorWrites[1].descriptorCount = 1;
+        descriptorWrites[1].pBufferInfo     = &edgesOutBufferInfo;
+
+        vk_device.updateDescriptorSets(descriptorWrites, nullptr);
+
+        Logger::info("Updated Vector Engine Edges");
+    }
+
     inline void VulkanInterface::updateVectorEngineDescriptorSet(VectorEngineObject& vEngine) {
         SPLITGUI_PROFILE;
 
@@ -111,16 +143,6 @@ namespace SplitGui {
         sceneDataBufferInfo.buffer = scenes[vEngine.scene.sceneNumber].dataUniformBuffer;
         sceneDataBufferInfo.offset = 0;
         sceneDataBufferInfo.range  = sizeof(SceneObj);
-
-        //vk::DescriptorBufferInfo edgesInBufferInfo;
-        //edgesInBufferInfo.buffer = scenes[vEngine.scene.sceneNumber].dataUniformBuffer;
-        //edgesInBufferInfo.offset = 0;
-        //edgesInBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
-
-        //vk::DescriptorBufferInfo edgesOutBufferInfo;
-        //edgesOutBufferInfo.buffer = scenes[vEngine.scene.sceneNumber].dataUniformBuffer;
-        //edgesOutBufferInfo.offset = 0;
-        //edgesOutBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
 
         vk::DescriptorImageInfo outputImageInfo;
         outputImageInfo.sampler     = vEngine.outputImageSampler;
@@ -135,20 +157,6 @@ namespace SplitGui {
         descriptorWrites[0].descriptorType  = vk::DescriptorType::eUniformBuffer;
         descriptorWrites[0].descriptorCount = 1;
         descriptorWrites[0].pBufferInfo     = &sceneDataBufferInfo;
-
-        //descriptorWrites[1].dstSet          = vEngine.descriptorSet;
-        //descriptorWrites[1].dstBinding      = VectorEngineDescriporBindings::eEdgesIn;
-        //descriptorWrites[1].dstArrayElement = 0;
-        //descriptorWrites[1].descriptorType  = vk::DescriptorType::eStorageBuffer;
-        //descriptorWrites[1].descriptorCount = 1;
-        //descriptorWrites[1].pBufferInfo     = &edgesInBufferInfo;
-
-        //descriptorWrites[2].dstSet          = vEngine.descriptorSet;
-        //descriptorWrites[2].dstBinding      = VectorEngineDescriporBindings::eEdgesOut;
-        //descriptorWrites[2].dstArrayElement = 0;
-        //descriptorWrites[2].descriptorType  = vk::DescriptorType::eStorageBuffer;
-        //descriptorWrites[2].descriptorCount = 1;
-        //descriptorWrites[2].pBufferInfo     = &edgesOutBufferInfo;
 
         descriptorWrites[1].dstSet          = vEngine.descriptorSet;
         descriptorWrites[1].dstBinding      = VectorEngineDescriporBindings::eOutputImage;

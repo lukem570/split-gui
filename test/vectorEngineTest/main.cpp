@@ -79,6 +79,15 @@ int main() {
     TRYRC(gridRes, grid.submit(sceneRef));
     TRYRC(submitRes, graphics.submitBuffers());
 
+    SplitGui::LinearEdge linEdge;
+    linEdge.from = {-1, -1, -1};
+    linEdge.to = {1, 1, 1};
+
+    std::vector<SplitGui::Edge> edges;
+    edges.push_back(linEdge);
+
+    graphics.submitEdgeData(vEngineRef.value, edges);
+
     int prevXPos = 0;
     int prevYPos = 0;
 

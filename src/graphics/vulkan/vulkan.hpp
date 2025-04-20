@@ -131,6 +131,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                override;
 [[nodiscard]] Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
+[[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges)                                                                     override;
 [[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
 [[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
 [[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef)                                                                                                override;
@@ -315,6 +316,7 @@ namespace SplitGui {
               inline void   createVectorEngineDescriptorPool(VectorEngineObject& vEngine);
               inline void   createVectorEngineDescriptorSet(VectorEngineObject& vEngine);
               inline void   updateVectorEngineDescriptorSet(VectorEngineObject& vEngine);
+              inline void   updateVectorEngineEdges(VectorEngineObject& vEngine);
 [[nodiscard]] inline Result createVectorEngineTransformPipeline(VectorEngineObject& vEngine);
 [[nodiscard]] inline Result createVectorEngineRenderPipeline(VectorEngineObject& vEngine);
 [[nodiscard]] inline Result createVectorEngineOutputResources(VectorEngineObject& vEngine);

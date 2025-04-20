@@ -121,6 +121,8 @@ namespace SplitGui {
     }
 
     ResultValue<VectorEngineRef> Graphics::instanceVectorEngine(SceneRef& ref) {
+        SPLITGUI_PROFILE;
+
         return pInterface->instanceVectorEngine(ref);
     }
 
@@ -171,6 +173,12 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
+    }
+
+    ResultValue<EdgeRef> Graphics::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->submitEdgeData(ref, edges);
     }
 
     void Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {

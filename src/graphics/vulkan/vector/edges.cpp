@@ -4,7 +4,7 @@ namespace SplitGui {
     inline Result VulkanInterface::submitVectorEngineEdgeResources(VectorEngineObject& vEngine) {
         SPLITGUI_PROFILE;
 
-        vk::DeviceSize edgeBufferSize = vEngine.edges.size();
+        vk::DeviceSize edgeBufferSize = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
 
         TRYR(stagingRes, InstanceStagingBuffer(vEngine.edgeStagingBuffer, edgeBufferSize));
 
@@ -22,7 +22,7 @@ namespace SplitGui {
 
         TRYR(bufferRes1, createBuffer(
             edgeBufferSize, 
-            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, 
+            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eStorageBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
             tempEdgeBuffer,
             tempEdgeBufferMemory
@@ -30,7 +30,7 @@ namespace SplitGui {
 
         TRYR(bufferRes2, createBuffer(
             edgeBufferSize, 
-            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, 
+            vk::BufferUsageFlagBits::eStorageBuffer, 
             vk::MemoryPropertyFlagBits::eDeviceLocal,
             tempTransformedEdgeBuffer,
             tempTransformedEdgeBufferMemory
