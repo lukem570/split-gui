@@ -116,35 +116,36 @@ namespace SplitGui {
 
     class VulkanInterface : GraphicsLibInterface {
         public:
-                                        VulkanInterface(VulkanFlags flags);
-                                       ~VulkanInterface()                                                                                                                  override;
+                                            VulkanInterface(VulkanFlags flags);
+                                        ~VulkanInterface()                                                                                                                  override;
 
-[[nodiscard]] Result                    instance()                                                                                                                         override;
-[[nodiscard]] Result                    submitWindow(SplitGui::Window& window)                                                                                             override;
+[[nodiscard]] Result                        instance()                                                                                                                         override;
+[[nodiscard]] Result                        submitWindow(SplitGui::Window& window)                                                                                             override;
 
-[[nodiscard]] Result                    drawFrame()                                                                                                                        override;
-              RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
-              void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
-              void                      deleteRect(RectRef& ref)                                                                                                           override;
-              void                      deleteText(TextRef& ref)                                                                                                           override;
-[[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
-[[nodiscard]] ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
-[[nodiscard]] Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
-[[nodiscard]] ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
-[[nodiscard]] Result                    deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
-[[nodiscard]] Result                    submitSceneData(SceneRef& sceneRef)                                                                                                override;
-              void                      updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
-              void                      updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
-              void                      updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
-              ModelRef                  createModel(SceneRef& ref, Mat4& model)                                                                                            override;
-[[nodiscard]] ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 override;
-[[nodiscard]] Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    override;
-[[nodiscard]] Result                    loadFont(const char* path)                                                                                                         override;
-[[nodiscard]] ResultValue<TextureRef>   createContourImage(std::vector<Contour>& contours)                                                                                 override;
-[[nodiscard]] Result                    submitBuffers()                                                                                                                    override;
-              void                      clearBuffers()                                                                                                                     override;
+[[nodiscard]] Result                        drawFrame()                                                                                                                        override;
+              RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
+              void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
+              void                          deleteRect(RectRef& ref)                                                                                                           override;
+              void                          deleteText(TextRef& ref)                                                                                                           override;
+[[nodiscard]] Result                        submitRect(RectRef& ref)                                                                                                           override;
+[[nodiscard]] ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
+[[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                override;
+[[nodiscard]] Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
+[[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
+[[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
+[[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef)                                                                                                override;
+              void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
+              void                          updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
+              void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
+              ModelRef                      createModel(SceneRef& ref, Mat4& model)                                                                                            override;
+[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 override;
+[[nodiscard]] Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    override;
+[[nodiscard]] Result                        loadFont(const char* path)                                                                                                         override;
+[[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 override;
+[[nodiscard]] Result                        submitBuffers()                                                                                                                    override;
+              void                          clearBuffers()                                                                                                                     override;
 
-[[nodiscard]] Result                    resizeEvent()                                                                                                                      override;
+[[nodiscard]] Result                        resizeEvent()                                                                                                                      override;
 
         protected:
             SplitGui::Window*                   pWindow;

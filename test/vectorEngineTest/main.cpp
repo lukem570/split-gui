@@ -20,7 +20,7 @@ int main() {
 
     SPLITGUI_PROFILE;
 
-    std::ifstream indexFile("test/cubeTest/index.xml");
+    std::ifstream indexFile("test/vectorEngineTest/index.xml");
 
     if (!indexFile.is_open()) {
         printf("ERROR: error opening index.xml\n");
@@ -34,7 +34,7 @@ int main() {
     SplitGui::EventHandler eventHandler;
 
     SplitGui::WindowFlags flags;
-    flags.title = "cube test";
+    flags.title = "vector engine test";
 
     SplitGui::Window window;
     TRYRC(glfwRes, window.instanceGlfw());
@@ -61,13 +61,6 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
-    SplitGui::Cube cube;
-    cube.submitGraphics(graphics);
-    cube.setSize(0.25);
-    cube.setPosition({0, 0, 0});
-    cube.setColor(SplitGui::HexColor(0xFF0000));
-    cube.generate();
-
     SplitGui::Grid grid;
     grid.submitGraphics(graphics);
     grid.generate();
@@ -79,7 +72,10 @@ int main() {
     SplitGui::SceneRef sceneRef = scene->getSceneRef();
 
     TRYRC(uiInstRes, ui.instance());
-    TRYRC(cubeRes, cube.submit(sceneRef));
+    
+    SplitGui::ResultValue<SplitGui::VectorEngineRef> vEngineRef = graphics.instanceVectorEngine(sceneRef);
+    TRYDC(vEngineRef);
+
     TRYRC(gridRes, grid.submit(sceneRef));
     TRYRC(submitRes, graphics.submitBuffers());
 

@@ -33,3 +33,4 @@
 #include "system.cpp"
 #include "text.cpp"
 #include "texture.cpp"
+#include "vector.cpp"

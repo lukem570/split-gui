@@ -397,6 +397,10 @@ namespace SplitGui {
         std::string          text;
     };
 
+    struct VectorEngineRef {
+        unsigned int instanceNumber;
+    };
+
     struct TriangleBlock {
         LinkElement<uint16_t>* indicesStart = nullptr;
         LinkElement<uint16_t>* indicesEnd   = nullptr;

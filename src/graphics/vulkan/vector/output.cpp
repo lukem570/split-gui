@@ -6,7 +6,7 @@ namespace SplitGui {
 
         vk::ImageCreateInfo outputImageInfo;
         outputImageInfo.imageType     = vk::ImageType::e2D;
-        outputImageInfo.format        = vk_surfaceFormat.format;
+        outputImageInfo.format        = vk::Format::eR32G32B32A32Sfloat;
         outputImageInfo.extent.width  = scenes[vEngine.scene.sceneNumber].sceneSize.x;
         outputImageInfo.extent.height = scenes[vEngine.scene.sceneNumber].sceneSize.y;
         outputImageInfo.extent.depth  = 1;
@@ -14,7 +14,8 @@ namespace SplitGui {
         outputImageInfo.arrayLayers   = 1;
         outputImageInfo.samples       = vk::SampleCountFlagBits::e1;
         outputImageInfo.tiling        = vk::ImageTiling::eOptimal;
-        outputImageInfo.usage         = vk::ImageUsageFlagBits::eColorAttachment;
+        outputImageInfo.usage         = vk::ImageUsageFlagBits::eStorage;
+        outputImageInfo.usage        |= vk::ImageUsageFlagBits::eColorAttachment;
         outputImageInfo.usage        |= vk::ImageUsageFlagBits::eTransferSrc;
         outputImageInfo.sharingMode   = vk::SharingMode::eExclusive;
         outputImageInfo.initialLayout = vk::ImageLayout::eUndefined;
@@ -38,7 +39,7 @@ namespace SplitGui {
         vk::ImageViewCreateInfo outputImageViewInfo;
         outputImageViewInfo.image                           = outputImage;
         outputImageViewInfo.viewType                        = vk::ImageViewType::e2D;
-        outputImageViewInfo.format                          = vk_surfaceFormat.format;
+        outputImageViewInfo.format                          = vk::Format::eR32G32B32A32Sfloat;
         outputImageViewInfo.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
         outputImageViewInfo.subresourceRange.baseMipLevel   = 0;
         outputImageViewInfo.subresourceRange.levelCount     = 1;

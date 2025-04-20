@@ -63,7 +63,11 @@ namespace SplitGui {
         
         createSceneDescriptorSetLayout();
         createScenePipelineLayout();
-        TRYR(moduleRes, createScenePipelineModules());
+        TRYR(moduleRes1, createScenePipelineModules());
+
+        createVectorEngineDescriptorSetLayout();
+        createVectorEnginePipelineLayout();
+        TRYR(moduleRes2, createVectorEnginePipelineModules());
 
         setupRenderpassBeginInfo();
         setupViewport();

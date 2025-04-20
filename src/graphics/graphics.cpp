@@ -120,6 +120,10 @@ namespace SplitGui {
         return pInterface->instanceScene(newX1, newX2, (float)depth / DEPTH_PLANE);
     }
 
+    ResultValue<VectorEngineRef> Graphics::instanceVectorEngine(SceneRef& ref) {
+        return pInterface->instanceVectorEngine(ref);
+    }
+
     Result Graphics::resizeEvent() {
         SPLITGUI_PROFILE;
 
