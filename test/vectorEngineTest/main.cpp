@@ -95,13 +95,18 @@ int main() {
     TRYRC(gridRes, grid.submit(sceneRef));
     TRYRC(submitRes, graphics.submitBuffers());
 
-    SplitGui::QuadraticEdge linEdge;
+    SplitGui::QuadraticEdge quadEdge;
+    quadEdge.from = {-1, -1, -1};
+    quadEdge.control = {1, -1, 1};
+    quadEdge.to = {1, 1, 1};
+
+    SplitGui::LinearEdge linEdge;
     linEdge.from = {-1, -1, -1};
-    linEdge.control = {1, -1, 1};
     linEdge.to = {1, 1, 1};
 
     std::vector<SplitGui::Edge> edges;
     edges.push_back(linEdge);
+    edges.push_back(quadEdge);
 
     graphics.submitEdgeData(vEngineRef.value, edges);
 
