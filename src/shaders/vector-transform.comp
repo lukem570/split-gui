@@ -1,10 +1,10 @@
 #version 450 core
 
 layout(std140, binding = 0) uniform Scene {
-    mat4 view;
-    mat4 projection;
-    vec3 cameraPosition;
-};
+    mat4  view;
+    mat4  projection;
+    vec3  cameraPosition;
+} sb;
 
 struct Edge {
     vec3 start;
@@ -24,16 +24,32 @@ layout(std430, binding = 2) writeonly buffer EdgesOut {
 void main() {
     uint index = gl_GlobalInvocationID.x;
 
-    if (index >= edgesIn.length())
-        return;
-
-    mat4 viewProj = projection * view;
-
     Edge e = edgesIn[index];
-    e.start    = (viewProj * vec4(e.start    - cameraPosition, 1.0)).xyz;
-    e.control1 = (viewProj * vec4(e.control1 - cameraPosition, 1.0)).xyz;
-    e.control2 = (viewProj * vec4(e.control2 - cameraPosition, 1.0)).xyz;
-    e.end      = (viewProj * vec4(e.end      - cameraPosition, 1.0)).xyz;
+
+    vec4 start = vec4(e.start, 1.0);
+    start -= vec4(sb.cameraPosition, 0.0);
+    start *= sb.view;
+    start *= sb.projection;
+
+    vec4 c1 = vec4(e.control1, 1.0);
+    c1 -= vec4(sb.cameraPosition, 0.0);
+    c1 *= sb.view;
+    c1 *= sb.projection;
+
+    vec4 c2 = vec4(e.control2, 1.0);
+    c2 -= vec4(sb.cameraPosition, 0.0);
+    c2 *= sb.view;
+    c2 *= sb.projection;
+
+    vec4 end = vec4(e.end, 1.0);
+    end -= vec4(sb.cameraPosition, 0.0);
+    end *= sb.view;
+    end *= sb.projection;
+
+    e.start    = start.xyz / start.z;
+    e.control1 = c1.xyz / c1.z;
+    e.control2 = c2.xyz / c2.z;
+    e.end      = end.xyz / end.z;
 
     edgesOut[index] = e;
 }

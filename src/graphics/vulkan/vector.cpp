@@ -18,7 +18,6 @@ namespace SplitGui {
         createVectorEngineDescriptorPool(vectorEngineInstances.back());
         TRYR(transformRes, createVectorEngineTransformPipeline(vectorEngineInstances.back()));
         TRYR(renderRes, createVectorEngineRenderPipeline(vectorEngineInstances.back()));
-        TRYR(outputRes, createVectorEngineOutputResources(vectorEngineInstances.back()));
         createVectorEngineDescriptorSet(vectorEngineInstances.back());
         updateVectorEngineDescriptorSet(vectorEngineInstances.back());
 

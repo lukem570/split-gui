@@ -6,6 +6,7 @@
 #include "scene/output.cpp"
 #include "scene/pipeline.cpp"
 #include "scene/uniform.cpp"
+#include "scene/renderpass.cpp"
 
 #include "vector/descriptor.cpp"
 #include "vector/edges.cpp"

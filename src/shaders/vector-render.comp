@@ -1,6 +1,6 @@
 #version 450 core
 
-#define LINE_WIDTH 5
+#define LINE_WIDTH 0.01
 
 struct Edge {
     vec3 start;
@@ -13,46 +13,63 @@ layout(std430, binding = 2) readonly buffer Edges {
     Edge edges[];
 };
 
-layout (rgba32f, binding = 3) writeonly uniform image2D outputImage;
+layout (rgba32f, binding = 3) uniform image2D outputImage;
 
-vec2 bezier(vec2 p0, vec2 p1, vec2 p2, vec2 p3, float t) {
+vec3 bezier(vec3 p0, vec3 p1, vec3 p2, vec3 p3, float t) {
     float u = 1.0 - t;
-    return u*u*u * p0 +
-           3.0*u*u*t * p1 +
-           3.0*u*t*t * p2 +
-           t*t*t * p3;
+    float tt = t * t;
+    float uu = u * u;
+    float uuu = uu * u;
+    float ttt = tt * t;
+
+    vec3 point = uuu * p0;              // (1 - t)^3 * p0
+    point += 3.0 * uu * t * p1;         // 3 * (1 - t)^2 * t * p1
+    point += 3.0 * u * tt * p2;         // 3 * (1 - t) * t^2 * p2
+    point += ttt * p3;                  // t^3 * p3
+
+    return point;
 }
 
-bool isPointNearBezier(vec2 pt, vec2 p0, vec2 p1, vec2 p2, vec2 p3, float threshold) {
+bool isPointNearBezier(vec2 pt, vec3 p0, vec3 p1, vec3 p2, vec3 p3, float threshold) {
     float minDistSq = 1e10;
     const int NUM_SAMPLES = 32;
     for (int i = 0; i <= NUM_SAMPLES; ++i) {
         float t = float(i) / float(NUM_SAMPLES);
-        vec2 b = bezier(p0, p1, p2, p3, t);
-        float distSq = dot(pt - b, pt - b);
+        vec3 b = bezier(p0, p1, p2, p3, t);
+
+        if (!(b.z >= 0.0 && b.z <= 1.0)) {
+            return false;
+        }
+
+        float distSq = dot(pt - b.xy, pt - b.xy);
         minDistSq = min(minDistSq, distSq);
     }
     return minDistSq <= threshold * threshold;
+}
+
+bool arePointsClose(vec2 p1, vec2 p2, float threshold) {
+    float distance = length(p1 - p2); // sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    return distance < threshold;
 }
 
 void main() {
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
     ivec2 size = imageSize(outputImage);
 
-    for (int i = 0; i < edges.length(); i++) {
+    for (int i = 0; i < 1; i++) {
 
-        vec2 point = pixelCoords / size * 2.0 - 1.0;
-        vec2 cp0 = edges[i].start.xy;
-        vec2 cp1 = edges[i].control1.xy;
-        vec2 cp2 = edges[i].control2.xy;
-        vec2 cp3 = edges[i].end.xy;
-        float threshold = 0.05;
+        vec2 point = vec2(pixelCoords) / vec2(size) * 2.0 - 1.0;
+        float threshold = LINE_WIDTH;
 
-        bool hit = isPointNearBezier(point, cp0, cp1, cp2, cp3, threshold);
+        bool hit = isPointNearBezier(point, edges[i].start, edges[i].control1, edges[i].control2, edges[i].end, threshold);
 
         if (hit) {
             vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-            imageStore(outputImage, pixelCoords, color);
+            vec4 srcColor = imageLoad(outputImage, pixelCoords);
+
+            vec4 newColor = (1 - color.a) * srcColor + color;
+
+            imageStore(outputImage, pixelCoords, newColor);
         }
     }
 

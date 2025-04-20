@@ -49,7 +49,7 @@ namespace SplitGui {
 
             renderpassBeginInfo.framebuffer = scenes[i].framebuffers[imageIndex];
 
-            renderpassBeginInfo.renderPass          = vk_renderpass;
+            renderpassBeginInfo.renderPass          = vk_sceneRenderpass;
             renderpassBeginInfo.renderArea.offset.x = 0;
             renderpassBeginInfo.renderArea.offset.y = 0;
             renderpassBeginInfo.renderArea.extent   = vk::Extent2D{ (unsigned int)scenes[i].sceneSize.x, (unsigned int)scenes[i].sceneSize.y };

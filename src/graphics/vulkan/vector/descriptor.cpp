@@ -145,8 +145,8 @@ namespace SplitGui {
         sceneDataBufferInfo.range  = sizeof(SceneObj);
 
         vk::DescriptorImageInfo outputImageInfo;
-        outputImageInfo.sampler     = vEngine.outputImageSampler;
-        outputImageInfo.imageView   = vEngine.outputImageView;
+        outputImageInfo.sampler     = vk::Sampler();
+        outputImageInfo.imageView   = scenes[vEngine.scene.sceneNumber].outputImageView;
         outputImageInfo.imageLayout = vk::ImageLayout::eGeneral;
 
         std::array<vk::WriteDescriptorSet, 2> descriptorWrites;

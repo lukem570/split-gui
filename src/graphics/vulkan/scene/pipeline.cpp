@@ -160,7 +160,7 @@ namespace SplitGui {
         pipelineInfo.pDepthStencilState  = &depthStencil;
         pipelineInfo.pDynamicState       = &dynamicState;
         pipelineInfo.layout              = vk_scenePipelineLayout;
-        pipelineInfo.renderPass          = vk_renderpass;
+        pipelineInfo.renderPass          = vk_sceneRenderpass;
         pipelineInfo.subpass             = 0;
         pipelineInfo.basePipelineHandle  = nullptr;
         pipelineInfo.basePipelineIndex   = -1;

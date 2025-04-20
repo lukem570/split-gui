@@ -147,12 +147,6 @@ namespace SplitGui {
         vk_device.destroyImage(scenes[ref.sceneNumber].depthImage);
     }
 
-    inline void VulkanInterface::cleanupVectorEngineOutputResources(VectorEngineObject& vEngine) {
-        vk_device.freeMemory(vEngine.outputImageMemory);
-        vk_device.destroyImageView(vEngine.outputImageView);
-        vk_device.destroyImage(vEngine.outputImage);
-    }
-
     inline void VulkanInterface::cleanupVectorEngineEdgeResources(VectorEngineObject& vEngine) {
         if (vEngine.edgeBufferMemory) {
 
@@ -174,7 +168,6 @@ namespace SplitGui {
             vk_device.freeDescriptorSets(vectorEngineInstances[i].descriptorPool, 1, &vectorEngineInstances[i].descriptorSet);
 
             cleanupVectorEngineEdgeResources(vectorEngineInstances[i]);
-            cleanupVectorEngineOutputResources(vectorEngineInstances[i]);
 
             vk_device.destroyDescriptorPool(vectorEngineInstances[i].descriptorPool);
             
@@ -222,6 +215,8 @@ namespace SplitGui {
 
         vk_device.destroyDescriptorSetLayout(vk_sceneDescriptorSetLayout);
         vk_device.destroyPipelineLayout(vk_scenePipelineLayout);
+
+        vk_device.destroyRenderPass(vk_sceneRenderpass);
     }
 
     inline void VulkanInterface::cleanupSceneVertexAndIndexBuffers(SceneRef& ref) {
