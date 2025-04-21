@@ -102,6 +102,10 @@ namespace SplitGui {
         union {float y; float g;};
         union {float z; float b;};
 
+        Vec3() = default;
+        Vec3(float x, float y, float z) : x(x), y(y), z(z) {};
+        Vec3(float f) : x(f), y(f), z(f){}
+
         Vec3 operator+(Vec3 operand);
         Vec3 operator-(Vec3 operand);
         Vec3 operator*(Vec3 operand);
@@ -111,7 +115,7 @@ namespace SplitGui {
         bool operator!=(Vec3 operand);
 
         Vec3 cross(const Vec3& operand) const {
-            return Vec3{
+            return Vec3 {
                 y * operand.z - z * operand.y,
                 z * operand.x - x * operand.z,
                 x * operand.y - y * operand.x,
@@ -353,6 +357,13 @@ namespace SplitGui {
         Vec3     normal;
     };
 
+    struct alignas(16) VectorEdgeBufferObject {
+        alignas(16) Vec3 start;
+        alignas(16) Vec3 control1;
+        alignas(16) Vec3 control2;
+        alignas(16) Vec3 end;
+    };
+
     struct RectRef {
 
         union {
@@ -388,6 +399,15 @@ namespace SplitGui {
     struct TextRef {
         std::vector<RectRef> rects;
         std::string          text;
+    };
+
+    struct VectorEngineRef {
+        unsigned int instanceNumber;
+    };
+
+    struct EdgeRef {
+        LinkElement<VectorEdgeBufferObject>* edgesStart = nullptr;
+        LinkElement<VectorEdgeBufferObject>* edgesEnd   = nullptr;
     };
 
     struct TriangleBlock {
@@ -573,6 +593,26 @@ namespace SplitGui {
 
     typedef std::variant<MoveTo, LinearContour, QuadraticBezierContour, CubicBezierContour> Contour;
 
+    struct LinearEdge {
+        Vec3 from;
+        Vec3 to;
+    };
+
+    struct QuadraticEdge {
+        Vec3 from;
+        Vec3 control;
+        Vec3 to;
+    };
+
+    struct CubicEdge {
+        Vec3 from;
+        Vec3 control1;
+        Vec3 control2;
+        Vec3 to;
+    };
+
+    typedef std::variant<LinearEdge, QuadraticEdge, CubicEdge> Edge;
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     struct DescriporBindings {
@@ -588,6 +628,15 @@ namespace SplitGui {
             eSceneData = 0,
             eModels    = 1,
             eTexture   = 2,
+        };
+    };
+
+    struct VectorEngineDescriporBindings {
+        enum {
+            eSceneData   = 0,
+            eEdgesIn     = 1,
+            eEdgesOut    = 2,
+            eOutputImage = 3,
         };
     };
 

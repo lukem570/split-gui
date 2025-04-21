@@ -23,5 +23,8 @@ graphics:
 thread:
 	python tools/testTools/test.py build/tests/threadTest
 
+vector:
+	python tools/testTools/test.py build/tests/vectorEngineTest
+
 test-all:
 	python tools/testTools/test.py

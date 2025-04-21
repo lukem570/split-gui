@@ -67,15 +67,15 @@ int main() {
 
     SplitGui::Vertex vert1;
     vert1.color = SplitGui::HexColor(0xFF0000).normalize();
-    vert1.pos = {0.0, -0.5};
+    vert1.pos = {0.0, -0.5, 0};
 
     SplitGui::Vertex vert2;
     vert2.color = SplitGui::HexColor(0x00FF00).normalize();
-    vert2.pos = {0.5, 0.5};
+    vert2.pos = {0.5, 0.5, 0};
 
     SplitGui::Vertex vert3;
     vert3.color = SplitGui::HexColor(0x0000FF).normalize();
-    vert3.pos = {-0.5, 0.5};
+    vert3.pos = {-0.5, 0.5, 0};
 
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2, 1, 0, 2};

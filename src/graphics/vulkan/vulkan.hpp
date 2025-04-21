@@ -39,6 +39,8 @@ namespace ft {
 #define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
 #define SCENE_VERTEX_SHADER_PATH   "shaders/scene-vertex.spv"
 #define SCENE_FRAGMENT_SHADER_PATH "shaders/scene-fragment.spv"
+#define VECTOR_ENGINE_TRANSFORM_SHADER_PATH "shaders/vector-transform.spv"
+#define VECTOR_ENGINE_RENDER_SHADER_PATH "shaders/vector-render.spv"
 
 /*
 #include "vulkan.hpp"
@@ -84,6 +86,8 @@ namespace SplitGui {
         SceneObj                          sceneData;
         std::vector<Mat4>                 models;
 
+        std::optional<VectorEngineRef> vEngineRef;
+
         StagingBuffer sceneDataStagingBuffer;
         StagingBuffer sceneModelStagingBuffer;
         StagingBuffer vertexStagingBuffer;
@@ -92,37 +96,56 @@ namespace SplitGui {
         unsigned int knownIndicesSize = 0;
     };
 
+    struct VectorEngineObject {
+        vk::DescriptorPool           descriptorPool;
+        vk::DescriptorSet            descriptorSet;
+        vk::Buffer                   edgeBuffer; 
+        vk::DeviceMemory             edgeBufferMemory; 
+        vk::Buffer                   transformedEdgeBuffer;
+        vk::DeviceMemory             transformedEdgeBufferMemory;
+        vk::Sampler                  outputImageSampler;
+        vk::Pipeline                 transformPipeline;
+        vk::Pipeline                 renderPipeline;
+
+        LinkList<VectorEdgeBufferObject> edges;
+        SceneRef scene;
+
+        StagingBuffer edgeStagingBuffer;
+    };
+
     class VulkanInterface : GraphicsLibInterface {
         public:
-                                        VulkanInterface(VulkanFlags flags);
-                                       ~VulkanInterface()                                                                                                                  override;
+                                            VulkanInterface(VulkanFlags flags);
+                                        ~VulkanInterface()                                                                                                                  override;
 
-[[nodiscard]] Result                    instance()                                                                                                                         override;
-[[nodiscard]] Result                    submitWindow(SplitGui::Window& window)                                                                                             override;
+[[nodiscard]] Result                        instance()                                                                                                                         override;
+[[nodiscard]] Result                        submitWindow(SplitGui::Window& window)                                                                                             override;
 
-[[nodiscard]] Result                    drawFrame()                                                                                                                        override;
-              RectRef                   drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
-              void                      updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
-              void                      deleteRect(RectRef& ref)                                                                                                           override;
-              void                      deleteText(TextRef& ref)                                                                                                           override;
-[[nodiscard]] Result                    submitRect(RectRef& ref)                                                                                                           override;
-[[nodiscard]] ResultValue<SceneRef>     instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
-[[nodiscard]] Result                    updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
-[[nodiscard]] ResultValue<TriangleRef>  submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
-[[nodiscard]] Result                    deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
-[[nodiscard]] Result                    submitSceneData(SceneRef& sceneRef)                                                                                                override;
-              void                      updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
-              void                      updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
-              void                      updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
-              ModelRef                  createModel(SceneRef& ref, Mat4& model)                                                                                            override;
-[[nodiscard]] ResultValue<TextRef>      drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 override;
-[[nodiscard]] Result                    updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    override;
-[[nodiscard]] Result                    loadFont(const char* path)                                                                                                         override;
-[[nodiscard]] ResultValue<TextureRef>   createContourImage(std::vector<Contour>& contours)                                                                                 override;
-[[nodiscard]] Result                    submitBuffers()                                                                                                                    override;
-              void                      clearBuffers()                                                                                                                     override;
+[[nodiscard]] Result                        drawFrame()                                                                                                                        override;
+              RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
+              void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
+              void                          deleteRect(RectRef& ref)                                                                                                           override;
+              void                          deleteText(TextRef& ref)                                                                                                           override;
+[[nodiscard]] Result                        submitRect(RectRef& ref)                                                                                                           override;
+[[nodiscard]] ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
+[[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                override;
+[[nodiscard]] Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
+[[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges)                                                                     override;
+[[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
+[[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
+[[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef)                                                                                                override;
+              void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
+              void                          updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
+              void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
+              ModelRef                      createModel(SceneRef& ref, Mat4& model)                                                                                            override;
+[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 override;
+[[nodiscard]] Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    override;
+[[nodiscard]] Result                        loadFont(const char* path)                                                                                                         override;
+[[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 override;
+[[nodiscard]] Result                        submitBuffers()                                                                                                                    override;
+              void                          clearBuffers()                                                                                                                     override;
 
-[[nodiscard]] Result                    resizeEvent()                                                                                                                      override;
+[[nodiscard]] Result                        resizeEvent()                                                                                                                      override;
 
         protected:
             SplitGui::Window*                   pWindow;
@@ -214,11 +237,19 @@ namespace SplitGui {
             bool                                vk_validation = false;
 
             // scene variables
-            vk::DescriptorSetLayout  vk_sceneDescriptorSetLayout;
-            vk::PipelineLayout       vk_scenePipelineLayout;
-            vk::ShaderModule         vk_sceneVertexModule;
-            vk::ShaderModule         vk_sceneFragmentModule;
-            std::vector<SceneObject> scenes;
+            vk::RenderPass                      vk_sceneRenderpass;
+            vk::DescriptorSetLayout             vk_sceneDescriptorSetLayout;
+            vk::PipelineLayout                  vk_scenePipelineLayout;
+            vk::ShaderModule                    vk_sceneVertexModule;
+            vk::ShaderModule                    vk_sceneFragmentModule;
+            std::vector<SceneObject>            scenes;
+
+            // vector engine variables
+            vk::DescriptorSetLayout             vk_vectorEngineDescriptorSetLayout;
+            vk::PipelineLayout                  vk_vectorEnginePipelineLayout;
+            vk::ShaderModule                    vk_vectorEngineTransformModule;
+            vk::ShaderModule                    vk_vectorEngineRenderModule;
+            std::vector<VectorEngineObject>     vectorEngineInstances;
 
             FairMutex queueMutex;
             FairMutex commandPoolMutex;
@@ -264,6 +295,7 @@ namespace SplitGui {
 [[nodiscard]] inline Result createTextureArray();
               inline void   updateDescriptorSets();
 
+[[nodiscard]] inline Result createSceneRenderpass();
               inline void   createSceneDescriptorSetLayout();
               inline void   createScenePipelineLayout();
 [[nodiscard]] inline Result createScenePipelineModules();
@@ -277,6 +309,18 @@ namespace SplitGui {
 [[nodiscard]] inline Result createSceneDataUniform(SceneObject& scene);
 [[nodiscard]] inline Result createSceneModelUniform(SceneObject& scene);
               inline void   updateSceneDescriptorSet(SceneObject& scene);
+              
+              inline void   createVectorEngineDescriptorSetLayout();
+              inline void   createVectorEnginePipelineLayout();
+[[nodiscard]] inline Result createVectorEnginePipelineModules();
+
+              inline void   createVectorEngineDescriptorPool(VectorEngineObject& vEngine);
+              inline void   createVectorEngineDescriptorSet(VectorEngineObject& vEngine);
+              inline void   updateVectorEngineDescriptorSet(VectorEngineObject& vEngine);
+              inline void   updateVectorEngineEdges(VectorEngineObject& vEngine);
+[[nodiscard]] inline Result createVectorEngineTransformPipeline(VectorEngineObject& vEngine);
+[[nodiscard]] inline Result createVectorEngineRenderPipeline(VectorEngineObject& vEngine);
+[[nodiscard]] inline Result submitVectorEngineEdgeResources(VectorEngineObject& vEngine);
 
               inline void setupRenderpassBeginInfo();
               inline void setupViewport();
@@ -291,6 +335,7 @@ namespace SplitGui {
               inline void cleanupVertexAndIndexBuffers();
               inline void cleanupScenesImageArray();
               inline void cleanupScenes();
+              inline void cleanupVectorEngineInstances();
 
               inline void cleanupStagingBuffer(StagingBuffer& stagingBuffer);
 
@@ -298,6 +343,8 @@ namespace SplitGui {
               inline void cleanupSceneFrameBuffers(SceneRef& ref);
               inline void cleanupSceneOutputImages(SceneRef& ref);
               inline void cleanupSceneDepthImages(SceneRef& ref);
+
+              inline void cleanupVectorEngineEdgeResources(VectorEngineObject& vEngine);
 
 [[nodiscard]] Result recreateSwapchain();
     };

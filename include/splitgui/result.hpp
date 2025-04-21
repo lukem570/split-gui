@@ -32,6 +32,7 @@ namespace SplitGui {
         eFailedToFindSuitableMemoryType,
         eFailedToFindSuitableFormat,
         eFailedToCreateGraphicsPipeline,
+        eFailedToCreateComputePipeline,
         eFailedToSubmitQueue,
         eFailedToUseFont,
         eFailedToLoadFont,
@@ -42,6 +43,7 @@ namespace SplitGui {
         eFailedToGetLayer,
         eFailedToCreateSurface,
         eInvalidRectRefUsed,
+        eSceneAlreadyHasVectorEngine,
 
         // interface
         eInvalidNumberOfChildren,

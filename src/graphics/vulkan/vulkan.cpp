@@ -6,6 +6,11 @@
 #include "scene/output.cpp"
 #include "scene/pipeline.cpp"
 #include "scene/uniform.cpp"
+#include "scene/renderpass.cpp"
+
+#include "vector/descriptor.cpp"
+#include "vector/edges.cpp"
+#include "vector/pipeline.cpp"
 
 #include "buffer.cpp"
 #include "cleanup.cpp"
@@ -28,3 +33,4 @@
 #include "system.cpp"
 #include "text.cpp"
 #include "texture.cpp"
+#include "vector.cpp"

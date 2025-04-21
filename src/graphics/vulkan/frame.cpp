@@ -49,7 +49,7 @@ namespace SplitGui {
 
             renderpassBeginInfo.framebuffer = scenes[i].framebuffers[imageIndex];
 
-            renderpassBeginInfo.renderPass          = vk_renderpass;
+            renderpassBeginInfo.renderPass          = vk_sceneRenderpass;
             renderpassBeginInfo.renderArea.offset.x = 0;
             renderpassBeginInfo.renderArea.offset.y = 0;
             renderpassBeginInfo.renderArea.extent   = vk::Extent2D{ (unsigned int)scenes[i].sceneSize.x, (unsigned int)scenes[i].sceneSize.y };
@@ -83,6 +83,19 @@ namespace SplitGui {
 
             vk_commandBuffers[currentFrame].endRenderPass();
 
+            if (scenes[i].vEngineRef.has_value()) {
+
+                VectorEngineObject& vEngine = vectorEngineInstances[scenes[i].vEngineRef.value().instanceNumber];
+
+                vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.transformPipeline);
+                vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
+                vk_commandBuffers[currentFrame].dispatch(vEngine.edges.size(), 1, 1);
+                
+                vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.renderPipeline);
+                vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
+                vk_commandBuffers[currentFrame].dispatch(scenes[i].sceneSize.x, scenes[i].sceneSize.y, vEngine.edges.size());
+            }
+            
             vk::ImageMemoryBarrier barrier;
             barrier.oldLayout                       = vk::ImageLayout::ePresentSrcKHR;
             barrier.newLayout                       = vk::ImageLayout::eTransferSrcOptimal;

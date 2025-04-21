@@ -51,7 +51,6 @@ namespace SplitGui {
     RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth, VertexFlags flags,  int textureIndex) {
         SPLITGUI_PROFILE;
 
-
         IVec2 windowSize = pWindow->getSize();
 
         Vec2 newX1;
@@ -121,6 +120,12 @@ namespace SplitGui {
         return pInterface->instanceScene(newX1, newX2, (float)depth / DEPTH_PLANE);
     }
 
+    ResultValue<VectorEngineRef> Graphics::instanceVectorEngine(SceneRef& ref) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->instanceVectorEngine(ref);
+    }
+
     Result Graphics::resizeEvent() {
         SPLITGUI_PROFILE;
 
@@ -168,6 +173,12 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
+    }
+
+    ResultValue<EdgeRef> Graphics::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->submitEdgeData(ref, edges);
     }
 
     void Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {

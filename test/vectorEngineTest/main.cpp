@@ -20,7 +20,7 @@ int main() {
 
     SPLITGUI_PROFILE;
 
-    std::ifstream indexFile("test/cubeTest/index.xml");
+    std::ifstream indexFile("test/vectorEngineTest/index.xml");
 
     if (!indexFile.is_open()) {
         printf("ERROR: error opening index.xml\n");
@@ -34,7 +34,7 @@ int main() {
     SplitGui::EventHandler eventHandler;
 
     SplitGui::WindowFlags flags;
-    flags.title = "cube test";
+    flags.title = "vector engine test";
 
     SplitGui::Window window;
     TRYRC(glfwRes, window.instanceGlfw());
@@ -61,12 +61,19 @@ int main() {
     ui.setViewport(viewport);
     ui.attachEventHandler(eventHandler);
 
-    SplitGui::Cube cube;
-    cube.submitGraphics(graphics);
-    cube.setSize(0.25);
-    cube.setPosition({0, 0, 0});
-    cube.setColor(SplitGui::HexColor(0xFF0000));
-    cube.generate();
+    SplitGui::Cube cube1;
+    cube1.submitGraphics(graphics);
+    cube1.setSize(0.05);
+    cube1.setPosition({1, 1, 1});
+    cube1.setColor(SplitGui::HexColor(0xFF0000));
+    cube1.generate();
+
+    SplitGui::Cube cube2;
+    cube2.submitGraphics(graphics);
+    cube2.setSize(0.05);
+    cube2.setPosition({-1, -1, -1});
+    cube2.setColor(SplitGui::HexColor(0xFF0000));
+    cube2.generate();
 
     SplitGui::Grid grid;
     grid.submitGraphics(graphics);
@@ -79,9 +86,29 @@ int main() {
     SplitGui::SceneRef sceneRef = scene->getSceneRef();
 
     TRYRC(uiInstRes, ui.instance());
-    TRYRC(cubeRes, cube.submit(sceneRef));
+    
+    SplitGui::ResultValue<SplitGui::VectorEngineRef> vEngineRef = graphics.instanceVectorEngine(sceneRef);
+    TRYDC(vEngineRef);
+
+    TRYRC(cube1Res, cube1.submit(sceneRef));
+    TRYRC(cube2Res, cube2.submit(sceneRef));
     TRYRC(gridRes, grid.submit(sceneRef));
     TRYRC(submitRes, graphics.submitBuffers());
+
+    SplitGui::QuadraticEdge quadEdge;
+    quadEdge.from = {-1, -1, -1};
+    quadEdge.control = {1, -1, 1};
+    quadEdge.to = {1, 1, 1};
+
+    SplitGui::LinearEdge linEdge;
+    linEdge.from = {-1, -1, -1};
+    linEdge.to = {1, 1, 1};
+
+    std::vector<SplitGui::Edge> edges;
+    edges.push_back(linEdge);
+    edges.push_back(quadEdge);
+
+    graphics.submitEdgeData(vEngineRef.value, edges);
 
     int prevXPos = 0;
     int prevYPos = 0;

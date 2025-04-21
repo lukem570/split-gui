@@ -16,7 +16,7 @@ namespace SplitGui {
         for (unsigned int i = 0; i < vk_swapchainImageViews.size(); i++) {
 
             vk::FramebufferCreateInfo framebufferInfo;
-            framebufferInfo.renderPass      = vk_renderpass;
+            framebufferInfo.renderPass      = vk_sceneRenderpass;
             framebufferInfo.attachmentCount = attachments.size();
             framebufferInfo.pAttachments    = attachments.data();
             framebufferInfo.width           = scene.sceneSize.x;
