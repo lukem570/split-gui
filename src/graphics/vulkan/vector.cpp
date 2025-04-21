@@ -2,6 +2,7 @@
 
 namespace SplitGui {
     ResultValue<VectorEngineRef> VulkanInterface::instanceVectorEngine(SceneRef& ref) {
+        SPLITGUI_PROFILE;
 
         if (scenes[ref.sceneNumber].vEngineRef.has_value()) {
             return Result::eSceneAlreadyHasVectorEngine;
@@ -25,6 +26,7 @@ namespace SplitGui {
     }
 
     ResultValue<EdgeRef> VulkanInterface::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges) {
+        SPLITGUI_PROFILE;
 
         EdgeRef edgeRef;
 
