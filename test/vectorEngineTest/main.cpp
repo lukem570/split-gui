@@ -108,7 +108,8 @@ int main() {
     edges.push_back(linEdge);
     edges.push_back(quadEdge);
 
-    graphics.submitEdgeData(vEngineRef.value, edges);
+    SplitGui::ResultValue<SplitGui::EdgeRef> edgeRes = graphics.submitEdgeData(vEngineRef.value, edges);
+    TRYDC(edgeRes)
 
     int prevXPos = 0;
     int prevYPos = 0;
