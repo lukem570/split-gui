@@ -32,7 +32,7 @@ namespace ft {
 #include "../../path.cpp"
 
 // TODO: make this accessible to the user
-#define MAX_FRAMES_IN_FLIGHT 2
+#define MAX_FRAMES_IN_FLIGHT 4
 #define MAX_VECTOR_IMAGES 256
 #define MAX_SCENES 16
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
@@ -270,6 +270,24 @@ namespace SplitGui {
               inline Result                  submitTriangles(SceneRef& ref);
 
 [[nodiscard]] inline Result InstanceStagingBuffer(StagingBuffer& stagingBuffer, vk::DeviceSize size);
+
+              inline void imageBarrier(
+                  vk::Image& image, 
+                  vk::ImageLayout oldLayout, 
+                  vk::ImageLayout newLayout, 
+                  vk::PipelineStageFlags src, 
+                  vk::PipelineStageFlagBits dst, 
+                  uint32_t layerCount = 1,
+                  vk::AccessFlags srcAccess = {},
+                  vk::AccessFlags dstAccess = {}
+              );
+
+              inline void   drawScene(SceneObject& scene, unsigned int index);
+              inline void   renderScene(SceneObject& scene);
+              inline void   renderInterface();
+              inline void   renderVectorEngineInstance(VectorEngineObject& vEngine, SceneObject& scene);
+[[nodiscard]] inline Result presentFrame();
+[[nodiscard]] inline Result waitFences();
 
 [[nodiscard]] inline Result instanceVulkan();
 [[nodiscard]] inline Result createPhysicalDevice();
