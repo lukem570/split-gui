@@ -44,7 +44,7 @@ namespace SplitGui {
         
         vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.renderPipeline);
         vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
-        vk_commandBuffers[currentFrame].dispatch(scene.sceneSize.x, scene.sceneSize.y, vEngine.edges.size());
+        vk_commandBuffers[currentFrame].dispatch(scene.sceneSize.x, scene.sceneSize.y, 1);
     }
 
     inline void VulkanInterface::renderScene(SceneObject& scene) {

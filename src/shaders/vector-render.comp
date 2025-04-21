@@ -93,19 +93,46 @@ bool isPointNearBezier(vec2 pt, vec3 p0, vec3 p1, vec3 p2, vec3 p3) {
 
 void main() {
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
-    int edgeIndex = int(gl_GlobalInvocationID.z);
     ivec2 size = imageSize(outputImage);
 
     vec2 point = vec2(pixelCoords) / vec2(size) * 2.0 - 1.0;
 
-    bool hit = isPointNearBezier(point, edges[edgeIndex].start, edges[edgeIndex].control1, edges[edgeIndex].control2, edges[edgeIndex].end);
+    for(int i = 0; i < edges.length(); i++) {
 
-    if (hit) {
-        vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-        vec4 srcColor = imageLoad(outputImage, pixelCoords);
+        float minx = min(min(edges[i].start.x, edges[i].control1.x), min(edges[i].control2.x, edges[i].end.x));
 
-        vec4 newColor = (1 - color.a) * srcColor + color;
+        if (point.x < minx - LINE_WIDTH*2) {
+            continue;
+        }
 
-        imageStore(outputImage, pixelCoords, newColor);
+        float miny = min(min(edges[i].start.y, edges[i].control1.y), min(edges[i].control2.y, edges[i].end.y));
+
+        if (point.y < miny - LINE_WIDTH*2) {
+            continue;
+        }
+
+        float maxx = max(max(edges[i].start.x, edges[i].control1.x), max(edges[i].control2.x, edges[i].end.x));
+
+        if (point.x > maxx + LINE_WIDTH*2) {
+            continue;
+        }
+
+        float maxy = max(max(edges[i].start.y, edges[i].control1.y), max(edges[i].control2.y, edges[i].end.y));
+
+        if (point.y > maxy + LINE_WIDTH*2) {
+            continue;
+        }
+
+        bool hit = isPointNearBezier(point, edges[i].start, edges[i].control1, edges[i].control2, edges[i].end);
+
+        if (hit) {
+            vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+            vec4 srcColor = imageLoad(outputImage, pixelCoords);
+
+            vec4 newColor = (1 - color.a) * srcColor + color;
+
+            imageStore(outputImage, pixelCoords, newColor);
+        }
+
     }
 }
