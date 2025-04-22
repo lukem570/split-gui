@@ -34,9 +34,15 @@ vec3 lerp(vec3 p0, vec3 p1, float t) {
     return (1.0 - t)*p0 + t*p1;
 }
 
+layout(local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
+
 void main() {
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
     ivec2 size = imageSize(outputImage);
+
+    if (pixelCoords.x >= size.x || pixelCoords.y >= size.y) {
+        return;
+    }
 
     vec2 point = vec2(pixelCoords) / vec2(size) * 2.0 - 1.0;
 
@@ -44,25 +50,25 @@ void main() {
 
         float minx = min(edges[i].start.x, edges[i].end.x);
 
-        if (point.x < minx - LINE_WIDTH*2) {
+        if (point.x < minx - LINE_WIDTH) {
             continue;
         }
 
         float miny = min(edges[i].start.y, edges[i].end.y);
 
-        if (point.y < miny - LINE_WIDTH*2) {
+        if (point.y < miny - LINE_WIDTH) {
             continue;
         }
 
         float maxx = max(edges[i].start.x, edges[i].end.x);
 
-        if (point.x > maxx + LINE_WIDTH*2) {
+        if (point.x > maxx + LINE_WIDTH) {
             continue;
         }
 
         float maxy = max(edges[i].start.y, edges[i].end.y);
 
-        if (point.y > maxy + LINE_WIDTH*2) {
+        if (point.y > maxy + LINE_WIDTH) {
             continue;
         }
 
