@@ -36,7 +36,7 @@ namespace ft {
 #define MAX_VECTOR_IMAGES 256
 #define MAX_SCENES 16
 #define VECTOR_RES 16
-#define LOCAL_COMPUTE_SIZE 32
+#define LOCAL_COMPUTE_SIZE 128
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
 #define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
 #define SCENE_VERTEX_SHADER_PATH   "shaders/scene-vertex.spv"
