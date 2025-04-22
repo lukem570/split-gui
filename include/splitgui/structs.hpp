@@ -359,8 +359,6 @@ namespace SplitGui {
 
     struct alignas(16) VectorEdgeBufferObject {
         alignas(16) Vec3 start;
-        alignas(16) Vec3 control1;
-        alignas(16) Vec3 control2;
         alignas(16) Vec3 end;
     };
 

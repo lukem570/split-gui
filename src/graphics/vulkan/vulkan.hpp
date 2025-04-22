@@ -35,6 +35,7 @@ namespace ft {
 #define MAX_FRAMES_IN_FLIGHT 4
 #define MAX_VECTOR_IMAGES 256
 #define MAX_SCENES 16
+#define VECTOR_RES 16
 #define VERTEX_SHADER_PATH   "shaders/vertex.spv"
 #define FRAGMENT_SHADER_PATH "shaders/fragment.spv"
 #define SCENE_VERTEX_SHADER_PATH   "shaders/scene-vertex.spv"
