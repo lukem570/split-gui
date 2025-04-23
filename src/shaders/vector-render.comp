@@ -34,7 +34,7 @@ vec3 lerp(vec3 p0, vec3 p1, float t) {
     return (1.0 - t)*p0 + t*p1;
 }
 
-layout(local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
+layout(local_size_x_id = 0, local_size_y_id = 1, local_size_z = 1) in;
 
 void main() {
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);

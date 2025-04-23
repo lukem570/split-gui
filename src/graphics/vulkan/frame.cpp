@@ -40,11 +40,11 @@ namespace SplitGui {
 
         vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.transformPipeline);
         vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
-        vk_commandBuffers[currentFrame].dispatch((vEngine.edges.size() + LOCAL_COMPUTE_SIZE - 1) / LOCAL_COMPUTE_SIZE, 1, 1);
+        vk_commandBuffers[currentFrame].dispatch((vEngine.edges.size() + vectorTransformPassSize - 1) / vectorTransformPassSize, 1, 1);
         
         vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.renderPipeline);
         vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
-        vk_commandBuffers[currentFrame].dispatch((scene.sceneSize.x + LOCAL_COMPUTE_SIZE - 1) / LOCAL_COMPUTE_SIZE, (scene.sceneSize.y + LOCAL_COMPUTE_SIZE - 1) / LOCAL_COMPUTE_SIZE, 1);
+        vk_commandBuffers[currentFrame].dispatch((scene.sceneSize.x + vectorRenderPassSize.x - 1) / vectorRenderPassSize.x, (scene.sceneSize.y + vectorRenderPassSize.y - 1) / vectorRenderPassSize.y, 1);
     }
 
     inline void VulkanInterface::renderScene(SceneObject& scene) {

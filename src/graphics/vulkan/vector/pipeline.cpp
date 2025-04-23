@@ -35,10 +35,28 @@ namespace SplitGui {
     inline Result VulkanInterface::createVectorEngineTransformPipeline(VectorEngineObject& vEngine) {
         SPLITGUI_PROFILE;
 
+        vk::PhysicalDeviceProperties properties = vk_physicalDevice.getProperties();
+
+        vectorTransformPassSize = properties.limits.maxComputeWorkGroupInvocations;
+
+        Logger::info("Vector Transform Work Group Size " + std::to_string(vectorTransformPassSize));
+
+        vk::SpecializationMapEntry xSizeEntry;
+        xSizeEntry.constantID = 0;
+        xSizeEntry.size       = sizeof(vectorTransformPassSize);
+        xSizeEntry.offset     = 0;
+
+        vk::SpecializationInfo specInfo;
+        specInfo.mapEntryCount = 1;
+        specInfo.pMapEntries   = &xSizeEntry;
+        specInfo.dataSize      = sizeof(vectorTransformPassSize);
+        specInfo.pData         = &vectorTransformPassSize;
+
         vk::PipelineShaderStageCreateInfo shaderStage;
-        shaderStage.stage  = vk::ShaderStageFlagBits::eCompute;
-        shaderStage.module = vk_vectorEngineTransformModule;
-        shaderStage.pName  = "main";
+        shaderStage.stage               = vk::ShaderStageFlagBits::eCompute;
+        shaderStage.module              = vk_vectorEngineTransformModule;
+        shaderStage.pSpecializationInfo = &specInfo;
+        shaderStage.pName               = "main";
 
         vk::ComputePipelineCreateInfo pipelineInfo;
         pipelineInfo.stage  = shaderStage;
@@ -60,10 +78,36 @@ namespace SplitGui {
     inline Result VulkanInterface::createVectorEngineRenderPipeline(VectorEngineObject& vEngine) {
         SPLITGUI_PROFILE;
 
+        vk::PhysicalDeviceProperties properties = vk_physicalDevice.getProperties();
+
+        uint32_t maxInvocations = properties.limits.maxComputeWorkGroupInvocations;
+
+        vectorRenderPassSize.x = std::ceil(std::sqrt((float) maxInvocations));
+        vectorRenderPassSize.y = std::floor(std::sqrt((float) maxInvocations));
+
+        vk::SpecializationMapEntry xSizeEntry;
+        xSizeEntry.constantID = 0;
+        xSizeEntry.size       = sizeof(IVec2::x);
+        xSizeEntry.offset     = offsetof(IVec2, IVec2::x);
+
+        vk::SpecializationMapEntry ySizeEntry;
+        ySizeEntry.constantID = 1;
+        ySizeEntry.size       = sizeof(IVec2::y);
+        ySizeEntry.offset     = offsetof(IVec2, IVec2::y);
+
+        std::array<vk::SpecializationMapEntry, 2> entries = {xSizeEntry, ySizeEntry};
+
+        vk::SpecializationInfo specInfo;
+        specInfo.mapEntryCount = entries.size();
+        specInfo.pMapEntries   = entries.data();
+        specInfo.dataSize      = sizeof(vectorRenderPassSize);
+        specInfo.pData         = &vectorRenderPassSize;
+
         vk::PipelineShaderStageCreateInfo shaderStage;
-        shaderStage.stage  = vk::ShaderStageFlagBits::eCompute;
-        shaderStage.module = vk_vectorEngineRenderModule;
-        shaderStage.pName  = "main";
+        shaderStage.stage               = vk::ShaderStageFlagBits::eCompute;
+        shaderStage.module              = vk_vectorEngineRenderModule;
+        shaderStage.pSpecializationInfo = &specInfo;
+        shaderStage.pName               = "main";
 
         vk::ComputePipelineCreateInfo pipelineInfo;
         pipelineInfo.stage  = shaderStage;
