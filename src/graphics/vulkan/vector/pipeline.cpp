@@ -85,6 +85,8 @@ namespace SplitGui {
         vectorRenderPassSize.x = std::ceil(std::sqrt((float) maxInvocations));
         vectorRenderPassSize.y = std::floor(std::sqrt((float) maxInvocations));
 
+        Logger::info("Vector Render Work Group Size (" + std::to_string(vectorRenderPassSize.x) + ", " + std::to_string(vectorRenderPassSize.y) + ")");
+
         vk::SpecializationMapEntry xSizeEntry;
         xSizeEntry.constantID = 0;
         xSizeEntry.size       = sizeof(IVec2::x);

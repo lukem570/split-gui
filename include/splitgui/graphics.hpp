@@ -30,6 +30,7 @@ namespace SplitGui {
               virtual void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         { throw; }
               virtual void                          deleteRect(RectRef& ref)                                                                                                           { throw; }
               virtual void                          deleteText(TextRef& ref)                                                                                                           { throw; }
+              virtual void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         { throw; }
 [[nodiscard]] virtual Result                        submitRect(RectRef& ref)                                                                                                           { throw; }
 [[nodiscard]] virtual ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                { throw; }
 [[nodiscard]] virtual ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                { throw; }
@@ -69,6 +70,7 @@ namespace SplitGui {
               void                          updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth = 0);
               void                          deleteRect(RectRef& ref);
               void                          deleteText(TextRef& ref);
+              void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef);
 [[nodiscard]] Result                        submitRect(RectRef& ref);
 [[nodiscard]] ResultValue<SceneRef>         instanceScene(IVec2 x1, IVec2 x2, int depth = 0);
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref);

@@ -48,6 +48,12 @@ namespace SplitGui {
         return Vec3(u) * p0 + Vec3(t) * p1;
     }
 
+    void VulkanInterface::deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef) {
+        SPLITGUI_PROFILE;
+
+        vectorEngineInstances[vEngineRef.instanceNumber].edges.erase(edgeRef.edgesStart, edgeRef.edgesEnd);
+    }
+
     ResultValue<EdgeRef> VulkanInterface::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges) {
         SPLITGUI_PROFILE;
 
