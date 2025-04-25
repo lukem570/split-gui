@@ -7,6 +7,8 @@ Split gui is a GUI library that is entirely gpu focused making it highly portabl
 
 ![Cube Test](assets/cube.png)
 
+![Vector Test](assets/vector.png)
+
 ## Builds 
 
 | Operating system |                                 Build Status                           |      Notes      |
