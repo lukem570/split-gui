@@ -181,6 +181,12 @@ namespace SplitGui {
         return pInterface->submitEdgeData(ref, edges);
     }
 
+    Result Graphics::updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, HexColor color) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->updateTrianglesColor(sceneRef, triangleRef, color.normalize());
+    }
+
     void Graphics::deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef) {
         SPLITGUI_PROFILE;
 

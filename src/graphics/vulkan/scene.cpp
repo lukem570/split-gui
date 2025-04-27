@@ -340,6 +340,53 @@ namespace SplitGui {
         scenes[ref.sceneNumber].sceneData.cameraPosition = position;
     }
 
+    Result VulkanInterface::updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color) {
+        SPLITGUI_PROFILE;
+
+        LinkList<vk::BufferCopy> bufferCopies;
+
+        for (TriangleBlock& tBlock : triangleRef.triangleBlocks) {
+
+            LinkElement<SceneVertexBufferObject>* element = tBlock.verticesStart;
+
+            while (element != tBlock.verticesEnd->next) {
+
+                element->data.vertex.color = color;
+                
+                element = element->next;
+            }
+            
+            std::optional<unsigned int> offsetOpt = scenes[sceneRef.sceneNumber].vertices.offset(tBlock.verticesStart);
+            
+            if (!offsetOpt.has_value()) {
+                return Result::eInvalidTrianglesRefUsed;
+            }
+
+            unsigned int offset = offsetOpt.value() * sizeof(SceneVertexBufferObject) + offsetof(SceneVertexBufferObject, SceneVertexBufferObject::vertex) + offsetof(Vertex, Vertex::color);
+            
+            void* memory = vk_device.mapMemory(scenes[sceneRef.sceneNumber].vertexStagingBuffer.memory, offset, sizeof(Vec3));
+
+            std::memcpy(memory, &color, sizeof(Vec3));
+
+            vk_device.unmapMemory(scenes[sceneRef.sceneNumber].vertexStagingBuffer.memory);
+
+            vk::BufferCopy bufferCopy;
+            bufferCopy.size      = sizeof(Vec3);
+            bufferCopy.srcOffset = offset;
+            bufferCopy.dstOffset = offset;
+
+            bufferCopies.push(bufferCopy);
+        }
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        commandBuffer.copyBuffer(scenes[sceneRef.sceneNumber].vertexStagingBuffer.buffer, scenes[sceneRef.sceneNumber].vertexBuffer, bufferCopies.size(), bufferCopies.array());
+
+        TRYR(commandRes, endSingleTimeCommands(commandBuffer));
+
+        return Result::eSuccess;
+    }
+
     Result VulkanInterface::submitSceneData(SceneRef& ref) {
         SPLITGUI_PROFILE;
 

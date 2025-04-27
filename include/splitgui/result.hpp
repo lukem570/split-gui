@@ -43,6 +43,7 @@ namespace SplitGui {
         eFailedToGetLayer,
         eFailedToCreateSurface,
         eInvalidRectRefUsed,
+        eInvalidTrianglesRefUsed,
         eSceneAlreadyHasVectorEngine,
 
         // interface
