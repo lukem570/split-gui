@@ -12,6 +12,7 @@
 #include <condition_variable>
 #include <list>
 #include <optional>
+#include <queue>
 
 namespace SplitGui {
 
@@ -499,30 +500,99 @@ namespace SplitGui {
     class FairMutex {
         public:
             void lock() {
-                unsigned int my_ticket;
+                SPLITGUI_PROFILE;
+
+                unsigned int myTicket;
                 {
                     std::lock_guard<std::mutex> lock(mtx);
-                    my_ticket = next_ticket++;
+                    myTicket = nextTicket++;
                 }
                 std::unique_lock<std::mutex> lock(mtx);
-                cv.wait(lock, [this, my_ticket] { return my_ticket == now_serving; });
+                cv.wait(lock, [this, myTicket] { return myTicket == nowServing; });
             }
         
             void unlock() {
+                SPLITGUI_PROFILE;
+
                 {
                     std::lock_guard<std::mutex> lock(mtx);
-                    now_serving++;
+                    nowServing++;
                 }
         
                 cv.notify_all();
             }
 
+            bool isLocked() {
+                SPLITGUI_PROFILE;
+
+                std::lock_guard<std::mutex> lock(mtx);
+                return nextTicket != nowServing;
+            }
+
         private:
-            unsigned int next_ticket = 0;
-            unsigned int now_serving = 0;
+            unsigned int nextTicket = 0;
+            unsigned int nowServing = 0;
             std::mutex mtx;
             std::condition_variable cv;
         
+    };
+
+    template <typename T>
+    class ThreadBuffer {
+        public:
+
+            void push(const T& data) {
+                SPLITGUI_PROFILE;
+
+                mtx.lock();
+
+                availableIndices.push(resources.size());
+                resources.push_back(std::move(data));
+
+                mtx.unlock();
+            }
+
+            unsigned int acquireAvailable() {
+                SPLITGUI_PROFILE;
+
+                mtx.lock();
+
+                std::unique_lock<std::mutex> lock(aq);
+
+                cv.wait(lock, [this]() { return !availableIndices.empty(); });
+                
+                unsigned int index = availableIndices.front();
+                availableIndices.pop();
+
+                mtx.unlock();
+                
+                return index;
+            }
+
+            T& getData(unsigned int id) {
+                SPLITGUI_PROFILE;
+
+                return resources[id];
+            }
+
+            void release(unsigned int id) {
+                SPLITGUI_PROFILE;
+
+                mtx.lock();
+
+                availableIndices.push(id);
+
+                mtx.unlock();
+
+                cv.notify_one();
+            }
+
+        private:
+            std::vector<T> resources;
+            std::queue<unsigned int> availableIndices;
+            std::condition_variable cv;
+            std::mutex aq;
+            FairMutex mtx;
     };
 
     struct UnitExpressionValue {

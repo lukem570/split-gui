@@ -162,7 +162,7 @@ namespace SplitGui {
             vk::Instance                        vk_instance;
             vk::PhysicalDevice                  vk_physicalDevice;
             vk::Device                          vk_device;
-            vk::Queue                           vk_graphicsQueue;
+            ThreadBuffer<vk::Queue>             vk_graphicsQueues;
             vk::Queue                           vk_presentQueue;
             vk::SurfaceKHR                      vk_surface;
             vk::SwapchainKHR                    vk_swapchain;
@@ -211,16 +211,18 @@ namespace SplitGui {
             std::vector<vk::Fence>              vk_inFlightFences;
             unsigned int                        graphicsQueueFamilyIndex = -1;
             unsigned int                        presentQueueFamilyIndex  = -1;
+            unsigned int                        graphicsQueueCount;
             std::vector<const char *>           enabledLayers;
             std::vector<const char *>           enabledInstanceExtensions;
             std::vector<const char *>           enabledDeviceExtensions;
-
+            
             StagingBuffer                       vk_textureArrayStagingBuffer;
             StagingBuffer                       vk_rectStagingBuffer;
             StagingBuffer                       vk_vertexStagingBuffer;
             StagingBuffer                       vk_indexStagingBuffer;
 
             // runtime variables
+            std::vector<vk::Fence>              vk_singleTimeFences;
             vk::CommandBufferBeginInfo          vk_beginInfo;
             vk::SubmitInfo                      vk_submitInfo;
             vk::DeviceSize                      vk_vertexBufferOffsets = 0;
@@ -256,7 +258,6 @@ namespace SplitGui {
             vk::ShaderModule                    vk_vectorEngineRenderModule;
             std::vector<VectorEngineObject>     vectorEngineInstances;
 
-            FairMutex queueMutex;
             FairMutex commandPoolMutex;
             FairMutex frameMutex;
 

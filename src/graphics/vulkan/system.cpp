@@ -104,6 +104,8 @@ namespace SplitGui {
             return Result::eFailedToFindQueueFamily;
         }
 
+        graphicsQueueCount = queueFamilies[graphicsQueueFamilyIndex].queueCount;
+
         Logger::info("Got Queue Families");
 
         return Result::eSuccess;
@@ -112,12 +114,18 @@ namespace SplitGui {
     // or logical device
     inline Result VulkanInterface::createDevice() {
         SPLITGUI_PROFILE;
-
         vk::DeviceQueueCreateInfo queueCreateInfo;
         queueCreateInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
-        queueCreateInfo.queueCount       = 1;
-        float queuePriority              = 1.0;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfo.queueCount       = graphicsQueueCount;
+
+        std::vector<float> queuePriorities;
+        queuePriorities.resize(graphicsQueueCount);
+
+        for (unsigned int i = 0; i < graphicsQueueCount; i++) {
+            queuePriorities[i] = 1.0;
+        }
+        
+        queueCreateInfo.pQueuePriorities = queuePriorities.data();
 
         vk::PhysicalDeviceFeatures deviceFeatures;
         deviceFeatures = vk_physicalDevice.getFeatures();
@@ -158,7 +166,16 @@ namespace SplitGui {
     inline void VulkanInterface::getQueues() {
         SPLITGUI_PROFILE;
 
-        vk_graphicsQueue = vk_device.getQueue(graphicsQueueFamilyIndex, 0);
+        Logger::info("Number Of Graphics Queues: " + std::to_string(graphicsQueueCount));
+
+        for (unsigned int i = 0; i < graphicsQueueCount; i++) {
+
+            vk_graphicsQueues.push(vk_device.getQueue(graphicsQueueFamilyIndex, i));
+        }
+
+        // reserve zero for present if they are from the same queue family
+        vk_graphicsQueues.acquireAvailable();
+
         vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
 
         Logger::info("Instanced Queue Objects");

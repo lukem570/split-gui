@@ -161,9 +161,9 @@ namespace SplitGui {
         vk_submitInfo.pCommandBuffers   = &vk_commandBuffers[currentFrame];
         vk_submitInfo.pSignalSemaphores = &vk_renderFinishedSemaphores[currentFrame];
 
-        queueMutex.lock();
+        unsigned int id = vk_graphicsQueues.acquireAvailable();
 
-        vk_runtimeResult = vk_graphicsQueue.submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
+        vk_runtimeResult = vk_graphicsQueues.getData(id).submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
             return Result::eFailedToSubmitQueue;
@@ -182,7 +182,7 @@ namespace SplitGui {
             return Result::eFailedToGetNextSwapchainImage;
         }
 
-        queueMutex.unlock();
+        vk_graphicsQueues.release(id);
 
         return Result::eSuccess;
     }
