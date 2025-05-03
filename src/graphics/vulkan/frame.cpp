@@ -228,8 +228,6 @@ namespace SplitGui {
 
         TRYR(fenceRes, waitFences());
 
-        commandPoolMutex.lock();
-
         vk_commandBuffers[currentFrame].reset();
         vk_commandBuffers[currentFrame].begin(vk_beginInfo);
 
@@ -256,8 +254,6 @@ namespace SplitGui {
         );
 
         vk_commandBuffers[currentFrame].end();
-
-        commandPoolMutex.unlock();
 
         TRYR(presRes, presentFrame());
 

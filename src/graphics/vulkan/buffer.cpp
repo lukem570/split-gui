@@ -72,11 +72,11 @@ namespace SplitGui {
     inline vk::CommandBuffer VulkanInterface::startCopyBuffer() {
         SPLITGUI_PROFILE;
 
-        commandPoolMutex.lock();
+        queueId = vk_graphicsQueues.acquireAvailable();
 
         vk::CommandBufferAllocateInfo allocInfo;
         allocInfo.level              = vk::CommandBufferLevel::ePrimary;
-        allocInfo.commandPool        = vk_commandPool;
+        allocInfo.commandPool        = vk_interactionCommandPools[queueId];
         allocInfo.commandBufferCount = 1;
 
         std::vector<vk::CommandBuffer> commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
@@ -107,24 +107,20 @@ namespace SplitGui {
         vk::SubmitInfo submitInfo;
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers    = &commandBuffer;
-
-        unsigned int id = vk_graphicsQueues.acquireAvailable();
         
-        vk_graphicsQueues.getData(id).waitIdle();
+        vk_graphicsQueues.getData(queueId).waitIdle();
 
-        vk::Result result_submit = vk_graphicsQueues.getData(id).submit(1, &submitInfo, nullptr);
+        vk::Result result_submit = vk_graphicsQueues.getData(queueId).submit(1, &submitInfo, nullptr);
 
         if (result_submit != vk::Result::eSuccess) {
             return Result::eFailedToSubmitQueue;
         }
 
-        vk_graphicsQueues.getData(id).waitIdle();
+        vk_graphicsQueues.getData(queueId).waitIdle();
 
-        vk_graphicsQueues.release(id);
-
-        vk_device.freeCommandBuffers(vk_commandPool, 1, &commandBuffer);
+        vk_device.freeCommandBuffers(vk_interactionCommandPools[queueId], 1, &commandBuffer);
         
-        commandPoolMutex.unlock();
+        vk_graphicsQueues.release(queueId);
 
         return Result::eSuccess;
     }

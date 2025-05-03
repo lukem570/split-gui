@@ -173,7 +173,7 @@ namespace SplitGui {
             vk::DescriptorSetLayout             vk_descriptorSetLayout;
             vk::PipelineLayout                  vk_graphicsPipelineLayout;
             vk::Pipeline                        vk_graphicsPipeline;
-            vk::CommandPool                     vk_commandPool;
+            vk::CommandPool                     vk_frameCommandPool;
             vk::RenderPassBeginInfo             vk_renderpassBeginInfo;
             vk::Viewport                        vk_viewport;
             vk::DescriptorPool                  vk_descriptorPool;
@@ -203,6 +203,7 @@ namespace SplitGui {
             std::array<vk::ClearValue, 2>       vk_clearValues;
             std::array<vk::ClearValue, 2>       vk_sceneClearValues;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
+            std::vector<vk::CommandPool>        vk_interactionCommandPools;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;
             std::vector<vk::ImageView>          vk_swapchainImageViews;
@@ -238,7 +239,8 @@ namespace SplitGui {
             bool                                markVerticesForUpdate = false;
             unsigned int                        vectorTransformPassSize;
             IVec2                               vectorRenderPassSize;
-
+            ThreadLocal<unsigned int>           queueId;
+            
             // debug
             bool                                vk_validation = false;
 
@@ -257,7 +259,6 @@ namespace SplitGui {
             vk::ShaderModule                    vk_vectorEngineRenderModule;
             std::vector<VectorEngineObject>     vectorEngineInstances;
 
-            FairMutex commandPoolMutex;
             FairMutex frameMutex;
 
 [[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);

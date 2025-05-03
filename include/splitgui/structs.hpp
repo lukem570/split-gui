@@ -595,6 +595,23 @@ namespace SplitGui {
             FairMutex mtx;
     };
 
+    template<typename T>
+    class ThreadLocal {
+    public:
+        T& get() {
+            thread_local T value{};
+            return value;
+        }
+
+        void operator=(const T& val) {
+            get() = val;
+        }
+
+        operator T() const {
+            return const_cast<ThreadLocal*>(this)->get();
+        }
+    };
+
     struct UnitExpressionValue {
         enum class Type {
             eVector,

@@ -8,7 +8,13 @@ namespace SplitGui {
         commandPoolInfo.flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer;
         commandPoolInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
 
-        vk_commandPool = vk_device.createCommandPool(commandPoolInfo);
+        vk_frameCommandPool = vk_device.createCommandPool(commandPoolInfo);
+
+        vk_interactionCommandPools.resize(graphicsQueueCount);
+
+        for (unsigned int i = 0; i < graphicsQueueCount; i++) {
+            vk_interactionCommandPools[i] = vk_device.createCommandPool(commandPoolInfo);
+        }
 
         Logger::info("Created Command Pool");
     }
@@ -17,7 +23,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
         
         vk::CommandBufferAllocateInfo allocInfo;
-        allocInfo.commandPool        = vk_commandPool;
+        allocInfo.commandPool        = vk_frameCommandPool;
         allocInfo.level              = vk::CommandBufferLevel::ePrimary;
         allocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;
 

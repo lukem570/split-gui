@@ -13,7 +13,7 @@ namespace SplitGui {
         cleanupStagingBuffer(vk_indexStagingBuffer);
         cleanupStagingBuffer(vk_vertexStagingBuffer);
 
-        vk_device.freeCommandBuffers(vk_commandPool, vk_commandBuffers.size(), vk_commandBuffers.data());
+        vk_device.freeCommandBuffers(vk_frameCommandPool, vk_commandBuffers.size(), vk_commandBuffers.data());
 
         vk_device.destroyImageView(vk_textGlyphImageView);
         vk_device.destroySampler(vk_textGlyphSampler);
@@ -30,7 +30,11 @@ namespace SplitGui {
         cleanupVertexAndIndexBuffers();
         cleanupScenesImageArray();
 
-        vk_device.destroyCommandPool(vk_commandPool);
+        vk_device.destroyCommandPool(vk_frameCommandPool);
+
+        for (unsigned int i = 0; i < graphicsQueueCount; i++) {
+            vk_device.destroyCommandPool(vk_interactionCommandPools[i]);
+        }
         
         cleanupFrameBuffers();
         cleanupDepthResources();
