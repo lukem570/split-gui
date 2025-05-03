@@ -89,10 +89,6 @@ namespace SplitGui {
         vk_imageAvailableSemaphores.clear();
         vk_renderFinishedSemaphores.clear();
         vk_inFlightFences.clear();
-
-        for (unsigned int i = 0; i < vk_singleTimeFences.size(); i++) {
-            vk_device.destroyFence(vk_singleTimeFences[i]);
-        }
     }
 
     inline void VulkanInterface::cleanupImageViews() {

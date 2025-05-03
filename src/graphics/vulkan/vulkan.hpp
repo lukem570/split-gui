@@ -222,7 +222,6 @@ namespace SplitGui {
             StagingBuffer                       vk_indexStagingBuffer;
 
             // runtime variables
-            std::vector<vk::Fence>              vk_singleTimeFences;
             vk::CommandBufferBeginInfo          vk_beginInfo;
             vk::SubmitInfo                      vk_submitInfo;
             vk::DeviceSize                      vk_vertexBufferOffsets = 0;

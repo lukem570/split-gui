@@ -109,28 +109,20 @@ namespace SplitGui {
         submitInfo.pCommandBuffers    = &commandBuffer;
 
         unsigned int id = vk_graphicsQueues.acquireAvailable();
+        
+        vk_graphicsQueues.getData(id).waitIdle();
 
-        vk::Result result_submit = vk_graphicsQueues.getData(id).submit(1, &submitInfo, vk_singleTimeFences[id]);
+        vk::Result result_submit = vk_graphicsQueues.getData(id).submit(1, &submitInfo, nullptr);
 
         if (result_submit != vk::Result::eSuccess) {
             return Result::eFailedToSubmitQueue;
         }
 
-        vk::Result result_wait = vk_device.waitForFences(1, &vk_singleTimeFences[id], true, UINT64_MAX);
+        vk_graphicsQueues.getData(id).waitIdle();
 
-        if (result_wait != vk::Result::eSuccess) {
-            return Result::eFailedToWaitForFences;
-        }
-
-        vk::Result runtimeResult = vk_device.resetFences(1, &vk_singleTimeFences[id]);
-
-        if (runtimeResult != vk::Result::eSuccess) {
-            return Result::eFailedToResetFences;
-        }
+        vk_graphicsQueues.release(id);
 
         vk_device.freeCommandBuffers(vk_commandPool, 1, &commandBuffer);
-        
-        vk_graphicsQueues.release(id);
         
         commandPoolMutex.unlock();
 

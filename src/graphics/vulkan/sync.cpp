@@ -18,16 +18,7 @@ namespace SplitGui {
             vk_renderFinishedSemaphores[i] = vk_device.createSemaphore(semaphoreInfo);
             vk_inFlightFences[i]           = vk_device.createFence(fenceInfo);
         }
-
-        vk::FenceCreateInfo queueFenceInfo;
-
-        vk_singleTimeFences.resize(graphicsQueueCount);
-
-        for (unsigned int i = 0; i < graphicsQueueCount; i++){
-            
-            vk_singleTimeFences[i] = vk_device.createFence(queueFenceInfo);
-        }
-
+        
         Logger::info("Created Sync Objects");
     }
 }
