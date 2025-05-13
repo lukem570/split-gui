@@ -72,6 +72,26 @@ namespace SplitGui {
             return Result::eSuccess;
         }
 
+        if (token.value == "padding") {
+            ResultValue<XmlToken> attributeTokenRes = nextToken();
+            TRYD(attributeTokenRes);
+            token = attributeTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            ResultValue<XmlToken> valueTokenRes = nextToken();
+            TRYD(valueTokenRes);
+            token = valueTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            list->setPadding(std::atoi(token.value.c_str()));
+
+            ResultValue<XmlToken> finalTokenRes = nextToken();
+            TRYD(finalTokenRes);
+            token = finalTokenRes.value;
+            
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }

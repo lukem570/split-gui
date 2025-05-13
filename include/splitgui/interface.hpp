@@ -137,6 +137,7 @@ namespace SplitGui {
   [[nodiscard]] Result update()   override;
 
                 void   setVertical(bool);
+                void   setPadding(unsigned int);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eList;
@@ -145,6 +146,7 @@ namespace SplitGui {
 
             private: // props
                 bool           isVertical;
+                unsigned int   padding = 0;
         };
 
         class SPLITGUI_EXPORT Box : public InterfaceElement {

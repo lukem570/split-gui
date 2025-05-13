@@ -18,17 +18,17 @@ namespace SplitGui {
             
             if (isVertical) {
 
-                extents[i].height = size;
+                extents[i].height = size - (i == 0 ? 0 : padding);
                 extents[i].width  = extent.width;
                 extents[i].x      = extent.x;
-                extents[i].y      = pos;
+                extents[i].y      = pos + (i == 0 ? 0 : padding);
                 
             } else {
 
                 extents[i].height = extent.height;
-                extents[i].width  = size;
+                extents[i].width  = size - (i == 0 ? 0 : padding);
                 extents[i].y      = extent.y;
-                extents[i].x      = pos;
+                extents[i].x      = pos + (i == 0 ? 0 : padding);
                 
             }
 
@@ -63,17 +63,17 @@ namespace SplitGui {
             
             if (isVertical) {
 
-                extents[i].height = size;
+                extents[i].height = size - (i == 0 ? 0 : padding);
                 extents[i].width  = extent.width;
                 extents[i].x      = extent.x;
-                extents[i].y      = pos;
+                extents[i].y      = pos + (i == 0 ? 0 : padding);
                 
             } else {
 
                 extents[i].height = extent.height;
-                extents[i].width  = size;
+                extents[i].width  = size - (i == 0 ? 0 : padding);
                 extents[i].y      = extent.y;
-                extents[i].x      = pos;
+                extents[i].x      = pos + (i == 0 ? 0 : padding);
 
             }
 
@@ -101,5 +101,11 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         isVertical = verticalIn;
+    }
+
+    void Default::List::setPadding(unsigned int paddingIn) {
+        SPLITGUI_PROFILE;
+
+        padding = paddingIn;
     }
 }

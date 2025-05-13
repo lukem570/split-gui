@@ -1,11 +1,9 @@
 <meta version="0.1.0"/>
 
-<split direction="horizontal" position="75%">
-    <box> </box>
-    <list direction="horizontal"> 
-        <rect color="ivec3(255u, 100u, 100u)"/>
-        <rect color="ivec3(100u, 255u, 100u)"/>
-        <rect color="ivec3(100u, 100u, 255u)"/>
-    </list>
-</split>
+<list direction="horizontal" padding="5"> 
+    <rect color="ivec3(255u, 100u, 100u)"/>
+    <rect color="ivec3(100u, 255u, 100u)"/>
+    <rect color="ivec3(100u, 100u, 255u)"/>
+</list>
+
  
