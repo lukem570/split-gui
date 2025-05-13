@@ -36,9 +36,9 @@ namespace SplitGui {
         }
         
         if (isVertical) {
-            extents.back().height += maxSize - pos;
+            extents.back().height += maxSize + extent.y - pos;
         } else {
-            extents.back().width  += maxSize - pos;
+            extents.back().width  += maxSize + extent.x - pos;
         }
 
         for (unsigned int i = 0; i < children.size(); i++) {
@@ -81,9 +81,9 @@ namespace SplitGui {
         }
         
         if (isVertical) {
-            extents.back().height += maxSize - pos;
+            extents.back().height += maxSize + extent.y - pos;
         } else {
-            extents.back().width  += maxSize - pos;
+            extents.back().width  += maxSize + extent.x - pos;
         }
 
         for (unsigned int i = 0; i < children.size(); i++) {

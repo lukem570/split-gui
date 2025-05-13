@@ -26,5 +26,8 @@ thread:
 vector:
 	python tools/testTools/test.py build/tests/vectorEngineTest
 
+list:
+	python tools/testTools/test.py build/tests/listTest
+
 test-all:
 	python tools/testTools/test.py
