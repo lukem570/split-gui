@@ -58,20 +58,23 @@ namespace SplitGui {
                 return Result::eFailedToLoadGlyph;
             }
 
-            ft::FT_GlyphSlot slot    = ft_face->glyph;
-            unsigned int     width   = slot->bitmap.width;
-            unsigned int     height  = slot->bitmap.rows;
+            ft::FT_GlyphSlot slot     = ft_face->glyph;
+            unsigned int     width    = slot->bitmap.width;
+            unsigned int     height   = slot->bitmap.rows;
             unsigned int     maxHeight = ft_face->ascender >> 6;
-            int              offsetX = slot->bitmap_left;
-            unsigned int     offsetY = slot->bitmap_top;
+            int              offsetX  = slot->bitmap_left;
+            unsigned int     offsetY  = slot->bitmap_top;
             int              bearingY = slot->metrics.horiBearingY;
 
             float yOff = (float)height - (float)bearingY * (1.0f/64.0f);
-            float outX1 = (pos.x + offsetX) / windowSize.x / 2.0f;
-            
-            float outY1 = (pos.y + maxHeight - offsetY - height + yOff) / windowSize.y / 2.0f;
-            float outX2 = (pos.x + offsetX + width) / windowSize.x / 2.0f;
-            float outY2 = (pos.y + maxHeight + yOff) / windowSize.y / 2.0f;
+
+            int xBorder = ((float)width  * 0.1f * (float)width / (float)height) / 2;
+            int yBorder = ((float)height * 0.1f) / 2;
+
+            float outX1 = (pos.x + offsetX - xBorder) / windowSize.x / 2.0f;
+            float outY1 = (pos.y + maxHeight - offsetY - height + yOff - yBorder) / windowSize.y / 2.0f;
+            float outX2 = (pos.x + offsetX + width + xBorder) / windowSize.x / 2.0f;
+            float outY2 = (pos.y + maxHeight + yOff + yBorder) / windowSize.y / 2.0f;
 
             updateRect(
                 ref.rects[rectIdx],

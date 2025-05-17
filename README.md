@@ -141,3 +141,4 @@ index.xml
 * fix transparency ordering
 * add transform absolute handing
 * add model to graphics
+* add text value updating
