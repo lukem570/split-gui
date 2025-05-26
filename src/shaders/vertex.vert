@@ -9,7 +9,7 @@
 #define MAX_SCENES 1024
 
 layout(location = 0) in vec3 in_inPosition;
-layout(location = 1) in vec3 in_inColor;
+layout(location = 1) in vec4 in_inColor;
 layout(location = 2) in vec2 in_textureCord;
 layout(location = 3) in uvec2 in_flags;
 layout(location = 4) in uvec2 in_index;

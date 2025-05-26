@@ -65,7 +65,7 @@ namespace SplitGui {
 
         attributeDescriptions[SceneVertexLayout::eVertexColor].binding        = 0;
         attributeDescriptions[SceneVertexLayout::eVertexColor].location       = SceneVertexLayout::eVertexColor;
-        attributeDescriptions[SceneVertexLayout::eVertexColor].format         = vk::Format::eR32G32B32Sfloat;
+        attributeDescriptions[SceneVertexLayout::eVertexColor].format         = vk::Format::eR32G32B32A32Sfloat;
         attributeDescriptions[SceneVertexLayout::eVertexColor].offset         = offsetof(SceneVertexBufferObject, SceneVertexBufferObject::vertex.color);
 
         attributeDescriptions[SceneVertexLayout::eVertexTextureCord].binding  = 0;

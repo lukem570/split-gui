@@ -340,7 +340,7 @@ namespace SplitGui {
         scenes[ref.sceneNumber].sceneData.cameraPosition = position;
     }
 
-    Result VulkanInterface::updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color) {
+    Result VulkanInterface::updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity) {
         SPLITGUI_PROFILE;
 
         LinkList<vk::BufferCopy> bufferCopies;
@@ -352,6 +352,7 @@ namespace SplitGui {
             while (element != tBlock.verticesEnd->next) {
 
                 element->data.vertex.color = color;
+                element->data.vertex.opacity = opacity;
                 
                 element = element->next;
             }

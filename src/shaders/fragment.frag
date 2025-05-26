@@ -7,7 +7,7 @@
 #define WORLD_VIEW_BIT  0x10
 
 
-layout(location = 0)      in vec3 in_fragColor;
+layout(location = 0)      in vec4 in_fragColor;
 layout(location = 1) flat in uint in_flags;
 layout(location = 2)      in vec2 in_textureCord;
 layout(location = 3) flat in uint in_index;
@@ -43,14 +43,14 @@ void main() {
         float w = fwidth(sd);
         float opacity = smoothstep(0.5 - w, 0.5 + w, sd);
 
-        outColor = mix(vec4(in_fragColor, 0.0), vec4(in_fragColor, 1.0), opacity);
+        outColor = mix(vec4(in_fragColor.rgb, 0.0), vec4(in_fragColor.rgb, 1.0), opacity);
 
     } else if (useScene) {
 
         outColor = texture(scenes, vec3(in_textureCord, in_index));
 
     } else {
-        outColor = vec4(in_fragColor, 1.0);
+        outColor = in_fragColor;
     }
     
     if (outColor.a == 0) {

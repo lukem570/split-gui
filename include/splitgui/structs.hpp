@@ -341,6 +341,7 @@ namespace SplitGui {
     struct Vertex {
         Vec3 pos;
         Vec3 color; // TODO: make material object
+        float opacity = 1.0f;
         Vec2 textureCord;
     };
 

@@ -9,7 +9,7 @@
 const float gridCellSize = 0.25;
 const float gridFalloffRadius = 15;
 
-layout(location = 0)      in vec3 in_fragColor;
+layout(location = 0)      in vec4 in_fragColor;
 layout(location = 1) flat in uint in_flags;
 layout(location = 2) flat in uint in_textureNumber;
 layout(location = 3)      in vec2 in_textureCord;
@@ -46,7 +46,7 @@ void main() {
         float w = fwidth(sd);
         float opacity = smoothstep(0.5 - w, 0.5 + w, sd);
 
-        outColor = mix(vec4(in_fragColor, 0.0), vec4(in_fragColor, 1.0), opacity);
+        outColor = mix(vec4(in_fragColor.rgb, 0.0), vec4(in_fragColor.rgb, 1.0), opacity);
 
     } else if (!worldView) {
         vec3 normal = normalize(in_fragNorm);
@@ -59,7 +59,7 @@ void main() {
 
         float diffuse = max(dot(normal, lightDir), 0.4);
 
-        outColor = vec4(diffuse * in_fragColor, 1.0);
+        outColor = vec4(diffuse * in_fragColor.rgb, in_fragColor.a);
     } else {
 
         vec2 pos = in_fragPos.xz;
@@ -83,7 +83,7 @@ void main() {
 
         float falloff = max(0.0, -1.0 / (gridFalloffRadius * gridFalloffRadius) * (height.x * height.x + height.y * height.y) + 1.0);
 
-        outColor = vec4(in_fragColor, Lod0 * falloff);
+        outColor = vec4(in_fragColor.rgb, Lod0 * falloff * in_fragColor.a);
     }
     
     if (outColor.a == 0) {
