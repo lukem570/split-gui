@@ -8,8 +8,9 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         int maxSize = isVertical ? extent.height : extent.width;
-        int pos     = isVertical ? extent.y : extent.x;
-        int size    = maxSize / children.size();
+        int pos   = isVertical ? extent.y : extent.x;
+        int jump  = maxSize / children.size();
+        int width = (maxSize - (children.size() - 1) * padding) / children.size();
 
         std::vector<RectObj> extents;
         extents.resize(children.size());
@@ -18,21 +19,21 @@ namespace SplitGui {
             
             if (isVertical) {
 
-                extents[i].height = size - (i == 0 ? 0 : padding);
                 extents[i].width  = extent.width;
                 extents[i].x      = extent.x;
-                extents[i].y      = pos + (i == 0 ? 0 : padding);
+                extents[i].height = width;
+                extents[i].y      = pos;
                 
             } else {
 
                 extents[i].height = extent.height;
-                extents[i].width  = size - (i == 0 ? 0 : padding);
                 extents[i].y      = extent.y;
-                extents[i].x      = pos + (i == 0 ? 0 : padding);
-                
+                extents[i].width  = width;
+                extents[i].x      = pos;
+
             }
 
-            pos += size;
+            pos += jump;
         }
         
         if (isVertical) {
@@ -53,8 +54,9 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         int maxSize = isVertical ? extent.height : extent.width;
-        int pos     = isVertical ? extent.y : extent.x;
-        int size    = maxSize / children.size();
+        int pos   = isVertical ? extent.y : extent.x;
+        int jump  = maxSize / children.size();
+        int width = (maxSize - (children.size() - 1) * padding) / children.size();
 
         std::vector<RectObj> extents;
         extents.resize(children.size());
@@ -63,21 +65,21 @@ namespace SplitGui {
             
             if (isVertical) {
 
-                extents[i].height = size - (i == 0 ? 0 : padding);
                 extents[i].width  = extent.width;
                 extents[i].x      = extent.x;
-                extents[i].y      = pos + (i == 0 ? 0 : padding);
+                extents[i].height = width;
+                extents[i].y      = pos;
                 
             } else {
 
                 extents[i].height = extent.height;
-                extents[i].width  = size - (i == 0 ? 0 : padding);
                 extents[i].y      = extent.y;
-                extents[i].x      = pos + (i == 0 ? 0 : padding);
+                extents[i].width  = width;
+                extents[i].x      = pos;
 
             }
 
-            pos += size;
+            pos += jump;
         }
         
         if (isVertical) {

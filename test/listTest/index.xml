@@ -1,9 +1,13 @@
 <meta version="0.1.0"/>
 
-<list direction="horizontal" padding="5"> 
-    <rect color="ivec3(255u, 100u, 100u)"/>
-    <rect color="ivec3(100u, 255u, 100u)"/>
-    <rect color="ivec3(100u, 100u, 255u)"/>
-</list>
+<transform origin="relative" position="ivec2(50% - 2px, 50%)" scale="ivec2(100px, 50px)">
+
+    <list depth="10" direction="horizontal" padding="10"> 
+        <rect color="ivec3(255u, 100u, 100u)"/>
+        <rect color="ivec3(100u, 255u, 100u)"/>
+        <rect color="ivec3(100u, 100u, 255u)"/>
+    </list>
+
+</transform>
 
  
