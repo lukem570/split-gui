@@ -130,6 +130,8 @@ namespace SplitGui {
         if (expressionTree) {
             cleanup(expressionTree);
         }
+
+        index = 0;
     }
 
     ResultValue<UnitExpression*> UnitExpressionEvaluator::parse(std::string expression) {
