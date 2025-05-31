@@ -319,10 +319,11 @@ namespace SplitGui {
             T* array();
             T* sliceArray(LinkElement<T>* start, LinkElement<T>* end);
         
-        private:
-            unsigned int listSize = 0;
             LinkElement<T>* first = nullptr;
             LinkElement<T>* last = nullptr;
+            
+        private:
+            unsigned int listSize = 0;
             T* arrayPtr = nullptr;
     };
 

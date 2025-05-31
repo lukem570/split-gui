@@ -73,6 +73,24 @@ namespace SplitGui {
     void VulkanInterface::deleteRect(RectRef& ref) {
         SPLITGUI_PROFILE;
 
+        std::optional<unsigned int> offset = vertices.offset(ref.verticesStart);
+
+        if (offset == std::nullopt) {
+            Logger::warn("Rect to delete does not exist"); // convert to result maybe?
+            return;
+        }
+
+        LinkElement<uint16_t>* current = indices.first;
+
+        while (current != indices.last->next) {
+            
+            if (offset.value() < current->data) {
+                current->data -= 4;
+            }
+
+            current = current->next;
+        }
+
         vertices.erase(ref.verticesStart, ref.verticesEnd);
         indices.erase(ref.indicesStart, ref.indicesEnd);
     }
