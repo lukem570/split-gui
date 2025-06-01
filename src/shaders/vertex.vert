@@ -17,13 +17,13 @@ layout(location = 4) in uvec2 in_index;
 uint flags = uint(in_flags.x);
 uint index = uint(in_index.x);
 
-layout(location = 0) out vec3 out_fragColor;
+layout(location = 0) out vec4 out_fragColor;
 layout(location = 1) out uint out_flags;
 layout(location = 2) out vec2 out_textureCord;
 layout(location = 3) out uint out_index;
 
 void main() {
-    out_fragColor     = in_inColor.rgb;
+    out_fragColor     = in_inColor;
     out_flags         = flags;
     out_textureCord   = in_textureCord;
     out_index         = index;

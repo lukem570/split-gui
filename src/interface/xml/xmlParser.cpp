@@ -12,6 +12,7 @@
 #include "scene.cpp"
 #include "setup.cpp"
 #include "split.cpp"
+#include "switch.cpp"
 #include "text.cpp"
 #include "tokens.cpp"
 #include "transform.cpp"

@@ -12,6 +12,7 @@ namespace SplitGui {
         map["split"]     = &SplitGui::XmlParser::handleSplitTag;
         map["text"]      = &SplitGui::XmlParser::handleTextTag;
         map["transform"] = &SplitGui::XmlParser::handleTransformTag;
+        map["switch"]    = &SplitGui::XmlParser::handleSwitchTag;
     }
 
     XmlParser::XmlParser() {

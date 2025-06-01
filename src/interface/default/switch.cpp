@@ -14,15 +14,16 @@ namespace SplitGui {
         if (children.empty()) {
             return Result::eSuccess;
         }
-
-        children[active]->setExtent(extent);
+        
         children[active]->setHidden(false);
-        TRYR(updateRes, children[active]->update());
-
+        
         for (unsigned int i = 0; i < children.size(); i++) {
             if (i != active) {
                 TRYR(hiddenRes, children[i]->setHidden(true));
             }
+
+            children[i]->setExtent(extent);
+            TRYR(updateRes, children[i]->update());
         }
 
         return Result::eSuccess;
@@ -38,18 +39,19 @@ namespace SplitGui {
         if (children.empty()) {
             return Result::eSuccess;
         }
-
-        children[active]->setGraphics(pGraphics);
-        children[active]->setExtent(extent);
+        
         children[active]->setHidden(false);
-        TRYR(instRes, children[active]->instance());
-
+        
         for (unsigned int i = 0; i < children.size(); i++) {
             if (i != active) {
                 TRYR(hiddenRes, children[i]->setHidden(true));
             }
-        }
 
+            children[i]->setExtent(extent);
+            children[i]->setGraphics(pGraphics);
+            TRYR(instRes, children[i]->instance());
+        }
+        
         Logger::info("Instanced Switch");
 
         return Result::eSuccess;

@@ -29,5 +29,8 @@ vector:
 list:
 	python tools/testTools/test.py build/tests/listTest
 
+switch:
+	python tools/testTools/test.py build/tests/switchTest
+
 test-all:
 	python tools/testTools/test.py

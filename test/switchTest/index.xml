@@ -1,0 +1,19 @@
+<meta version="0.1.0"/>
+
+<switch ref="switch" active="0"> 
+    <list direction="horizontal">
+        <rect depth="10" color="ivec3(255u, 100u, 100u)"/>
+        <box> </box>
+        <box> </box>
+    </list>
+    <list direction="horizontal">
+        <box> </box>
+        <rect depth="20" color="ivec3(100u, 255u, 100u)"/>
+        <box> </box>
+    </list>
+    <list direction="horizontal">
+        <box> </box>
+        <box> </box>
+        <rect depth="30" color="ivec3(100u, 100u, 255u)"/>
+    </list>
+</switch>

@@ -9,6 +9,10 @@ namespace SplitGui {
     Result Default::Rect::update() {
         SPLITGUI_PROFILE;
 
+        if (hidden) {
+            return Result::eSuccess;
+        }
+
         IVec2 x1;
         x1.x = extent.x;
         x1.y = extent.y;
@@ -16,17 +20,20 @@ namespace SplitGui {
         IVec2 x2;
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
-
-        if (!hidden) {
-
-            pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
-        }
+        
+        
+        pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
+    
 
         return Result::eSuccess;
     }
 
     Result Default::Rect::instance() {
         SPLITGUI_PROFILE;
+
+        if (hidden) {
+            return Result::eSuccess;
+        }
 
         if (maxChildren != children.size()) {
             return Result::eInvalidNumberOfChildren;
@@ -42,10 +49,9 @@ namespace SplitGui {
 
         Logger::info("Instanced Rect");
 
-        if (!hidden) {
-
-            graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
-        }
+        graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
+        
+        rectExists = true;
 
         return Result::eSuccess;
     }
@@ -63,15 +69,21 @@ namespace SplitGui {
     }
 
     void Default::Rect::cleanup() {
-        pGraphics->deleteRect(graphicsRectRef);
+        if (rectExists) {
+            pGraphics->deleteRect(graphicsRectRef);
+            rectExists = false;
+        }
     }
 
     Result Default::Rect::setHidden(bool isHidden) {
         
-        if (hidden != isHidden && !hidden) {
+        if (hidden != isHidden && isHidden) {
 
-            pGraphics->deleteRect(graphicsRectRef);
-        } else if (hidden != isHidden && hidden) {
+            if (rectExists) {
+                pGraphics->deleteRect(graphicsRectRef);
+                rectExists = false;
+            }
+        } else if (hidden != isHidden && !isHidden) {
 
             IVec2 x1;
             x1.x = extent.x;
@@ -82,6 +94,8 @@ namespace SplitGui {
             x2.y = extent.y + extent.height;
 
             graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
+
+            rectExists = true;
         }
 
         hidden = isHidden;

@@ -51,6 +51,8 @@ namespace SplitGui {
 
         Logger::info("Created Rect: " + std::to_string(vertices.size()));
 
+        markVerticesForUpdate = true;
+
         return refRet;
     }
 

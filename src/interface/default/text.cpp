@@ -62,6 +62,8 @@ namespace SplitGui {
 
         textRef = textRes.value;
 
+        textExists = true;
+
         Logger::info("Instanced Text");
 
         return Result::eSuccess;
@@ -69,16 +71,21 @@ namespace SplitGui {
 
     Result Default::Text::setHidden(bool isHidden) {
         
-        if (hidden != isHidden && !hidden) {
+        if (hidden != isHidden && isHidden) {
 
-            pGraphics->deleteText(textRef);
-        } else if (hidden != isHidden && hidden) {
+            if (textExists) {
+                pGraphics->deleteText(textRef);
+                textExists = false;
+            }
+        } else if (hidden != isHidden && !isHidden) {
 
             SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
 
             TRYD(textRes);
 
             textRef = textRes.value;
+
+            textExists = true;
         }
 
         hidden = isHidden;
@@ -87,7 +94,10 @@ namespace SplitGui {
     }
 
     void Default::Text::cleanup() {
-        pGraphics->deleteText(textRef);
+        if (textExists) {
+            pGraphics->deleteText(textRef);
+            textExists = false;
+        }
     }
 
     void Default::Text::setSize(unsigned int size) {

@@ -236,6 +236,7 @@ namespace SplitGui {
                 
                 // state
                 RectRef                        graphicsRectRef;
+                bool                           rectExists = false;
         };
 
         class SPLITGUI_EXPORT SceneElement : public InterfaceElement {
@@ -287,6 +288,7 @@ namespace SplitGui {
 
                 // state
                 TextRef                        textRef;
+                bool                           textExists = false;
         };
 
         class SPLITGUI_EXPORT Binding : public InterfaceElement {
