@@ -59,6 +59,12 @@ namespace SplitGui {
         children.push_back(child);
     }
 
+    void InterfaceElement::clearChildren() {
+        SPLITGUI_PROFILE;
+
+        children.clear();
+    }
+
     void InterfaceElement::setSize(IVec2 size) {
         SPLITGUI_PROFILE;
 

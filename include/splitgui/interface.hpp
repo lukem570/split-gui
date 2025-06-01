@@ -83,6 +83,7 @@ namespace SplitGui {
               virtual void   cleanup();
 
             void addChild(InterfaceElement* pChild);
+            void clearChildren();
             void setSize(IVec2 size);
             void setPosition(IVec2 position);
             void setExtent(RectObj extent);
