@@ -114,6 +114,17 @@ namespace SplitGui {
         children.clear();
     }
 
+    Result InterfaceElement::setHidden(bool isHidden) {
+        hidden = isHidden;
+
+        for (unsigned int i = 0; i < children.size(); i++) {
+
+            TRYR(hiddenRes, children[i]->setHidden(isHidden));
+        }
+
+        return Result::eSuccess;
+    }
+
     std::vector<InterfaceElement*> InterfaceElement::searchByReference(std::string reference) {
         SPLITGUI_PROFILE;
 

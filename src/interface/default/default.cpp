@@ -7,5 +7,6 @@
 #include "rect.cpp"
 #include "scene.cpp"
 #include "split.cpp"
+#include "switch.cpp"
 #include "text.cpp"
 #include "transform.cpp"

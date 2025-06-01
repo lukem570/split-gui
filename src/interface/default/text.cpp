@@ -42,11 +42,19 @@ namespace SplitGui {
     Result Default::Text::update() {
         SPLITGUI_PROFILE;
 
+        if (hidden) {
+            return Result::eSuccess;
+        }
+
         return pGraphics->updateText(textRef, {extent.x, extent.y}, color, fontSize, depth);
     }
 
     Result Default::Text::instance() {
         SPLITGUI_PROFILE;
+
+        if (hidden) {
+            return Result::eSuccess;
+        }
 
         SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
 
@@ -55,6 +63,25 @@ namespace SplitGui {
         textRef = textRes.value;
 
         Logger::info("Instanced Text");
+
+        return Result::eSuccess;
+    }
+
+    Result Default::Text::setHidden(bool isHidden) {
+        
+        if (hidden != isHidden && !hidden) {
+
+            pGraphics->deleteText(textRef);
+        } else if (hidden != isHidden && hidden) {
+
+            SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
+
+            TRYD(textRes);
+
+            textRef = textRes.value;
+        }
+
+        hidden = isHidden;
 
         return Result::eSuccess;
     }

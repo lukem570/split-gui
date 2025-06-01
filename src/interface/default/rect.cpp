@@ -17,7 +17,10 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
-        pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
+        if (!hidden) {
+
+            pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
+        }
 
         return Result::eSuccess;
     }
@@ -39,7 +42,10 @@ namespace SplitGui {
 
         Logger::info("Instanced Rect");
 
-        graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
+        if (!hidden) {
+
+            graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
+        }
 
         return Result::eSuccess;
     }
@@ -58,6 +64,29 @@ namespace SplitGui {
 
     void Default::Rect::cleanup() {
         pGraphics->deleteRect(graphicsRectRef);
+    }
+
+    Result Default::Rect::setHidden(bool isHidden) {
+        
+        if (hidden != isHidden && !hidden) {
+
+            pGraphics->deleteRect(graphicsRectRef);
+        } else if (hidden != isHidden && hidden) {
+
+            IVec2 x1;
+            x1.x = extent.x;
+            x1.y = extent.y;
+
+            IVec2 x2;
+            x2.x = extent.x + extent.width;
+            x2.y = extent.y + extent.height;
+
+            graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
+        }
+
+        hidden = isHidden;
+
+        return Result::eSuccess;
     }
 
     Result Default::Rect::setColor(std::string colorIn) {

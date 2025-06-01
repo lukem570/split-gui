@@ -39,6 +39,7 @@ namespace SplitGui {
         eBinding,
         eMeta,
         eRoot,
+        eSwitch,
         eCustom = 0xFF,
     };
 
@@ -81,6 +82,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result update();
 [[nodiscard]] virtual Result submit();
               virtual void   cleanup();
+[[nodiscard]] virtual Result setHidden(bool isHidden);
 
             void addChild(InterfaceElement* pChild);
             void clearChildren();
@@ -103,6 +105,7 @@ namespace SplitGui {
             RectObj                        extent;
             std::string                    ref         = "";
             int                            depth       = 0;
+            bool                           hidden      = false;
             
 
             Graphics*                      pGraphics   = nullptr;
@@ -213,6 +216,8 @@ namespace SplitGui {
   [[nodiscard]] Result submit()   override;
                 void   cleanup()  override;
 
+  [[nodiscard]] Result setHidden(bool) override;
+
                 void   setColor(HexColor);
   [[nodiscard]] Result setColor(std::string);
                 void   setFlags(VertexFlags flags);
@@ -260,6 +265,8 @@ namespace SplitGui {
   [[nodiscard]] Result instance() override;
   [[nodiscard]] Result update()   override;
                 void   cleanup()  override;
+
+  [[nodiscard]] Result setHidden(bool) override;
 
                 void   setText(std::string value);
                 void   setColor(HexColor);
@@ -325,7 +332,7 @@ namespace SplitGui {
             public:
                       ~BindPoint() override;
 
-  [[nodiscard]] Result instance()  override;
+  [[nodiscard]] Result instance() override;
   [[nodiscard]] Result update()   override;
 
                 void   setBindPoint(InterfaceElement*);
@@ -338,9 +345,28 @@ namespace SplitGui {
                 std::string                    name        = "meta";
                 const static unsigned int      maxChildren = 0;
 
-            private: 
+            private: // props
                 InterfaceElement*              root = nullptr;
                 bool                           owner = false;
+        };
+
+        class SPLITGUI_EXPORT Switch : public InterfaceElement {
+            public:
+                      ~Switch()   override = default;
+
+  [[nodiscard]] Result instance() override;
+  [[nodiscard]] Result update()   override;
+
+                void   setActive(unsigned int idx);
+                void   popBack();
+
+            protected:
+                InterfaceElementType           type        = InterfaceElementType::eSwitch;
+                std::string                    name        = "switch";
+                const static unsigned int      maxChildren = 0;
+
+            private: // props
+                unsigned int                   active = 0;
         };
     }
 
