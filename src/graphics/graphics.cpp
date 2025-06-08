@@ -133,7 +133,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<TextRef> Graphics::drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth) {
+    ResultValue<TextRef> Graphics::drawText(IVec2 x1, std::string text, HexColor color, float fontSize, int depth) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -145,7 +145,7 @@ namespace SplitGui {
         return pInterface->drawText(newX1, text, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
     }
 
-    Result Graphics::updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth) {
+    Result Graphics::updateText(TextRef& ref, IVec2 x1, HexColor color, float fontSize, int depth) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -256,5 +256,18 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         return pInterface->createContourImage(contours);
+    }
+
+    ResultValue<IVec2> Graphics::getTextSize(const std::string& text, float fontSize) {
+
+        ResultValue<Vec2> normSize = pInterface->getTextSize(text, fontSize);
+        TRYD(normSize);
+
+        IVec2 windowSize = pWindow->getSize();
+        IVec2 size;
+        size.x = (normSize.value.x + 1.0f) / 2.0f * windowSize.x;
+        size.y = (normSize.value.y + 1.0f) / 2.0f * windowSize.y;
+
+        return size;
     }
 }

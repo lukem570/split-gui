@@ -37,6 +37,7 @@ namespace SplitGui {
         eFailedToUseFont,
         eFailedToLoadFont,
         eFailedToLoadGlyph,
+        eFailedToSetFontSize,
         eFailedToWaitForFences,
         eFailedToResetFences, 
         eFailedToGetNextSwapchainImage,

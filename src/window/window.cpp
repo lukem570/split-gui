@@ -142,6 +142,12 @@ namespace SplitGui {
         return windowLib->getMouseState(code);
     }
 
+    Vec2 Window::getMonitorContextScale() {
+        SPLITGUI_PROFILE;
+
+        return windowLib->getMonitorContextScale();
+    }
+
 #ifdef SPLIT_GUI_USE_VULKAN
 
     ResultValue<vk::SurfaceKHR> Window::createSurface(vk::Instance instance) {

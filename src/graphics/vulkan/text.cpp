@@ -25,88 +25,72 @@ namespace SplitGui {
         }
     }
 
-    Result VulkanInterface::updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth) {
-        SPLITGUI_PROFILE;
+    ResultValue<Vec2> VulkanInterface::getTextSize(const std::string& text, float fontSize) {
 
         IVec2 windowSize = pWindow->getSize();
 
-        Vec2 pos = {0.0f, 0.0f};
-        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, 1000, 500);
+        float emScale = fontSize / (float)ft_face->units_per_EM;
+        float lineHeight = ft_face->size->metrics.height * emScale;
+        
+        if (lineHeight == 0) {
+            lineHeight = fontSize * 1.2f;
+        }
 
-        pos.y += ft_face->ascender >> 3;
+        Vec2 pos = {0.0f, ft_face->ascender * emScale };
+        Vec2 size = {0.0f, 0.0f};
 
-        int rectIdx = 0;
+        for (unsigned int i = 0; i < text.size(); i++) {
 
-        for (unsigned int i = 0; i < ref.text.size(); i++) {
-
-            if (ref.text[i] == '\n') {
-                pos.y += ft_face->ascender >> 3;
+            if (text[i] == '\n') {
+                pos.y += lineHeight;
                 pos.x = 0;
                 continue;
             }
-
-            if (std::isspace(ref.text[i])) {
-                pos.x += fontSize * 2;
-                continue;
-            }
-
-            int glyphId = ft::FT_Get_Char_Index(ft_face, ref.text[i]);
-
+            
+            int glyphId = ft::FT_Get_Char_Index(ft_face, text[i]);
+            
             ft::FT_Error loadCharError = ft::FT_Load_Glyph(ft_face, glyphId, 0);
-
+            
             if (loadCharError) {
                 return Result::eFailedToLoadGlyph;
             }
 
-            ft::FT_GlyphSlot slot     = ft_face->glyph;
-            unsigned int     width    = slot->bitmap.width;
-            unsigned int     height   = slot->bitmap.rows;
-            unsigned int     maxHeight = ft_face->ascender >> 6;
-            int              offsetX  = slot->bitmap_left;
-            unsigned int     offsetY  = slot->bitmap_top;
-            int              bearingY = slot->metrics.horiBearingY;
+            ft::FT_GlyphSlot slot = ft_face->glyph;
 
-            float yOff = (float)height - (float)bearingY * (1.0f/64.0f);
+            if (std::isspace(text[i])) {
+                
+                pos.x += slot->advance.x * emScale;
+                continue;
+            }
 
-            int xBorder = ((float)width  * 0.1f * (float)width / (float)height) / 2;
-            int yBorder = ((float)height * 0.1f) / 2;
+            float width  = slot->metrics.width * emScale;
+            float height = slot->metrics.height * emScale;
+            
+            float xBorder = ((float)width  * 0.1f * (float)width / (float)height) / 2.0f;
+            float yBorder = ((float)height * 0.1f) / 2.0f;
+            
+            float bearingY = slot->metrics.horiBearingY * emScale;
+            
+            float outX2 = (pos.x + slot->bitmap_left * emScale + width + xBorder) / windowSize.x * 2.0f;
+            float outY2 = (pos.y - bearingY + height + yBorder) / windowSize.y * 2.0f;
+            
+            if (outX2 > size.x) {
+                size.x = outX2;
+            }
 
-            float outX1 = (pos.x + offsetX - xBorder) / windowSize.x / 2.0f;
-            float outY1 = (pos.y + maxHeight - offsetY - height + yOff - yBorder) / windowSize.y / 2.0f;
-            float outX2 = (pos.x + offsetX + width + xBorder) / windowSize.x / 2.0f;
-            float outY2 = (pos.y + maxHeight + yOff + yBorder) / windowSize.y / 2.0f;
+            if (outY2 > size.y) {
+                size.y = outY2;
+            }
 
-            updateRect(
-                ref.rects[rectIdx],
-                x1 + Vec2{outX1, outY1},
-                x1 + Vec2{outX2, outY2},
-                color,
-                depth
-            );
-
-            pos.x += slot->advance.x >> 6;
-
-            rectIdx++;
+            pos.x += slot->advance.x * emScale;
         }
 
-        return Result::eSuccess;
+        Logger::debug("size: " + std::to_string(size.x) + ", " + std::to_string(size.y));
+
+        return size + Vec2{-1, -1};
     }
 
-    ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth) {
-        SPLITGUI_PROFILE;
-
-        if (!ft_fontInUse) {
-            return Result::eFailedToUseFont;
-        }
-
-        TextRef ret;
-        ret.text = text;
-
-        IVec2 windowSize = pWindow->getSize();
-
-        Vec2 pos = {0.0f, 0.0f};
-        ft::FT_Set_Char_Size(ft_face, 0, fontSize * 64, 1000, 500);
-
+    Result VulkanInterface::prepareTextForRendering(std::string text) {
         double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
@@ -248,47 +232,138 @@ namespace SplitGui {
             cleanupStagingBuffer(stagingBuffers[i]);
         }
 
-        pos.y += ft_face->ascender >> 3;
+        return Result::eSuccess;
+    }
 
-        for (unsigned int i = 0; i < text.size(); i++) {
+    Result VulkanInterface::updateText(TextRef& ref, Vec2 x1, Vec3 color, float fontSize, float depth) {
+        SPLITGUI_PROFILE;
 
-            if (text[i] == '\n') {
-                pos.y += ft_face->ascender >> 3;
+        IVec2 windowSize = pWindow->getSize();
+
+        float emScale = fontSize / (float)ft_face->units_per_EM;
+        float lineHeight = ft_face->size->metrics.height * emScale;
+        
+        if (lineHeight == 0) {
+            lineHeight = fontSize * 1.2f;
+        }
+
+        Vec2 pos = {0.0f, ft_face->ascender * emScale };
+
+        int rectIdx = 0;
+
+        for (unsigned int i = 0; i < ref.text.size(); i++) {
+
+            if (ref.text[i] == '\n') {
+                pos.y += lineHeight;
                 pos.x = 0;
                 continue;
             }
-
-            if (std::isspace(text[i])) {
-                pos.x += fontSize * 2;
-                continue;
-            }
-
-            int glyphId = ft::FT_Get_Char_Index(ft_face, text[i]);
-
+            
+            int glyphId = ft::FT_Get_Char_Index(ft_face, ref.text[i]);
+            
             ft::FT_Error loadCharError = ft::FT_Load_Glyph(ft_face, glyphId, 0);
-
+            
             if (loadCharError) {
                 return Result::eFailedToLoadGlyph;
             }
 
-            ft::FT_GlyphSlot slot     = ft_face->glyph;
-            unsigned int     width    = slot->bitmap.width;
-            unsigned int     height   = slot->bitmap.rows;
-            unsigned int     maxHeight = ft_face->ascender >> 6;
-            int              offsetX  = slot->bitmap_left;
-            unsigned int     offsetY  = slot->bitmap_top;
-            int              bearingY = slot->metrics.horiBearingY;
+            ft::FT_GlyphSlot slot = ft_face->glyph;
 
-            float yOff = (float)height - (float)bearingY * (1.0f/64.0f);
+            if (std::isspace(ref.text[i])) {
+                
+                pos.x += slot->advance.x * emScale;
+                continue;
+            }
 
-            int xBorder = ((float)width  * 0.1f * (float)width / (float)height) / 2;
-            int yBorder = ((float)height * 0.1f) / 2;
+            float width  = slot->metrics.width * emScale;
+            float height = slot->metrics.height * emScale;
+            
+            float xBorder = ((float)width  * 0.1f * (float)width / (float)height) / 2.0f;
+            float yBorder = ((float)height * 0.1f) / 2.0f;
 
-            float outX1 = (pos.x + offsetX - xBorder) / windowSize.x / 2.0f;
-            float outY1 = (pos.y + maxHeight - offsetY - height + yOff - yBorder) / windowSize.y / 2.0f;
-            float outX2 = (pos.x + offsetX + width + xBorder) / windowSize.x / 2.0f;
-            float outY2 = (pos.y + maxHeight + yOff + yBorder) / windowSize.y / 2.0f;
+            float bearingY = slot->metrics.horiBearingY * emScale;
+            
+            float outX1 = (pos.x + slot->bitmap_left * emScale - xBorder) / windowSize.x * 2.0f;
+            float outY1 = (pos.y - bearingY - yBorder) / windowSize.y * 2.0f;
+            float outX2 = (pos.x + slot->bitmap_left * emScale + width + xBorder) / windowSize.x * 2.0f;
+            float outY2 = (pos.y - bearingY + height + yBorder) / windowSize.y * 2.0f;
 
+            updateRect(
+                ref.rects[rectIdx],
+                x1 + Vec2{outX1, outY1},
+                x1 + Vec2{outX2, outY2},
+                color,
+                depth
+            );
+
+            pos.x += slot->advance.x * emScale;
+
+            rectIdx++;
+        }
+
+        return Result::eSuccess;
+    }
+
+    ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, float fontSize, float depth) {
+        SPLITGUI_PROFILE;
+
+        if (!ft_fontInUse) {
+            return Result::eFailedToUseFont;
+        }
+
+        TRYR(prepRes, prepareTextForRendering(text));
+
+        TextRef ret;
+        ret.text = text;
+
+        IVec2 windowSize = pWindow->getSize();
+
+        float emScale = fontSize / (float)ft_face->units_per_EM;
+        float lineHeight = ft_face->size->metrics.height * emScale;
+        
+        if (lineHeight == 0) {
+            lineHeight = fontSize * 1.2f;
+        }
+
+        Vec2 pos = {0.0f, ft_face->ascender * emScale };
+
+        for (unsigned int i = 0; i < text.size(); i++) {
+
+            if (text[i] == '\n') {
+                pos.y += lineHeight;
+                pos.x = 0;
+                continue;
+            }
+            
+            int glyphId = ft::FT_Get_Char_Index(ft_face, text[i]);
+            
+            ft::FT_Error loadCharError = ft::FT_Load_Glyph(ft_face, glyphId, 0);
+            
+            if (loadCharError) {
+                return Result::eFailedToLoadGlyph;
+            }
+
+            ft::FT_GlyphSlot slot = ft_face->glyph;
+
+            if (std::isspace(text[i])) {
+                
+                pos.x += slot->advance.x * emScale;
+                continue;
+            }
+
+            float width  = slot->metrics.width * emScale;
+            float height = slot->metrics.height * emScale;
+            
+            float xBorder = ((float)width  * 0.1f * (float)width / (float)height) / 2.0f;
+            float yBorder = ((float)height * 0.1f) / 2.0f;
+
+            float bearingY = slot->metrics.horiBearingY * emScale;
+            
+            float outX1 = (pos.x + slot->bitmap_left * emScale - xBorder) / windowSize.x * 2.0f;
+            float outY1 = (pos.y - bearingY - yBorder) / windowSize.y * 2.0f;
+            float outX2 = (pos.x + slot->bitmap_left * emScale + width + xBorder) / windowSize.x * 2.0f;
+            float outY2 = (pos.y - bearingY + height + yBorder) / windowSize.y * 2.0f;
+            
             ret.rects.push_back(drawRect(
                 x1 + Vec2{outX1, outY1}, 
                 x1 + Vec2{outX2, outY2}, 
@@ -298,7 +373,7 @@ namespace SplitGui {
                 text[i]
             ));
 
-            pos.x += slot->advance.x >> 6;
+            pos.x += slot->advance.x * emScale;
         }
 
         Logger::info("Drew Text");

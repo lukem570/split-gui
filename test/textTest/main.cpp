@@ -19,6 +19,8 @@ int main() {
 
     SplitGui::VulkanFlags vulkanFlags;
     vulkanFlags.enableValidationLayers = true;
+    vulkanFlags.clearColor = 0xFFFFFF;
+    vulkanFlags.mdsfTextureSize = 128;
 
     SplitGui::Graphics graphics;
     TRYRC(instanceRes, graphics.instanceVulkan(vulkanFlags));
@@ -26,25 +28,24 @@ int main() {
     TRYRC(fontRes, graphics.loadFont("fonts/roboto/Roboto-Regular.ttf"));
     graphics.attachEventHandler(eventHandler);
 
-    graphics.drawRect(
-        SplitGui::IVec2{0, 0}, 
-        window.getSize(),
-        0xFFFFFF,
-        1
-    );
+    std::string text = "Hello, world\nThis is a newline\nHi\nbearing test cpcpcp\njijj";
 
     TRYC(SplitGui::TextRef, textRes, graphics.drawText(
         SplitGui::IVec2{0, 0},
-        "Hello, world\nThis is a newline\nHi\nbearing test cpcpcp\njijj",
+        text,
         0x000000,
-        20
+        40.0
     ));
+
+    TRYC(SplitGui::IVec2, sizeRes, graphics.getTextSize(text, 40.0));
+
+    graphics.drawRect({0, 0}, sizeRes.value, 0xFF0000);
 
     TRYRC(submitRes, graphics.submitBuffers());
 
     while (!window.shouldClose()) {
         while (eventHandler.popEvent()) {
-            
+
         }  
 
         TRYRC(frameRes, graphics.drawFrame());

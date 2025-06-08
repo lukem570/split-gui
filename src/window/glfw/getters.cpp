@@ -43,6 +43,13 @@ namespace SplitGui {
         return window.handle->getAttribMaximized();
     }
 
+    Vec2 GlfwInterface::getMonitorContextScale() {
+        SPLITGUI_PROFILE;
+
+        auto [retX, retY] = window.handle->getContentScale();
+        return { retX, retY };
+    }
+
     MouseState GlfwInterface::getMouseState(MouseCode code) {
         SPLITGUI_PROFILE;
 

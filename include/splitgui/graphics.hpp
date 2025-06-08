@@ -30,6 +30,7 @@ namespace SplitGui {
               virtual void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         { throw; }
               virtual void                          deleteRect(RectRef& ref)                                                                                                           { throw; }
               virtual void                          deleteText(TextRef& ref)                                                                                                           { throw; }
+[[nodiscard]] virtual ResultValue<Vec2>             getTextSize(const std::string& text, float fontSize)                                                                               { throw; }
               virtual void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         { throw; }
 [[nodiscard]] virtual Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity = 1.0f)                               { throw; }
 [[nodiscard]] virtual Result                        submitRect(RectRef& ref)                                                                                                           { throw; }
@@ -44,8 +45,8 @@ namespace SplitGui {
               virtual void                          updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
               virtual void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
               virtual ModelRef                      createModel(SceneRef& ref, Mat4& model)                                                                                            { throw; }
-[[nodiscard]] virtual ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, int fontSize, float depth = 0.0f)                                                 { throw; }
-[[nodiscard]] virtual Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, int fontSize, float depth = 0.0f)                                                    { throw; }
+[[nodiscard]] virtual ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                               { throw; }
+[[nodiscard]] virtual Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                                                  { throw; }
 [[nodiscard]] virtual Result                        loadFont(const char* path)                                                                                                         { throw; }
 [[nodiscard]] virtual ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 { throw; }
 [[nodiscard]] virtual Result                        submitBuffers()                                                                                                                    { throw; }
@@ -71,6 +72,7 @@ namespace SplitGui {
               void                          updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth = 0);
               void                          deleteRect(RectRef& ref);
               void                          deleteText(TextRef& ref);
+              ResultValue<IVec2>            getTextSize(const std::string& text, float fontSize);
               void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef);
 [[nodiscard]] Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, HexColor color, unsigned int opacity);
 [[nodiscard]] Result                        submitRect(RectRef& ref);
@@ -85,8 +87,8 @@ namespace SplitGui {
               void                          updateSceneCameraView(SceneRef& ref, Mat4& view);
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
               ModelRef                      createModel(SceneRef& ref, Mat4& model);
-[[nodiscard]] ResultValue<TextRef>          drawText(IVec2 x1, std::string text, HexColor color, int fontSize, int depth = 0);
-[[nodiscard]] Result                        updateText(TextRef& ref, IVec2 x1, HexColor color, int fontSize, int depth = 0);
+[[nodiscard]] ResultValue<TextRef>          drawText(IVec2 x1, std::string text, HexColor color, float fontSize, int depth = 0);
+[[nodiscard]] Result                        updateText(TextRef& ref, IVec2 x1, HexColor color, float fontSize, int depth = 0);
 [[nodiscard]] Result                        loadFont(const char* path);
 [[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours);
 [[nodiscard]] Result                        submitBuffers();
