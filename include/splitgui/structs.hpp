@@ -52,6 +52,18 @@ namespace SplitGui {
         eError
     };
 
+    enum class HorizontalTextAlign {
+        eLeft,
+        eCenter,
+        eRight,
+    };
+
+    enum class VerticalTextAlign {
+        eTop,
+        eCenter,
+        eBottom,
+    };
+
     enum VertexFlagsBits {
         eNone        = 0x00,
         eUseTexture  = 0x01,

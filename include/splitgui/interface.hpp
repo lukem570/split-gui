@@ -273,6 +273,8 @@ namespace SplitGui {
                 void   setColor(HexColor);
   [[nodiscard]] Result setColor(std::string);
                 void   setSize(unsigned int size);
+                void   setHorizontalAnchor(HorizontalAnchor anchor);
+                void   setVerticalAnchor(VerticalAnchor anchor);
 
             protected:
                 InterfaceElementType           type        = InterfaceElementType::eText;
@@ -280,11 +282,12 @@ namespace SplitGui {
                 const static unsigned int      maxChildren = 1;
 
             private: // props
-                unsigned int                   fontSize = 12;
-                std::string                    font; // TODO:
+                unsigned int                   fontSize = 40;
                 std::string                    value;
                 UnitExpressionEvaluator        colorStatement;
                 HexColor                       color = 0;
+                HorizontalAnchor               horizontalAnchor = HorizontalAnchor::eLeft;
+                VerticalAnchor                 verticalAnchor = VerticalAnchor::eTop;
 
                 // state
                 TextRef                        textRef;

@@ -2,5 +2,5 @@
 
 <overlay>
     <rect depth="10" color="ivec3(100u, 255u, 100u)"/>
-    <text depth="0" color="ivec3(0u, 0u, 0u)" value="Hello, World"/>
+    <text depth="0" horizontalAnchor="center" verticalAnchor="center" color="ivec3(0u, 0u, 0u)" value="Hello, World"/>
 </overlay>

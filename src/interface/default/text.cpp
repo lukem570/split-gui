@@ -46,7 +46,58 @@ namespace SplitGui {
             return Result::eSuccess;
         }
 
-        return pGraphics->updateText(textRef, {extent.x, extent.y}, color, fontSize, depth);
+        ResultValue<IVec2> textSizeRes = pGraphics->getTextSize(value, fontSize);
+        TRYD(textSizeRes);
+
+        IVec2 origin;
+
+        switch (horizontalAnchor) {
+            case HorizontalAnchor::eLeft: {
+                
+                origin.x = extent.x;
+
+                break;
+            }
+            case HorizontalAnchor::eCenter: {
+
+                origin.x = extent.x + extent.width / 2;
+                origin.x -= textSizeRes.value.x / 2;
+
+                break;
+            }
+            case HorizontalAnchor::eRight: {
+
+                origin.x = extent.x + extent.width;
+                origin.x -= textSizeRes.value.x;
+
+                break;
+            }
+        }
+
+        switch (verticalAnchor) {
+            case VerticalAnchor::eTop: {
+
+                origin.y = extent.y;
+
+                break;
+            }
+            case VerticalAnchor::eCenter: {
+
+                origin.y = extent.y + extent.height / 2;
+                origin.y -= textSizeRes.value.y / 2;
+
+                break;
+            }
+            case VerticalAnchor::eBottom: {
+
+                origin.y = extent.y + extent.height;
+                origin.y -= textSizeRes.value.y;
+
+                break;
+            }
+        }
+
+        return pGraphics->updateText(textRef, origin, color, fontSize, depth);
     }
 
     Result Default::Text::instance() {
@@ -56,8 +107,58 @@ namespace SplitGui {
             return Result::eSuccess;
         }
 
-        SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
+        ResultValue<IVec2> textSizeRes = pGraphics->getTextSize(value, fontSize);
+        TRYD(textSizeRes);
 
+        IVec2 origin;
+
+        switch (horizontalAnchor) {
+            case HorizontalAnchor::eLeft: {
+                
+                origin.x = extent.x;
+
+                break;
+            }
+            case HorizontalAnchor::eCenter: {
+
+                origin.x = extent.x + extent.width / 2;
+                origin.x -= textSizeRes.value.x / 2;
+
+                break;
+            }
+            case HorizontalAnchor::eRight: {
+
+                origin.x = extent.x + extent.width;
+                origin.x -= textSizeRes.value.x;
+
+                break;
+            }
+        }
+
+        switch (verticalAnchor) {
+            case VerticalAnchor::eTop: {
+
+                origin.y = extent.y;
+
+                break;
+            }
+            case VerticalAnchor::eCenter: {
+
+                origin.y = extent.y + extent.height / 2;
+                origin.y -= textSizeRes.value.y / 2;
+
+                break;
+            }
+            case VerticalAnchor::eBottom: {
+
+                origin.y = extent.y + extent.height;
+                origin.y -= textSizeRes.value.y;
+
+                break;
+            }
+        }
+
+        ResultValue<TextRef> textRes = pGraphics->drawText(origin, value, color, fontSize, depth);
         TRYD(textRes);
 
         textRef = textRes.value;
@@ -70,6 +171,7 @@ namespace SplitGui {
     }
 
     Result Default::Text::setHidden(bool isHidden) {
+        SPLITGUI_PROFILE;
         
         if (hidden != isHidden && isHidden) {
 
@@ -94,6 +196,8 @@ namespace SplitGui {
     }
 
     void Default::Text::cleanup() {
+        SPLITGUI_PROFILE;
+
         if (textExists) {
             pGraphics->deleteText(textRef);
             textExists = false;
@@ -101,6 +205,20 @@ namespace SplitGui {
     }
 
     void Default::Text::setSize(unsigned int size) {
+        SPLITGUI_PROFILE;
+
         fontSize = size;
+    }
+
+    void Default::Text::setHorizontalAnchor(HorizontalAnchor anchor) {
+        SPLITGUI_PROFILE;
+
+        horizontalAnchor = anchor;
+    }
+
+    void Default::Text::setVerticalAnchor(VerticalAnchor anchor) {
+        SPLITGUI_PROFILE;
+
+        verticalAnchor = anchor;
     }
 }

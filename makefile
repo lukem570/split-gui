@@ -14,6 +14,9 @@ multi:
 text:
 	python tools/testTools/test.py build/tests/textTest
 
+textxml:
+	python tools/testTools/test.py build/tests/textXmlTest
+
 depth:
 	python tools/testTools/test.py build/tests/depthTest
 

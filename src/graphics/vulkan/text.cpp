@@ -85,8 +85,6 @@ namespace SplitGui {
             pos.x += slot->advance.x * emScale;
         }
 
-        Logger::debug("size: " + std::to_string(size.x) + ", " + std::to_string(size.y));
-
         return size + Vec2{-1, -1};
     }
 

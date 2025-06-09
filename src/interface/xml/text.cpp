@@ -93,6 +93,62 @@ namespace SplitGui {
             return Result::eSuccess;
         }
 
+        if (token.value == "horizontalAnchor") {
+            ResultValue<XmlToken> attributeTokenRes = nextToken();
+            TRYD(attributeTokenRes);
+            token = attributeTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            ResultValue<XmlToken> valueTokenRes = nextToken();
+            TRYD(valueTokenRes);
+            token = valueTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            if (token.value == "left") {
+                text->setHorizontalAnchor(HorizontalAnchor::eLeft);
+            } else if (token.value == "center") {
+                text->setHorizontalAnchor(HorizontalAnchor::eCenter);
+            } else if (token.value == "right") {
+                text->setHorizontalAnchor(HorizontalAnchor::eRight);
+            } else {
+                return Result::eInvalidToken;
+            }
+
+            ResultValue<XmlToken> finalTokenRes = nextToken();
+            TRYD(finalTokenRes);
+            token = finalTokenRes.value;
+
+            return Result::eSuccess;
+        }
+
+        if (token.value == "verticalAnchor") {
+            ResultValue<XmlToken> attributeTokenRes = nextToken();
+            TRYD(attributeTokenRes);
+            token = attributeTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            ResultValue<XmlToken> valueTokenRes = nextToken();
+            TRYD(valueTokenRes);
+            token = valueTokenRes.value;
+            ASSERT_ATTRIBUTE(token);
+
+            if (token.value == "top") {
+                text->setVerticalAnchor(VerticalAnchor::eTop);
+            } else if (token.value == "center") {
+                text->setVerticalAnchor(VerticalAnchor::eCenter);
+            } else if (token.value == "bottom") {
+                text->setVerticalAnchor(VerticalAnchor::eBottom);
+            } else {
+                return Result::eInvalidToken;
+            }
+
+            ResultValue<XmlToken> finalTokenRes = nextToken();
+            TRYD(finalTokenRes);
+            token = finalTokenRes.value;
+
+            return Result::eSuccess;
+        }
+
         return Result::eInvalidSetting;
     }
 }
