@@ -173,10 +173,13 @@ namespace SplitGui {
             vk_graphicsQueues.push(vk_device.getQueue(graphicsQueueFamilyIndex, i));
         }
 
-        // reserve zero for present if they are from the same queue family
-        vk_graphicsQueues.acquireAvailable();
+        if (presentQueueFamilyIndex == graphicsQueueFamilyIndex) {
+            presentStoredInGraphics = true;
+        } else {
 
-        vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
+            vk_presentQueue  = vk_device.getQueue(presentQueueFamilyIndex , 0);
+        }
+
 
         Logger::info("Instanced Queue Objects");
     }
