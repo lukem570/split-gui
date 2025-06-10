@@ -38,6 +38,10 @@ namespace SplitGui {
     inline void VulkanInterface::renderVectorEngineInstance(VectorEngineObject& vEngine, SceneObject& scene) {
         SPLITGUI_PROFILE;
 
+        if (!vEngine.edgeBuffer) {
+            return;
+        }
+
         vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.transformPipeline);
         vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
         vk_commandBuffers[currentFrame].dispatch((vEngine.edges.size() + vectorTransformPassSize - 1) / vectorTransformPassSize, 1, 1);
