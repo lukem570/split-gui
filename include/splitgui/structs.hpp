@@ -558,45 +558,40 @@ namespace SplitGui {
             void push(const T& data) {
                 SPLITGUI_PROFILE;
 
-                mtx.lock();
+                std::unique_lock<std::mutex> lock(mtx);
 
-                availableIndices.push(resources.size());
-                resources.push_back(std::move(data));
+                resources.push_back(data);
+                availableIndices.push(resources.size() - 1);
 
-                mtx.unlock();
+                cv.notify_one();
             }
 
             unsigned int acquireAvailable() {
                 SPLITGUI_PROFILE;
 
-                mtx.lock();
-
-                std::unique_lock<std::mutex> lock(aq);
+                std::unique_lock<std::mutex> lock(mtx);
 
                 cv.wait(lock, [this]() { return !availableIndices.empty(); });
-                
+
                 unsigned int index = availableIndices.front();
                 availableIndices.pop();
 
-                mtx.unlock();
-                
                 return index;
             }
 
             T& getData(unsigned int id) {
                 SPLITGUI_PROFILE;
 
+                std::unique_lock<std::mutex> lock(mtx);
                 return resources[id];
             }
 
             void release(unsigned int id) {
                 SPLITGUI_PROFILE;
 
-                mtx.lock();
+                std::unique_lock<std::mutex> lock(mtx);
 
                 availableIndices.push(id);
-
-                mtx.unlock();
 
                 cv.notify_one();
             }
@@ -605,8 +600,7 @@ namespace SplitGui {
             std::vector<T> resources;
             std::queue<unsigned int> availableIndices;
             std::condition_variable cv;
-            std::mutex aq;
-            FairMutex mtx;
+            std::mutex mtx;
     };
 
     template<typename T>
