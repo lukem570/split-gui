@@ -217,7 +217,6 @@ namespace SplitGui {
             std::vector<const char *>           enabledLayers;
             std::vector<const char *>           enabledInstanceExtensions;
             std::vector<const char *>           enabledDeviceExtensions;
-            bool                                presentStoredInGraphics = false;
             
             StagingBuffer                       vk_textureArrayStagingBuffer;
             StagingBuffer                       vk_rectStagingBuffer;
