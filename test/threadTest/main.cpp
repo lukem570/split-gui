@@ -11,6 +11,8 @@
 #include <thread>
 #include <future>
 
+#define PI 3.14159
+
 struct Data {
     SplitGui::EventHandler eventHandler;
     SplitGui::Window window;
@@ -20,7 +22,7 @@ struct Data {
 };
 
 double degToRad(double degrees) {
-    return degrees * (M_PI / 180.0);
+    return degrees * (PI / 180.0);
 }
 
 int frame(Data* data, bool* running) {
