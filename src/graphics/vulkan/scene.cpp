@@ -288,6 +288,8 @@ namespace SplitGui {
 
         TRYR(modelRes, createSceneModelUniform(ref));
 
+        Logger::info("Created model");
+
         return outRef;
     }
 

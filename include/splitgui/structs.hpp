@@ -244,7 +244,7 @@ namespace SplitGui {
                 alignas(16) Vec4 c;
                 alignas(16) Vec4 d;
             };
-            float matrix[4][4];
+            alignas(16) float matrix[4][4];
         };
 
         Mat4 operator*(const Mat4& operand);

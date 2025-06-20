@@ -28,7 +28,7 @@ namespace SplitGui {
         for (int x = -1; x <= 1; x += 2) {
             for (int y = -1; y <= 1; y += 2) {
                 for (int z = -1; z <= 1; z += 2) {
-                    vertices[idx].pos     = Vec3{x * size, y * size, z * size} + transform.position;
+                    vertices[idx].pos     = Vec3{x * size, y * size, z * size};
                     vertices[idx++].color = color.normalize();
                 }
             }

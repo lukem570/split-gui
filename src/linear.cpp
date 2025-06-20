@@ -518,9 +518,9 @@ namespace SplitGui {
     Mat4 Mat4::translate(Vec3 factor) {
         Mat4 result = Mat4::ident();
 
-        result.d.x = factor.x;
-        result.d.y = factor.y;
-        result.d.z = factor.z;
+        result.a.w = factor.x;
+        result.b.w = factor.y;
+        result.c.w = factor.z;
 
         return result;
     }

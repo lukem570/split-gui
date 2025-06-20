@@ -64,7 +64,7 @@ int main() {
     SplitGui::Cube cube;
     cube.submitGraphics(graphics);
     cube.setSize(0.25);
-    cube.setPosition({0, 0, 0});
+    cube.setPosition({0, -10, 0});
     cube.setColor(SplitGui::HexColor(0xFF0000));
     cube.generate();
 

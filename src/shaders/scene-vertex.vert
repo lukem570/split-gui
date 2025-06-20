@@ -40,7 +40,6 @@ void main() {
     out_flags         = flags;
     out_textureNumber = textureNumber;
     out_textureCord   = in_textureCord;
-    out_fragPos       = in_inPosition;
     out_fragNorm      = in_normal;
 
     int flags = int(flags);
@@ -49,13 +48,16 @@ void main() {
 
     vec4 pos = vec4(in_inPosition, 1.0f);
 
+    pos *= models[modelNumber];
+
+    out_fragPos = pos.xyz;
+
     if (worldView) {
         pos += vec4(sb.cameraPosition.x, 0.0, sb.cameraPosition.z, 0.0);
     }
 
     pos -= vec4(sb.cameraPosition, 0.0);
 
-    pos *= models[modelNumber];
     pos *= sb.view;
     pos *= sb.projection;
 
