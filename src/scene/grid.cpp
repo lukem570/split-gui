@@ -55,7 +55,14 @@ namespace SplitGui {
     Result Grid::submit(SceneRef& ref, int flags) {
         SPLITGUI_PROFILE;
 
-        ResultValue<TriangleRef> triangleRes = pGraphics->submitTriangleData(ref, vertices, indices, flags);
+        if (!model.has_value()) {
+            ResultValue<ModelRef> modelRef = pGraphics->createModel(ref, transform.getModel());
+            TRYD(modelRef);
+
+            model = modelRef.value;
+        }
+
+        ResultValue<TriangleRef> triangleRes = pGraphics->submitTriangleData(ref, vertices, indices, model.value(), flags);
 
         TRYD(triangleRes);
 

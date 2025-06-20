@@ -196,12 +196,18 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<TriangleRef> VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, int flags, int textureNumber) {
+    ResultValue<TriangleRef> VulkanInterface::submitTriangleData(SceneRef& ref, std::vector<Vertex>& newVertices, std::vector<uint16_t>& newIndices, ModelRef& model, int flags, int textureNumber) {
         SPLITGUI_PROFILE;
 
         unsigned int oldVerticesSize = scenes[ref.sceneNumber].vertices.size();
 
         TriangleBlock tBlock;
+
+        std::optional<unsigned int> offset = scenes[ref.sceneNumber].models.offset(model.model);
+
+        if (!offset.has_value()) {
+            return Result::eCouldNotFindElementInList;
+        }
 
         for (unsigned int i = 0; i < newIndices.size(); i += 3) { 
             // TODO: FIX THIS, THIS IS BAD LIKE REALLY BAD
@@ -216,7 +222,7 @@ namespace SplitGui {
                 SceneVertexBufferObject vbo;
                 vbo.vertex        = newVertices[newIndices[i + j]];
                 vbo.flags         = VertexFlagsBits::eScene ^ flags;
-                vbo.modelNumber   = 0;
+                vbo.modelNumber   = offset.value();
                 vbo.textureNumber = textureNumber;
 
                 pVertices[j] = scenes[ref.sceneNumber].vertices.push(vbo);
@@ -274,13 +280,13 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ModelRef VulkanInterface::createModel(SceneRef& ref, Mat4& model) { // TODO:
+    ResultValue<ModelRef> VulkanInterface::createModel(SceneRef& ref, const Mat4& model) { // TODO:
         SPLITGUI_PROFILE;
 
         ModelRef outRef;
-        outRef.modelNumber = scenes[ref.sceneNumber].models.size();
+        outRef.model = scenes[ref.sceneNumber].models.push(model);
 
-        scenes[ref.sceneNumber].models.push_back(model);
+        TRYR(modelRes, createSceneModelUniform(ref));
 
         return outRef;
     }

@@ -46,6 +46,7 @@ namespace SplitGui {
         eInvalidRectRefUsed,
         eInvalidTrianglesRefUsed,
         eSceneAlreadyHasVectorEngine,
+        eCouldNotFindElementInList,
 
         // interface
         eInvalidNumberOfChildren,

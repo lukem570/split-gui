@@ -38,19 +38,20 @@ namespace SplitGui {
 [[nodiscard]] virtual ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                { throw; }
 [[nodiscard]] virtual Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   { throw; }
 [[nodiscard]] virtual ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges)                                                                     { throw; }
-[[nodiscard]] virtual ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) { throw; }
+[[nodiscard]] virtual ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags, int textureNumber = 0) { throw; }
 [[nodiscard]] virtual Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      { throw; }
 [[nodiscard]] virtual Result                        submitSceneData(SceneRef& sceneRef)                                                                                                { throw; }
               virtual void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }
               virtual void                          updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
               virtual void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
-              virtual ModelRef                      createModel(SceneRef& ref, Mat4& model)                                                                                            { throw; }
+[[nodiscard]] virtual ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      { throw; }
 [[nodiscard]] virtual ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                               { throw; }
 [[nodiscard]] virtual Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                                                  { throw; }
 [[nodiscard]] virtual Result                        loadFont(const char* path)                                                                                                         { throw; }
 [[nodiscard]] virtual ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 { throw; }
 [[nodiscard]] virtual Result                        submitBuffers()                                                                                                                    { throw; }
 [[nodiscard]] virtual Result                        resizeEvent()                                                                                                                      { throw; }
+[[nodiscard]] virtual ResultValue<unsigned int>     offsetOf(SceneRef& scene, ModelRef& ref)                                                                                           { throw; }
               virtual void                          clearBuffers()                                                                                                                     { throw; }
 
         protected:
@@ -80,19 +81,20 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref);
 [[nodiscard]] Result                        updateScene(SceneRef& ref, IVec2 x1, IVec2 x2, int depth = 0);
 [[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges);
-[[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags = 0, int textureNumber = 0);
+[[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags = 0, int textureNumber = 0);
 [[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef);
 [[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef);
               void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position);
               void                          updateSceneCameraView(SceneRef& ref, Mat4& view);
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
-              ModelRef                      createModel(SceneRef& ref, Mat4& model);
+[[nodiscard]] ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model);
 [[nodiscard]] ResultValue<TextRef>          drawText(IVec2 x1, std::string text, HexColor color, float fontSize, int depth = 0);
 [[nodiscard]] Result                        updateText(TextRef& ref, IVec2 x1, HexColor color, float fontSize, int depth = 0);
 [[nodiscard]] Result                        loadFont(const char* path);
 [[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours);
 [[nodiscard]] Result                        submitBuffers();
 [[nodiscard]] Result                        resizeEvent();
+[[nodiscard]] ResultValue<unsigned int>     offsetOf(SceneRef& scene, ModelRef& ref);
               void                          attachEventHandler(EventHandler& handler);
               void                          clearBuffers();
 

@@ -489,6 +489,42 @@ namespace SplitGui {
         return model;
     }
 
+    Mat4 Mat4::scale(Vec3 factor) {
+        Mat4 result;
+
+        result.a.x = factor.x;
+        result.a.y = 0;
+        result.a.z = 0;
+        result.a.w = 0;
+
+        result.b.x = 0;
+        result.b.y = factor.y;
+        result.b.z = 0;
+        result.b.w = 0;
+
+        result.c.x = 0;
+        result.c.y = 0;
+        result.c.z = factor.z;
+        result.c.w = 0;
+
+        result.d.x = 0;
+        result.d.y = 0;
+        result.d.z = 0;
+        result.d.w = 1;
+
+        return result;
+    }
+
+    Mat4 Mat4::translate(Vec3 factor) {
+        Mat4 result = Mat4::ident();
+
+        result.d.x = factor.x;
+        result.d.y = factor.y;
+        result.d.z = factor.z;
+
+        return result;
+    }
+
     bool RectObj::inside(IVec2 point) {
         SPLITGUI_PROFILE;
 

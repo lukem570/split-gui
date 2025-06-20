@@ -80,12 +80,15 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2, 1, 0, 2};
 
-    SplitGui::ResultValue<SplitGui::TriangleRef> triangleRes1 = graphics.submitTriangleData(sceneRef1, vertices, indices, 0);
-
+    SplitGui::ResultValue<SplitGui::ModelRef> model1 = graphics.createModel(sceneRef1, SplitGui::Mat4::ident());
+    SplitGui::ResultValue<SplitGui::ModelRef> model2 = graphics.createModel(sceneRef2, SplitGui::Mat4::ident());
+    TRYDC(model1);
+    TRYDC(model2);
+    
+    SplitGui::ResultValue<SplitGui::TriangleRef> triangleRes1 = graphics.submitTriangleData(sceneRef1, vertices, indices, model1.value, 0);
+    SplitGui::ResultValue<SplitGui::TriangleRef> triangleRes2 = graphics.submitTriangleData(sceneRef2, vertices, indices, model2.value, 0);
+    
     TRYDC(triangleRes1);
-
-    SplitGui::ResultValue<SplitGui::TriangleRef> triangleRes2 = graphics.submitTriangleData(sceneRef2, vertices, indices, 0);
-
     TRYDC(triangleRes2);
 
     SplitGui::Vec3 rotation1 = {degToRad(5), 0, 0};

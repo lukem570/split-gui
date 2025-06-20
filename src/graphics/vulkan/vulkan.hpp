@@ -85,7 +85,7 @@ namespace SplitGui {
         LinkList<SceneVertexBufferObject> vertices;
         LinkList<uint16_t>                indices;
         SceneObj                          sceneData;
-        std::vector<Mat4>                 models;
+        LinkList<Mat4>                    models;
 
         std::optional<VectorEngineRef> vEngineRef;
 
@@ -135,13 +135,13 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                override;
 [[nodiscard]] Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
 [[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges)                                                                     override;
-[[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber = 0) override;
+[[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags, int textureNumber = 0) override;
 [[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
 [[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef)                                                                                                override;
               void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
               void                          updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
-              ModelRef                      createModel(SceneRef& ref, Mat4& model)                                                                                            override;
+[[nodiscard]] ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      override;
 [[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                               override;
 [[nodiscard]] Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                                                  override;
 [[nodiscard]] Result                        loadFont(const char* path)                                                                                                         override;
@@ -332,9 +332,10 @@ namespace SplitGui {
               inline void   createSceneFramebuffers(SceneObject& scene);
               inline void   createSceneDescriptorSet(SceneObject& scene);
 [[nodiscard]] inline Result createSceneDataUniform(SceneObject& scene);
-[[nodiscard]] inline Result createSceneModelUniform(SceneObject& scene);
               inline void   updateSceneDescriptorSet(SceneObject& scene);
-              
+
+[[nodiscard]] inline Result createSceneModelUniform(SceneRef& ref);
+
               inline void   createVectorEngineDescriptorSetLayout();
               inline void   createVectorEnginePipelineLayout();
 [[nodiscard]] inline Result createVectorEnginePipelineModules();
@@ -370,6 +371,7 @@ namespace SplitGui {
               inline void cleanupSceneFrameBuffers(SceneRef& ref);
               inline void cleanupSceneOutputImages(SceneRef& ref);
               inline void cleanupSceneDepthImages(SceneRef& ref);
+              inline void cleanupModelUniform(SceneRef& ref);
 
               inline void cleanupVectorEngineEdgeResources(VectorEngineObject& vEngine);
 

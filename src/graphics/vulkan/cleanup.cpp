@@ -186,6 +186,13 @@ namespace SplitGui {
         vk_device.destroyPipelineLayout(vk_vectorEnginePipelineLayout);
     }
 
+    inline void VulkanInterface::cleanupModelUniform(SceneRef& ref) {
+        if (scenes[ref.sceneNumber].modelUniformBufferMemory) {
+            vk_device.freeMemory(scenes[ref.sceneNumber].modelUniformBufferMemory);
+            vk_device.destroyBuffer(scenes[ref.sceneNumber].modelUniformBuffer);
+        }
+    }
+
     inline void VulkanInterface::cleanupScenes() {
         SPLITGUI_PROFILE;
 
@@ -208,6 +215,7 @@ namespace SplitGui {
             cleanupSceneDepthImages(ref);
             cleanupSceneOutputImages(ref);
             cleanupSceneFrameBuffers(ref);
+            cleanupModelUniform(ref);
 
             vk_device.destroyDescriptorPool(scenes[i].descriptorPool);
             

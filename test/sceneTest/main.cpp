@@ -77,7 +77,9 @@ int main() {
     std::vector<SplitGui::Vertex> vertices = {vert1, vert2, vert3};
     std::vector<uint16_t> indices          = {0, 1, 2};
 
-    SplitGui::ResultValue<SplitGui::TriangleRef> triangleRes = graphics.submitTriangleData(sceneRef, vertices, indices, 0);
+    SplitGui::ResultValue<SplitGui::ModelRef> model = graphics.createModel(sceneRef, SplitGui::Mat4::ident());
+    TRYDC(model);
+    SplitGui::ResultValue<SplitGui::TriangleRef> triangleRes = graphics.submitTriangleData(sceneRef, vertices, indices, model.value, 0);
 
     TRYDC(triangleRes);
     

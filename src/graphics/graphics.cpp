@@ -169,10 +169,10 @@ namespace SplitGui {
         pInterface->clearBuffers();
     }
 
-    ResultValue<TriangleRef> Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, int flags, int textureNumber) {
+    ResultValue<TriangleRef> Graphics::submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags, int textureNumber) {
         SPLITGUI_PROFILE;
 
-        return pInterface->submitTriangleData(ref, vertices, indices, flags, textureNumber);
+        return pInterface->submitTriangleData(ref, vertices, indices, model, flags, textureNumber);
     }
 
     ResultValue<EdgeRef> Graphics::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges) {
@@ -211,7 +211,7 @@ namespace SplitGui {
         pInterface->updateSceneCameraProjection(ref, projection);
     }
 
-    ModelRef Graphics::createModel(SceneRef& ref, Mat4& model) {
+    ResultValue<ModelRef> Graphics::createModel(SceneRef& ref, const Mat4& model) {
         SPLITGUI_PROFILE;
 
         return pInterface->createModel(ref, model);
@@ -259,6 +259,7 @@ namespace SplitGui {
     }
 
     ResultValue<IVec2> Graphics::getTextSize(const std::string& text, float fontSize) {
+        SPLITGUI_PROFILE;
 
         ResultValue<Vec2> normSize = pInterface->getTextSize(text, fontSize);
         TRYD(normSize);

@@ -265,6 +265,9 @@ namespace SplitGui {
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
         static Mat4 perspectiveProjection(float fieldOfView, RectObj extent, float far = 100.0f, float near = 0.1f);
         static Mat4 ident();
+
+        static Mat4 scale(Vec3 factor);
+        static Mat4 translate(Vec3 factor);
     };
 
     struct HexColor {
@@ -343,6 +346,20 @@ namespace SplitGui {
         Vec3 position = {0, 0, 0};
         Vec3 rotation = {0, 0, 0};
         Vec3 scale    = {1, 1, 1};
+
+        Mat4 getModel() {
+            Mat4 model = Mat4::ident();
+
+            Mat4 translationMat = Mat4::translate(position);
+            Mat4 rotationXMat   = Mat4::xRotationMatrix(rotation.x);
+            Mat4 rotationYMat   = Mat4::yRotationMatrix(rotation.y);
+            Mat4 rotationZMat   = Mat4::zRotationMatrix(rotation.z);
+            Mat4 scaleMat       = Mat4::scale(scale);
+
+            model = translationMat * rotationZMat * rotationYMat * rotationXMat * scaleMat;
+
+            return model;
+        } 
     };
 
     struct alignas(16) SceneObj {
@@ -406,7 +423,7 @@ namespace SplitGui {
     };
 
     struct ModelRef {
-        unsigned int modelNumber;
+        LinkElement<Mat4>* model;
     };
 
     struct TextRef {
