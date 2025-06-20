@@ -84,6 +84,8 @@ namespace SplitGui {
 
         frameMutex.lock();
 
+        vk_device.waitIdle();
+
         cleanupModelUniform(ref);
 
         scene.modelUniformBuffer = tempBuffer;
