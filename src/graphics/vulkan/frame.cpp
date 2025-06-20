@@ -223,15 +223,15 @@ namespace SplitGui {
 
     Result VulkanInterface::drawFrame() {
         SPLITGUI_PROFILE;
-
-        frameMutex.lock();
         
         if (!vk_vertexBuffer) {
             return Result::eSuccess;
         }
-
+        
         TRYR(fenceRes, waitFences());
 
+        frameMutex.lock();
+        
         vk_commandBuffers[currentFrame].reset();
         vk_commandBuffers[currentFrame].begin(vk_beginInfo);
 

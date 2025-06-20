@@ -140,5 +140,4 @@ index.xml
 * add calls to unit expression parser
 * fix transparency ordering
 * add transform absolute handing
-* add model to graphics
 * add text value updating
