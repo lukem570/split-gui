@@ -114,9 +114,21 @@ namespace SplitGui {
     // or logical device
     inline Result VulkanInterface::createDevice() {
         SPLITGUI_PROFILE;
-        vk::DeviceQueueCreateInfo queueCreateInfo;
-        queueCreateInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
-        queueCreateInfo.queueCount       = graphicsQueueCount;
+
+        std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
+        queueCreateInfos.resize(1);
+
+        queueCreateInfos[0].queueFamilyIndex = graphicsQueueFamilyIndex;
+        queueCreateInfos[0].queueCount       = graphicsQueueCount;
+
+        float queuePrior = 1.0;
+
+        if (graphicsQueueFamilyIndex != presentQueueFamilyIndex) {
+            queueCreateInfos.resize(2);
+            queueCreateInfos[1].queueFamilyIndex = presentQueueFamilyIndex;
+            queueCreateInfos[1].queueCount = 1;
+            queueCreateInfos[1].pQueuePriorities = &queuePrior;
+        }
 
         std::vector<float> queuePriorities;
         queuePriorities.resize(graphicsQueueCount);
@@ -125,7 +137,7 @@ namespace SplitGui {
             queuePriorities[i] = 1.0;
         }
         
-        queueCreateInfo.pQueuePriorities = queuePriorities.data();
+        queueCreateInfos[0].pQueuePriorities = queuePriorities.data();
 
         vk::PhysicalDeviceFeatures deviceFeatures;
         deviceFeatures = vk_physicalDevice.getFeatures();
@@ -148,8 +160,8 @@ namespace SplitGui {
         }
 
         vk::DeviceCreateInfo deviceCreateInfo;
-        deviceCreateInfo.queueCreateInfoCount    = 1;
-        deviceCreateInfo.pQueueCreateInfos       = &queueCreateInfo;
+        deviceCreateInfo.queueCreateInfoCount    = queueCreateInfos.size();
+        deviceCreateInfo.pQueueCreateInfos       = queueCreateInfos.data();
         deviceCreateInfo.pEnabledFeatures        = &deviceFeatures;
         deviceCreateInfo.enabledExtensionCount   = enabledDeviceExtensions.size();
         deviceCreateInfo.ppEnabledExtensionNames = enabledDeviceExtensions.data();

@@ -176,6 +176,10 @@ namespace SplitGui {
         vk_presentInfo.pWaitSemaphores = &vk_renderFinishedSemaphores[currentFrame];
         vk_presentInfo.pImageIndices   = &imageIndex;
 
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR // TODO: fix this evil
+    vk_device.waitIdle();
+#endif
+
         vk_runtimeResult = vk_presentQueue.presentKHR(&vk_presentInfo);
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
@@ -200,23 +204,46 @@ namespace SplitGui {
             return Result::eFailedToWaitForFences;
         }
 
-        vk::ResultValue<uint32_t> result = vk_device.acquireNextImageKHR(vk_swapchain, UINT64_MAX, vk_imageAvailableSemaphores[currentFrame], nullptr);
-
-        if (result.result != vk::Result::eSuccess) {
-            if (result.result == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
-                return Result::eSuccess; // might be a better way to do this...
-            }
-        
-            return Result::eFailedToGetNextSwapchainImage;
-        }
-
         vk_runtimeResult = vk_device.resetFences(1, &vk_inFlightFences[currentFrame]);
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
             return Result::eFailedToResetFences;
         }
 
-        imageIndex = result.value;
+        vk::Result aquireResult;
+        unsigned int timeouts = 0;
+
+        do {
+
+            aquireResult = vk_device.acquireNextImageKHR(vk_swapchain, 100000000, vk_imageAvailableSemaphores[currentFrame], vk::Fence(), &imageIndex);
+    
+            if (aquireResult == vk::Result::eErrorOutOfDateKHR) {
+
+                TRYR(resizeRes, resizeEvent());
+
+            } else if (aquireResult == vk::Result::eSuboptimalKHR) {
+
+                break;
+            } else if (aquireResult == vk::Result::eErrorSurfaceLostKHR){
+
+                vk_instance.destroySurfaceKHR(vk_surface);
+                TRYR(surfaceRes, createSurface(*pWindow));
+                TRYR(resizeRes, resizeEvent());
+            } else if (aquireResult == vk::Result::eTimeout) {
+
+                timeouts++;
+
+                continue;
+            } else if (aquireResult != vk::Result::eSuccess) {
+
+                return Result::eFailedToGetNextSwapchainImage;
+            }
+
+        } while (aquireResult != vk::Result::eSuccess);
+
+        if (timeouts != 0) {
+            Logger::warn("vkAcquireNextImageKHR took " + std::to_string(100 * timeouts) + "ms to complete");
+        }
 
         return Result::eSuccess;
     }

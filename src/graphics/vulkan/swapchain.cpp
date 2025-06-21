@@ -12,21 +12,51 @@ namespace SplitGui {
         vk_surfaceFormat   = chooseSwapSurfaceFormat(formats);
         vk_presentMode     = chooseSwapPresentMode(presentModes);
 
+        uint32_t desiredNumOfSwapchainImages = 3;
+        if (desiredNumOfSwapchainImages < capabilities.minImageCount) {
+            desiredNumOfSwapchainImages = capabilities.minImageCount;
+        }
+
+        if ((capabilities.maxImageCount > 0) && (desiredNumOfSwapchainImages > capabilities.maxImageCount)) {
+            desiredNumOfSwapchainImages = capabilities.maxImageCount;
+        }
+
+        vk::SurfaceTransformFlagBitsKHR preTransform;
+        if (capabilities.supportedTransforms & vk::SurfaceTransformFlagBitsKHR::eIdentity) {
+            preTransform = vk::SurfaceTransformFlagBitsKHR::eIdentity;
+        } else {
+            preTransform = capabilities.currentTransform;
+        }
+
+        vk::CompositeAlphaFlagBitsKHR compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
+        std::array<vk::CompositeAlphaFlagBitsKHR, 4> compositeAlphaFlags = {
+            vk::CompositeAlphaFlagBitsKHR::eOpaque,
+            vk::CompositeAlphaFlagBitsKHR::ePreMultiplied,
+            vk::CompositeAlphaFlagBitsKHR::ePostMultiplied,
+            vk::CompositeAlphaFlagBitsKHR::eInherit,
+        };
+        for (const auto &compositeAlphaFlag : compositeAlphaFlags) {
+            if (capabilities.supportedCompositeAlpha & compositeAlphaFlag) {
+                compositeAlpha = compositeAlphaFlag;
+                break;
+            }
+        }
+
         vk::SwapchainCreateInfoKHR createInfo;
-        createInfo.minImageCount         = capabilities.minImageCount + 1;
-        createInfo.pQueueFamilyIndices   = &graphicsQueueFamilyIndex;
         createInfo.surface               = vk_surface;
+        createInfo.minImageCount         = desiredNumOfSwapchainImages;
         createInfo.imageFormat           = vk_surfaceFormat.format;
         createInfo.imageColorSpace       = vk_surfaceFormat.colorSpace;
         createInfo.imageExtent           = vk_swapchainExtent;
-        createInfo.presentMode           = vk_presentMode;
         createInfo.imageArrayLayers      = 1;
-        createInfo.queueFamilyIndexCount = 1;
-        createInfo.imageSharingMode      = vk::SharingMode::eExclusive;
         createInfo.imageUsage            = vk::ImageUsageFlagBits::eColorAttachment;
+        createInfo.imageSharingMode      = vk::SharingMode::eExclusive;
+        createInfo.preTransform          = preTransform;
+        createInfo.compositeAlpha        = compositeAlpha;
+        createInfo.presentMode           = vk_presentMode;
         createInfo.clipped               = true;
         createInfo.oldSwapchain          = nullptr;
-
+        
         vk_swapchain       = vk_device.createSwapchainKHR(createInfo);
         vk_swapchainImages = vk_device.getSwapchainImagesKHR(vk_swapchain);
 
