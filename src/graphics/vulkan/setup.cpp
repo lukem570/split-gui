@@ -126,5 +126,6 @@ namespace SplitGui {
         vk_presentInfo.waitSemaphoreCount = 1;
         vk_presentInfo.swapchainCount     = 1;
         vk_presentInfo.pSwapchains        = &vk_swapchain;
+        vk_presentInfo.pResults           = nullptr;
     }
 }

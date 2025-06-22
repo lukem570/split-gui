@@ -176,11 +176,20 @@ namespace SplitGui {
         vk_presentInfo.pWaitSemaphores = &vk_renderFinishedSemaphores[currentFrame];
         vk_presentInfo.pImageIndices   = &imageIndex;
 
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR // TODO: fix this evil
-    vk_device.waitIdle();
-#endif
+        vk_graphicsQueues.release(id);
 
-        vk_runtimeResult = vk_presentQueue.presentKHR(&vk_presentInfo);
+        if (graphicsQueueFamilyIndex == presentQueueFamilyIndex) {
+
+            id = vk_graphicsQueues.acquireAvailable();
+
+            vk_runtimeResult = vk_graphicsQueues.getData(id).presentKHR(&vk_presentInfo);
+
+            vk_graphicsQueues.release(id);
+        } else {
+
+            vk_runtimeResult = vk_presentQueue.presentKHR(&vk_presentInfo);
+        }
+
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
             if (vk_runtimeResult == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {
@@ -190,7 +199,6 @@ namespace SplitGui {
             return Result::eFailedToGetNextSwapchainImage;
         }
 
-        vk_graphicsQueues.release(id);
 
         return Result::eSuccess;
     }

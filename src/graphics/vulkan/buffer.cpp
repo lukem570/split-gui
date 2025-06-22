@@ -107,17 +107,22 @@ namespace SplitGui {
         vk::SubmitInfo submitInfo;
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers    = &commandBuffer;
-        
-        vk_graphicsQueues.getData(queueId).waitIdle();
 
-        vk::Result result_submit = vk_graphicsQueues.getData(queueId).submit(1, &submitInfo, nullptr);
+        vk::Fence fence = vk_device.createFence(vk::FenceCreateInfo());
+
+        vk::Result result_submit = vk_graphicsQueues.getData(queueId).submit(1, &submitInfo, fence);
 
         if (result_submit != vk::Result::eSuccess) {
             return Result::eFailedToSubmitQueue;
         }
 
-        vk_graphicsQueues.getData(queueId).waitIdle();
+        vk::Result fenceRes = vk_device.waitForFences(1, &fence, vk::True, UINT64_MAX);
 
+        if (fenceRes != vk::Result::eSuccess) {
+            return Result::eFailedToWaitForFences;
+        }
+
+        vk_device.destroyFence(fence);
         vk_device.freeCommandBuffers(vk_interactionCommandPools[queueId], 1, &commandBuffer);
         
         vk_graphicsQueues.release(queueId);
