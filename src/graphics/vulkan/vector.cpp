@@ -54,10 +54,16 @@ namespace SplitGui {
         vectorEngineInstances[vEngineRef.instanceNumber].edges.erase(edgeRef.edgesStart, edgeRef.edgesEnd);
     }
 
-    ResultValue<EdgeRef> VulkanInterface::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges) {
+    ResultValue<EdgeRef> VulkanInterface::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model) {
         SPLITGUI_PROFILE;
 
         EdgeRef edgeRef;
+
+        std::optional<unsigned int> modelNumber = scenes[vectorEngineInstances[ref.instanceNumber].scene.sceneNumber].models.offset(model.model);
+
+        if (!modelNumber.has_value()) {
+            return Result::eCouldNotFindElementInList;
+        }
 
         for (unsigned int i = 0; i < edges.size(); i++) {
 
@@ -73,8 +79,9 @@ namespace SplitGui {
                     Vec3 curr = lerp(edge.from, edge.to, (float)i / (float)VECTOR_RES);
 
                     VectorEdgeBufferObject edgeObj;
-                    edgeObj.start    = prev;
-                    edgeObj.end      = curr;
+                    edgeObj.start       = prev;
+                    edgeObj.end         = curr;
+                    edgeObj.modelNumber = modelNumber.value();
 
                     element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
 
@@ -92,8 +99,9 @@ namespace SplitGui {
                     Vec3 curr = quadraticBezier(edge.from, edge.control, edge.to, (float)i / (float)VECTOR_RES);
 
                     VectorEdgeBufferObject edgeObj;
-                    edgeObj.start    = prev;
-                    edgeObj.end      = curr;
+                    edgeObj.start       = prev;
+                    edgeObj.end         = curr;
+                    edgeObj.modelNumber = modelNumber.value();
 
                     element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
 
@@ -112,8 +120,9 @@ namespace SplitGui {
                     Vec3 curr = cubicBezier(edge.from, edge.control1, edge.control2, edge.to, (float)i / (float)VECTOR_RES);
 
                     VectorEdgeBufferObject edgeObj;
-                    edgeObj.start    = prev;
-                    edgeObj.end      = curr;
+                    edgeObj.start       = prev;
+                    edgeObj.end         = curr;
+                    edgeObj.modelNumber = modelNumber.value();
 
                     element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
 

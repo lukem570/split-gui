@@ -175,10 +175,10 @@ namespace SplitGui {
         return pInterface->submitTriangleData(ref, vertices, indices, model, flags, textureNumber);
     }
 
-    ResultValue<EdgeRef> Graphics::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges) {
+    ResultValue<EdgeRef> Graphics::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model) {
         SPLITGUI_PROFILE;
 
-        return pInterface->submitEdgeData(ref, edges);
+        return pInterface->submitEdgeData(ref, edges, model);
     }
 
     Result Graphics::updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, HexColor color, unsigned int opacity) {

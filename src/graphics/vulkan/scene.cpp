@@ -288,13 +288,17 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<ModelRef> VulkanInterface::createModel(SceneRef& ref, const Mat4& model) { // TODO:
+    ResultValue<ModelRef> VulkanInterface::createModel(SceneRef& ref, const Mat4& model) {
         SPLITGUI_PROFILE;
 
         ModelRef outRef;
         outRef.model = scenes[ref.sceneNumber].models.push(model);
 
         TRYR(modelRes, createSceneModelUniform(ref));
+
+        if (scenes[ref.sceneNumber].vEngineRef.has_value()) {
+            updateVectorEngineDescriptorSet(vectorEngineInstances[scenes[ref.sceneNumber].vEngineRef.value().instanceNumber]);
+        }
 
         Logger::info("Created model");
 

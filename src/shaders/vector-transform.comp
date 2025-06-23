@@ -1,5 +1,7 @@
 #version 450 core
 
+#define MAX_MODELS 1024
+
 layout(std140, binding = 0) uniform Scene {
     mat4  view;
     mat4  projection;
@@ -9,6 +11,7 @@ layout(std140, binding = 0) uniform Scene {
 struct Edge {
     vec3 start;
     vec3 end;
+    int modelNumber;
 };
 
 layout(std430, binding = 1) readonly buffer EdgesIn {
@@ -19,8 +22,14 @@ layout(std430, binding = 2) writeonly buffer EdgesOut {
     Edge edgesOut[];
 };
 
-vec4 transform(vec3 position, vec3 cameraPos, mat4 view, mat4 proj) {
-    vec4 pos = vec4(position - cameraPos, 1.0);
+layout(std140, binding = 4) uniform Model {mat4 models[MAX_MODELS];};
+
+vec4 transform(vec3 position, vec3 cameraPos, mat4 view, mat4 proj, mat4 model) {
+    vec4 pos = vec4(position, 1.0f);
+
+    pos *= model;
+
+    pos.xyz -= cameraPos;
     pos = ((pos * view)* proj);
     return pos;
 }
@@ -36,8 +45,8 @@ void main() {
 
     Edge e = edgesIn[index];
 
-    vec4 start = transform(e.start,    sb.cameraPosition, sb.view, sb.projection);
-    vec4 end   = transform(e.end,      sb.cameraPosition, sb.view, sb.projection);
+    vec4 start = transform(e.start,    sb.cameraPosition, sb.view, sb.projection, models[e.modelNumber]);
+    vec4 end   = transform(e.end,      sb.cameraPosition, sb.view, sb.projection, models[e.modelNumber]);
 
     e.start    = start.xyz / start.w;
     e.end      = end.xyz / end.w;

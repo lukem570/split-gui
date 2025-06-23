@@ -32,11 +32,19 @@ namespace SplitGui {
         outputImageLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eCompute;
         outputImageLayoutBinding.pImmutableSamplers = nullptr;
 
-        std::array<vk::DescriptorSetLayoutBinding, 4> bindings = { 
+        vk::DescriptorSetLayoutBinding ModelLayoutBinding;
+        ModelLayoutBinding.binding            = VectorEngineDescriporBindings::eModels;
+        ModelLayoutBinding.descriptorCount    = 1;
+        ModelLayoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
+        ModelLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eCompute;
+        ModelLayoutBinding.pImmutableSamplers = nullptr;
+
+        std::array<vk::DescriptorSetLayoutBinding, 5> bindings = { 
             sceneLayoutBinding, 
             edgesInLayoutBinding,  
             edgesOutLayoutBinding,
-            outputImageLayoutBinding
+            outputImageLayoutBinding,
+            ModelLayoutBinding,
         };
 
         vk::DescriptorSetLayoutCreateInfo createInfo;
@@ -69,11 +77,16 @@ namespace SplitGui {
         outputImagePoolSize.type            = vk::DescriptorType::eStorageImage;
         outputImagePoolSize.descriptorCount = 1;
 
-        std::array<vk::DescriptorPoolSize, 4> poolSizes = { 
+        vk::DescriptorPoolSize ModelPoolSize;
+        ModelPoolSize.type            = vk::DescriptorType::eUniformBuffer;
+        ModelPoolSize.descriptorCount = 1;
+
+        std::array<vk::DescriptorPoolSize, 5> poolSizes = { 
             scenePoolSize, 
             edgesInPoolSize, 
             edgesOutPoolSize,
-            outputImagePoolSize
+            outputImagePoolSize,
+            ModelPoolSize,
         };
 
         vk::DescriptorPoolCreateInfo createInfo;
@@ -151,7 +164,12 @@ namespace SplitGui {
         outputImageInfo.imageView   = scenes[vEngine.scene.sceneNumber].outputImageView;
         outputImageInfo.imageLayout = vk::ImageLayout::eGeneral;
 
-        std::array<vk::WriteDescriptorSet, 2> descriptorWrites;
+        vk::DescriptorBufferInfo modelBufferInfo;
+        modelBufferInfo.buffer = scenes[vEngine.scene.sceneNumber].modelUniformBuffer;
+        modelBufferInfo.offset = 0;
+        modelBufferInfo.range  = scenes[vEngine.scene.sceneNumber].models.size() * sizeof(Mat4);
+
+        std::array<vk::WriteDescriptorSet, 3> descriptorWrites;
 
         descriptorWrites[0].dstSet          = vEngine.descriptorSet;
         descriptorWrites[0].dstBinding      = VectorEngineDescriporBindings::eSceneData;
@@ -166,6 +184,13 @@ namespace SplitGui {
         descriptorWrites[1].descriptorType  = vk::DescriptorType::eStorageImage;
         descriptorWrites[1].descriptorCount = 1;
         descriptorWrites[1].pImageInfo      = &outputImageInfo;
+
+        descriptorWrites[2].dstSet          = vEngine.descriptorSet;
+        descriptorWrites[2].dstBinding      = VectorEngineDescriporBindings::eModels;
+        descriptorWrites[2].dstArrayElement = 0;
+        descriptorWrites[2].descriptorType  = vk::DescriptorType::eUniformBuffer;
+        descriptorWrites[2].descriptorCount = 1;
+        descriptorWrites[2].pBufferInfo     = &modelBufferInfo;
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 

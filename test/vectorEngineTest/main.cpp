@@ -5,6 +5,7 @@
 #include <splitgui/structs.hpp>
 #include <splitgui/scene.hpp>
 #include <splitgui/events.hpp>
+#include <splitgui/logger.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -87,6 +88,9 @@ int main() {
 
     TRYRC(uiInstRes, ui.instance());
     
+    SplitGui::ResultValue<SplitGui::ModelRef> model = graphics.createModel(sceneRef, SplitGui::Mat4::ident());
+    TRYDC(model);
+
     SplitGui::ResultValue<SplitGui::VectorEngineRef> vEngineRef = graphics.instanceVectorEngine(sceneRef);
     TRYDC(vEngineRef);
 
@@ -108,7 +112,7 @@ int main() {
     edges.push_back(linEdge);
     edges.push_back(quadEdge);
 
-    SplitGui::ResultValue<SplitGui::EdgeRef> edgeRes = graphics.submitEdgeData(vEngineRef.value, edges);
+    SplitGui::ResultValue<SplitGui::EdgeRef> edgeRes = graphics.submitEdgeData(vEngineRef.value, edges, model.value);
     TRYDC(edgeRes)
 
     int prevXPos = 0;

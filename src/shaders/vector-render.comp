@@ -5,6 +5,7 @@
 struct Edge {
     vec3 start;
     vec3 end;
+    int modelNumber;
 };
 
 layout(std140, binding = 0) uniform Scene {

@@ -117,7 +117,7 @@ namespace SplitGui {
 
         Vec3() = default;
         Vec3(float x, float y, float z) : x(x), y(y), z(z) {};
-        Vec3(float f) : x(f), y(f), z(f){}
+        Vec3(float f) : x(f), y(f), z(f) {}
 
         Vec3 operator+(Vec3 operand);
         Vec3 operator-(Vec3 operand);
@@ -392,6 +392,7 @@ namespace SplitGui {
     struct alignas(16) VectorEdgeBufferObject {
         alignas(16) Vec3 start;
         alignas(16) Vec3 end;
+        unsigned int modelNumber;
     };
 
     struct RectRef {
@@ -695,6 +696,7 @@ namespace SplitGui {
             eEdgesIn     = 1,
             eEdgesOut    = 2,
             eOutputImage = 3,
+            eModels      = 4,
         };
     };
 
