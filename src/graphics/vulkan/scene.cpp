@@ -181,7 +181,13 @@ namespace SplitGui {
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
-        vk_device.waitIdle();
+        frameMutex.lock();
+
+        vk::Result fenceRes = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), vk::True, UINT64_MAX);
+
+        if (fenceRes != vk::Result::eSuccess) {
+            return Result::eFailedToWaitForFences;
+        }
         
         cleanupSceneVertexAndIndexBuffers(ref);
 
@@ -192,6 +198,8 @@ namespace SplitGui {
         scenes[ref.sceneNumber].indexBufferMemory  = tempIndexBufferMemory;
         
         scenes[ref.sceneNumber].knownIndicesSize = scenes[ref.sceneNumber].indices.size();
+
+        frameMutex.unlock();
 
         return Result::eSuccess;
     }
