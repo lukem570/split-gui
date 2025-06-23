@@ -100,7 +100,6 @@ namespace SplitGui {
     void InterfaceElement::setDepth(int depthIn) {
         SPLITGUI_PROFILE;
 
-        Logger::info("Depth: " + std::to_string(depthIn));
         depth = depthIn;
     }
 
