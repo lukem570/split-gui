@@ -165,9 +165,9 @@ namespace SplitGui {
         vk_submitInfo.pCommandBuffers   = &vk_commandBuffers[currentFrame];
         vk_submitInfo.pSignalSemaphores = &vk_renderFinishedSemaphores[currentFrame];
 
-        unsigned int id = vk_graphicsQueues.acquireAvailable();
+        queueMutex.lock();
 
-        vk_runtimeResult = vk_graphicsQueues.getData(id).submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
+        vk_runtimeResult = vk_graphicsQueue.submit(1, &vk_submitInfo, vk_inFlightFences[currentFrame]);
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
             return Result::eFailedToSubmitQueue;
@@ -176,20 +176,9 @@ namespace SplitGui {
         vk_presentInfo.pWaitSemaphores = &vk_renderFinishedSemaphores[currentFrame];
         vk_presentInfo.pImageIndices   = &imageIndex;
 
-        vk_graphicsQueues.release(id);
+        vk_runtimeResult = vk_presentQueue.presentKHR(&vk_presentInfo);
 
-        if (graphicsQueueFamilyIndex == presentQueueFamilyIndex) {
-
-            id = vk_graphicsQueues.acquireAvailable();
-
-            vk_runtimeResult = vk_graphicsQueues.getData(id).presentKHR(&vk_presentInfo);
-
-            vk_graphicsQueues.release(id);
-        } else {
-
-            vk_runtimeResult = vk_presentQueue.presentKHR(&vk_presentInfo);
-        }
-
+        queueMutex.unlock();
 
         if (vk_runtimeResult != vk::Result::eSuccess) {
             if (vk_runtimeResult == vk::Result::eErrorOutOfDateKHR || vk_runtimeResult == vk::Result::eSuboptimalKHR) {

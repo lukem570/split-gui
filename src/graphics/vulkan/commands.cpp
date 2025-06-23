@@ -10,12 +10,8 @@ namespace SplitGui {
 
         vk_frameCommandPool = vk_device.createCommandPool(commandPoolInfo);
 
-        vk_interactionCommandPools.resize(graphicsQueueCount);
-
-        for (unsigned int i = 0; i < graphicsQueueCount; i++) {
-            vk_interactionCommandPools[i] = vk_device.createCommandPool(commandPoolInfo);
-        }
-
+        vk_interactionCommandPool = vk_device.createCommandPool(commandPoolInfo);
+        
         Logger::info("Created Command Pool");
     }
 

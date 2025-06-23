@@ -72,11 +72,9 @@ namespace SplitGui {
     inline vk::CommandBuffer VulkanInterface::startCopyBuffer() {
         SPLITGUI_PROFILE;
 
-        queueId = vk_graphicsQueues.acquireAvailable();
-
         vk::CommandBufferAllocateInfo allocInfo;
         allocInfo.level              = vk::CommandBufferLevel::ePrimary;
-        allocInfo.commandPool        = vk_interactionCommandPools[queueId];
+        allocInfo.commandPool        = vk_interactionCommandPool;
         allocInfo.commandBufferCount = 1;
 
         std::vector<vk::CommandBuffer> commandBuffers = vk_device.allocateCommandBuffers(allocInfo);
@@ -110,7 +108,9 @@ namespace SplitGui {
 
         vk::Fence fence = vk_device.createFence(vk::FenceCreateInfo());
 
-        vk::Result result_submit = vk_graphicsQueues.getData(queueId).submit(1, &submitInfo, fence);
+        queueMutex.lock();
+
+        vk::Result result_submit = vk_graphicsQueue.submit(1, &submitInfo, fence);
 
         if (result_submit != vk::Result::eSuccess) {
             return Result::eFailedToSubmitQueue;
@@ -123,9 +123,9 @@ namespace SplitGui {
         }
 
         vk_device.destroyFence(fence);
-        vk_device.freeCommandBuffers(vk_interactionCommandPools[queueId], 1, &commandBuffer);
-        
-        vk_graphicsQueues.release(queueId);
+        vk_device.freeCommandBuffers(vk_interactionCommandPool, 1, &commandBuffer);
+
+        queueMutex.unlock();
 
         return Result::eSuccess;
     }

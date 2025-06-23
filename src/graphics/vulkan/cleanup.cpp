@@ -32,9 +32,7 @@ namespace SplitGui {
 
         vk_device.destroyCommandPool(vk_frameCommandPool);
 
-        for (unsigned int i = 0; i < graphicsQueueCount; i++) {
-            vk_device.destroyCommandPool(vk_interactionCommandPools[i]);
-        }
+        vk_device.destroyCommandPool(vk_interactionCommandPool);
         
         cleanupFrameBuffers();
         cleanupDepthResources();

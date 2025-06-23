@@ -163,7 +163,7 @@ namespace SplitGui {
             vk::Instance                        vk_instance;
             vk::PhysicalDevice                  vk_physicalDevice;
             vk::Device                          vk_device;
-            ThreadBuffer<vk::Queue>             vk_graphicsQueues;
+            vk::Queue                           vk_graphicsQueue;
             vk::Queue                           vk_presentQueue;
             vk::SurfaceKHR                      vk_surface;
             vk::SwapchainKHR                    vk_swapchain;
@@ -204,7 +204,7 @@ namespace SplitGui {
             std::array<vk::ClearValue, 2>       vk_clearValues;
             std::array<vk::ClearValue, 2>       vk_sceneClearValues;
             std::vector<vk::CommandBuffer>      vk_commandBuffers;
-            std::vector<vk::CommandPool>        vk_interactionCommandPools;
+            vk::CommandPool                     vk_interactionCommandPool;
             std::vector<vk::Framebuffer>        vk_swapchainFramebuffers;
             std::vector<vk::Image>              vk_swapchainImages;
             std::vector<vk::ImageView>          vk_swapchainImageViews;
@@ -213,7 +213,6 @@ namespace SplitGui {
             std::vector<vk::Fence>              vk_inFlightFences;
             unsigned int                        graphicsQueueFamilyIndex = -1;
             unsigned int                        presentQueueFamilyIndex  = -1;
-            unsigned int                        graphicsQueueCount;
             std::vector<const char *>           enabledLayers;
             std::vector<const char *>           enabledInstanceExtensions;
             std::vector<const char *>           enabledDeviceExtensions;
@@ -240,7 +239,6 @@ namespace SplitGui {
             bool                                markVerticesForUpdate = false;
             unsigned int                        vectorTransformPassSize;
             IVec2                               vectorRenderPassSize;
-            ThreadLocal<unsigned int>           queueId;
             
             // debug
             bool                                vk_validation = false;
@@ -261,6 +259,7 @@ namespace SplitGui {
             std::vector<VectorEngineObject>     vectorEngineInstances;
 
             FairMutex frameMutex;
+            FairMutex queueMutex;
 
 [[nodiscard]] inline ResultValue<vk::Bool32> checkLayers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
               inline vk::Extent2D            chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);

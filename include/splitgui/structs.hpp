@@ -568,64 +568,6 @@ namespace SplitGui {
         
     };
 
-    template <typename T>
-    class ThreadBuffer {
-        public:
-
-            void push(const T& data) {
-                SPLITGUI_PROFILE;
-
-                mtx.lock();
-
-                availableIndices.push(resources.size());
-                resources.push_back(std::move(data));
-
-                mtx.unlock();
-            }
-
-            unsigned int acquireAvailable() {
-                SPLITGUI_PROFILE;
-
-                mtx.lock();
-
-                std::unique_lock<std::mutex> lock(aq);
-
-                cv.wait(lock, [this]() { return !availableIndices.empty(); });
-                
-                unsigned int index = availableIndices.front();
-                availableIndices.pop();
-
-                mtx.unlock();
-                
-                return index;
-            }
-
-            T& getData(unsigned int id) {
-                SPLITGUI_PROFILE;
-
-                return resources[id];
-            }
-
-            void release(unsigned int id) {
-                SPLITGUI_PROFILE;
-
-                mtx.lock();
-
-                availableIndices.push(id);
-
-                mtx.unlock();
-
-                cv.notify_one();
-            }
-
-        private:
-            std::vector<T> resources;
-            std::queue<unsigned int> availableIndices;
-            std::condition_variable cv;
-            std::mutex aq;
-            FairMutex mtx;
-    };
-
     template<typename T>
     class ThreadLocal {
     public:
