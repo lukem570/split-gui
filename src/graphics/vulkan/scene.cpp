@@ -359,38 +359,39 @@ namespace SplitGui {
     Result VulkanInterface::updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity) {
         SPLITGUI_PROFILE;
 
+        auto& scene = scenes[sceneRef.sceneNumber];
         LinkList<vk::BufferCopy> bufferCopies;
 
         for (TriangleBlock& tBlock : triangleRef.triangleBlocks) {
 
+            unsigned int size = 0;
+
             LinkElement<SceneVertexBufferObject>* element = tBlock.verticesStart;
-
             while (element != tBlock.verticesEnd->next) {
-
                 element->data.vertex.color = color;
                 element->data.vertex.opacity = opacity;
-                
                 element = element->next;
+                size++;
             }
-            
-            std::optional<unsigned int> offsetOpt = scenes[sceneRef.sceneNumber].vertices.offset(tBlock.verticesStart);
-            
+
+            std::optional<unsigned int> offsetOpt = scene.vertices.offset(tBlock.verticesStart);
             if (!offsetOpt.has_value()) {
                 return Result::eInvalidTrianglesRefUsed;
             }
 
-            unsigned int offset = offsetOpt.value() * sizeof(SceneVertexBufferObject) + offsetof(SceneVertexBufferObject, SceneVertexBufferObject::vertex) + offsetof(Vertex, Vertex::color);
-            
-            void* memory = vk_device.mapMemory(scenes[sceneRef.sceneNumber].vertexStagingBuffer.memory, offset, sizeof(Vec3));
+            unsigned int baseOffset = offsetOpt.value() * sizeof(SceneVertexBufferObject);
+            unsigned int sizeToCopy = sizeof(SceneVertexBufferObject) * size;
 
-            std::memcpy(memory, &color, sizeof(Vec3));
+            void* memory = vk_device.mapMemory(scene.vertexStagingBuffer.memory, baseOffset, sizeToCopy);
 
-            vk_device.unmapMemory(scenes[sceneRef.sceneNumber].vertexStagingBuffer.memory);
+            std::memcpy(memory, scene.vertices.sliceArray(tBlock.verticesStart, tBlock.verticesEnd), sizeToCopy);
 
-            vk::BufferCopy bufferCopy;
-            bufferCopy.size      = sizeof(Vec3);
-            bufferCopy.srcOffset = offset;
-            bufferCopy.dstOffset = offset;
+            vk_device.unmapMemory(scene.vertexStagingBuffer.memory);
+
+            vk::BufferCopy bufferCopy{};
+            bufferCopy.srcOffset = baseOffset;
+            bufferCopy.dstOffset = baseOffset;
+            bufferCopy.size      = sizeToCopy;
 
             bufferCopies.push(bufferCopy);
         }
