@@ -23,12 +23,15 @@ namespace SplitGui {
             static void error(std::string message);
             static void fatal(std::string message);
 
+            static void setSilent(bool isSilent);
+
         private:
             static Logger* instance;
             
             FILE* outputBuffer = stdout;
 
             bool ansiAware;
+            bool silent = false;
 
             Logger();
 

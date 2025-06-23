@@ -95,6 +95,10 @@ namespace SplitGui {
     void Logger::info(std::string message) {
         SPLITGUI_PROFILE;
 
+        if (getInstance()->silent) {
+            return;
+        }
+
         std::string time = getTime();
 
         if (getInstance()->ansiAware) {
@@ -110,6 +114,10 @@ namespace SplitGui {
 
     void Logger::debug(std::string message) {
         SPLITGUI_PROFILE;
+
+        if (getInstance()->silent) {
+            return;
+        }
 
         std::string time = getTime();
 
@@ -127,6 +135,10 @@ namespace SplitGui {
     void Logger::warn(std::string message) {
         SPLITGUI_PROFILE;
 
+        if (getInstance()->silent) {
+            return;
+        }
+
         std::string time = getTime();
 
         if (getInstance()->ansiAware) {
@@ -142,6 +154,10 @@ namespace SplitGui {
 
     void Logger::error(std::string message) {
         SPLITGUI_PROFILE;
+
+        if (getInstance()->silent) {
+            return;
+        }
 
         std::string time = getTime();
 
@@ -159,6 +175,10 @@ namespace SplitGui {
     void Logger::fatal(std::string message) {
         SPLITGUI_PROFILE;
 
+        if (getInstance()->silent) {
+            return;
+        }
+
         std::string time = getTime();
 
         if (getInstance()->ansiAware) {
@@ -170,6 +190,12 @@ namespace SplitGui {
         fflush(getInstance()->outputBuffer);
 
         SPLITGUI_PROFILE_LOG(message.c_str(), message.size());
+    }
+
+    void Logger::setSilent(bool isSilent) {
+        SPLITGUI_PROFILE;
+
+        getInstance()->silent = isSilent;
     }
 
 }
