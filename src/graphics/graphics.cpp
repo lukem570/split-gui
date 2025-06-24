@@ -279,4 +279,10 @@ namespace SplitGui {
 
         return size;
     }
+
+    ResultValue<TextureRef> Graphics::rasterizeSvg(const std::string& svg) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->rasterizeSvg(svg);
+    }
 }

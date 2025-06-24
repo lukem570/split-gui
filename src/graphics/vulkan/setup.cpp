@@ -29,6 +29,8 @@ namespace SplitGui {
             return Result::eFailedToInstanceFreeType;
         }
 
+        ns_rasterizer = nsvgCreateRasterizer();
+
         TRYR(instanceRes, instanceVulkan());
         TRYR(deviceRes, createPhysicalDevice());
 

@@ -280,6 +280,13 @@
     #define UINT8_WIDTH 8
     #endif
 
+    // nano svg
+    #define NANOSVG_IMPLEMENTATION
+    #include <nanosvg.h>
+
+    #define NANOSVGRAST_IMPLEMENTATION
+    #include <nanosvgrast.h>
+
 #endif
 
 #ifdef PROFILER_TRACY

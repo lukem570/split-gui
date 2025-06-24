@@ -57,6 +57,8 @@ namespace SplitGui {
             ft::FT_Done_Face(ft_face);
         }
 
+        nsvgDeleteRasterizer(ns_rasterizer);
+
         ft::FT_Done_FreeType(ft_lib);
 
         Logger::info("Cleaned Up Vulkan");

@@ -50,6 +50,7 @@ ninja
 * msdfgen
 * freetype
 * maccount
+* nano svg
 
 ## How to use
 

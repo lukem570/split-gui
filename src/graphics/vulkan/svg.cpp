@@ -1,99 +1,31 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
+    ResultValue<TextureRef> VulkanInterface::rasterizeSvg(const std::string& svg) {
 
-    inline msdfgen::Point2 splitguiPoint2(const Vec2& vector) {
-        return msdfgen::Point2(vector.x, vector.y);
-    }
+        NSVGimage* image = nsvgParse((char*)svg.c_str(), "px", 96);
 
-    ResultValue<TextureRef> VulkanInterface::createContourImage(std::vector<Contour>& contours) {
-        SPLITGUI_PROFILE;
-
-        msdfgen::Shape shape;
-
-        msdfgen::Contour* contour;
-
-        msdfgen::Point2 position;
-
-        for (unsigned int i = 0; i < contours.size(); i++) {
-
-            if (std::holds_alternative<MoveTo>(contours[i])) {
-                
-                msdfgen::Point2 from = splitguiPoint2(std::get<MoveTo>(contours[i]).from);
-                
-                contour = &shape.addContour();
-                position = from;
-            }
-
-            if (std::holds_alternative<LinearContour>(contours[i])) {
-
-                msdfgen::Point2 to = splitguiPoint2(std::get<LinearContour>(contours[i]).to);
-                
-                contour->addEdge(msdfgen::EdgeHolder(position, to));
-                position = to;
-            }
-            
-            if (std::holds_alternative<QuadraticBezierContour>(contours[i])) {
-                
-                msdfgen::Point2 to      = splitguiPoint2(std::get<QuadraticBezierContour>(contours[i]).to);
-                msdfgen::Point2 control = splitguiPoint2(std::get<QuadraticBezierContour>(contours[i]).control);
-                
-                msdfgen::EdgeHolder quadraticHolder(position, control, to);
-                
-                contour->addEdge(quadraticHolder);
-                position = to;
-            }
-            
-            if (std::holds_alternative<CubicBezierContour>(contours[i])) {
-                
-                msdfgen::Point2 to       = splitguiPoint2(std::get<CubicBezierContour>(contours[i]).to);
-                msdfgen::Point2 controlA = splitguiPoint2(std::get<CubicBezierContour>(contours[i]).controlA);
-                msdfgen::Point2 controlB = splitguiPoint2(std::get<CubicBezierContour>(contours[i]).controlB);
-                
-                msdfgen::EdgeHolder cubicHolder(position, controlA, controlB, to);
-                
-                contour->addEdge(cubicHolder);
-                position = to;
-            }
+        if (!image) {
+            return Result::eFailedToParseSvg;
         }
 
-        
-        shape.normalize();
-        
-        msdfgen::edgeColoringSimple(shape, M_PI);
-        
-        msdfgen::Range pxRange = msdfgen::Range(0.04);
-        
-        msdfgen::Vector2 scale;
+        float scale = 1.0f;
 
-        scale.set(vk_msdfExtent.width, vk_msdfExtent.height);
+        if (image->width > image->height) {
+            scale = image->width / vk_msdfExtent.width;
+        } else {
+            scale = image->height / vk_msdfExtent.height;
+        }
 
-        msdfgen::SDFTransformation transformation(
-            msdfgen::Projection(
-                scale,
-                msdfgen::Vector2(0, 0)
-            ), 
-            pxRange
-        );
-
-        msdfgen::Bitmap<float, 4> msdf(vk_msdfExtent.width, vk_msdfExtent.height);
-        msdfgen::generateMTSDF(msdf, shape, transformation);
+        scale /= 2.0;
 
         int numPixels = 4 * vk_msdfExtent.width * vk_msdfExtent.height;
+        TRYR(bufferRes, InstanceStagingBuffer(vk_textureArrayStagingBuffer, numPixels * sizeof(uint8_t)));
 
-        TRYR(bufferRes, InstanceStagingBuffer(vk_textureArrayStagingBuffer, numPixels * sizeof(unsigned char)));
+        uint8_t* memory = (uint8_t*)vk_device.mapMemory(vk_textureArrayStagingBuffer.memory, 0, vk_textureArrayStagingBuffer.size);
 
-        unsigned char* memory = (unsigned char*)vk_device.mapMemory(vk_textureArrayStagingBuffer.memory, 0, vk_textureArrayStagingBuffer.size);
-        int index = 0;
-        for (int x = (int)vk_msdfExtent.width - 1; x >= 0; x--) {
-            for (int y = 0; y < (int)vk_msdfExtent.height; y++) {
-                for (int j = 0; j < 4; j++) {
-                    memory[index] = msdfgen::pixelFloatToByte(msdf(y,x)[j]);
-                    index++;
-                }
-            }
-        }
-        
+        nsvgRasterize(ns_rasterizer, image, 0, 0, scale, memory, vk_msdfExtent.width, vk_msdfExtent.height, vk_msdfExtent.width * 4);
+
         vk_device.unmapMemory(vk_textureArrayStagingBuffer.memory);
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
@@ -145,13 +77,11 @@ namespace SplitGui {
 
         commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader, vk::DependencyFlagBits::eByRegion, nullptr, nullptr, barrier2);
 
-        vk_device.waitIdle();
-
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
-        vectorImages.push_back(contours);
+        Logger::info("Rasterized SVG");
 
-        Logger::info("Created Contour Image");
+        nsvgDelete(image);
 
         TextureRef ref;
         ref.textureNumber = textures++;

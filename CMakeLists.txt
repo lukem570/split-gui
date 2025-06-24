@@ -30,6 +30,7 @@ set(DEPENDENCIES
     "https://github.com/zeux/volk.git"
     "https://github.com/Chlumsky/msdfgen.git"
     "https://github.com/lukem570/memory-accountant.git"
+    "https://github.com/memononen/nanosvg.git"
 )
 
 set(DEPENDENCIES_DO_BUILD
@@ -41,6 +42,7 @@ set(DEPENDENCIES_DO_BUILD
     "TRUE"                          # volk
     "TRUE"                          # msdfgen
     "FALSE"                         # maccount
+    "TRUE"                          # nano svg
 )
 
 set(DEPENDENCIES_INCLUDE
@@ -52,6 +54,7 @@ set(DEPENDENCIES_INCLUDE
     "../"                           # volk
     "../"                           # msdfgen
     "include"                       # maccount
+    "src"                           # nano svg
 )
 
 set(INCLUDE_PATHS ${CMAKE_SOURCE_DIR}/include)

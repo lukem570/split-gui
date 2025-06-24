@@ -53,6 +53,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result                        submitBuffers()                                                                                                                    { throw; }
 [[nodiscard]] virtual Result                        resizeEvent()                                                                                                                      { throw; }
 [[nodiscard]] virtual ResultValue<unsigned int>     offsetOf(SceneRef& scene, ModelRef& ref)                                                                                           { throw; }
+[[nodiscard]] virtual ResultValue<TextureRef>       rasterizeSvg(const std::string& svg)                                                                                               { throw; }
               virtual void                          clearBuffers()                                                                                                                     { throw; }
 
         protected:
@@ -97,6 +98,7 @@ namespace SplitGui {
 [[nodiscard]] Result                        submitBuffers();
 [[nodiscard]] Result                        resizeEvent();
 [[nodiscard]] ResultValue<unsigned int>     offsetOf(SceneRef& scene, ModelRef& ref);
+[[nodiscard]] ResultValue<TextureRef>       rasterizeSvg(const std::string& svg);
               void                          attachEventHandler(EventHandler& handler);
               void                          clearBuffers();
 

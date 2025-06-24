@@ -28,6 +28,7 @@
 #include "scene.cpp"
 #include "setup.cpp"
 #include "submit.cpp"
+#include "svg.cpp"
 #include "swapchain.cpp"
 #include "sync.cpp"
 #include "system.cpp"

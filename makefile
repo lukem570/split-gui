@@ -35,5 +35,8 @@ list:
 switch:
 	python tools/testTools/test.py build/tests/switchTest
 
+svg:
+	python tools/testTools/test.py build/tests/svgTest
+
 test-all:
 	python tools/testTools/test.py

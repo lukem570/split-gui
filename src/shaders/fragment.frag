@@ -45,8 +45,11 @@ void main() {
 
         outColor = mix(vec4(in_fragColor.rgb, 0.0), vec4(in_fragColor.rgb, 1.0), opacity);
 
-        //outColor = vec4(1.0, 0.0, 0.0, 1.0);
+    } else if (useTexture) {
 
+        outColor = texture(textures, vec3(in_textureCord, in_index));
+        
+        
     } else if (useScene) {
 
         outColor = texture(scenes, vec3(in_textureCord, in_index));

@@ -148,6 +148,7 @@ namespace SplitGui {
 [[nodiscard]] Result                        loadFont(const char* path)                                                                                                         override;
 [[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 override;
 [[nodiscard]] Result                        submitBuffers()                                                                                                                    override;
+[[nodiscard]] ResultValue<TextureRef>       rasterizeSvg(const std::string& svg)                                                                                               override;
               void                          clearBuffers()                                                                                                                     override;
 
 [[nodiscard]] Result                        resizeEvent()                                                                                                                      override;
@@ -159,6 +160,9 @@ namespace SplitGui {
             ft::FT_Library                      ft_lib;
             ft::FT_Face                         ft_face;
             bool                                ft_fontInUse = false;
+
+            // nano svg variables
+            NSVGrasterizer*                     ns_rasterizer;
 
             // vulkan variables
             vk::Instance                        vk_instance;
@@ -239,6 +243,7 @@ namespace SplitGui {
             std::unordered_set<char>            charSet;
             bool                                markVerticesForUpdate = false;
             unsigned int                        vectorTransformPassSize;
+            unsigned int                        textures = 0;
             IVec2                               vectorRenderPassSize;
             
             // debug
