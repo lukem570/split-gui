@@ -18,6 +18,7 @@ namespace SplitGui {
 
         if (interfaceElement) {
             interfaceElement->cleanup();
+            ma::untrack(interfaceElement);
             delete interfaceElement;
         }
     }

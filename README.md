@@ -49,6 +49,7 @@ ninja
 * volk
 * msdfgen
 * freetype
+* maccount
 
 ## How to use
 

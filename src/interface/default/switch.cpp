@@ -63,6 +63,7 @@ namespace SplitGui {
 
     void Default::Switch::popBack() {
         children.back()->cleanup();
+        ma::untrack(children.back());
         delete children.back();
 
         children.pop_back();

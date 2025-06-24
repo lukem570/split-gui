@@ -568,6 +568,7 @@ namespace SplitGui {
         clear();
 
         if (arrayPtr) {
+            ma::untrack(arrayPtr);
             delete[] arrayPtr;
         }
     }
@@ -592,6 +593,7 @@ namespace SplitGui {
         LinkElement<T>* stop = end->next;
         while (current != stop) {
             LinkElement<T>* next = current->next;
+            ma::untrack(current);
             delete current;
             current = next;
             listSize--;
@@ -603,6 +605,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         LinkElement<T>* element = new LinkElement<T>;
+        ma::track(element, "link element");
         element->data = data;
         element->next = nullptr;
         element->previous = last;
@@ -631,11 +634,13 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         if (arrayPtr) {
+            ma::untrack(arrayPtr);
             delete[] arrayPtr;
             arrayPtr = nullptr;
         }
 
         arrayPtr = new T[listSize];
+        ma::track(arrayPtr, "link array");
 
         LinkElement<T>* element = first;
 
@@ -652,6 +657,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         if (arrayPtr) {
+            ma::untrack(arrayPtr);
             delete[] arrayPtr;
             arrayPtr = nullptr;
         }
@@ -667,6 +673,7 @@ namespace SplitGui {
         }
 
         arrayPtr = new T[sliceSize];
+        ma::track(arrayPtr, "link slice");
 
         element = start;
 
@@ -684,6 +691,7 @@ namespace SplitGui {
 
         while (element) {
             LinkElement<T>* next = element->next;
+            ma::untrack(element);
             delete element;
             element = next;
         }

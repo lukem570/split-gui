@@ -108,6 +108,7 @@ namespace SplitGui {
 
         for (unsigned int i = 0; i < children.size(); i++) {
             children[i]->cleanup();
+            ma::untrack(children[i]);
             delete children[i];
         }
         children.clear();

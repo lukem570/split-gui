@@ -2,9 +2,8 @@
 
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleTextTag() {
-
-        
         Default::Text* newText = new(std::nothrow) Default::Text();
+        ma::track(newText, "text");
         
         if (!newText) {
             return Result::eHeapAllocFailed;

@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleTransformTag() {
         Default::Transform* newTransform = new(std::nothrow) Default::Transform();
+        ma::track(newTransform, "transform");
 
         if (!newTransform) {
             return Result::eHeapAllocFailed;

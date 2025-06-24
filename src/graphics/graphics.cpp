@@ -13,6 +13,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         if (pInterface) {
+            ma::untrack(pInterface);
             delete pInterface;
         }
     }
@@ -25,6 +26,7 @@ namespace SplitGui {
         }
 
         pInterface = (GraphicsLibInterface*) new(std::nothrow) VulkanInterface(flags);
+        ma::track(pInterface, "vulkan instance");
         if (!pInterface) {
             return Result::eHeapAllocFailed;
         }

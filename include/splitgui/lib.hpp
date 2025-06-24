@@ -18,6 +18,11 @@
     #error "Unknown platform, please define export/import macros."
 #endif
 
+#ifdef BUILD_SPLITGUI
+    #define MACCOUNT_BUILD
+#endif
+#include <maccount/maccount.hpp>
+
 // Graphics library (default Vulkan)
 
 #if !defined(SPLIT_GUI_USE_VULKAN)

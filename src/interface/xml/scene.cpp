@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleSceneTag() {
         Default::SceneElement* newScene = new(std::nothrow) Default::SceneElement();
+        ma::track(newScene, "scene");
 
         if (!newScene) {
             return Result::eHeapAllocFailed;

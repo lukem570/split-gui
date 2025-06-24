@@ -11,6 +11,7 @@
 #include <chrono>
 
 int main() {
+    ma::Instance instance;
 
     SPLITGUI_PROFILE;
 

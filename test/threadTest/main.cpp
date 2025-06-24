@@ -73,6 +73,7 @@ int window(Data* data, bool* running) {
 }
 
 int main() {
+    ma::Instance instance;
 
     SPLITGUI_PROFILE;
 

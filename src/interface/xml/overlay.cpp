@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleOverlayTag() {
         Default::Overlay* newOverlay = new(std::nothrow) Default::Overlay();
+        ma::track(newOverlay, "overlay");
 
         if (!newOverlay) {
             return Result::eHeapAllocFailed;

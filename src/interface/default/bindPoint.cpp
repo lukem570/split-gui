@@ -8,6 +8,8 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         if (owner && root) {
+            root->cleanup();
+            ma::untrack(root);
             delete root;
         }
     }

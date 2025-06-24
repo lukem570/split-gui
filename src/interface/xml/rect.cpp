@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleRectTag() {
         Default::Rect* newRect = new(std::nothrow) Default::Rect();
+        ma::track(newRect, "rect");
 
         if (!newRect) {
             return Result::eHeapAllocFailed;

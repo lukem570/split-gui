@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleBindingTag() {
         Default::Binding* newBinding = new(std::nothrow) Default::Binding();
+        ma::track(newBinding, "binding");
 
         if (!newBinding) {
             return Result::eHeapAllocFailed;

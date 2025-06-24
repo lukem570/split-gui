@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleMetaTag() {
         Default::Meta* newMeta = new(std::nothrow) Default::Meta();
+        ma::track(newMeta, "meta");
 
         if (!newMeta) {
             return Result::eHeapAllocFailed;

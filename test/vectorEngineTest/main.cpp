@@ -18,6 +18,7 @@ double degToRad(double degrees) {
 }
 
 int main() {
+    ma::Instance instance;
 
     SPLITGUI_PROFILE;
 

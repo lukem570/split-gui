@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleBoxTag() {
         Default::Box* newBox = new(std::nothrow) Default::Box();
+        ma::track(newBox, "box");
 
         if (!newBox) {
             return Result::eHeapAllocFailed;

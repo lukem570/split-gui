@@ -9,6 +9,7 @@
 #include <string>
 
 int main() {
+    ma::Instance instance;
 
     SPLITGUI_PROFILE;
 

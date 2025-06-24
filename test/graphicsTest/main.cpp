@@ -2,6 +2,7 @@
 #include <splitgui/graphics.hpp>
 
 int main() {
+    ma::Instance instance;
 
     SPLITGUI_PROFILE;
 

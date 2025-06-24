@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleSplitTag() {
         Default::Split* newSplit = new(std::nothrow) Default::Split();
+        ma::track(newSplit, "split");
 
         if (!newSplit) {
             return Result::eHeapAllocFailed;

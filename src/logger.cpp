@@ -67,6 +67,7 @@ namespace SplitGui {
     void Logger::cleanup() {
         SPLITGUI_PROFILE;
         
+        ma::untrack(instance);
         delete instance;
     }
 
@@ -88,6 +89,7 @@ namespace SplitGui {
 
         if (instance == nullptr) {
             instance = new Logger();
+            ma::track(instance, "logger instance");
         }
         return instance;
     }

@@ -4,6 +4,7 @@
 #include <splitgui/structs.hpp>
 
 int main() {
+    ma::Instance instance;
 
     SPLITGUI_PROFILE;
 

@@ -20,6 +20,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
         
         if (windowLib) {
+            ma::untrack(windowLib);
             delete windowLib;
         }
     }
@@ -28,6 +29,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         windowLib = (WindowLibInterface*) new(std::nothrow) GlfwInterface();
+        ma::track(windowLib, "glfw instance");
         
         if (!windowLib) {
             return Result::eHeapAllocFailed;

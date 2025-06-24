@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleListTag() {
         Default::List* newList = new(std::nothrow) Default::List();
+        ma::track(newList, "list");
 
         if (!newList) {
             return Result::eHeapAllocFailed;

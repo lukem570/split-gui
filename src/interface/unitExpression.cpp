@@ -155,6 +155,7 @@ namespace SplitGui {
                 case UnitExpressionTokenType::eLiteral: {
                     
                     UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eLiteral);
+                    ma::track(newExpression, "unit expression");
 
                     if (!newExpression) {
                         return Result::eHeapAllocFailed;
@@ -177,6 +178,7 @@ namespace SplitGui {
                 }
                 case UnitExpressionTokenType::eCall: {
                     UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eCall);
+                    ma::track(newExpression, "unit expression");
 
                     if (!newExpression) {
                         return Result::eHeapAllocFailed;
@@ -190,6 +192,7 @@ namespace SplitGui {
                 case UnitExpressionTokenType::eVector: {
 
                     UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eVector);
+                    ma::track(newExpression, "unit expression");
 
                     if (!newExpression) {
                         return Result::eHeapAllocFailed;
@@ -257,6 +260,7 @@ namespace SplitGui {
                 case UnitExpressionTokenType::eBinaryOp: {
                     
                     UnitExpression* newExpression = new(std::nothrow) UnitExpression(UnitExpression::Type::eBinaryOp);
+                    ma::track(newExpression, "unit expression");
 
                     if (!newExpression) {
                         return Result::eHeapAllocFailed;
@@ -395,6 +399,7 @@ namespace SplitGui {
             default: break;
         }
 
+        ma::untrack(expression);
         delete expression;
     }
 

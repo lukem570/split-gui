@@ -29,6 +29,7 @@ set(DEPENDENCIES
     "https://github.com/lukem570/glfwpp.git"
     "https://github.com/zeux/volk.git"
     "https://github.com/Chlumsky/msdfgen.git"
+    "https://github.com/lukem570/memory-accountant.git"
 )
 
 set(DEPENDENCIES_DO_BUILD
@@ -39,6 +40,7 @@ set(DEPENDENCIES_DO_BUILD
     "FALSE"                         # glfwpp
     "TRUE"                          # volk
     "TRUE"                          # msdfgen
+    "FALSE"                         # maccount
 )
 
 set(DEPENDENCIES_INCLUDE
@@ -49,6 +51,7 @@ set(DEPENDENCIES_INCLUDE
     "include"                       # glfwpp
     "../"                           # volk
     "../"                           # msdfgen
+    "include"                       # maccount
 )
 
 set(INCLUDE_PATHS ${CMAKE_SOURCE_DIR}/include)

@@ -26,6 +26,7 @@ namespace SplitGui {
             if (token.value == "meta") { // TODO: fix
                 ResultValue<InterfaceElement*> metaRet = handleMetaTag();
                 TRYD(metaRet);
+                ma::untrack(metaRet.value);
                 delete metaRet.value;
                 continue;
             }
@@ -63,6 +64,7 @@ namespace SplitGui {
                     return Result::eInvalidTag;
                 }
                 
+                ma::untrack(bindingRet.value);
                 delete bindingRet.value;
                 continue;
             }
@@ -70,6 +72,7 @@ namespace SplitGui {
             if (bindings.find(token.value) != bindings.end()) {
             
                 Default::BindPoint* newBindPoint = new Default::BindPoint();
+                ma::track(newBindPoint, "bind point");
                 
                 newBindPoint->setBindPoint(bindings[token.value].node);
                 newBindPoint->setOwnership(!bindings[token.value].hasOwner);

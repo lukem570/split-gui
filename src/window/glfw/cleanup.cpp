@@ -17,6 +17,7 @@ namespace SplitGui {
     #endif
 
         if (window.handle) {
+            ma::untrack(window.handle);
             delete window.handle;
         }
 

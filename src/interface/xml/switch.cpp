@@ -3,6 +3,7 @@
 namespace SplitGui {
     ResultValue<InterfaceElement*> XmlParser::handleSwitchTag() {
         Default::Switch* newSwitch = new(std::nothrow) Default::Switch();
+        ma::track(newSwitch, "switch");
 
         if (!newSwitch) {
             return Result::eHeapAllocFailed;
