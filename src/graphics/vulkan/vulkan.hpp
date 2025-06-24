@@ -141,6 +141,7 @@ namespace SplitGui {
               void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           override;
               void                          updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   override;
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
+              Mat4&                         getModel(ModelRef& model)                                                                                                          override;
 [[nodiscard]] ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      override;
 [[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                               override;
 [[nodiscard]] Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                                                  override;

@@ -211,6 +211,12 @@ namespace SplitGui {
         pInterface->updateSceneCameraProjection(ref, projection);
     }
 
+    Mat4& Graphics::getModel(ModelRef& model) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->getModel(model);
+    }
+
     ResultValue<ModelRef> Graphics::createModel(SceneRef& ref, const Mat4& model) {
         SPLITGUI_PROFILE;
 

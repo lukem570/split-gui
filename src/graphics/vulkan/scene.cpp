@@ -274,6 +274,12 @@ namespace SplitGui {
         return outRef;
     }
 
+    Mat4& VulkanInterface::getModel(ModelRef& model) {
+        SPLITGUI_PROFILE;
+
+        return model.model->data;
+    }
+
     Result VulkanInterface::deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef) {
         SPLITGUI_PROFILE;
     
