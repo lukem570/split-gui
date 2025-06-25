@@ -11,7 +11,7 @@ int main() {
 
     SPLITGUI_PROFILE;
 
-    std::ifstream indexFile("test/svgTest/23.svg");
+    std::ifstream indexFile("test/svgTest/background.svg");
 
     if (!indexFile.is_open()) {
         printf("ERROR: error opening index.xml\n");

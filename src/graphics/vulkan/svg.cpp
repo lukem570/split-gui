@@ -3,7 +3,10 @@
 namespace SplitGui {
     ResultValue<TextureRef> VulkanInterface::rasterizeSvg(const std::string& svg) {
 
-        NSVGimage* image = nsvgParse((char*)svg.c_str(), "px", 96);
+        char* string = new char[svg.size()];
+        std::memcpy(string, svg.c_str(), svg.size());
+
+        NSVGimage* image = nsvgParse(string, "px", 96);
 
         if (!image) {
             return Result::eFailedToParseSvg;
@@ -16,8 +19,6 @@ namespace SplitGui {
         } else {
             scale = image->height / vk_msdfExtent.height;
         }
-
-        scale /= 2.0;
 
         int numPixels = 4 * vk_msdfExtent.width * vk_msdfExtent.height;
         TRYR(bufferRes, InstanceStagingBuffer(vk_textureArrayStagingBuffer, numPixels * sizeof(uint8_t)));
