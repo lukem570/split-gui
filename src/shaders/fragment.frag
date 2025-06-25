@@ -47,12 +47,11 @@ void main() {
 
     } else if (useTexture) {
 
-        outColor = texture(textures, vec3(in_textureCord, in_index));
-        
+        outColor = texture(textures, vec3(in_textureCord, in_index)) * in_fragColor;
         
     } else if (useScene) {
 
-        outColor = texture(scenes, vec3(in_textureCord, in_index)) * in_fragColor;
+        outColor = texture(scenes, vec3(in_textureCord, in_index));
 
     } else {
         outColor = in_fragColor;
