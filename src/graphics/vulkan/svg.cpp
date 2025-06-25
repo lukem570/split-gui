@@ -3,10 +3,14 @@
 namespace SplitGui {
     ResultValue<TextureRef> VulkanInterface::rasterizeSvg(const std::string& svg) {
 
-        char* string = new char[svg.size()];
+        char* string = new char[svg.size() + 1];
+        ma::track(string, "SVG data");
         std::memcpy(string, svg.c_str(), svg.size());
+        string[svg.size()] = '\0';
 
         NSVGimage* image = nsvgParse(string, "px", 96);
+        ma::untrack(string);
+        delete[] string;
 
         if (!image) {
             return Result::eFailedToParseSvg;
@@ -31,7 +35,7 @@ namespace SplitGui {
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
 
-        vk::ImageMemoryBarrier barrier1;
+        vk::ImageMemoryBarrier barrier1 = {};
         barrier1.srcAccessMask                   = (vk::AccessFlagBits) 0;
         barrier1.dstAccessMask                   = vk::AccessFlagBits::eTransferWrite;
         barrier1.oldLayout                       = vk::ImageLayout::eUndefined;
@@ -40,8 +44,8 @@ namespace SplitGui {
         barrier1.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
         barrier1.image                           = vk_textureArrayImages;
         barrier1.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
-        barrier1.subresourceRange.baseArrayLayer = 0;
-        barrier1.subresourceRange.layerCount     = MAX_VECTOR_IMAGES;
+        barrier1.subresourceRange.baseArrayLayer = textures;
+        barrier1.subresourceRange.layerCount     = 1;
         barrier1.subresourceRange.levelCount     = 1;
 
         commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eTransfer, (vk::DependencyFlagBits)0, nullptr, nullptr, barrier1);
@@ -63,7 +67,7 @@ namespace SplitGui {
 
         commandBuffer.copyBufferToImage(vk_textureArrayStagingBuffer.buffer, vk_textureArrayImages, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
 
-        vk::ImageMemoryBarrier barrier2;
+        vk::ImageMemoryBarrier barrier2 = {};
         barrier2.srcAccessMask                   = vk::AccessFlagBits::eTransferWrite;
         barrier2.dstAccessMask                   = vk::AccessFlagBits::eShaderRead;
         barrier2.oldLayout                       = vk::ImageLayout::eTransferDstOptimal;
@@ -72,8 +76,8 @@ namespace SplitGui {
         barrier2.dstQueueFamilyIndex             = vk::QueueFamilyIgnored;
         barrier2.image                           = vk_textureArrayImages;
         barrier2.subresourceRange.aspectMask     = vk::ImageAspectFlagBits::eColor;
-        barrier2.subresourceRange.baseArrayLayer = 0;
-        barrier2.subresourceRange.layerCount     = MAX_VECTOR_IMAGES;
+        barrier2.subresourceRange.baseArrayLayer = textures;
+        barrier2.subresourceRange.layerCount     = 1;
         barrier2.subresourceRange.levelCount     = 1;
 
         commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader, vk::DependencyFlagBits::eByRegion, nullptr, nullptr, barrier2);
