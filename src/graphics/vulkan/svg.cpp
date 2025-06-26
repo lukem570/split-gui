@@ -16,13 +16,10 @@ namespace SplitGui {
             return Result::eFailedToParseSvg;
         }
 
-        float scale = 1.0f;
-
-        if (image->width > image->height) {
-            scale = image->width / vk_msdfExtent.width;
-        } else {
-            scale = image->height / vk_msdfExtent.height;
-        }
+        float scale = std::min(
+            vk_msdfExtent.width / image->width,
+            vk_msdfExtent.height / image->height
+        );
 
         int numPixels = 4 * vk_msdfExtent.width * vk_msdfExtent.height;
         TRYR(bufferRes, InstanceStagingBuffer(vk_textureArrayStagingBuffer, numPixels * sizeof(uint8_t)));
