@@ -73,6 +73,7 @@ namespace SplitGui {
               virtual IVec2      getCursorPosition()                             { throw; }
               virtual void       setCursorShape(CursorType type)                 { throw; }
               virtual MouseState getMouseState(MouseCode code)                   { throw; }
+              virtual KeyState   getKeyState(KeyCode code)                       { throw; }
               virtual Vec2       getMonitorContextScale()                        { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
@@ -116,6 +117,7 @@ namespace SplitGui {
               IVec2      getCursorPosition();
               void       setCursorShape(CursorType type);
               MouseState getMouseState(MouseCode code);
+              KeyState   getKeyState(KeyCode code);
               Vec2       getMonitorContextScale();
 
 #ifdef SPLIT_GUI_USE_VULKAN

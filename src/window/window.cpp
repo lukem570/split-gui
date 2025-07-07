@@ -144,6 +144,12 @@ namespace SplitGui {
         return windowLib->getMouseState(code);
     }
 
+    KeyState Window::getKeyState(KeyCode code) {
+        SPLITGUI_PROFILE;
+
+        return windowLib->getKeyState(code);
+    }
+
     Vec2 Window::getMonitorContextScale() {
         SPLITGUI_PROFILE;
 

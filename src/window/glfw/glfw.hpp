@@ -41,6 +41,7 @@ namespace SplitGui {
             IVec2      getCursorPosition() override;
             void       setCursorShape(CursorType type) override;
             MouseState getMouseState(MouseCode code) override;
+            KeyState   getKeyState(KeyCode code) override;
             Vec2       getMonitorContextScale() override;
 
 #ifdef SPLIT_GUI_USE_VULKAN
@@ -74,6 +75,7 @@ namespace SplitGui {
             static inline MouseState convertGlfwMouseState(glfw::MouseButtonState state);
 
             static inline glfw::MouseButton convertSplitGuiMouseCode(MouseCode code);
+            static inline glfw::KeyCode convertSplitGuiKeyCode(KeyCode code);
 
     };
 }

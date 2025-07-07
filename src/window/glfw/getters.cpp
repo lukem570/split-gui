@@ -55,4 +55,10 @@ namespace SplitGui {
 
         return convertGlfwMouseState((glfw::MouseButtonState)glfwGetMouseButton(*window.handle, (int)convertSplitGuiMouseCode(code)));
     }
+
+    KeyState GlfwInterface::getKeyState(KeyCode code) {
+        SPLITGUI_PROFILE;
+
+        return convertGlfwKeyState((glfw::KeyState)glfwGetKey(*window.handle, (int)convertSplitGuiKeyCode(code)));
+    }
 }
