@@ -38,7 +38,7 @@ namespace SplitGui {
                 Default::Binding* binding = (Default::Binding*)bindingRet.value;
                 
                 std::string alias  = binding->getAlias();
-                std::string source = binding->getSource();
+                std::string source = remove_extension(getExecutablePath()) + "/" + binding->getSource();
                 
                 if (alias.empty() || source.empty()) {
                     return Result::eInvalidType;
