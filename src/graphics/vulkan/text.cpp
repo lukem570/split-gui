@@ -88,7 +88,7 @@ namespace SplitGui {
         return size + Vec2{-1, -1};
     }
 
-    Result VulkanInterface::prepareTextForRendering(std::string text) {
+    Result VulkanInterface::prepareTextForRendering(const std::string& text) {
         double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
         vk::CommandBuffer commandBuffer = startCopyBuffer();
@@ -233,10 +233,29 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    Result VulkanInterface::updateText(TextRef& ref, Vec2 x1, Vec3 color, float fontSize, float depth) {
+    Result VulkanInterface::updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
+
+        TRYR(prepRes, prepareTextForRendering(text));
+
+        unsigned int itterateSize = text.size() < ref.text.size() ? text.size() : ref.text.size();
+
+        if (text.size() < ref.text.size()) {
+            for (unsigned int i = ref.text.size() - text.size(); i < ref.text.size(); i++) {
+                deleteRect(ref.rects[i]);
+            }
+
+            ref.text.resize(text.size());
+        }
+
+        if (text.size() > ref.text.size()) {
+
+            auto refRes = drawText(x1, text.substr(ref.text.size()), color, fontSize, depth);
+            TRYD(refRes);
+            ref.rects.insert(ref.rects.end(), refRes.value.rects.begin(), refRes.value.rects.end());
+        }
 
         float emScale = fontSize / (float)ft_face->units_per_EM;
         float lineHeight = ft_face->size->metrics.height * emScale;
@@ -249,7 +268,7 @@ namespace SplitGui {
 
         int rectIdx = 0;
 
-        for (unsigned int i = 0; i < ref.text.size(); i++) {
+        for (unsigned int i = 0; i < itterateSize; i++) {
 
             if (ref.text[i] == '\n') {
                 pos.y += lineHeight;
@@ -291,7 +310,8 @@ namespace SplitGui {
                 x1 + Vec2{outX1, outY1},
                 x1 + Vec2{outX2, outY2},
                 color,
-                depth
+                depth,
+                text[i]
             );
 
             pos.x += slot->advance.x * emScale;
@@ -299,10 +319,12 @@ namespace SplitGui {
             rectIdx++;
         }
 
+        ref.text = text;
+
         return Result::eSuccess;
     }
 
-    ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, std::string& text, Vec3 color, float fontSize, float depth) {
+    ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth) {
         SPLITGUI_PROFILE;
 
         if (!ft_fontInUse) {

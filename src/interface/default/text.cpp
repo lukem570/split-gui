@@ -97,7 +97,7 @@ namespace SplitGui {
             }
         }
 
-        return pGraphics->updateText(textRef, origin, color, fontSize, depth);
+        return pGraphics->updateText(textRef, value, origin, color, fontSize, depth);
     }
 
     Result Default::Text::instance() {

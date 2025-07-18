@@ -56,7 +56,7 @@ namespace SplitGui {
         return refRet;
     }
 
-    void VulkanInterface::updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth) {
+    void VulkanInterface::updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth, uint16_t textureIndex) {
         SPLITGUI_PROFILE;
 
         ref.bottomLeft->data.vertex.pos  = {std::min(x1.x, x2.x), std::min(x1.y, x2.y), depth};
@@ -68,6 +68,11 @@ namespace SplitGui {
         ref.bottomRight->data.vertex.color = color;
         ref.topLeft->data.vertex.color     = color;
         ref.topRight->data.vertex.color    = color;
+
+        ref.bottomLeft->data.index  = textureIndex;
+        ref.bottomRight->data.index = textureIndex;
+        ref.topLeft->data.index     = textureIndex;
+        ref.topRight->data.index    = textureIndex;
 
         markVerticesForUpdate = true;
     }

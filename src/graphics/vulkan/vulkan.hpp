@@ -124,7 +124,7 @@ namespace SplitGui {
 
 [[nodiscard]] Result                        drawFrame()                                                                                                                        override;
               RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
-              void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f)                                                         override;
+              void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, uint16_t textureIndex = 0)                              override;
               void                          deleteRect(RectRef& ref)                                                                                                           override;
               void                          deleteText(TextRef& ref)                                                                                                           override;
 [[nodiscard]] ResultValue<Vec2>             getTextSize(const std::string& text, float fontSize)                                                                               override;
@@ -143,8 +143,8 @@ namespace SplitGui {
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
               Mat4&                         getModel(ModelRef& model)                                                                                                          override;
 [[nodiscard]] ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      override;
-[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                               override;
-[[nodiscard]] Result                        updateText(TextRef& ref, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                                                  override;
+[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                               override;
+[[nodiscard]] Result                        updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                                                  override;
 [[nodiscard]] Result                        loadFont(const char* path)                                                                                                         override;
 [[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 override;
 [[nodiscard]] Result                        submitBuffers()                                                                                                                    override;
@@ -353,7 +353,7 @@ namespace SplitGui {
 [[nodiscard]] inline Result createVectorEngineRenderPipeline(VectorEngineObject& vEngine);
 [[nodiscard]] inline Result submitVectorEngineEdgeResources(VectorEngineObject& vEngine);
 
-[[nodiscard]] inline Result prepareTextForRendering(std::string text);
+[[nodiscard]] inline Result prepareTextForRendering(const std::string& text);
 
               inline void setupRenderpassBeginInfo();
               inline void setupViewport();

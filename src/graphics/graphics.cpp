@@ -66,7 +66,7 @@ namespace SplitGui {
         return pInterface->drawRect(newX1, newX2, color.normalize(), (float)depth / DEPTH_PLANE, flags, textureIndex);
     }
 
-    void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth) {
+    void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth, uint16_t textureIndex) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -79,7 +79,7 @@ namespace SplitGui {
         newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
         newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
 
-        pInterface->updateRect(ref, newX1, newX2, color.normalize(),(float)depth / DEPTH_PLANE);
+        pInterface->updateRect(ref, newX1, newX2, color.normalize(),(float)depth / DEPTH_PLANE, textureIndex);
     }
 
     void Graphics::deleteRect(RectRef& ref) {
@@ -135,7 +135,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<TextRef> Graphics::drawText(IVec2 x1, std::string text, HexColor color, float fontSize, int depth) {
+    ResultValue<TextRef> Graphics::drawText(IVec2 x1, const std::string& text, HexColor color, float fontSize, int depth) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -147,7 +147,7 @@ namespace SplitGui {
         return pInterface->drawText(newX1, text, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
     }
 
-    Result Graphics::updateText(TextRef& ref, IVec2 x1, HexColor color, float fontSize, int depth) {
+    Result Graphics::updateText(TextRef& ref, const std::string& text, IVec2 x1, HexColor color, float fontSize, int depth) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -156,7 +156,7 @@ namespace SplitGui {
         newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
         newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
 
-        return pInterface->updateText(ref, newX1, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
+        return pInterface->updateText(ref, text, newX1, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
     }
 
     Result Graphics::loadFont(const char* path) {
