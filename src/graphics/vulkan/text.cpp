@@ -240,14 +240,11 @@ namespace SplitGui {
 
         TRYR(prepRes, prepareTextForRendering(text));
 
-        unsigned int itterateSize = text.size() < ref.text.size() ? text.size() : ref.text.size();
-
         if (text.size() < ref.text.size()) {
-            for (unsigned int i = ref.text.size() - text.size(); i < ref.text.size(); i++) {
-                deleteRect(ref.rects[i]);
+            for (unsigned int i = 0; i < ref.text.size() - text.size(); i++) {
+                deleteRect(ref.rects.back());
+                ref.rects.pop_back();
             }
-
-            ref.text.resize(text.size());
         }
 
         if (text.size() > ref.text.size()) {
@@ -268,15 +265,15 @@ namespace SplitGui {
 
         int rectIdx = 0;
 
-        for (unsigned int i = 0; i < itterateSize; i++) {
+        for (unsigned int i = 0; i < text.size(); i++) {
 
-            if (ref.text[i] == '\n') {
+            if (text[i] == '\n') {
                 pos.y += lineHeight;
                 pos.x = 0;
                 continue;
             }
             
-            int glyphId = ft::FT_Get_Char_Index(ft_face, ref.text[i]);
+            int glyphId = ft::FT_Get_Char_Index(ft_face, text[i]);
             
             ft::FT_Error loadCharError = ft::FT_Load_Glyph(ft_face, glyphId, 0);
             
@@ -286,7 +283,7 @@ namespace SplitGui {
 
             ft::FT_GlyphSlot slot = ft_face->glyph;
 
-            if (std::isspace(ref.text[i])) {
+            if (std::isspace(text[i])) {
                 
                 pos.x += slot->advance.x * emScale;
                 continue;
