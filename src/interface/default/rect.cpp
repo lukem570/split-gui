@@ -22,7 +22,7 @@ namespace SplitGui {
         x2.y = extent.y + extent.height;
         
         
-        pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth);
+        pGraphics->updateRect(graphicsRectRef, x1, x2, color, depth, textureIndex);
     
 
         return Result::eSuccess;
