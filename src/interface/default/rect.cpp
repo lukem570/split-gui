@@ -93,7 +93,7 @@ namespace SplitGui {
             x2.x = extent.x + extent.width;
             x2.y = extent.y + extent.height;
 
-            graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
+            graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex, cropRegionRef);
 
             rectExists = true;
         }

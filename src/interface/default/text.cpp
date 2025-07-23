@@ -181,7 +181,7 @@ namespace SplitGui {
             }
         } else if (hidden != isHidden && !isHidden) {
 
-            SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth);
+            SplitGui::ResultValue<TextRef> textRes = pGraphics->drawText({extent.x, extent.y}, value, color, fontSize, depth, cropRegionRef);
 
             TRYD(textRes);
 
