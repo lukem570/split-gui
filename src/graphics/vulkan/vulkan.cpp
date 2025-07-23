@@ -16,6 +16,7 @@
 #include "cleanup.cpp"
 #include "commands.cpp"
 #include "contourImage.cpp"
+#include "crop.cpp"
 #include "depth.cpp"
 #include "descriptors.cpp"
 #include "events.cpp"

@@ -8,6 +8,7 @@ namespace SplitGui {
 
         cleanupSyncObj();
 
+        cleanupStagingBuffer(vk_cropRegionArrayStagingBuffer);
         cleanupStagingBuffer(vk_textureArrayStagingBuffer);
         cleanupStagingBuffer(vk_rectStagingBuffer);
         cleanupStagingBuffer(vk_indexStagingBuffer);
@@ -25,6 +26,7 @@ namespace SplitGui {
         vk_device.freeMemory(vk_textureArrayImageMemory);
         vk_device.destroyImage(vk_textureArrayImages);
 
+        cleanupCropRegionResources();
         cleanupVectorEngineInstances();
         cleanupScenes();
         cleanupVertexAndIndexBuffers();
@@ -125,6 +127,13 @@ namespace SplitGui {
         vk_device.destroySampler(vk_scenesImageArraySampler);
         vk_device.freeMemory(vk_scenesImageArrayImageMemory);
         vk_device.destroyImage(vk_scenesImageArrayImages);
+    }
+
+    inline void VulkanInterface::cleanupCropRegionResources() {
+        if (vk_cropRegionArrayBufferMemory) {
+            vk_device.freeMemory(vk_cropRegionArrayBufferMemory);
+            vk_device.destroyBuffer(vk_cropRegionArrayBuffer);
+        }
     }
 
     inline void VulkanInterface::cleanupSceneFrameBuffers(SceneRef& ref) {

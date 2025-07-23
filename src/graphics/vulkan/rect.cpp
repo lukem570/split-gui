@@ -1,8 +1,18 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    RectRef VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth, VertexFlags flags, uint16_t textureIndex) {
+    RectRef VulkanInterface::drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth, VertexFlags flags, uint16_t textureIndex, std::optional<CropRegionRef> crop) {
         SPLITGUI_PROFILE;
+
+        uint16_t regionIndex = 0;
+
+        if (crop.has_value()) {
+            std::optional<unsigned int> regionOffset = cropRegions.offset(crop.value().cropRegion);
+
+            if (regionOffset.has_value()) {
+                regionIndex = regionOffset.value();
+            }
+        }
 
         int verticesOffset = vertices.size();
 
@@ -35,10 +45,10 @@ namespace SplitGui {
         topRight.color       = color;
         topRight.textureCord = {1.0f, 1.0f};
 
-        LinkElement<VertexBufferObject>* bottomLeftElement  = vertices.push({bottomLeft,  flags, textureIndex});
-        LinkElement<VertexBufferObject>* bottomRightElement = vertices.push({bottomRight, flags, textureIndex});
-        LinkElement<VertexBufferObject>* topLeftElement     = vertices.push({topLeft,     flags, textureIndex});
-        LinkElement<VertexBufferObject>* topRightElement    = vertices.push({topRight,    flags, textureIndex});
+        LinkElement<VertexBufferObject>* bottomLeftElement  = vertices.push({bottomLeft,  flags, textureIndex, regionIndex});
+        LinkElement<VertexBufferObject>* bottomRightElement = vertices.push({bottomRight, flags, textureIndex, regionIndex});
+        LinkElement<VertexBufferObject>* topLeftElement     = vertices.push({topLeft,     flags, textureIndex, regionIndex});
+        LinkElement<VertexBufferObject>* topRightElement    = vertices.push({topRight,    flags, textureIndex, regionIndex});
 
         RectRef refRet;
         refRet.indicesStart  = iStart;

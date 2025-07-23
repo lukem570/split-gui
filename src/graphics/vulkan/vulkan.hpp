@@ -123,7 +123,7 @@ namespace SplitGui {
 [[nodiscard]] Result                        submitWindow(SplitGui::Window& window)                                                                                             override;
 
 [[nodiscard]] Result                        drawFrame()                                                                                                                        override;
-              RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       override;
+              RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0, std::optional<CropRegionRef> crop = std::nullopt) override;
               void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, uint16_t textureIndex = 0)                              override;
               void                          deleteRect(RectRef& ref)                                                                                                           override;
               void                          deleteText(TextRef& ref)                                                                                                           override;
@@ -143,12 +143,14 @@ namespace SplitGui {
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
               Mat4&                         getModel(ModelRef& model)                                                                                                          override;
 [[nodiscard]] ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      override;
-[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                               override;
-[[nodiscard]] Result                        updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                                                  override;
+[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                         override;
+[[nodiscard]] Result                        updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                         override;
 [[nodiscard]] Result                        loadFont(const char* path)                                                                                                         override;
 [[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 override;
 [[nodiscard]] Result                        submitBuffers()                                                                                                                    override;
 [[nodiscard]] ResultValue<TextureRef>       rasterizeSvg(const std::string& svg)                                                                                               override;
+[[nodiscard]] Result                        updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2)                                                                           override;
+[[nodiscard]] ResultValue<CropRegionRef>    createCropRegion(IVec2 x1, IVec2 x2)                                                                                               override;
               void                          clearBuffers()                                                                                                                     override;
 
 [[nodiscard]] Result                        resizeEvent()                                                                                                                      override;
@@ -192,6 +194,8 @@ namespace SplitGui {
             vk::DeviceMemory                    vk_vertexBufferMemory;
             vk::Buffer                          vk_indexBuffer;
             vk::DeviceMemory                    vk_indexBufferMemory;
+            vk::Buffer                          vk_cropRegionArrayBuffer;
+            vk::DeviceMemory                    vk_cropRegionArrayBufferMemory;
             vk::DescriptorSet                   vk_descriptorSet;
             vk::Extent2D                        vk_msdfExtent;
             vk::Image                           vk_textGlyphImages;
@@ -223,6 +227,7 @@ namespace SplitGui {
             std::vector<const char *>           enabledDeviceExtensions;
             
             StagingBuffer                       vk_textureArrayStagingBuffer;
+            StagingBuffer                       vk_cropRegionArrayStagingBuffer;
             StagingBuffer                       vk_rectStagingBuffer;
             StagingBuffer                       vk_vertexStagingBuffer;
             StagingBuffer                       vk_indexStagingBuffer;
@@ -239,6 +244,7 @@ namespace SplitGui {
             uint32_t                            imageIndex       = -1;
             LinkList<VertexBufferObject>        vertices;
             LinkList<uint16_t>                  indices;
+            LinkList<CropRegionObject>          cropRegions;
             std::vector<std::vector<Contour>>   vectorImages;
             std::unordered_set<char>            charSet;
             bool                                markVerticesForUpdate = false;
@@ -369,6 +375,7 @@ namespace SplitGui {
               inline void cleanupScenesImageArray();
               inline void cleanupScenes();
               inline void cleanupVectorEngineInstances();
+              inline void cleanupCropRegionResources();
 
               inline void cleanupStagingBuffer(StagingBuffer& stagingBuffer);
 

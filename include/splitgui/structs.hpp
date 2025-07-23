@@ -71,6 +71,7 @@ namespace SplitGui {
         eTransparent = 0x04,
         eScene       = 0x08,
         eWorldSpace  = 0x10,
+        eCropEnable  = 0x20,
     };
 
     struct SPLITGUI_EXPORT Vec4 {
@@ -378,7 +379,13 @@ namespace SplitGui {
     struct VertexBufferObject {
         Vertex   vertex;
         uint16_t flags;
-        uint16_t index; // stores scene number and texture number
+        uint16_t index; // stores scene number or texture number
+        uint16_t cropIndex; // stores the index of the crop region if eCropEnable flag is set
+    }; 
+
+    struct CropRegionObject {
+        IVec2 x1;
+        IVec2 x2;
     };
 
     struct SceneVertexBufferObject {
@@ -430,6 +437,10 @@ namespace SplitGui {
     struct TextRef {
         std::vector<RectRef> rects;
         std::string          text;
+    };
+
+    struct CropRegionRef {
+        LinkElement<CropRegionObject>* cropRegion;
     };
 
     struct VectorEngineRef {
@@ -676,9 +687,10 @@ namespace SplitGui {
 
     struct DescriporBindings {
         enum {
-            eGlyphs  = 0,
-            eScenes  = 1,
-            eTexture = 2,
+            eGlyphs      = 0,
+            eScenes      = 1,
+            eTexture     = 2,
+            eCropRegions = 3,
         };
     };
 
@@ -707,6 +719,7 @@ namespace SplitGui {
             eVertexTextureCord = 2,
             eFlags             = 3,
             eIndex             = 4,
+            eCropIndex         = 5,
         };
     };
 

@@ -55,7 +55,7 @@ namespace SplitGui {
 
         vk::DeviceSize bufferSize = sizeof(Mat4) * scene.models.size();
 
-        TRYR(stagingBufferRes, InstanceStagingBuffer(scene.sceneModelStagingBuffer, sizeof(Mat4) * scenes[ref.sceneNumber].models.size()));
+        TRYR(stagingBufferRes, InstanceStagingBuffer(scene.sceneModelStagingBuffer, bufferSize));
 
         void* memory = vk_device.mapMemory(scene.sceneModelStagingBuffer.memory, 0, bufferSize);
 

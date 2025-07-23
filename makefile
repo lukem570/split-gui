@@ -38,5 +38,8 @@ switch:
 svg:
 	python tools/testTools/test.py build/tests/svgTest
 
+crop:
+	python tools/testTools/test.py build/tests/cropRegionTest
+
 test-all:
 	python tools/testTools/test.py

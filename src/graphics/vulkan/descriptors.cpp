@@ -25,10 +25,18 @@ namespace SplitGui {
         textureLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
         textureLayoutBinding.pImmutableSamplers = nullptr;
 
-        std::array<vk::DescriptorSetLayoutBinding, 3> bindings = { 
+        vk::DescriptorSetLayoutBinding cropRegionsLayoutBinding;
+        cropRegionsLayoutBinding.binding            = DescriporBindings::eCropRegions;
+        cropRegionsLayoutBinding.descriptorCount    = 1;
+        cropRegionsLayoutBinding.descriptorType     = vk::DescriptorType::eUniformBuffer;
+        cropRegionsLayoutBinding.stageFlags         = vk::ShaderStageFlagBits::eFragment;
+        cropRegionsLayoutBinding.pImmutableSamplers = nullptr;
+
+        std::array<vk::DescriptorSetLayoutBinding, 4> bindings = { 
             glyphLayoutBinding,
             sceneLayoutBinding,
             textureLayoutBinding,
+            cropRegionsLayoutBinding,
         };
 
         vk::DescriptorSetLayoutCreateInfo createInfo;
@@ -55,10 +63,15 @@ namespace SplitGui {
         texturePoolSize.type            = vk::DescriptorType::eCombinedImageSampler;
         texturePoolSize.descriptorCount = 1;
 
-        std::array<vk::DescriptorPoolSize, 3> poolSizes = { 
+        vk::DescriptorPoolSize cropRegionsPoolSize;
+        cropRegionsPoolSize.type            = vk::DescriptorType::eUniformBuffer;
+        cropRegionsPoolSize.descriptorCount = 1;
+
+        std::array<vk::DescriptorPoolSize, 4> poolSizes = { 
             glyphPoolSize,
             scenePoolSize,
             texturePoolSize,
+            cropRegionsPoolSize,
         };
 
         vk::DescriptorPoolCreateInfo createInfo;

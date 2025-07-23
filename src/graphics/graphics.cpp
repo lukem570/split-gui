@@ -50,7 +50,7 @@ namespace SplitGui {
         return pInterface->drawFrame();
     }
 
-    RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth, VertexFlags flags,  int textureIndex) {
+    RectRef Graphics::drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth, VertexFlags flags,  int textureIndex, std::optional<CropRegionRef> crop) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -63,7 +63,7 @@ namespace SplitGui {
         newX2.x = (float)x2.x / windowSize.x * 2.0 - 1.0f;
         newX2.y = (float)x2.y / windowSize.y * 2.0 - 1.0f;
 
-        return pInterface->drawRect(newX1, newX2, color.normalize(), (float)depth / DEPTH_PLANE, flags, textureIndex);
+        return pInterface->drawRect(newX1, newX2, color.normalize(), (float)depth / DEPTH_PLANE, flags, textureIndex, crop);
     }
 
     void Graphics::updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth, uint16_t textureIndex) {
@@ -284,5 +284,17 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         return pInterface->rasterizeSvg(svg);
+    }
+
+    Result Graphics::updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->updateCropRegion(ref, x1, x2);
+    }
+
+    ResultValue<CropRegionRef> Graphics::createCropRegion(IVec2 x1, IVec2 x2) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->createCropRegion(x1, x2);
     }
 }

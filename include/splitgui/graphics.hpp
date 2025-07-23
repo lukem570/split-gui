@@ -26,7 +26,7 @@ namespace SplitGui {
 [[nodiscard]] virtual Result                        instance()                                                                                                                         { throw; }
 [[nodiscard]] virtual Result                        submitWindow(Window& window)                                                                                                       { throw; }
 [[nodiscard]] virtual Result                        drawFrame()                                                                                                                        { throw; }
-              virtual RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0)                       { throw; }
+              virtual RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0, std::optional<CropRegionRef> crop = std::nullopt) { throw; }
               virtual void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, uint16_t textureIndex = 0)                              { throw; }
               virtual void                          deleteRect(RectRef& ref)                                                                                                           { throw; }
               virtual void                          deleteText(TextRef& ref)                                                                                                           { throw; }
@@ -54,6 +54,8 @@ namespace SplitGui {
 [[nodiscard]] virtual Result                        resizeEvent()                                                                                                                      { throw; }
 [[nodiscard]] virtual ResultValue<unsigned int>     offsetOf(SceneRef& scene, ModelRef& ref)                                                                                           { throw; }
 [[nodiscard]] virtual ResultValue<TextureRef>       rasterizeSvg(const std::string& svg)                                                                                               { throw; }
+[[nodiscard]] virtual Result                        updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2)                                                                           { throw; }
+[[nodiscard]] virtual ResultValue<CropRegionRef>    createCropRegion(IVec2 x1, IVec2 x2)                                                                                               { throw; }
               virtual void                          clearBuffers()                                                                                                                     { throw; }
 
         protected:
@@ -71,7 +73,7 @@ namespace SplitGui {
 [[nodiscard]] Result                        instanceVulkan(VulkanFlags flags);
 [[nodiscard]] Result                        submitWindow(Window& window);
 [[nodiscard]] Result                        drawFrame();
-              RectRef                       drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth = 0, VertexFlags flags = 0, int textureIndex = 0);
+              RectRef                       drawRect(IVec2 x1, IVec2 x2, HexColor color, int depth = 0, VertexFlags flags = 0, int textureIndex = 0, std::optional<CropRegionRef> crop = std::nullopt);
               void                          updateRect(RectRef& ref, IVec2 x1, IVec2 x2, HexColor color, int depth = 0, uint16_t textureIndex = 0);
               void                          deleteRect(RectRef& ref);
               void                          deleteText(TextRef& ref);
@@ -99,6 +101,8 @@ namespace SplitGui {
 [[nodiscard]] Result                        resizeEvent();
 [[nodiscard]] ResultValue<unsigned int>     offsetOf(SceneRef& scene, ModelRef& ref);
 [[nodiscard]] ResultValue<TextureRef>       rasterizeSvg(const std::string& svg);
+[[nodiscard]] Result                        updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2);
+[[nodiscard]] ResultValue<CropRegionRef>    createCropRegion(IVec2 x1, IVec2 x2);
               void                          attachEventHandler(EventHandler& handler);
               void                          clearBuffers();
 

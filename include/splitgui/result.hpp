@@ -48,6 +48,7 @@ namespace SplitGui {
         eSceneAlreadyHasVectorEngine,
         eCouldNotFindElementInList,
         eFailedToParseSvg,
+        eInvalidCropRegionRefUsed,
 
         // interface
         eInvalidNumberOfChildren,
