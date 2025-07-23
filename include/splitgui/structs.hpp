@@ -433,15 +433,15 @@ namespace SplitGui {
     struct ModelRef {
         LinkElement<Mat4>* model;
     };
+    
+    struct CropRegionRef {
+        LinkElement<CropRegionObject>* cropRegion;
+    };
 
     struct TextRef {
         std::vector<RectRef> rects;
         std::string          text;
         CropRegionRef        crop;
-    };
-
-    struct CropRegionRef {
-        LinkElement<CropRegionObject>* cropRegion;
     };
 
     struct VectorEngineRef {
