@@ -106,7 +106,7 @@ namespace SplitGui {
         return pInterface->submitBuffers();
     }
 
-    ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2, int depth) {
+    ResultValue<SceneRef> Graphics::instanceScene(IVec2 x1, IVec2 x2, int depth, std::optional<CropRegionRef> crop) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -119,7 +119,7 @@ namespace SplitGui {
         newX2.x = (float)x2.x / (float)windowSize.x * 2.0f - 1.0f;
         newX2.y = (float)x2.y / (float)windowSize.y * 2.0f - 1.0f;
 
-        return pInterface->instanceScene(newX1, newX2, (float)depth / DEPTH_PLANE);
+        return pInterface->instanceScene(newX1, newX2, (float)depth / DEPTH_PLANE, crop);
     }
 
     ResultValue<VectorEngineRef> Graphics::instanceVectorEngine(SceneRef& ref) {
@@ -135,7 +135,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<TextRef> Graphics::drawText(IVec2 x1, const std::string& text, HexColor color, float fontSize, int depth) {
+    ResultValue<TextRef> Graphics::drawText(IVec2 x1, const std::string& text, HexColor color, float fontSize, int depth, std::optional<CropRegionRef> crop) {
         SPLITGUI_PROFILE;
 
         IVec2 windowSize = pWindow->getSize();
@@ -144,7 +144,7 @@ namespace SplitGui {
         newX1.x = (float)x1.x / windowSize.x * 2.0 - 1.0f;
         newX1.y = (float)x1.y / windowSize.y * 2.0 - 1.0f;
 
-        return pInterface->drawText(newX1, text, color.normalize(), fontSize, (float)depth / DEPTH_PLANE);
+        return pInterface->drawText(newX1, text, color.normalize(), fontSize, (float)depth / DEPTH_PLANE, crop);
     }
 
     Result Graphics::updateText(TextRef& ref, const std::string& text, IVec2 x1, HexColor color, float fontSize, int depth) {

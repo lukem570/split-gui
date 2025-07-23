@@ -158,7 +158,7 @@ namespace SplitGui {
             }
         }
 
-        ResultValue<TextRef> textRes = pGraphics->drawText(origin, value, color, fontSize, depth);
+        ResultValue<TextRef> textRes = pGraphics->drawText(origin, value, color, fontSize, depth, cropRegionRef);
         TRYD(textRes);
 
         textRef = textRes.value;

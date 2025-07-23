@@ -49,7 +49,7 @@ namespace SplitGui {
 
         Logger::info("Instanced Rect");
 
-        graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex);
+        graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex, cropRegionRef);
         
         rectExists = true;
 

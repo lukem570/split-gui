@@ -321,7 +321,7 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
-    ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth) {
+    ResultValue<TextRef> VulkanInterface::drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth, std::optional<CropRegionRef> crop) {
         SPLITGUI_PROFILE;
 
         if (!ft_fontInUse) {
@@ -387,7 +387,8 @@ namespace SplitGui {
                 color, 
                 depth,
                 VertexFlagsBits::eTextureMsdf, 
-                text[i]
+                text[i],
+                crop
             ));
 
             pos.x += slot->advance.x * emScale;

@@ -1,7 +1,7 @@
 #include "vulkan.hpp"
 
 namespace SplitGui {
-    ResultValue<SceneRef> VulkanInterface::instanceScene(Vec2 x1, Vec2 x2, float depth) {
+    ResultValue<SceneRef> VulkanInterface::instanceScene(Vec2 x1, Vec2 x2, float depth, std::optional<CropRegionRef> crop) {
         SPLITGUI_PROFILE;
 
         SceneRef reference;
@@ -23,7 +23,7 @@ namespace SplitGui {
         TRYR(dataRes, createSceneDataUniform(scenes.back()));
         updateSceneDescriptorSet(scenes.back());
 
-        reference.rect = drawRect(x1, x2, HexColor(0xFF00FF).normalize(), depth, VertexFlagsBits::eScene, reference.sceneNumber);
+        reference.rect = drawRect(x1, x2, HexColor(0xFF00FF).normalize(), depth, VertexFlagsBits::eScene, reference.sceneNumber, crop);
         
         Logger::info("Created Scene: " + std::to_string(scenes.size()));
 

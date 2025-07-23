@@ -103,6 +103,16 @@ namespace SplitGui {
         depth = depthIn;
     }
 
+    void InterfaceElement::setCropRegionRef(std::optional<CropRegionRef> ref) {
+        SPLITGUI_PROFILE;
+
+        cropRegionRef = ref;
+
+        for (auto& child : children) {
+            child->setCropRegionRef(ref);
+        }
+    }
+
     void InterfaceElement::cleanup() {
         SPLITGUI_PROFILE;
 

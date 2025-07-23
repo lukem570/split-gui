@@ -34,7 +34,7 @@ namespace SplitGui {
               virtual void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         { throw; }
 [[nodiscard]] virtual Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity = 1.0f)                               { throw; }
 [[nodiscard]] virtual Result                        submitRect(RectRef& ref)                                                                                                           { throw; }
-[[nodiscard]] virtual ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                { throw; }
+[[nodiscard]] virtual ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              { throw; }
 [[nodiscard]] virtual ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                { throw; }
 [[nodiscard]] virtual Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   { throw; }
 [[nodiscard]] virtual ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model)                                                                      { throw; }
@@ -46,7 +46,7 @@ namespace SplitGui {
               virtual void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
               virtual Mat4&                         getModel(ModelRef& model)                                                                                                          { throw; }
 [[nodiscard]] virtual ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      { throw; }
-[[nodiscard]] virtual ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                         { throw; }
+[[nodiscard]] virtual ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt) { throw; }
 [[nodiscard]] virtual Result                        updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                         { throw; }
 [[nodiscard]] virtual Result                        loadFont(const char* path)                                                                                                         { throw; }
 [[nodiscard]] virtual ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 { throw; }
@@ -81,7 +81,7 @@ namespace SplitGui {
               void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef);
 [[nodiscard]] Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, HexColor color, unsigned int opacity);
 [[nodiscard]] Result                        submitRect(RectRef& ref);
-[[nodiscard]] ResultValue<SceneRef>         instanceScene(IVec2 x1, IVec2 x2, int depth = 0);
+[[nodiscard]] ResultValue<SceneRef>         instanceScene(IVec2 x1, IVec2 x2, int depth = 0, std::optional<CropRegionRef> crop = std::nullopt);
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref);
 [[nodiscard]] Result                        updateScene(SceneRef& ref, IVec2 x1, IVec2 x2, int depth = 0);
 [[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model);
@@ -93,7 +93,7 @@ namespace SplitGui {
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
               Mat4&                         getModel(ModelRef& model);
 [[nodiscard]] ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model);
-[[nodiscard]] ResultValue<TextRef>          drawText(IVec2 x1, const std::string& text, HexColor color, float fontSize, int depth = 0);
+[[nodiscard]] ResultValue<TextRef>          drawText(IVec2 x1, const std::string& text, HexColor color, float fontSize, int depth = 0, std::optional<CropRegionRef> crop = std::nullopt);
 [[nodiscard]] Result                        updateText(TextRef& ref, const std::string& text, IVec2 x1, HexColor color, float fontSize, int depth = 0);
 [[nodiscard]] Result                        loadFont(const char* path);
 [[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours);

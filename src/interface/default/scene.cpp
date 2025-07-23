@@ -13,7 +13,7 @@ namespace SplitGui {
     Result Default::SceneElement::instance() {
         SPLITGUI_PROFILE;
         
-        ResultValue<SceneRef> result = pGraphics->instanceScene(extent.pos, extent.pos + extent.size, depth);
+        ResultValue<SceneRef> result = pGraphics->instanceScene(extent.pos, extent.pos + extent.size, depth, cropRegionRef);
 
         TRYD(result);
 

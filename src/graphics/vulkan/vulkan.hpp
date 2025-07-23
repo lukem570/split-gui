@@ -131,7 +131,7 @@ namespace SplitGui {
               void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         override;
 [[nodiscard]] Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity = 1.0f)                               override;
 [[nodiscard]] Result                        submitRect(RectRef& ref)                                                                                                           override;
-[[nodiscard]] ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                                override;
+[[nodiscard]] ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              override;
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                override;
 [[nodiscard]] Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
 [[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model)                                                                      override;
@@ -143,7 +143,7 @@ namespace SplitGui {
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       override;
               Mat4&                         getModel(ModelRef& model)                                                                                                          override;
 [[nodiscard]] ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      override;
-[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f)                                         override;
+[[nodiscard]] ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt) override;
 [[nodiscard]] Result                        updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                         override;
 [[nodiscard]] Result                        loadFont(const char* path)                                                                                                         override;
 [[nodiscard]] ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 override;

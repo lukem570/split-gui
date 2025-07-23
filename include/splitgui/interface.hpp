@@ -9,6 +9,7 @@
 #include <splitgui/graphics.hpp>
 #include <vector>
 #include <string>
+#include <optional>
 #include <unordered_map>
 
 #define DEPTH_PLANE 255.0
@@ -92,6 +93,7 @@ namespace SplitGui {
             void setGraphics(Graphics* pgGraphics);
             void setRef(std::string string);
             void setDepth(int depth);
+            void setCropRegionRef(std::optional<CropRegionRef> ref);
 
             virtual std::vector<InterfaceElement*> searchByReference(std::string reference);
 
@@ -106,7 +108,7 @@ namespace SplitGui {
             std::string                    ref         = "";
             int                            depth       = 0;
             bool                           hidden      = false;
-            
+            std::optional<CropRegionRef>   cropRegionRef = std::nullopt;                   
 
             Graphics*                      pGraphics   = nullptr;
     };
