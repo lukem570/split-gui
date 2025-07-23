@@ -11,6 +11,7 @@ namespace SplitGui {
 
             if (regionOffset.has_value()) {
                 regionIndex = regionOffset.value();
+                flags |= VertexFlagsBits::eCropEnable;
             }
         }
 
