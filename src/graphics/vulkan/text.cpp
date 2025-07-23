@@ -249,7 +249,7 @@ namespace SplitGui {
 
         if (text.size() > ref.text.size()) {
 
-            auto refRes = drawText(x1, text.substr(ref.text.size()), color, fontSize, depth);
+            auto refRes = drawText(x1, text.substr(ref.text.size()), color, fontSize, depth, ref.crop);
             TRYD(refRes);
             ref.rects.insert(ref.rects.end(), refRes.value.rects.begin(), refRes.value.rects.end());
         }
@@ -331,6 +331,7 @@ namespace SplitGui {
         TRYR(prepRes, prepareTextForRendering(text));
 
         TextRef ret;
+        ret.crop = crop;
         ret.text = text;
 
         IVec2 windowSize = pWindow->getSize();

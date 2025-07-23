@@ -437,6 +437,7 @@ namespace SplitGui {
     struct TextRef {
         std::vector<RectRef> rects;
         std::string          text;
+        CropRegionRef        crop;
     };
 
     struct CropRegionRef {
