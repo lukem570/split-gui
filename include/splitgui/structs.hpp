@@ -441,7 +441,7 @@ namespace SplitGui {
     struct TextRef {
         std::vector<RectRef> rects;
         std::string          text;
-        CropRegionRef        crop;
+        std::optional<CropRegionRef> crop;
     };
 
     struct VectorEngineRef {
