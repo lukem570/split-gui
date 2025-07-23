@@ -170,6 +170,12 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
+    Result Default::Text::submit() {
+        SPLITGUI_PROFILE;
+
+        return pGraphics->submitText(textRef);
+    }
+
     Result Default::Text::setHidden(bool isHidden) {
         SPLITGUI_PROFILE;
         

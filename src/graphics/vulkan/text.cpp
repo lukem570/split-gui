@@ -233,6 +233,15 @@ namespace SplitGui {
         return Result::eSuccess;
     }
 
+    Result VulkanInterface::submitText(TextRef& ref) {
+
+        for (auto& rect : ref.rects) {
+            TRYR(submitRes, submitRect(rect));
+        }
+
+        return Result::eSuccess;
+    }
+
     Result VulkanInterface::updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth) {
         SPLITGUI_PROFILE;
 

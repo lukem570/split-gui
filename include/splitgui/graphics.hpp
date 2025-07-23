@@ -56,6 +56,7 @@ namespace SplitGui {
 [[nodiscard]] virtual ResultValue<TextureRef>       rasterizeSvg(const std::string& svg)                                                                                               { throw; }
 [[nodiscard]] virtual Result                        updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2)                                                                           { throw; }
 [[nodiscard]] virtual ResultValue<CropRegionRef>    createCropRegion(IVec2 x1, IVec2 x2)                                                                                               { throw; }
+[[nodiscard]] virtual Result                        submitText(TextRef& ref)                                                                                                           { throw; }
               virtual void                          clearBuffers()                                                                                                                     { throw; }
 
         protected:
@@ -103,6 +104,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<TextureRef>       rasterizeSvg(const std::string& svg);
 [[nodiscard]] Result                        updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2);
 [[nodiscard]] ResultValue<CropRegionRef>    createCropRegion(IVec2 x1, IVec2 x2);
+[[nodiscard]] Result                        submitText(TextRef& ref);
               void                          attachEventHandler(EventHandler& handler);
               void                          clearBuffers();
 

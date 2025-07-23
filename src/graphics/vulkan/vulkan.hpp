@@ -151,6 +151,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<TextureRef>       rasterizeSvg(const std::string& svg)                                                                                               override;
 [[nodiscard]] Result                        updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2)                                                                           override;
 [[nodiscard]] ResultValue<CropRegionRef>    createCropRegion(IVec2 x1, IVec2 x2)                                                                                               override;
+[[nodiscard]] Result                        submitText(TextRef& ref)                                                                                                           override;
               void                          clearBuffers()                                                                                                                     override;
 
 [[nodiscard]] Result                        resizeEvent()                                                                                                                      override;

@@ -268,6 +268,7 @@ namespace SplitGui {
   [[nodiscard]] Result instance() override;
   [[nodiscard]] Result update()   override;
                 void   cleanup()  override;
+  [[nodiscard]] Result submit()   override;
 
   [[nodiscard]] Result setHidden(bool) override;
 

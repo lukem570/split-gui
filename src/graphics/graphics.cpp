@@ -297,4 +297,10 @@ namespace SplitGui {
 
         return pInterface->createCropRegion(x1, x2);
     }
+
+    Result Graphics::submitText(TextRef& ref) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->submitText(ref);
+    }
 }
