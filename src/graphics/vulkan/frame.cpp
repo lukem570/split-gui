@@ -269,6 +269,8 @@ namespace SplitGui {
 
                 sceneUpdateData.clear();
 
+                TRYR(submitRes, submitBuffers());
+
             } else {
                 return Result::eSuccess;
             }

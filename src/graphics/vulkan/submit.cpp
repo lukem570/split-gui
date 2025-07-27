@@ -81,6 +81,10 @@ namespace SplitGui {
     Result VulkanInterface::submitBuffers() {
         SPLITGUI_PROFILE;
 
+        if (resizeUpdate) {
+            return Result::eSuccess;
+        }
+
         if (indices.size() != knownIndicesSize || markVerticesForUpdate) {
             markVerticesForUpdate = false;
             TRYR(vertexRes, vertexBufferSubmit());
