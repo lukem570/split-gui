@@ -314,6 +314,16 @@ namespace SplitGui {
     Result VulkanInterface::updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth) {
         SPLITGUI_PROFILE;
 
+        if (resizeUpdate) {
+            sceneUpdateData[ref.sceneNumber] = SceneUpdateData{
+                .x1 = x1,
+                .x2 = x2,
+                .depth = depth,
+                .ref = ref,
+            };
+            return Result::eSuccess;
+        }
+
         IVec2 windowSize = pWindow->getSize();
         Vec2 delta = x1 - x2;
 

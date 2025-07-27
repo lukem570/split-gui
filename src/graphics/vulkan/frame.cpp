@@ -247,9 +247,35 @@ namespace SplitGui {
 
     Result VulkanInterface::drawFrame() {
         SPLITGUI_PROFILE;
+        
+
+        if (resizeUpdate) {
+            auto now = clk::high_resolution_clock::now();
+
+
+            if (clk::duration_cast<clk::milliseconds>(now - lastResizeUpdate) > RESIZE_REFRESH_RATE) {
+                resizeUpdate = false;
+
+                TRYR(recreateRes, recreateSwapchain());
+
+                for (auto [_, sceneUpdateDataEntry] : sceneUpdateData) {
+                    TRYR(updateRes, updateScene(
+                        sceneUpdateDataEntry.ref, 
+                        sceneUpdateDataEntry.x1,
+                        sceneUpdateDataEntry.x2,
+                        sceneUpdateDataEntry.depth
+                    ));
+                }
+
+                sceneUpdateData.clear();
+
+            } else {
+                return Result::eSuccess;
+            }
+        }
 
         frameMutex.lock();
-        
+
         if (!vk_vertexBuffer) {
             return Result::eSuccess;
         }

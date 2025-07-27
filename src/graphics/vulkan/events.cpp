@@ -4,7 +4,10 @@ namespace SplitGui {
     Result VulkanInterface::resizeEvent() {
         SPLITGUI_PROFILE;
 
-        TRYR(recreateRes, recreateSwapchain());
+        if (!resizeUpdate) {
+            lastResizeUpdate = clk::high_resolution_clock::now();
+            resizeUpdate = true;
+        }
 
         return Result::eSuccess;
     }

@@ -20,6 +20,7 @@
 #include <setjmp.h>
 #include <unordered_set>
 #include <mutex>
+#include <chrono>
 
 namespace ft {
     #include <ft2build.h>
@@ -42,6 +43,7 @@ namespace ft {
 #define SCENE_FRAGMENT_SHADER_PATH "shaders/scene-fragment.spv"
 #define VECTOR_ENGINE_TRANSFORM_SHADER_PATH "shaders/vector-transform.spv"
 #define VECTOR_ENGINE_RENDER_SHADER_PATH "shaders/vector-render.spv"
+#define RESIZE_REFRESH_RATE clk::milliseconds(25)
 
 /*
 #include "vulkan.hpp"
@@ -51,7 +53,16 @@ namespace SplitGui {
 }
 */
 
+namespace clk = std::chrono;
+
 namespace SplitGui {
+
+    struct SceneUpdateData {
+        Vec2 x1;
+        Vec2 x2;
+        float depth;
+        SceneRef ref;
+    };
 
     struct StagingBuffer {
         vk::DeviceSize   size = 0;
@@ -252,6 +263,9 @@ namespace SplitGui {
             unsigned int                        vectorTransformPassSize;
             unsigned int                        textures = 0;
             IVec2                               vectorRenderPassSize;
+            bool                                resizeUpdate = false;
+            clk::time_point<clk::system_clock>  lastResizeUpdate;
+            std::unordered_map<unsigned int, SceneUpdateData> sceneUpdateData;
             
             // debug
             bool                                vk_validation = false;
