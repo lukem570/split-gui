@@ -74,6 +74,10 @@ namespace SplitGui {
     Result VulkanInterface::updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2) {
         SPLITGUI_PROFILE;
 
+        if (ref.cropRegion->data.x1 == x1 && ref.cropRegion->data.x2 == x2) {
+            return Result::eSuccess;
+        }
+
         ref.cropRegion->data.x1 = x1;
         ref.cropRegion->data.x2 = x2;
 
