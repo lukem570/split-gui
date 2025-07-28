@@ -91,6 +91,20 @@ namespace SplitGui {
     Result VulkanInterface::prepareTextForRendering(const std::string& text) {
         double fontScale = msdfgen::getFontCoordinateScale(ft_face, msdfgen::FontCoordinateScaling::eFontScalingEmNormalized);
 
+        bool allPrepped = true;
+
+        for (unsigned int i = 0; i < text.size(); i++) {
+            if (charSet.find(text[i]) != charSet.end() || std::isspace(text[i])) {
+                continue;
+            }
+            allPrepped = false;
+            break;
+        }
+
+        if (allPrepped) {
+            return Result::eSuccess;
+        }
+
         vk::CommandBuffer commandBuffer = startCopyBuffer();
         std::vector<StagingBuffer> stagingBuffers;
 
