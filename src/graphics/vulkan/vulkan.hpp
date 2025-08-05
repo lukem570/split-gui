@@ -145,7 +145,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              override;
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                override;
 [[nodiscard]] Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   override;
-[[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model)                                                                      override;
+[[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, Vec3 color)                                                                      override;
 [[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags, int textureNumber = 0) override;
 [[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      override;
 [[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef)                                                                                                override;

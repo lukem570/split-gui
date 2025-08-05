@@ -399,6 +399,7 @@ namespace SplitGui {
     struct alignas(16) VectorEdgeBufferObject {
         alignas(16) Vec3 start;
         alignas(16) Vec3 end;
+        alignas(16) Vec3 color;
         unsigned int modelNumber;
     };
 

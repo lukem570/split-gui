@@ -5,6 +5,7 @@
 struct Edge {
     vec3 start;
     vec3 end;
+    vec3 color;
     int modelNumber;
 };
 
@@ -88,7 +89,7 @@ void main() {
         float dist = d.x*d.x + d.y*d.y;
 
         if (dist < LINE_WIDTH*LINE_WIDTH) {
-            vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+            vec4 color = vec4(edges[i].color, 1.0);
             vec4 srcColor = imageLoad(outputImage, pixelCoords);
 
             vec4 newColor = (1 - color.a) * srcColor + color;

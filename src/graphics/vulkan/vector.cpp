@@ -54,7 +54,7 @@ namespace SplitGui {
         vectorEngineInstances[vEngineRef.instanceNumber].edges.erase(edgeRef.edgesStart, edgeRef.edgesEnd);
     }
 
-    ResultValue<EdgeRef> VulkanInterface::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model) {
+    ResultValue<EdgeRef> VulkanInterface::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, Vec3 color) {
         SPLITGUI_PROFILE;
 
         EdgeRef edgeRef;
@@ -82,6 +82,7 @@ namespace SplitGui {
                     edgeObj.start       = prev;
                     edgeObj.end         = curr;
                     edgeObj.modelNumber = modelNumber.value();
+                    edgeObj.color       = color;
 
                     element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
 
@@ -102,6 +103,7 @@ namespace SplitGui {
                     edgeObj.start       = prev;
                     edgeObj.end         = curr;
                     edgeObj.modelNumber = modelNumber.value();
+                    edgeObj.color       = color;
 
                     element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
 
@@ -123,6 +125,7 @@ namespace SplitGui {
                     edgeObj.start       = prev;
                     edgeObj.end         = curr;
                     edgeObj.modelNumber = modelNumber.value();
+                    edgeObj.color       = color;
 
                     element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
 
