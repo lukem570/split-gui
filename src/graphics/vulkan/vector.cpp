@@ -54,99 +54,167 @@ namespace SplitGui {
         vectorEngineInstances[vEngineRef.instanceNumber].edges.erase(edgeRef.edgesStart, edgeRef.edgesEnd);
     }
 
+    std::array<VectorEdgeBufferObject, VECTOR_RES> proccessLinearEdge(LinearEdge& edge, Vec3& color, unsigned int modelNumber) {
+        std::array<VectorEdgeBufferObject, VECTOR_RES> ret;
+
+        Vec3 prev = lerp(edge.from, edge.to, 0);
+
+        for (unsigned int i = 1; i < VECTOR_RES + 1; i++) {
+
+            Vec3 curr = lerp(edge.from, edge.to, (float)i / (float)VECTOR_RES);
+
+            VectorEdgeBufferObject edgeObj;
+            edgeObj.start       = prev;
+            edgeObj.end         = curr;
+            edgeObj.modelNumber = modelNumber;
+            edgeObj.color       = color;
+
+            ret[i - 1] = edgeObj;
+
+            prev = curr;
+        }
+
+        return ret;
+    }
+
+    std::array<VectorEdgeBufferObject, VECTOR_RES> proccessQuadraticEdge(QuadraticEdge& edge, Vec3& color, unsigned int modelNumber) {
+        std::array<VectorEdgeBufferObject, VECTOR_RES> ret;
+
+        Vec3 prev = quadraticBezier(edge.from, edge.control, edge.to, 0);
+
+        for (unsigned int i = 1; i < VECTOR_RES + 1; i++) {
+
+            Vec3 curr = quadraticBezier(edge.from, edge.control, edge.to, (float)i / (float)VECTOR_RES);
+
+            VectorEdgeBufferObject edgeObj;
+            edgeObj.start       = prev;
+            edgeObj.end         = curr;
+            edgeObj.modelNumber = modelNumber;
+            edgeObj.color       = color;
+
+            ret[i - 1] = edgeObj;
+
+            prev = curr;
+        }
+
+        return ret;
+    }
+
+    std::array<VectorEdgeBufferObject, VECTOR_RES> proccessCubicEdge(CubicEdge& edge, Vec3& color, unsigned int modelNumber) {
+        std::array<VectorEdgeBufferObject, VECTOR_RES> ret;
+
+        Vec3 prev = cubicBezier(edge.from, edge.control1, edge.control2, edge.to, 0);
+
+        for (unsigned int i = 1; i < VECTOR_RES + 1; i++) {
+
+            Vec3 curr = cubicBezier(edge.from, edge.control1, edge.control2, edge.to, (float)i / (float)VECTOR_RES);
+
+            VectorEdgeBufferObject edgeObj;
+            edgeObj.start       = prev;
+            edgeObj.end         = curr;
+            edgeObj.modelNumber = modelNumber;
+            edgeObj.color       = color;
+
+            ret[i - 1] = edgeObj;
+
+            prev = curr;
+        }
+
+        return ret;
+    }
+
+    std::array<VectorEdgeBufferObject, VECTOR_RES> proccessEdge(Edge& edge, Vec3& color, unsigned int modelNumber) {
+        if (std::holds_alternative<LinearEdge>(edge)) {
+
+            return proccessLinearEdge(std::get<LinearEdge>(edge), color, modelNumber);
+        }
+
+        if (std::holds_alternative<QuadraticEdge>(edge)) {
+
+            return proccessQuadraticEdge(std::get<QuadraticEdge>(edge), color, modelNumber);
+        }
+
+        if (std::holds_alternative<CubicEdge>(edge)) {
+
+            return proccessCubicEdge(std::get<CubicEdge>(edge), color, modelNumber);
+        }
+
+        return {};
+    }
+
     ResultValue<EdgeRef> VulkanInterface::submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, Vec3 color) {
         SPLITGUI_PROFILE;
 
         EdgeRef edgeRef;
 
-        std::optional<unsigned int> modelNumber = scenes[vectorEngineInstances[ref.instanceNumber].scene.sceneNumber].models.offset(model.model);
+        VectorEngineObject& vEng = vectorEngineInstances[ref.instanceNumber];
+        SceneObject& scene = scenes[vEng.scene.sceneNumber];
+
+        std::optional<unsigned int> modelNumber = scene.models.offset(model.model);
 
         if (!modelNumber.has_value()) {
             return Result::eCouldNotFindElementInList;
         }
 
-        for (unsigned int i = 0; i < edges.size(); i++) {
+        for (auto& edge : edges) {
 
-            LinkElement<VectorEdgeBufferObject>* element;
+            std::array<VectorEdgeBufferObject, VECTOR_RES> edgeObjs = proccessEdge(edge, color, modelNumber.value());
 
-            if (std::holds_alternative<LinearEdge>(edges[i])) {
-                LinearEdge& edge = std::get<LinearEdge>(edges[i]);
+            for (auto& edgeObj : edgeObjs) {
+                LinkElement<VectorEdgeBufferObject>* element = vEng.edges.push(edgeObj);
 
-                Vec3 prev = lerp(edge.from, edge.to, 0);
-
-                for (unsigned int i = 1; i < VECTOR_RES + 1; i++) {
-
-                    Vec3 curr = lerp(edge.from, edge.to, (float)i / (float)VECTOR_RES);
-
-                    VectorEdgeBufferObject edgeObj;
-                    edgeObj.start       = prev;
-                    edgeObj.end         = curr;
-                    edgeObj.modelNumber = modelNumber.value();
-                    edgeObj.color       = color;
-
-                    element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
-
-                    prev = curr;
-                }
-            }
-
-            if (std::holds_alternative<QuadraticEdge>(edges[i])) {
-                QuadraticEdge& edge = std::get<QuadraticEdge>(edges[i]);
-
-                Vec3 prev = quadraticBezier(edge.from, edge.control, edge.to, 0);
-
-                for (unsigned int i = 1; i < VECTOR_RES + 1; i++) {
-
-                    Vec3 curr = quadraticBezier(edge.from, edge.control, edge.to, (float)i / (float)VECTOR_RES);
-
-                    VectorEdgeBufferObject edgeObj;
-                    edgeObj.start       = prev;
-                    edgeObj.end         = curr;
-                    edgeObj.modelNumber = modelNumber.value();
-                    edgeObj.color       = color;
-
-                    element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
-
-                    prev = curr;
-                }
-            }
-
-            if (std::holds_alternative<CubicEdge>(edges[i])) {
+                if (!edgeRef.edgesStart) 
+                    edgeRef.edgesStart = element;
                 
-                CubicEdge& edge = std::get<CubicEdge>(edges[i]);
-
-                Vec3 prev = cubicBezier(edge.from, edge.control1, edge.control2, edge.to, 0);
-
-                for (unsigned int i = 1; i < VECTOR_RES + 1; i++) {
-
-                    Vec3 curr = cubicBezier(edge.from, edge.control1, edge.control2, edge.to, (float)i / (float)VECTOR_RES);
-
-                    VectorEdgeBufferObject edgeObj;
-                    edgeObj.start       = prev;
-                    edgeObj.end         = curr;
-                    edgeObj.modelNumber = modelNumber.value();
-                    edgeObj.color       = color;
-
-                    element = vectorEngineInstances[ref.instanceNumber].edges.push(edgeObj);
-
-                    prev = curr;
-                }
-            }
-
-            if (i == 0) {
-                edgeRef.edgesStart = element;
-            } else if (i + 1 == edges.size()) {
                 edgeRef.edgesEnd = element;
             }
         }
 
-        if (!(vectorEngineInstances[ref.instanceNumber].edges.size() > 0)) {
+        if (!(vEng.edges.size() > 0)) {
             return edgeRef;
         }
         
-        TRYR(submitRes, submitVectorEngineEdgeResources(vectorEngineInstances[ref.instanceNumber]));
-        updateVectorEngineEdges(vectorEngineInstances[ref.instanceNumber]);
+        TRYR(submitRes, submitVectorEngineEdgeResources(vEng));
+        updateVectorEngineEdges(vEng);
 
         return edgeRef;
+    }
+
+    Result VulkanInterface::resubmitEdgeData(VectorEngineRef& ref, EdgeRef edgeRef, std::vector<Edge>& edges, ModelRef model, Vec3 color) {
+        SPLITGUI_PROFILE;
+
+        VectorEngineObject& vEng = vectorEngineInstances[ref.instanceNumber];
+        SceneObject& scene = scenes[vEng.scene.sceneNumber];
+
+        std::optional<unsigned int> modelNumber = scene.models.offset(model.model);
+
+        if (!modelNumber.has_value()) {
+            return Result::eCouldNotFindElementInList;
+        }
+
+        LinkElement<VectorEdgeBufferObject>* current = edgeRef.edgesStart;
+
+        for (auto& edge : edges) {
+
+            if (current == edgeRef.edgesEnd->next) 
+                return Result::eSizeMismatch;
+
+            std::array<VectorEdgeBufferObject, VECTOR_RES> edgeObjs = proccessEdge(edge, color, modelNumber.value());
+
+            for (auto& edgeObj : edgeObjs) {
+                current->data = edgeObj;
+
+                current = current->next;
+            }
+        }
+
+        if (!(vEng.edges.size() > 0)) {
+            return Result::eSuccess;
+        }
+        
+        TRYR(submitRes, submitVectorEngineEdgeResources(vEng));
+        updateVectorEngineEdges(vEng);
+
+        return Result::eSuccess;
     }
 }

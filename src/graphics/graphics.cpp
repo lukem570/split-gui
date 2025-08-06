@@ -183,6 +183,12 @@ namespace SplitGui {
         return pInterface->submitEdgeData(ref, edges, model, color.normalize());
     }
 
+    Result Graphics::resubmitEdgeData(VectorEngineRef& veng, EdgeRef edgeRef, std::vector<Edge>& edges, ModelRef model, HexColor color) {
+        SPLITGUI_PROFILE;
+
+        return pInterface->resubmitEdgeData(veng, edgeRef, edges, model, color.normalize());
+    }
+
     Result Graphics::updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, HexColor color, unsigned int opacity) {
         SPLITGUI_PROFILE;
 

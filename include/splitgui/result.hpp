@@ -49,6 +49,7 @@ namespace SplitGui {
         eCouldNotFindElementInList,
         eFailedToParseSvg,
         eInvalidCropRegionRefUsed,
+        eSizeMismatch,
 
         // interface
         eInvalidNumberOfChildren,

@@ -37,7 +37,8 @@ namespace SplitGui {
 [[nodiscard]] virtual ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              { throw; }
 [[nodiscard]] virtual ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                { throw; }
 [[nodiscard]] virtual Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   { throw; }
-[[nodiscard]] virtual ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, Vec3 color)                                                                      { throw; }
+[[nodiscard]] virtual ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, Vec3 color)                                         { throw; }
+[[nodiscard]] virtual Result                        resubmitEdgeData(VectorEngineRef& veng, EdgeRef edgeRef, std::vector<Edge>& edges, ModelRef model, Vec3 color)                     { throw; }
 [[nodiscard]] virtual ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags, int textureNumber = 0) { throw; }
 [[nodiscard]] virtual Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      { throw; }
 [[nodiscard]] virtual Result                        submitSceneData(SceneRef& sceneRef)                                                                                                { throw; }
@@ -86,6 +87,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref);
 [[nodiscard]] Result                        updateScene(SceneRef& ref, IVec2 x1, IVec2 x2, int depth = 0);
 [[nodiscard]] ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, HexColor color);
+[[nodiscard]] Result                        resubmitEdgeData(VectorEngineRef& veng, EdgeRef edgeRef, std::vector<Edge>& edges, ModelRef model, HexColor color);
 [[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags = 0, int textureNumber = 0);
 [[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef);
 [[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef);
