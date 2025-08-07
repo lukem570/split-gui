@@ -139,7 +139,7 @@ namespace SplitGui {
               void                          deleteRect(RectRef& ref)                                                                                                           override;
               void                          deleteText(TextRef& ref)                                                                                                           override;
 [[nodiscard]] ResultValue<Vec2>             getTextSize(const std::string& text, float fontSize)                                                                               override;
-              void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         override;
+[[nodiscard]] Result                        deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         override;
 [[nodiscard]] Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity = 1.0f)                               override;
 [[nodiscard]] Result                        submitRect(RectRef& ref)                                                                                                           override;
 [[nodiscard]] ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              override;

@@ -48,10 +48,16 @@ namespace SplitGui {
         return Vec3(u) * p0 + Vec3(t) * p1;
     }
 
-    void VulkanInterface::deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef) {
+    Result VulkanInterface::deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef) {
         SPLITGUI_PROFILE;
 
-        vectorEngineInstances[vEngineRef.instanceNumber].edges.erase(edgeRef.edgesStart, edgeRef.edgesEnd);
+        VectorEngineObject& vEng = vectorEngineInstances[vEngineRef.instanceNumber];
+
+        vEng.edges.erase(edgeRef.edgesStart, edgeRef.edgesEnd);
+
+        TRYR(submitRes, submitVectorEngineEdgeResources(vEng));
+
+        return Result::eSuccess;
     }
 
     std::array<VectorEdgeBufferObject, VECTOR_RES> proccessLinearEdge(LinearEdge& edge, Vec3& color, unsigned int modelNumber) {

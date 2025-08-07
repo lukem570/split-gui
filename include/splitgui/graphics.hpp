@@ -31,7 +31,7 @@ namespace SplitGui {
               virtual void                          deleteRect(RectRef& ref)                                                                                                           { throw; }
               virtual void                          deleteText(TextRef& ref)                                                                                                           { throw; }
 [[nodiscard]] virtual ResultValue<Vec2>             getTextSize(const std::string& text, float fontSize)                                                                               { throw; }
-              virtual void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         { throw; }
+[[nodiscard]] virtual Result                        deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         { throw; }
 [[nodiscard]] virtual Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity = 1.0f)                               { throw; }
 [[nodiscard]] virtual Result                        submitRect(RectRef& ref)                                                                                                           { throw; }
 [[nodiscard]] virtual ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              { throw; }
@@ -80,7 +80,7 @@ namespace SplitGui {
               void                          deleteRect(RectRef& ref);
               void                          deleteText(TextRef& ref);
               ResultValue<IVec2>            getTextSize(const std::string& text, float fontSize);
-              void                          deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef);
+[[nodiscard]] Result                        deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef);
 [[nodiscard]] Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, HexColor color, unsigned int opacity);
 [[nodiscard]] Result                        submitRect(RectRef& ref);
 [[nodiscard]] ResultValue<SceneRef>         instanceScene(IVec2 x1, IVec2 x2, int depth = 0, std::optional<CropRegionRef> crop = std::nullopt);

@@ -1,4 +1,4 @@
-# Split gui 0.2.17
+# Split gui 0.2.18
 
 Split gui is a GUI library that is entirely gpu focused making it highly portable. Split gui is built on Vulkan and Glfw, but is designed to be expanded to other libraries and systems.
 
