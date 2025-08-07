@@ -9,9 +9,17 @@ namespace SplitGui {
         if (edgeBufferSize == 0) {
             frameMutex.lock();
 
+            vk::Result fenceRes = vk_device.waitForFences(vk_inFlightFences.size(), vk_inFlightFences.data(), vk::True, UINT64_MAX);
+
+            if (fenceRes != vk::Result::eSuccess) {
+                return Result::eFailedToWaitForFences;
+            }
+
             cleanupVectorEngineEdgeResources(vEngine);
 
             frameMutex.unlock();
+
+            return Result::eSuccess;
         }
 
         TRYR(stagingRes, InstanceStagingBuffer(vEngine.edgeStagingBuffer, edgeBufferSize));
