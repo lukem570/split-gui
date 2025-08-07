@@ -196,10 +196,10 @@ namespace SplitGui {
         return pInterface->updateTrianglesColor(sceneRef, triangleRef, color.normalize(), (float) opacity / 255.f);
     }
 
-    void Graphics::deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef) {
+    Result Graphics::deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef) {
         SPLITGUI_PROFILE;
 
-        pInterface->deleteEdges(vEngineRef, edgeRef);
+        return pInterface->deleteEdges(vEngineRef, edgeRef);
     }
 
     void Graphics::updateSceneCameraPosition(SceneRef& ref, Vec3& position) {
