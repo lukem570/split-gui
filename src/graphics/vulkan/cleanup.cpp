@@ -168,6 +168,11 @@ namespace SplitGui {
             
             vk_device.freeMemory(vEngine.transformedEdgeBufferMemory);
             vk_device.destroyBuffer(vEngine.transformedEdgeBuffer);
+
+            vEngine.edgeBufferMemory = nullptr;
+            vEngine.edgeBuffer = nullptr;
+            vEngine.transformedEdgeBufferMemory = nullptr;
+            vEngine.transformedEdgeBuffer = nullptr;
         }
     }
 
