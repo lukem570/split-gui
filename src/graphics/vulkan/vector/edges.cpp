@@ -6,6 +6,14 @@ namespace SplitGui {
 
         vk::DeviceSize edgeBufferSize = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
 
+        if (edgeBufferSize == 0) {
+            frameMutex.lock();
+
+            cleanupVectorEngineEdgeResources(vEngine);
+
+            frameMutex.unlock();
+        }
+
         TRYR(stagingRes, InstanceStagingBuffer(vEngine.edgeStagingBuffer, edgeBufferSize));
 
         void* edgeMemory = vk_device.mapMemory(vEngine.edgeStagingBuffer.memory, 0, edgeBufferSize);
