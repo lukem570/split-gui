@@ -120,6 +120,10 @@ namespace SplitGui {
     inline void VulkanInterface::updateVectorEngineEdges(VectorEngineObject& vEngine) {
         SPLITGUI_PROFILE;
 
+        if (!vEngine.edgeBuffer) {
+            return;
+        }
+
         vk::DescriptorBufferInfo edgesInBufferInfo;
         edgesInBufferInfo.buffer = vEngine.edgeBuffer;
         edgesInBufferInfo.offset = 0;
