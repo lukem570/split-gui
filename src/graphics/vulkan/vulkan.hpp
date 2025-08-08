@@ -122,6 +122,8 @@ namespace SplitGui {
         LinkList<VectorEdgeBufferObject> edges;
         SceneRef scene;
 
+        unsigned int knownSize = 0;
+
         StagingBuffer edgeStagingBuffer;
     };
 

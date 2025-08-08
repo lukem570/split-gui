@@ -44,7 +44,7 @@ namespace SplitGui {
 
         vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.transformPipeline);
         vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);
-        vk_commandBuffers[currentFrame].dispatch((vEngine.edges.size() + vectorTransformPassSize - 1) / vectorTransformPassSize, 1, 1);
+        vk_commandBuffers[currentFrame].dispatch((vEngine.knownSize + vectorTransformPassSize - 1) / vectorTransformPassSize, 1, 1);
         
         vk_commandBuffers[currentFrame].bindPipeline(vk::PipelineBindPoint::eCompute, vEngine.renderPipeline);
         vk_commandBuffers[currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eCompute, vk_vectorEnginePipelineLayout, 0, 1, &vEngine.descriptorSet, 0, nullptr);

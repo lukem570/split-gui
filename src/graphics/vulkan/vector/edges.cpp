@@ -75,6 +75,8 @@ namespace SplitGui {
         vEngine.transformedEdgeBuffer       = tempTransformedEdgeBuffer;
         vEngine.transformedEdgeBufferMemory = tempTransformedEdgeBufferMemory;
 
+        vEngine.knownSize = vEngine.edges.size();
+
         frameMutex.unlock();
 
         Logger::info("Submitted Vector Engine Edge Buffer");

@@ -123,12 +123,12 @@ namespace SplitGui {
         vk::DescriptorBufferInfo edgesInBufferInfo;
         edgesInBufferInfo.buffer = vEngine.edgeBuffer;
         edgesInBufferInfo.offset = 0;
-        edgesInBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
+        edgesInBufferInfo.range  = vEngine.knownSize * sizeof(VectorEdgeBufferObject);
 
         vk::DescriptorBufferInfo edgesOutBufferInfo;
         edgesOutBufferInfo.buffer = vEngine.transformedEdgeBuffer;
         edgesOutBufferInfo.offset = 0;
-        edgesOutBufferInfo.range  = vEngine.edges.size() * sizeof(VectorEdgeBufferObject);
+        edgesOutBufferInfo.range  = vEngine.knownSize * sizeof(VectorEdgeBufferObject);
 
         std::array<vk::WriteDescriptorSet, 2> descriptorWrites;
         
