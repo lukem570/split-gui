@@ -56,6 +56,7 @@ namespace SplitGui {
         vEng.edges.erase(edgeRef.edgesStart, edgeRef.edgesEnd);
 
         TRYR(submitRes, submitVectorEngineEdgeResources(vEng));
+        updateVectorEngineEdges(vEng);
 
         return Result::eSuccess;
     }
