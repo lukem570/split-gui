@@ -377,6 +377,8 @@ namespace SplitGui {
 [[nodiscard]] inline Result createVectorEngineRenderPipeline(VectorEngineObject& vEngine);
 [[nodiscard]] inline Result submitVectorEngineEdgeResources(VectorEngineObject& vEngine);
 
+[[nodiscard]] inline Result updateCropRegionDescriptor();
+
 [[nodiscard]] inline Result prepareTextForRendering(const std::string& text);
 
               inline void setupRenderpassBeginInfo();

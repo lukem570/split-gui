@@ -58,6 +58,7 @@ namespace SplitGui {
         createSyncObj();
         createDescriptorPool();
         createDescriptorSet();
+        TRYR(cropUpdate, updateCropRegionDescriptor());
         TRYR(glyphRes, createTextGlyphImage());
         TRYR(sceneRes, createScenesImageArray());
         TRYR(textureRes, createTextureArray());

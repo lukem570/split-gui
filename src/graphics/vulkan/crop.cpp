@@ -71,6 +71,54 @@ namespace SplitGui {
         return ref;
     }
 
+    Result VulkanInterface::updateCropRegionDescriptor() {
+
+        vk::DeviceSize bufferSize = sizeof(CropRegionObject);
+
+        TRYR(stagingBufferRes, InstanceStagingBuffer(vk_cropRegionArrayStagingBuffer, bufferSize));
+
+        void* memory = vk_device.mapMemory(vk_cropRegionArrayStagingBuffer.memory, 0, bufferSize);
+
+        CropRegionObject b = {};
+        std::memcpy(memory, &b, bufferSize);
+
+        vk_device.unmapMemory(vk_cropRegionArrayStagingBuffer.memory);
+
+        TRYR(bufferRes, createBuffer(
+            bufferSize,
+            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eUniformBuffer, 
+            vk::MemoryPropertyFlagBits::eDeviceLocal,
+            vk_cropRegionArrayBuffer,
+            vk_cropRegionArrayBufferMemory
+        ));
+
+        vk::CommandBuffer commandBuffer = startCopyBuffer();
+
+        vk::BufferCopy copyRegion;
+
+        copyBuffer(vk_cropRegionArrayStagingBuffer.buffer, vk_cropRegionArrayBuffer, bufferSize,  commandBuffer, copyRegion);
+
+        TRYR(endRes, endSingleTimeCommands(commandBuffer));
+
+        vk::DescriptorBufferInfo cropRegionsBufferInfo;
+        cropRegionsBufferInfo.buffer = vk_cropRegionArrayBuffer;
+        cropRegionsBufferInfo.offset = 0;
+        cropRegionsBufferInfo.range  = bufferSize;
+
+        std::array<vk::WriteDescriptorSet, 1> descriptorWrites;
+
+        descriptorWrites[0].dstSet          = vk_descriptorSet;
+        descriptorWrites[0].dstBinding      = DescriporBindings::eCropRegions;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType  = vk::DescriptorType::eUniformBuffer;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo     = &cropRegionsBufferInfo;
+
+        vk_device.updateDescriptorSets(descriptorWrites, nullptr);
+
+        return Result::eSuccess;
+    }
+
     Result VulkanInterface::updateCropRegion(CropRegionRef& ref, IVec2 x1, IVec2 x2) {
         SPLITGUI_PROFILE;
 

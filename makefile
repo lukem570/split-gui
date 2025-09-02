@@ -41,5 +41,8 @@ svg:
 crop:
 	python tools/testTools/test.py build/tests/cropRegionTest
 
+win2:
+	python tools/testTools/test.py build/tests/multiWindowTest
+
 test-all:
 	python tools/testTools/test.py
