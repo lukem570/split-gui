@@ -67,8 +67,13 @@ namespace SplitGui {
     void Logger::cleanup() {
         SPLITGUI_PROFILE;
         
+        if (!instance) {
+            return;
+        }
+
         ma::untrack(instance);
         delete instance;
+        instance = nullptr;
     }
 
     std::string Logger::getTime() {
