@@ -1,0 +1,6 @@
+[packages]
+name="splitgui"
+version="0.0.1"
+description="Windowing library for c++"
+include="include"
+link="splitgui"
