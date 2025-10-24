@@ -52,7 +52,7 @@ namespace SplitGui {
         scene.outputImageMemory = outputImageMemory;
         scene.outputImageView   = outputImageView;
 
-        Logger::info("Created Scene Output Resources");
+        Logutil::info("Created Scene Output Resources");
 
         return Result::eSuccess;
     }

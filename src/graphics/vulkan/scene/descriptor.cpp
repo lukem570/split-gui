@@ -40,7 +40,7 @@ namespace SplitGui {
 
         vk_sceneDescriptorSetLayout = descriptorSetLayout;
 
-        Logger::info("Created Scene Descriptor Set Layout");
+        Logutil::info("Created Scene Descriptor Set Layout");
     }
 
     inline void VulkanInterface::createSceneDescriptorPool(SceneObject& scene) {
@@ -74,7 +74,7 @@ namespace SplitGui {
 
         scene.descriptorPool = descriptorPool;
 
-        Logger::info("Created Scene Descriptor Pool");
+        Logutil::info("Created Scene Descriptor Pool");
     }
 
     inline void VulkanInterface::createSceneDescriptorSet(SceneObject& scene) {
@@ -89,7 +89,7 @@ namespace SplitGui {
 
         scene.descriptorSet = descriptorSet;
 
-        Logger::info("Created Scene Descriptor Set");
+        Logutil::info("Created Scene Descriptor Set");
     }
 
     inline void VulkanInterface::updateSceneDescriptorSet(SceneObject& scene) {
@@ -123,6 +123,6 @@ namespace SplitGui {
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 
-        Logger::info("Updated Scene Descriptor Sets");
+        Logutil::info("Updated Scene Descriptor Sets");
     }
 }

@@ -1,7 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
-#include <splitgui/logger.hpp>
+#include <logutil/logutil.hpp>
 
 namespace SplitGui {
     void Default::Text::setText(std::string valueIn) {
@@ -34,7 +34,7 @@ namespace SplitGui {
         UnitExpressionValue colorEval = colorStatement.evaluate(extent.height);
         color = colorEval.vector.ivec3;
 
-        Logger::info("Set Text Color");
+        Logutil::info("Set Text Color");
 
         return Result::eSuccess;
     }
@@ -165,7 +165,7 @@ namespace SplitGui {
 
         textExists = true;
 
-        Logger::info("Instanced Text");
+        Logutil::info("Instanced Text");
 
         return Result::eSuccess;
     }

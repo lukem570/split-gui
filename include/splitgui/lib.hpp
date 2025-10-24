@@ -104,15 +104,20 @@
         #error "Vulkan previously defined"
     #endif
 
+    #include <logutil/logutil.hpp>
+    #include <logutil/undef.hpp>
+
     #ifdef BUILD_SPLITGUI
     // includes
-    #include <volk/volk.h>
+    #include <volk.h>
 
     // This is wonderful 
     #include <vulkan/vulkan_core.h>
     #undef VK_HEADER_VERSION
     #define VK_HEADER_VERSION 309
     #include <vulkan/vulkan.hpp>
+
+    #include <logutil/define.hpp>
     
     // dispatch loader
     VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
@@ -262,7 +267,7 @@
 
     // msdfgen 
     #define MSDFGEN_PUBLIC
-    #include <msdfgen/msdfgen.h>
+    #include <msdfgen.h>
 
     // freetype
     #include <setjmp.h>

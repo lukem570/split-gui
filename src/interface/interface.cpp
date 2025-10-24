@@ -1,4 +1,5 @@
 #include <splitgui/interface.hpp>
+#include <logutil/logutil.hpp>
 
 #include "xml/xmlParser.cpp"
 #include "default/default.cpp"
@@ -68,7 +69,7 @@ namespace SplitGui {
         SPLITGUI_PROFILE;
 
         if (interfaceElement) {
-            Logger::warn("Interface data is being overwritten this can cause memory leaks if unhandled");
+            Logutil::warn("Interface data is being overwritten this can cause memory leaks if unhandled");
         }
 
         interfaceElement = data;

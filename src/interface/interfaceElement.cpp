@@ -1,5 +1,4 @@
 #include <splitgui/interface.hpp>
-#include <splitgui/logger.hpp>
 
 namespace SplitGui {
     Result InterfaceElement::instance() {

@@ -55,7 +55,7 @@ namespace SplitGui {
 
         vk_vectorEngineDescriptorSetLayout = descriptorSetLayout;
 
-        Logger::info("Created Vector Engine Descriptor Set Layout");
+        Logutil::info("Created Vector Engine Descriptor Set Layout");
     }
 
     inline void VulkanInterface::createVectorEngineDescriptorPool(VectorEngineObject& vEngine) {
@@ -99,7 +99,7 @@ namespace SplitGui {
 
         vEngine.descriptorPool = descriptorPool;
 
-        Logger::info("Created Vector Engine Descriptor Pool");
+        Logutil::info("Created Vector Engine Descriptor Pool");
     }
 
     inline void VulkanInterface::createVectorEngineDescriptorSet(VectorEngineObject& vEngine) {
@@ -114,7 +114,7 @@ namespace SplitGui {
 
         vEngine.descriptorSet = descriptorSet;
 
-        Logger::info("Created Vector Engine Descriptor Set");
+        Logutil::info("Created Vector Engine Descriptor Set");
     }
 
     inline void VulkanInterface::updateVectorEngineEdges(VectorEngineObject& vEngine) {
@@ -152,7 +152,7 @@ namespace SplitGui {
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 
-        Logger::info("Updated Vector Engine Edges");
+        Logutil::info("Updated Vector Engine Edges");
     }
 
     inline void VulkanInterface::updateVectorEngineDescriptorSet(VectorEngineObject& vEngine) {
@@ -198,6 +198,6 @@ namespace SplitGui {
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 
-        Logger::info("Updated Vector Engine Descriptor Sets");
+        Logutil::info("Updated Vector Engine Descriptor Sets");
     }
 }

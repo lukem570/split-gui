@@ -45,7 +45,7 @@ namespace SplitGui {
         
         vk_descriptorSetLayout = vk_device.createDescriptorSetLayout(createInfo);
 
-        Logger::info("Created Descriptor Set Layout");
+        Logutil::info("Created Descriptor Set Layout");
     }
 
     void VulkanInterface::createDescriptorPool() {
@@ -82,7 +82,7 @@ namespace SplitGui {
         
         vk_descriptorPool = vk_device.createDescriptorPool(createInfo);
 
-        Logger::info("Created Descriptor Pool");
+        Logutil::info("Created Descriptor Pool");
     }
 
     void VulkanInterface::createDescriptorSet() {
@@ -95,7 +95,7 @@ namespace SplitGui {
 
         vk_descriptorSet = vk_device.allocateDescriptorSets(allocInfo).back();
 
-        Logger::info("Created Descriptor Set");
+        Logutil::info("Created Descriptor Set");
     }
 
     inline void VulkanInterface::updateDescriptorSets() {
@@ -141,6 +141,6 @@ namespace SplitGui {
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 
-        Logger::info("Updated Descriptor Sets");
+        Logutil::info("Updated Descriptor Sets");
     }
 }

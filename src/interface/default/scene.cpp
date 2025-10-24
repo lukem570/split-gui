@@ -1,7 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
-#include <splitgui/logger.hpp>
+#include <logutil/logutil.hpp>
 
 namespace SplitGui {
     Result Default::SceneElement::update() {
@@ -19,7 +19,7 @@ namespace SplitGui {
 
         graphicsSceneRef = result.value;
 
-        Logger::info("Instanced Scene");
+        Logutil::info("Instanced Scene");
 
         return Result::eSuccess;
     }

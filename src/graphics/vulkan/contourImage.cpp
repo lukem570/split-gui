@@ -151,7 +151,7 @@ namespace SplitGui {
 
         vectorImages.push_back(contours);
 
-        Logger::info("Created Contour Image");
+        Logutil::info("Created Contour Image");
 
         TextureRef ref;
         ref.textureNumber = textures++;

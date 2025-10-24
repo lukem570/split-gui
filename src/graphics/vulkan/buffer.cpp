@@ -23,7 +23,7 @@ namespace SplitGui {
             vk_swapchainFramebuffers[i] = vk_device.createFramebuffer(framebufferInfo);
         }
 
-        Logger::info("Created Framebuffers");
+        Logutil::info("Created Framebuffers");
     }
 
     void VulkanInterface::clearBuffers() {

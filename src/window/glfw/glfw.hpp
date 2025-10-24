@@ -4,8 +4,9 @@
 #include <splitgui/window.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/events.hpp>
-#include <splitgui/logger.hpp>
 #include <tuple>
+
+#include <logutil/logutil.hpp>
 
 /*
 #include "glfw.hpp"

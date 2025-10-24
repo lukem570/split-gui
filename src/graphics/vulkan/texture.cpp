@@ -96,7 +96,7 @@ namespace SplitGui {
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
-        Logger::info("Created Glyph Texture Image");
+        Logutil::info("Created Glyph Texture Image");
 
         return Result::eSuccess;
     }
@@ -195,7 +195,7 @@ namespace SplitGui {
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
-        Logger::info("Created Texture Image Array");
+        Logutil::info("Created Texture Image Array");
 
         return Result::eSuccess;
     }

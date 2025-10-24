@@ -1,7 +1,8 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
-#include <splitgui/logger.hpp>
+
+#include <logutil/logutil.hpp>
 
 namespace SplitGui {
 
@@ -102,7 +103,7 @@ namespace SplitGui {
         children.back()->setExtent(childExtent);
         children.back()->instance();
 
-        Logger::info("Instanced Transform");
+        Logutil::info("Instanced Transform");
 
         return Result::eSuccess;
     }

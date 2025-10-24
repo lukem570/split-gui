@@ -1,7 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
-#include <splitgui/logger.hpp>
+#include <logutil/logutil.hpp>
 
 #include "../unitExpression.cpp"
 
@@ -47,7 +47,7 @@ namespace SplitGui {
         x2.x = extent.x + extent.width;
         x2.y = extent.y + extent.height;
 
-        Logger::info("Instanced Rect");
+        Logutil::info("Instanced Rect");
 
         graphicsRectRef = pGraphics->drawRect(x1, x2, color, depth, flags, textureIndex, cropRegionRef);
         
