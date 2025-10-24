@@ -1,4 +1,4 @@
-# Split gui 0.2.18
+# Split gui 0.3.0
 
 Split gui is a GUI library that is entirely gpu focused making it highly portable. Split gui is built on Vulkan and Glfw, but is designed to be expanded to other libraries and systems.
 
@@ -25,13 +25,8 @@ All documentation is located in the [Docs](docs) folder and is seperated into us
 
 ## Build
 
-note: ninja is not required for builds
-
 ``` bash
-mkdir build
-cd build
-cmake -G "Ninja" .. 
-ninja
+cbuild build
 ```
 
 ## Build dependencies
