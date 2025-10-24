@@ -14,7 +14,7 @@ namespace SplitGui {
 
         vk_vectorEnginePipelineLayout = pipelineLayout;
 
-        Logger::info("Created Vector Engine Pipeline Layout");
+        Logutil::info("Created Vector Engine Pipeline Layout");
     }
 
     inline Result VulkanInterface::createVectorEnginePipelineModules() {
@@ -39,7 +39,7 @@ namespace SplitGui {
 
         vectorTransformPassSize = properties.limits.maxComputeWorkGroupInvocations;
 
-        Logger::info("Vector Transform Work Group Size " + std::to_string(vectorTransformPassSize));
+        Logutil::info("Vector Transform Work Group Size: {}", vectorTransformPassSize);
 
         vk::SpecializationMapEntry xSizeEntry;
         xSizeEntry.constantID = 0;
@@ -70,7 +70,7 @@ namespace SplitGui {
 
         vEngine.transformPipeline = result.value;
 
-        Logger::info("Created Vector Engine Transform Pipeline");
+        Logutil::info("Created Vector Engine Transform Pipeline");
 
         return Result::eSuccess;
     }
@@ -85,7 +85,7 @@ namespace SplitGui {
         vectorRenderPassSize.x = std::ceil(std::sqrt((float) maxInvocations));
         vectorRenderPassSize.y = std::floor(std::sqrt((float) maxInvocations));
 
-        Logger::info("Vector Render Work Group Size (" + std::to_string(vectorRenderPassSize.x) + ", " + std::to_string(vectorRenderPassSize.y) + ")");
+        Logutil::info("Vector Render Work Group Size ({}, {})", vectorRenderPassSize.x, vectorRenderPassSize.y);
 
         vk::SpecializationMapEntry xSizeEntry;
         xSizeEntry.constantID = 0;
@@ -123,7 +123,7 @@ namespace SplitGui {
 
         vEngine.renderPipeline = result.value;
 
-        Logger::info("Created Vector Engine Render Pipeline");
+        Logutil::info("Created Vector Engine Render Pipeline");
 
         return Result::eSuccess;
     }

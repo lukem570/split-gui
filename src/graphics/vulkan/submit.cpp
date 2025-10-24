@@ -73,7 +73,7 @@ namespace SplitGui {
         
         frameMutex.unlock();
         
-        Logger::info("Submitted Vertex Buffer");
+        Logutil::info("Submitted Vertex Buffer");
 
         return Result::eSuccess;
     }
@@ -90,7 +90,7 @@ namespace SplitGui {
             TRYR(vertexRes, vertexBufferSubmit());
         }
 
-        Logger::info("Submited Buffers");
+        Logutil::info("Submited Buffers");
 
         return Result::eSuccess;
     }

@@ -14,7 +14,7 @@ namespace SplitGui {
         }
         ft_fontInUse = true;
 
-        Logger::info("Loaded Font");
+        Logutil::info("Loaded Font");
 
         return Result::eSuccess;
     }
@@ -418,7 +418,7 @@ namespace SplitGui {
             pos.x += slot->advance.x * emScale;
         }
 
-        Logger::info("Drew Text");
+        Logutil::info("Drew Text");
 
         return ret;
     }

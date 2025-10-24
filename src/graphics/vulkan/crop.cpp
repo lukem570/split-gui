@@ -66,7 +66,7 @@ namespace SplitGui {
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 
-        Logger::info("Created crop region");
+        Logutil::info("Created crop region");
 
         return ref;
     }

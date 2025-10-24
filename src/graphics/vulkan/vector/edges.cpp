@@ -79,7 +79,7 @@ namespace SplitGui {
 
         frameMutex.unlock();
 
-        Logger::info("Submitted Vector Engine Edge Buffer");
+        Logutil::info("Submitted Vector Engine Edge Buffer");
 
         return Result::eSuccess;
     }

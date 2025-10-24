@@ -3,7 +3,6 @@
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/structs.hpp>
-#include <splitgui/logger.hpp>
 
 #include <fstream>
 #include <sstream>

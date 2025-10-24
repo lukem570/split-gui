@@ -5,7 +5,6 @@
 #include <splitgui/structs.hpp>
 #include <splitgui/scene.hpp>
 #include <splitgui/events.hpp>
-#include <splitgui/logger.hpp>
 
 #include <fstream>
 #include <sstream>

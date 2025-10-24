@@ -28,6 +28,6 @@ namespace SplitGui {
 
         scene.framebuffers = framebuffers;
 
-        Logger::info("Created Scene Framebuffers");
+        Logutil::info("Created Scene Framebuffers");
     }
 }

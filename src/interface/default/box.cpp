@@ -1,7 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
-#include <splitgui/logger.hpp>
+#include <logutil/logutil.hpp>
 
 namespace SplitGui {
     Result Default::Box::update() {
@@ -28,7 +28,7 @@ namespace SplitGui {
         children[0]->setExtent(Default::Box::extent);
         children[0]->instance();
 
-        Logger::info("Instanced Box");
+        Logutil::info("Instanced Box");
 
         return Result::eSuccess;
     }

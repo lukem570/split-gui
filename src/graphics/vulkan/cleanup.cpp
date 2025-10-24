@@ -63,7 +63,7 @@ namespace SplitGui {
 
         ft::FT_Done_FreeType(ft_lib);
 
-        Logger::info("Cleaned Up Vulkan");
+        Logutil::info("Cleaned Up Vulkan");
     }
 
     inline void VulkanInterface::cleanupFrameBuffers() {

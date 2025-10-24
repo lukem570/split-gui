@@ -1,7 +1,7 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/interface.hpp>
-#include <splitgui/logger.hpp>
+#include <logutil/logutil.hpp>
 
 namespace SplitGui {
     Result Default::Switch::update() {
@@ -52,7 +52,7 @@ namespace SplitGui {
             TRYR(instRes, children[i]->instance());
         }
         
-        Logger::info("Instanced Switch");
+        Logutil::info("Instanced Switch");
 
         return Result::eSuccess;
     }

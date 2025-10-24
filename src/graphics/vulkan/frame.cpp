@@ -239,7 +239,7 @@ namespace SplitGui {
         } while (aquireResult != vk::Result::eSuccess);
 
         if (timeouts != 0) {
-            Logger::warn("vkAcquireNextImageKHR took " + std::to_string(100 * timeouts) + "ms to complete");
+            Logutil::warn("vkAcquireNextImageKHR took {}ms to complete", 100 * timeouts);
         }
 
         return Result::eSuccess;

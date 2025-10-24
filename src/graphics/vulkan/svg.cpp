@@ -81,7 +81,7 @@ namespace SplitGui {
 
         TRYR(commandRes, endSingleTimeCommands(commandBuffer));
 
-        Logger::info("Rasterized SVG");
+        Logutil::info("Rasterized SVG");
 
         nsvgDelete(image);
 

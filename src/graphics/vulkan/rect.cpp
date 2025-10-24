@@ -60,7 +60,7 @@ namespace SplitGui {
         refRet.topLeft     = topLeftElement;
         refRet.topRight    = topRightElement;
 
-        Logger::info("Created Rect: " + std::to_string(vertices.size()));
+        Logutil::info("Created Rect: {}", vertices.size());
 
         markVerticesForUpdate = true;
 
@@ -94,7 +94,7 @@ namespace SplitGui {
         std::optional<unsigned int> offset = vertices.offset(ref.verticesStart);
 
         if (offset == std::nullopt) {
-            Logger::warn("Rect to delete does not exist"); // convert to result maybe?
+            Logutil::warn("Rect to delete does not exist"); // convert to result maybe?
             return;
         }
 

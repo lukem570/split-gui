@@ -9,10 +9,7 @@ namespace SplitGui {
         int selection = -1;
 
         for (unsigned int i = 0; i < physicalDevices.size(); i++) {
-            std::string deviceName = physicalDevices[i].getProperties().deviceName.data();
-            std::stringstream info;
-            info << "Possible Device: " << deviceName;
-            Logger::info(info.str());
+            Logutil::info("Possible Device: {}", physicalDevices[i].getProperties().deviceName.data());
         }
 
         std::vector<int> scores;
@@ -64,12 +61,8 @@ namespace SplitGui {
 
         vk_physicalDevice = physicalDevices[selection];
 
-        Logger::info("Created Physical Device");
-
-        std::string deviceName = vk_physicalDevice.getProperties().deviceName.data();
-        std::stringstream info;
-        info << "Using: " << deviceName;
-        Logger::info(info.str());
+        Logutil::info("Created Physical Device");
+        Logutil::info("Using: {}", vk_physicalDevice.getProperties().deviceName.data());
 
         return Result::eSuccess;
     }
@@ -104,7 +97,7 @@ namespace SplitGui {
             return Result::eFailedToFindQueueFamily;
         }
 
-        Logger::info("Got Queue Families");
+        Logutil::info("Got Queue Families");
 
         return Result::eSuccess;
     }
@@ -150,7 +143,7 @@ namespace SplitGui {
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(vk_device);
 
-        Logger::info("Created Logical Device");
+        Logutil::info("Created Logical Device");
 
         return Result::eSuccess;
     }
@@ -161,7 +154,7 @@ namespace SplitGui {
         vk_graphicsQueue = vk_device.getQueue(graphicsQueueFamilyIndex, 0);
         vk_presentQueue = vk_device.getQueue(presentQueueFamilyIndex , 0);
 
-        Logger::info("Instanced Queue Objects");
+        Logutil::info("Instanced Queue Objects");
     }
 
     inline Result VulkanInterface::createSurface(SplitGui::Window& window) {
@@ -173,7 +166,7 @@ namespace SplitGui {
 
         vk_surface = surfaceRet.value;
 
-        Logger::info("Created Surface");
+        Logutil::info("Created Surface");
 
         return Result::eSuccess;
     }

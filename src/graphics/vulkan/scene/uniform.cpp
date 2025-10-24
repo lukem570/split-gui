@@ -43,7 +43,7 @@ namespace SplitGui {
         scene.dataUniformBufferMemory = tempBufferMemory;
         scene.dataUniformBuffer       = tempBuffer;
 
-        Logger::info("Created Scene Data Uniform");
+        Logutil::info("Created Scene Data Uniform");
 
         return Result::eSuccess;
     }
@@ -109,7 +109,7 @@ namespace SplitGui {
 
         vk_device.updateDescriptorSets(descriptorWrites, nullptr);
 
-        Logger::info("Created Scene Data Uniform");
+        Logutil::info("Created Scene Data Uniform");
 
         return Result::eSuccess;
     }
