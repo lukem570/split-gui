@@ -1,5 +1,8 @@
 #include <cbuild/cbuild.hpp>
 #include <string>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 #if defined(__APPLE__) && defined(__MACH__)
     #error "Mac not supported."
@@ -38,6 +41,24 @@ int build(CBuild::Context context) {
     splitgui.define("BUILD_SPLITGUI");
     splitgui.includeDirectory("include");
     splitgui.compile();
+
+    fs::path shaderDir = "src/shaders";
+
+    if (!fs::exists("./build/shaders")) 
+        fs::create_directory("./build/shaders");
+
+    for (auto entry : fs::recursive_directory_iterator(shaderDir)) {
+        if (!fs::is_regular_file(entry)) {
+            continue;
+        }
+
+        std::stringstream command;
+        command << "glslc ";
+        command << entry << " ";
+        command << "-o./build/shaders/" << entry.path().stem() << ".spv ";
+
+        system(command.str().c_str());
+    }
 
     CBuild::Executable cube (
         context,
