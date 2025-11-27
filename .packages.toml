@@ -21,6 +21,11 @@ link = 'https://github.com/lukem570/glfwpp.git'
 target = 'main'
 version = '0.0.1'
 
+[linalg]
+link = 'https://github.com/lukem570/linalg.git'
+target = 'main'
+version = '0.0.1'
+
 [logutil]
 link = 'https://github.com/lukem570/logger-util.git'
 target = 'main'

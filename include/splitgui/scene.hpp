@@ -15,8 +15,8 @@ namespace SplitGui {
         public:
 
             void      setTransform(Transform& transform);
-            void      setPosition(Vec3 position);
-            void      setRotation(Vec3 rotation);
+            void      setPosition(la::Vec3 position);
+            void      setRotation(la::Vec3 rotation);
             void      addChild(Node& child);
             void      submitGraphics(Graphics& graphics);
 

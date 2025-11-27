@@ -1,5 +1,7 @@
 #include <splitgui/scene.hpp>
 
+#include <linalg/linalg.hpp>
+
 namespace SplitGui {
     void Node::setTransform(Transform& transformIn) {
         SPLITGUI_PROFILE;
@@ -19,13 +21,13 @@ namespace SplitGui {
         pGraphics = &graphics;
     }
 
-    void Node::setPosition(Vec3 position) {
+    void Node::setPosition(la::Vec3 position) {
         SPLITGUI_PROFILE;
 
         transform.position = position;
     }
 
-    void Node::setRotation(Vec3 rotation) {
+    void Node::setRotation(la::Vec3 rotation) {
         SPLITGUI_PROFILE;
 
         transform.rotation = rotation;

@@ -3,6 +3,8 @@
 
 #include "lib.hpp"
 
+#include <linalg/linalg.hpp>
+
 #include <cinttypes>
 #include <array>
 #include <vector>
@@ -74,24 +76,6 @@ namespace SplitGui {
         eCropEnable  = 0x20,
     };
 
-    struct SPLITGUI_EXPORT Vec4 {
-        union {float x; float r;};
-        union {float y; float g;};
-        union {float z; float b;};
-        union {float w; float a;};
-
-        Vec4 operator+(Vec4 operand);
-        Vec4 operator-(Vec4 operand);
-        Vec4 operator*(Vec4 operand);
-        Vec4 operator/(Vec4 operand);
-
-        bool operator==(Vec4 operand);
-        bool operator!=(Vec4 operand);
-
-        float dot(const Vec4& operand);
-        void normalize();
-    };
-
     struct SPLITGUI_EXPORT IVec4 {
         union {int x; int r;};
         union {int y; int g;};
@@ -111,37 +95,6 @@ namespace SplitGui {
         std::string stringify();
     };
 
-    struct SPLITGUI_EXPORT Vec3 {
-        union {float x; float r;};
-        union {float y; float g;};
-        union {float z; float b;};
-
-        Vec3() = default;
-        Vec3(float x, float y, float z) : x(x), y(y), z(z) {};
-        Vec3(float f) : x(f), y(f), z(f) {}
-
-        Vec3 operator+(Vec3 operand);
-        Vec3 operator-(Vec3 operand);
-        Vec3 operator*(Vec3 operand);
-        Vec3 operator/(Vec3 operand);
-
-        bool operator==(Vec3 operand);
-        bool operator!=(Vec3 operand);
-
-        Vec3 cross(const Vec3& operand) const {
-            return Vec3 {
-                y * operand.z - z * operand.y,
-                z * operand.x - x * operand.z,
-                x * operand.y - y * operand.x,
-            };
-        }
-
-        float dot(const Vec3& operand);
-        void normalize();
-
-        Vec4 extend(float value);
-    };
-
     struct SPLITGUI_EXPORT IVec3 {
         union {int x; int r;};
         union {int y; int g;};
@@ -158,22 +111,6 @@ namespace SplitGui {
         float dot(const IVec3& operand);
 
         std::string stringify();
-    };
-
-    struct SPLITGUI_EXPORT Vec2 {
-        union {float x; float r;};
-        union {float y; float g;};
-
-        Vec2 operator+(Vec2 operand);
-        Vec2 operator-(Vec2 operand);
-        Vec2 operator*(Vec2 operand);
-        Vec2 operator/(Vec2 operand);
-
-        bool operator==(Vec2 operand);
-        bool operator!=(Vec2 operand);
-
-        float dot(const Vec2& operand);
-        void normalize();
     };
 
     struct SPLITGUI_EXPORT IVec2 {
@@ -227,23 +164,23 @@ namespace SplitGui {
     };
 
     struct SPLITGUI_EXPORT Mat2 {
-        alignas(8) Vec2 a;
-        alignas(8) Vec2 b;
+        alignas(8) la::Vec2 a;
+        alignas(8) la::Vec2 b;
     };
 
     struct SPLITGUI_EXPORT Mat3 {
-        alignas(16) Vec3 a;
-        alignas(16) Vec3 b;
-        alignas(16) Vec3 c;
+        alignas(16) la::Vec3 a;
+        alignas(16) la::Vec3 b;
+        alignas(16) la::Vec3 c;
     };
 
     struct SPLITGUI_EXPORT Mat4 {
         union {
             struct {
-                alignas(16) Vec4 a;
-                alignas(16) Vec4 b;
-                alignas(16) Vec4 c;
-                alignas(16) Vec4 d;
+                alignas(16) la::Vec4 a;
+                alignas(16) la::Vec4 b;
+                alignas(16) la::Vec4 c;
+                alignas(16) la::Vec4 d;
             };
             alignas(16) float matrix[4][4];
         };
@@ -253,22 +190,20 @@ namespace SplitGui {
 
         Mat4 inverse();
 
-        Vec4 operator*(const Vec4& operand);
-
         void updatePerspective(float fieldOfView, RectObj extent);
 
         static Mat4 xRotationMatrix(float theta);
         static Mat4 yRotationMatrix(float theta);
         static Mat4 zRotationMatrix(float theta);
 
-        static Mat4 quaternionMatrix(Vec4 quaternion);
+        static Mat4 quaternionMatrix(la::Vec4 quaternion);
 
         static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
         static Mat4 perspectiveProjection(float fieldOfView, RectObj extent, float far = 100.0f, float near = 0.1f);
         static Mat4 ident();
 
-        static Mat4 scale(Vec3 factor);
-        static Mat4 translate(Vec3 factor);
+        static Mat4 scale(la::Vec3 factor);
+        static Mat4 translate(la::Vec3 factor);
     };
 
     struct HexColor {
@@ -286,7 +221,7 @@ namespace SplitGui {
             b = hex.b;
         }
 
-        Vec3 normalize() {
+        la::Vec3 normalize() {
             return {
                 (float) r / (float) UINT8_MAX, 
                 (float) g / (float) UINT8_MAX, 
@@ -344,17 +279,17 @@ namespace SplitGui {
     };
 
     struct Transform {
-        Vec3 position = {0, 0, 0};
-        Vec3 rotation = {0, 0, 0};
-        Vec3 scale    = {1, 1, 1};
+        la::Vec3 position = {0, 0, 0};
+        la::Vec3 rotation = {0, 0, 0};
+        la::Vec3 scale    = {1, 1, 1};
 
         Mat4 getModel() {
             Mat4 model = Mat4::ident();
 
             Mat4 translationMat = Mat4::translate(position);
-            Mat4 rotationXMat   = Mat4::xRotationMatrix(rotation.x);
-            Mat4 rotationYMat   = Mat4::yRotationMatrix(rotation.y);
-            Mat4 rotationZMat   = Mat4::zRotationMatrix(rotation.z);
+            Mat4 rotationXMat   = Mat4::xRotationMatrix(rotation[0]);
+            Mat4 rotationYMat   = Mat4::yRotationMatrix(rotation[1]);
+            Mat4 rotationZMat   = Mat4::zRotationMatrix(rotation[2]);
             Mat4 scaleMat       = Mat4::scale(scale);
 
             model = translationMat * rotationZMat * rotationYMat * rotationXMat * scaleMat;
@@ -366,14 +301,14 @@ namespace SplitGui {
     struct alignas(16) SceneObj {
         Mat4    cameraView;
         Mat4    cameraProjection;
-        Vec3    cameraPosition;
+        la::Vec3    cameraPosition;
     };
 
     struct Vertex {
-        Vec3 pos;
-        Vec3 color; // TODO: make material object
+        la::Vec3 pos;
+        la::Vec3 color; // TODO: make material object
         float opacity = 1.0f;
-        Vec2 textureCord;
+        la::Vec2 textureCord;
     };
 
     struct VertexBufferObject {
@@ -393,13 +328,13 @@ namespace SplitGui {
         uint16_t flags;
         uint16_t textureNumber;
         uint16_t modelNumber;
-        Vec3     normal;
+        la::Vec3     normal;
     };
 
     struct alignas(16) VectorEdgeBufferObject {
-        alignas(16) Vec3 start;
-        alignas(16) Vec3 end;
-        alignas(16) Vec3 color;
+        alignas(16) la::Vec3 start;
+        alignas(16) la::Vec3 end;
+        alignas(16) la::Vec3 color;
         unsigned int modelNumber;
     };
 
@@ -614,9 +549,9 @@ namespace SplitGui {
                     IVec4 ivec4;
                     IVec3 ivec3;
                     IVec2 ivec2;
-                    Vec4   vec4;
-                    Vec3   vec3;
-                    Vec2   vec2;
+                    la::Vec4   vec4;
+                    la::Vec3   vec3;
+                    la::Vec2   vec2;
                 };
             } vector;
         };
@@ -627,11 +562,11 @@ namespace SplitGui {
         UnitExpressionValue(double number) : number(number), type(Type::eNumber) {} 
 
         UnitExpressionValue(IVec4 vec) : vector{.size = 4, .isInt = true,  .ivec4 = vec}, type(Type::eVector) {} 
-        UnitExpressionValue( Vec4 vec) : vector{.size = 4, .isInt = false,  .vec4 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue( la::Vec4 vec) : vector{.size = 4, .isInt = false,  .vec4 = vec}, type(Type::eVector) {} 
         UnitExpressionValue(IVec3 vec) : vector{.size = 3, .isInt = true,  .ivec3 = vec}, type(Type::eVector) {} 
-        UnitExpressionValue( Vec3 vec) : vector{.size = 3, .isInt = false,  .vec3 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue( la::Vec3 vec) : vector{.size = 3, .isInt = false,  .vec3 = vec}, type(Type::eVector) {} 
         UnitExpressionValue(IVec2 vec) : vector{.size = 2, .isInt = true,  .ivec2 = vec}, type(Type::eVector) {} 
-        UnitExpressionValue( Vec2 vec) : vector{.size = 2, .isInt = false,  .vec2 = vec}, type(Type::eVector) {} 
+        UnitExpressionValue( la::Vec2 vec) : vector{.size = 2, .isInt = false,  .vec2 = vec}, type(Type::eVector) {} 
 
         UnitExpressionValue operator+(const UnitExpressionValue& operand);
         UnitExpressionValue operator-(const UnitExpressionValue& operand);
@@ -645,42 +580,42 @@ namespace SplitGui {
     };
 
     struct MoveTo {
-        Vec2 from;
+        la::Vec2 from;
     };
 
     struct LinearContour {
-        Vec2 to;
+        la::Vec2 to;
     };
 
     struct QuadraticBezierContour {
-        Vec2 control;
-        Vec2 to;
+        la::Vec2 control;
+        la::Vec2 to;
     };
 
     struct CubicBezierContour {
-        Vec2 controlA;
-        Vec2 controlB;
-        Vec2 to;
+        la::Vec2 controlA;
+        la::Vec2 controlB;
+        la::Vec2 to;
     };
 
     typedef std::variant<MoveTo, LinearContour, QuadraticBezierContour, CubicBezierContour> Contour;
 
     struct LinearEdge {
-        Vec3 from;
-        Vec3 to;
+        la::Vec3 from;
+        la::Vec3 to;
     };
 
     struct QuadraticEdge {
-        Vec3 from;
-        Vec3 control;
-        Vec3 to;
+        la::Vec3 from;
+        la::Vec3 control;
+        la::Vec3 to;
     };
 
     struct CubicEdge {
-        Vec3 from;
-        Vec3 control1;
-        Vec3 control2;
-        Vec3 to;
+        la::Vec3 from;
+        la::Vec3 control1;
+        la::Vec3 control2;
+        la::Vec3 to;
     };
 
     typedef std::variant<LinearEdge, QuadraticEdge, CubicEdge> Edge;

@@ -7,6 +7,9 @@
 #include <splitgui/interface.hpp>
 #include <splitgui/graphics.hpp>
 #include <splitgui/events.hpp>
+
+#include <linalg/linalg.hpp>
+
 #include <unordered_map>
 
 namespace SplitGui {
@@ -74,7 +77,7 @@ namespace SplitGui {
               virtual void       setCursorShape(CursorType type)                 { throw; }
               virtual MouseState getMouseState(MouseCode code)                   { throw; }
               virtual KeyState   getKeyState(KeyCode code)                       { throw; }
-              virtual Vec2       getMonitorContextScale()                        { throw; }
+              virtual la::Vec2   getMonitorContextScale()                        { throw; }
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   
@@ -118,7 +121,7 @@ namespace SplitGui {
               void       setCursorShape(CursorType type);
               MouseState getMouseState(MouseCode code);
               KeyState   getKeyState(KeyCode code);
-              Vec2       getMonitorContextScale();
+              la::Vec2   getMonitorContextScale();
 
 #ifdef SPLIT_GUI_USE_VULKAN
 #ifdef BUILD_SPLITGUI   

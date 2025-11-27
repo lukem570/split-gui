@@ -1,89 +1,33 @@
 #include <splitgui/structs.hpp>
 
 namespace SplitGui {
-    Vec4 Vec4::operator+(Vec4 operand) { return { (float)x + operand.x, (float)y + operand.y, (float)z + operand.z, (float)w + operand.w }; }
-    Vec4 Vec4::operator-(Vec4 operand) { return { (float)x - operand.x, (float)y - operand.y, (float)z - operand.z, (float)w - operand.w }; }
-    Vec4 Vec4::operator*(Vec4 operand) { return { (float)x * operand.x, (float)y * operand.y, (float)z * operand.z, (float)w * operand.w }; }
-    Vec4 Vec4::operator/(Vec4 operand) { return { (float)x / operand.x, (float)y / operand.y, (float)z / operand.z, (float)w / operand.w }; }
-
     IVec4 IVec4::operator+(IVec4 operand) { return { (int)x + operand.x, (int)y + operand.y, (int)z + operand.z, (int)w + operand.w }; }
     IVec4 IVec4::operator-(IVec4 operand) { return { (int)x - operand.x, (int)y - operand.y, (int)z - operand.z, (int)w - operand.w }; }
     IVec4 IVec4::operator*(IVec4 operand) { return { (int)x * operand.x, (int)y * operand.y, (int)z * operand.z, (int)w * operand.w }; }
     IVec4 IVec4::operator/(IVec4 operand) { return { (int)x / operand.x, (int)y / operand.y, (int)z / operand.z, (int)w / operand.w }; }
-
-    Vec3 Vec3::operator+(Vec3 operand) { return { (float)x + operand.x, (float)y + operand.y, (float)z + operand.z }; }
-    Vec3 Vec3::operator-(Vec3 operand) { return { (float)x - operand.x, (float)y - operand.y, (float)z - operand.z }; }
-    Vec3 Vec3::operator*(Vec3 operand) { return { (float)x * operand.x, (float)y * operand.y, (float)z * operand.z }; }
-    Vec3 Vec3::operator/(Vec3 operand) { return { (float)x / operand.x, (float)y / operand.y, (float)z / operand.z }; }
 
     IVec3 IVec3::operator+(IVec3 operand) { return { (int)x + operand.x, (int)y + operand.y, (int)z + operand.z }; }
     IVec3 IVec3::operator-(IVec3 operand) { return { (int)x - operand.x, (int)y - operand.y, (int)z - operand.z }; }
     IVec3 IVec3::operator*(IVec3 operand) { return { (int)x * operand.x, (int)y * operand.y, (int)z * operand.z }; }
     IVec3 IVec3::operator/(IVec3 operand) { return { (int)x / operand.x, (int)y / operand.y, (int)z / operand.z }; }
 
-    Vec2 Vec2::operator+(Vec2 operand) { return { (float)x + operand.x, (float)y + operand.y }; }
-    Vec2 Vec2::operator-(Vec2 operand) { return { (float)x - operand.x, (float)y - operand.y }; }
-    Vec2 Vec2::operator*(Vec2 operand) { return { (float)x * operand.x, (float)y * operand.y }; }
-    Vec2 Vec2::operator/(Vec2 operand) { return { (float)x / operand.x, (float)y / operand.y }; }
-
     IVec2 IVec2::operator+(IVec2 operand) { return { (int)x + operand.x, (int)y + operand.y }; }
     IVec2 IVec2::operator-(IVec2 operand) { return { (int)x - operand.x, (int)y - operand.y }; }
     IVec2 IVec2::operator*(IVec2 operand) { return { (int)x * operand.x, (int)y * operand.y }; }
     IVec2 IVec2::operator/(IVec2 operand) { return { (int)x / operand.x, (int)y / operand.y }; }
 
-    bool Vec4::operator==(Vec4 operand) { return (x == operand.x && y == operand.y && z == operand.z && w == operand.w); }
-    bool Vec4::operator!=(Vec4 operand) { return (x != operand.x && y != operand.y && z != operand.z && w != operand.w); }
-
     bool IVec4::operator==(IVec4 operand) { return (x == operand.x && y == operand.y && z == operand.z && w == operand.w); }
     bool IVec4::operator!=(IVec4 operand) { return (x != operand.x && y != operand.y && z != operand.z && w != operand.w); }
-
-    bool Vec3::operator==(Vec3 operand) { return (x == operand.x && y == operand.y && z == operand.z); }
-    bool Vec3::operator!=(Vec3 operand) { return (x != operand.x && y != operand.y && z != operand.z); }
 
     bool IVec3::operator==(IVec3 operand) { return (x == operand.x && y == operand.y && z == operand.z); }
     bool IVec3::operator!=(IVec3 operand) { return (x != operand.x && y != operand.y && z != operand.z); }
 
-    bool Vec2::operator==(Vec2 operand) { return (x == operand.x && y == operand.y); }
-    bool Vec2::operator!=(Vec2 operand) { return (x != operand.x && y != operand.y); }
-
     bool IVec2::operator==(IVec2 operand) { return (x == operand.x && y == operand.y); }
     bool IVec2::operator!=(IVec2 operand) { return (x != operand.x && y != operand.y); }
 
-    float Vec4::dot(const Vec4& operand) { return x * operand.x + y * operand.y + z * operand.z + w * operand.w; }
     float IVec4::dot(const IVec4& operand) { return x * operand.x + y * operand.y + z * operand.z + w * operand.w; }
-    float Vec3::dot(const Vec3& operand) { return x * operand.x + y * operand.y + z * operand.z; }
     float IVec3::dot(const IVec3& operand) { return x * operand.x + y * operand.y + z * operand.z; }
-    float Vec2::dot(const Vec2& operand) { return x * operand.x + y * operand.y; }
     float IVec2::dot(const IVec2& operand) { return x * operand.x + y * operand.y; }
-
-    Vec4 Vec3::extend(float value) { return {x, y, z, value}; }
-
-    void Vec4::normalize() {
-        SPLITGUI_PROFILE;
-
-        float len = std::sqrt(x*x + y*y + z*z + w*w);
-        x /= len;
-        y /= len;
-        z /= len;
-        w /= len;
-    }
-
-    void Vec3::normalize() {
-        SPLITGUI_PROFILE;
-
-        float len = std::sqrt(x*x + y*y + z*z);
-        x /= len;
-        y /= len;
-        z /= len;
-    }
-
-    void Vec2::normalize() {
-        SPLITGUI_PROFILE;
-
-        float len = std::sqrt(x*x + y*y);
-        x /= len;
-        y /= len;
-    }
 
     std::string IVec4::stringify() {
         SPLITGUI_PROFILE;

@@ -6,6 +6,9 @@
 #include <splitgui/result.hpp>
 #include <splitgui/structs.hpp>
 #include <splitgui/events.hpp>
+
+#include <linalg/linalg.hpp>
+
 #include <array>
 
 namespace SplitGui {
@@ -26,29 +29,29 @@ namespace SplitGui {
 [[nodiscard]] virtual Result                        instance()                                                                                                                         { throw; }
 [[nodiscard]] virtual Result                        submitWindow(Window& window)                                                                                                       { throw; }
 [[nodiscard]] virtual Result                        drawFrame()                                                                                                                        { throw; }
-              virtual RectRef                       drawRect(Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0, std::optional<CropRegionRef> crop = std::nullopt) { throw; }
-              virtual void                          updateRect(RectRef& ref, Vec2 x1, Vec2 x2, Vec3 color, float depth = 0.0f, uint16_t textureIndex = 0)                              { throw; }
+              virtual RectRef                       drawRect(la::Vec2 x1, la::Vec2 x2, la::Vec3 color, float depth = 0.0f, VertexFlags flags = 0, uint16_t textureIndex = 0, std::optional<CropRegionRef> crop = std::nullopt) { throw; }
+              virtual void                          updateRect(RectRef& ref, la::Vec2 x1, la::Vec2 x2, la::Vec3 color, float depth = 0.0f, uint16_t textureIndex = 0)                              { throw; }
               virtual void                          deleteRect(RectRef& ref)                                                                                                           { throw; }
               virtual void                          deleteText(TextRef& ref)                                                                                                           { throw; }
-[[nodiscard]] virtual ResultValue<Vec2>             getTextSize(const std::string& text, float fontSize)                                                                               { throw; }
+[[nodiscard]] virtual ResultValue<la::Vec2>         getTextSize(const std::string& text, float fontSize)                                                                               { throw; }
 [[nodiscard]] virtual Result                        deleteEdges(VectorEngineRef& vEngineRef, EdgeRef& edgeRef)                                                                         { throw; }
-[[nodiscard]] virtual Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, Vec3 color, float opacity = 1.0f)                               { throw; }
+[[nodiscard]] virtual Result                        updateTrianglesColor(SceneRef& sceneRef, TriangleRef& triangleRef, la::Vec3 color, float opacity = 1.0f)                               { throw; }
 [[nodiscard]] virtual Result                        submitRect(RectRef& ref)                                                                                                           { throw; }
-[[nodiscard]] virtual ResultValue<SceneRef>         instanceScene(Vec2 x1, Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              { throw; }
+[[nodiscard]] virtual ResultValue<SceneRef>         instanceScene(la::Vec2 x1, la::Vec2 x2, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt)                              { throw; }
 [[nodiscard]] virtual ResultValue<VectorEngineRef>  instanceVectorEngine(SceneRef& ref)                                                                                                { throw; }
-[[nodiscard]] virtual Result                        updateScene(SceneRef& ref, Vec2 x1, Vec2 x2, float depth = 0.0f)                                                                   { throw; }
-[[nodiscard]] virtual ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, Vec3 color)                                         { throw; }
-[[nodiscard]] virtual Result                        resubmitEdgeData(VectorEngineRef& veng, EdgeRef edgeRef, std::vector<Edge>& edges, ModelRef model, Vec3 color)                     { throw; }
+[[nodiscard]] virtual Result                        updateScene(SceneRef& ref, la::Vec2 x1, la::Vec2 x2, float depth = 0.0f)                                                                   { throw; }
+[[nodiscard]] virtual ResultValue<EdgeRef>          submitEdgeData(VectorEngineRef& ref, std::vector<Edge>& edges, ModelRef model, la::Vec3 color)                                         { throw; }
+[[nodiscard]] virtual Result                        resubmitEdgeData(VectorEngineRef& veng, EdgeRef edgeRef, std::vector<Edge>& edges, ModelRef model, la::Vec3 color)                     { throw; }
 [[nodiscard]] virtual ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags, int textureNumber = 0) { throw; }
 [[nodiscard]] virtual Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef)                                                                      { throw; }
 [[nodiscard]] virtual Result                        submitSceneData(SceneRef& sceneRef)                                                                                                { throw; }
-              virtual void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position)                                                                           { throw; }
+              virtual void                          updateSceneCameraPosition(SceneRef& ref, la::Vec3& position)                                                                           { throw; }
               virtual void                          updateSceneCameraView(SceneRef& ref, Mat4& view)                                                                                   { throw; }
               virtual void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection)                                                                       { throw; }
               virtual Mat4&                         getModel(ModelRef& model)                                                                                                          { throw; }
 [[nodiscard]] virtual ResultValue<ModelRef>         createModel(SceneRef& ref, const Mat4& model)                                                                                      { throw; }
-[[nodiscard]] virtual ResultValue<TextRef>          drawText(Vec2 x1, const std::string& text, Vec3 color, float fontSize, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt) { throw; }
-[[nodiscard]] virtual Result                        updateText(TextRef& ref, const std::string& text, Vec2 x1, Vec3 color, float fontSize, float depth = 0.0f)                         { throw; }
+[[nodiscard]] virtual ResultValue<TextRef>          drawText(la::Vec2 x1, const std::string& text, la::Vec3 color, float fontSize, float depth = 0.0f, std::optional<CropRegionRef> crop = std::nullopt) { throw; }
+[[nodiscard]] virtual Result                        updateText(TextRef& ref, const std::string& text, la::Vec2 x1, la::Vec3 color, float fontSize, float depth = 0.0f)                         { throw; }
 [[nodiscard]] virtual Result                        loadFont(const char* path)                                                                                                         { throw; }
 [[nodiscard]] virtual ResultValue<TextureRef>       createContourImage(std::vector<Contour>& contours)                                                                                 { throw; }
 [[nodiscard]] virtual Result                        submitBuffers()                                                                                                                    { throw; }
@@ -91,7 +94,7 @@ namespace SplitGui {
 [[nodiscard]] ResultValue<TriangleRef>      submitTriangleData(SceneRef& ref, std::vector<Vertex>& vertices, std::vector<uint16_t>& indices, ModelRef& model, int flags = 0, int textureNumber = 0);
 [[nodiscard]] Result                        deleteTriangles(SceneRef& sceneRef, TriangleRef& triangleRef);
 [[nodiscard]] Result                        submitSceneData(SceneRef& sceneRef);
-              void                          updateSceneCameraPosition(SceneRef& ref, Vec3& position);
+              void                          updateSceneCameraPosition(SceneRef& ref, la::Vec3& position);
               void                          updateSceneCameraView(SceneRef& ref, Mat4& view);
               void                          updateSceneCameraProjection(SceneRef& ref, Mat4& projection);
               Mat4&                         getModel(ModelRef& model);

@@ -6,6 +6,8 @@
 #include <splitgui/scene.hpp>
 #include <splitgui/events.hpp>
 
+#include <linalg/linalg.hpp>
+
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -80,8 +82,8 @@ int main() {
     grid.submitGraphics(graphics);
     grid.generate();
 
-    SplitGui::Vec3 rotation = {0, 0, 0};
-    SplitGui::Vec3 position = {0, 0, 0};
+    la::Vec3 rotation = {0, 0, 0};
+    la::Vec3 position = {0, 0, 0};
 
     SplitGui::Default::SceneElement* scene = (SplitGui::Default::SceneElement*)ui.searchByReference("scene").back();
     SplitGui::SceneRef sceneRef = scene->getSceneRef();
