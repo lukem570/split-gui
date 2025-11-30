@@ -163,48 +163,52 @@ namespace SplitGui {
         bool atBottomEdge(IVec2, int);
     };
 
-    struct SPLITGUI_EXPORT Mat2 {
-        alignas(8) la::Vec2 a;
-        alignas(8) la::Vec2 b;
-    };
-
-    struct SPLITGUI_EXPORT Mat3 {
-        alignas(16) la::Vec3 a;
-        alignas(16) la::Vec3 b;
-        alignas(16) la::Vec3 c;
-    };
-
-    struct SPLITGUI_EXPORT Mat4 {
-        union {
-            struct {
-                alignas(16) la::Vec4 a;
-                alignas(16) la::Vec4 b;
-                alignas(16) la::Vec4 c;
-                alignas(16) la::Vec4 d;
-            };
-            alignas(16) float matrix[4][4];
+    namespace STD140 {
+        
+        struct Mat2 {
+            alignas(16) float matrix[2][2];
         };
 
-        Mat4 operator*(const Mat4& operand);
-        Mat4 operator+(const Mat4& operand);
+        struct Mat2 {
+            alignas(16) float matrix[4][3];
+        };
 
-        Mat4 inverse();
+        struct Mat2 {
+            alignas(16) float matrix[4][4];
+        };
+    }
 
-        void updatePerspective(float fieldOfView, RectObj extent);
+    // struct SPLITGUI_EXPORT Mat4 {
+    //     union {
+    //         struct {
+    //             alignas(16) la::Vec4 a;
+    //             alignas(16) la::Vec4 b;
+    //             alignas(16) la::Vec4 c;
+    //             alignas(16) la::Vec4 d;
+    //         };
+    //         alignas(16) float matrix[4][4];
+    //     };
 
-        static Mat4 xRotationMatrix(float theta);
-        static Mat4 yRotationMatrix(float theta);
-        static Mat4 zRotationMatrix(float theta);
+    //     Mat4 operator*(const Mat4& operand);
+    //     Mat4 operator+(const Mat4& operand);
 
-        static Mat4 quaternionMatrix(la::Vec4 quaternion);
+    //     Mat4 inverse();
 
-        static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
-        static Mat4 perspectiveProjection(float fieldOfView, RectObj extent, float far = 100.0f, float near = 0.1f);
-        static Mat4 ident();
+    //     void updatePerspective(float fieldOfView, RectObj extent);
 
-        static Mat4 scale(la::Vec3 factor);
-        static Mat4 translate(la::Vec3 factor);
-    };
+    //     static Mat4 xRotationMatrix(float theta);
+    //     static Mat4 yRotationMatrix(float theta);
+    //     static Mat4 zRotationMatrix(float theta);
+
+    //     static Mat4 quaternionMatrix(la::Vec4 quaternion);
+
+    //     static Mat4 orthographicProjection(float far = 100.0f, float near = 0.1f);
+    //     static Mat4 perspectiveProjection(float fieldOfView, RectObj extent, float far = 100.0f, float near = 0.1f);
+    //     static Mat4 ident();
+
+    //     static Mat4 scale(la::Vec3 factor);
+    //     static Mat4 translate(la::Vec3 factor);
+    // };
 
     struct HexColor {
         HexColor() {}
